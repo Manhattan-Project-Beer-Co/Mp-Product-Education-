@@ -527,8 +527,9 @@
 </div>
 
 <script>
-const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
-const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
+const APP_CONFIG = window.APP_CONFIG || window.__APP_CONFIG__ || {};
+const BEER_CSV_URL = APP_CONFIG.BEER_CSV_URL || window.BEER_CSV_URL || "";
+const FOOD_CSV_URL = APP_CONFIG.FOOD_CSV_URL || window.FOOD_CSV_URL || "";
 
 let beers = [];
 let foods = [];
@@ -598,6 +599,17 @@ function parseCSV(text) {
 async function loadData() {
   const content = document.getElementById("content");
 
+  // If no BEER_CSV_URL is configured, show helpful instructions instead of failing silently.
+  if (!BEER_CSV_URL) {
+    content.innerHTML = `
+      <div class="status">
+        <strong>No data source configured.</strong>
+        Please copy <code>config.example.js</code> to <code>config.js</code> and set <code>BEER_CSV_URL</code> to your published Google Sheet CSV URL, or expose <code>window.APP_CONFIG.BEER_CSV_URL</code>.
+      </div>
+    `;
+    return;
+  }
+
   try {
     const beerResponse = await fetch(BEER_CSV_URL, { cache: "no-store" });
 
@@ -612,7 +624,7 @@ async function loadData() {
       b.Name.trim() !== "?"
     );
 
-    if (FOOD_CSV_URL !== "PASTE_YOUR_FOOD_CSV_LINK_HERE") {
+    if (FOOD_CSV_URL !== "") {
       try {
         const foodResponse = await fetch(FOOD_CSV_URL, { cache: "no-store" });
         if (foodResponse.ok) {
@@ -1109,7 +1121,7 @@ function renderPractice(content) {
   content.innerHTML = `
     <div class="game-card">
       <p class="game-question">
-        A guest says: “${escapeHTML(practiceItem.correct["Guest Guidance"])}”
+        A guest says: “${escapeHTML(practiceItem.correct["Guest Guidance"])}"
         <br><br>
         Which beer do you recommend?
       </p>

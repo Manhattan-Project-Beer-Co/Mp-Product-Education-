@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "Atlas Pale Ale",
+    "Style": "American Pale Ale",
+    "ABV": "5.5%",
+    "abv": "5.5%",
+    "On Tap": "Yes - Tap 4",
+    "Flavor Profile": "Citrus and resinous hop character with a clean malt backbone.",
+    "Description / ingredients": "Brewed with pale malt, a touch of crystal, and a bold Amarillo+Citra hop bill.",
+    "Guest Guidance": "Bright, sessionable, easy to recommend for hop-curious guests.",
+    "Gluten-Reduced": "No",
+    "New Tap": "No"
+  },
+  {
+    "Name": "Blacksmith Stout",
+    "Style": "Stout",
+    "ABV": "7.2%",
+    "abv": "7.2%",
+    "On Tap": "Yes - Tap 12",
+    "Flavor Profile": "Roasty chocolate and coffee notes with smooth lactose sweetness.",
+    "Description / ingredients": "Dark malts, flaked oats, and a touch of lactose.",
+    "Guest Guidance": "Great for guests who like dessert-style beers.",
+    "Gluten-Reduced": "No",
+    "New Tap": "Yes"
+  }
+]

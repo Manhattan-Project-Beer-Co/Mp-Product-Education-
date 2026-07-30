@@ -397,7 +397,7 @@
   }
 
   .modal-backdrop.show { display: flex; }
-
+  
   .modal {
     background: var(--paper);
     width: 100%;
@@ -599,12 +599,31 @@ function parseCSV(text) {
 async function loadData() {
   const content = document.getElementById("content");
 
-  // If no BEER_CSV_URL is configured, show helpful instructions instead of failing silently.
+  async function loadLocalFallback() {
+    try {
+      const localResp = await fetch('./beers.json', { cache: 'no-store' });
+      if (localResp.ok) {
+        const json = await localResp.json();
+        // ensure array
+        beers = Array.isArray(json) ? json : [];
+        render();
+        startNewTapRotation();
+        return true;
+      }
+    } catch (e) {
+      console.warn('Local beers.json not available:', e);
+    }
+    return false;
+  }
+
+  // If no BEER_CSV_URL configured, try local fallback first, then show instructions
   if (!BEER_CSV_URL) {
+    if (await loadLocalFallback()) return;
+
     content.innerHTML = `
       <div class="status">
         <strong>No data source configured.</strong>
-        Please copy <code>config.example.js</code> to <code>config.js</code> and set <code>BEER_CSV_URL</code> to your published Google Sheet CSV URL, or expose <code>window.APP_CONFIG.BEER_CSV_URL</code>.
+        Please copy <code>config.example.js</code> to <code>config.js</code> and set <code>BEER_CSV_URL</code> to your published Google Sheet CSV URL, or drop a <code>beers.json</code> file in the project root for offline testing.
       </div>
     `;
     return;
@@ -614,6 +633,8 @@ async function loadData() {
     const beerResponse = await fetch(BEER_CSV_URL, { cache: "no-store" });
 
     if (!beerResponse.ok) {
+      // Try local fallback if CSV fetch failed
+      if (await loadLocalFallback()) return;
       throw new Error("Beer spreadsheet returned " + beerResponse.status);
     }
 
@@ -639,6 +660,9 @@ async function loadData() {
     startNewTapRotation();
   } catch (error) {
     console.error(error);
+    // Try local fallback before showing failed message
+    if (await loadLocalFallback()) return;
+
     content.innerHTML = `
       <div class="status">
         <strong>The beer list could not be loaded.</strong>
@@ -979,7 +1003,7 @@ function escapeHTML(value) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
+    .replace(/"/g, "&quote;")
     .replace(/'/g, "&#039;");
 }
 

@@ -1,0 +1,4 @@
+node_modules/
+training.db
+.env
+.DS_Store

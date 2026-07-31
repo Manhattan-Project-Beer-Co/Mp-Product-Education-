@@ -3,113 +3,228 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manhattan Project Tap List Guide</title>
+<title>Manhattan Project | Staff Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
 
   :root {
-    --black: #111;
-    --charcoal: #1b1b1b;
-    --cream: #f7f3ea;
-    --paper: #fffdf8;
-    --muted: #777;
-    --line: #e8e2d7;
-    --green: #e9f5ec;
-    --green-text: #1e7a3d;
+    --black: #09090b;
+    --charcoal: #18181b;
+    --cream: #f4f5f7;
+    --paper: #ffffff;
+    --muted: #71717a;
+    --line: rgba(9, 9, 11, 0.08);
+    --line-strong: rgba(9, 9, 11, 0.14);
+    --green: #ecfdf3;
+    --green-text: #15803d;
+    --accent: #a67c52;
+    --accent-light: #faf6f1;
+    --accent-glow: rgba(166, 124, 82, 0.15);
+    --shadow-sm: 0 1px 2px rgba(9, 9, 11, 0.04);
+    --shadow-md: 0 8px 24px rgba(9, 9, 11, 0.06), 0 2px 6px rgba(9, 9, 11, 0.03);
+    --shadow-lg: 0 20px 48px rgba(9, 9, 11, 0.1);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 24px;
+    --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  html { scroll-behavior: smooth; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-family: var(--font);
     margin: 0;
     background: var(--cream);
+    background-image:
+      radial-gradient(ellipse 90% 60% at 0% -20%, rgba(166, 124, 82, 0.09), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgba(9, 9, 11, 0.04), transparent 50%);
     color: var(--black);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.55;
   }
 
-  header {
-    padding: 20px 16px 14px;
-    background: var(--black);
+  /* ── Top bar ── */
+  .site-header {
+    background: rgba(9, 9, 11, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     position: sticky;
     top: 0;
-    z-index: 20;
-    box-shadow: 0 4px 18px rgba(0,0,0,.18);
+    z-index: 30;
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 24px;
   }
 
   .brand {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
   }
 
-  .brand svg { flex-shrink: 0; }
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-mark svg { display: block; }
 
   .brand-text h1 {
-    font-size: 17px;
-    font-weight: 750;
+    font-size: 14px;
+    font-weight: 700;
     margin: 0;
     color: #fff;
-    letter-spacing: .03em;
+    letter-spacing: 0.04em;
   }
 
   .brand-text p {
     font-size: 10px;
-    font-weight: 600;
-    margin: 2px 0 0;
-    color: #999;
-    letter-spacing: .14em;
+    font-weight: 500;
+    margin: 1px 0 0;
+    color: rgba(255, 255, 255, 0.42);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
-  input[type="text"] {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #333;
-    border-radius: 12px;
-    font-size: 14px;
-    background: var(--charcoal);
-    color: #fff;
-    outline: none;
+  /* ── Sticky toolbar ── */
+  .toolbar {
+    position: sticky;
+    top: 67px;
+    z-index: 25;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 4px 20px rgba(9, 9, 11, 0.03);
   }
 
-  input[type="text"]::placeholder { color: #777; }
-  input[type="text"]:focus { border-color: #fff; }
+  .toolbar-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
 
   .tabs {
     display: flex;
-    gap: 7px;
-    margin-top: 12px;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
     overflow-x: auto;
     scrollbar-width: none;
-    padding-bottom: 2px;
+    padding: 4px;
+    background: #eef0f4;
+    border-radius: var(--radius-md);
   }
 
   .tabs::-webkit-scrollbar { display: none; }
 
   .tab {
-    padding: 8px 14px;
-    border-radius: 999px;
-    border: 1px solid #333;
-    font-size: 12.5px;
+    padding: 9px 15px;
+    border-radius: 10px;
+    border: none;
+    font-family: var(--font);
+    font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    color: #ccc;
-    transition: .15s ease;
+    color: var(--muted);
+    background: transparent;
+    transition: color 0.2s var(--ease), background 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.15s var(--ease);
   }
 
+  .tab:hover { color: var(--black); }
+
   .tab.active {
-    background: #fff;
+    background: var(--paper);
     color: var(--black);
-    border-color: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tab:active { transform: scale(0.97); }
+
+  .search-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    flex-shrink: 0;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 11px 14px 11px 42px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font);
+    font-size: 14px;
+    background: var(--paper);
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .auth-panel input {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+
+  input::placeholder { color: #a1a1aa; }
+
+  input:focus {
+    border-color: rgba(9, 9, 11, 0.22);
+    box-shadow: 0 0 0 4px rgba(9, 9, 11, 0.06);
+  }
+
+  .auth-panel input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-glow);
   }
 
   .filter-wrap {
-    padding: 12px 14px 0;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 12px;
   }
 
   .filters {
     display: flex;
-    gap: 7px;
+    gap: 8px;
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -117,112 +232,195 @@
   .filters::-webkit-scrollbar { display: none; }
 
   .filter-btn {
-    border: 1px solid #d7d0c5;
+    border: 1px solid var(--line-strong);
     background: var(--paper);
-    color: #555;
+    color: var(--muted);
     border-radius: 999px;
-    padding: 8px 12px;
+    padding: 8px 14px;
+    font-family: var(--font);
     font-size: 12px;
-    font-weight: 650;
+    font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+
+  .filter-btn:hover {
+    color: var(--black);
+    border-color: rgba(9, 9, 11, 0.18);
+    transform: translateY(-1px);
   }
 
   .filter-btn.active {
     background: var(--black);
     border-color: var(--black);
     color: #fff;
+    box-shadow: 0 4px 12px rgba(9, 9, 11, 0.18);
+  }
+
+  /* ── Auth ── */
+  .auth-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .auth-btn {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+
+  .auth-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .auth-btn:active { transform: scale(0.97); }
+
+  .auth-btn.primary {
+    background: #fff;
+    color: var(--black);
+    border-color: #fff;
+  }
+
+  .auth-btn.primary:hover { background: #f4f4f5; }
+
+  .auth-user {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.48);
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .auth-user strong {
+    display: block;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── Layout ── */
+  .app-main {
+    min-height: calc(100vh - 180px);
+    padding-bottom: 40px;
+  }
+
+  #content.is-entering {
+    animation: contentEnter 0.45s var(--ease) both;
+  }
+
+  @keyframes contentEnter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .status {
     text-align: center;
-    padding: 60px 18px;
-    color: #888;
+    padding: 80px 24px;
+    color: var(--muted);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.65;
   }
 
   .status strong {
     display: block;
-    color: #333;
-    margin-bottom: 6px;
-    font-size: 15px;
+    color: var(--black);
+    margin-bottom: 8px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
+  /* ── Cards ── */
   .list {
-    padding: 14px;
+    padding: 20px 24px;
     display: flex;
     flex-direction: column;
-    gap: 11px;
+    gap: 12px;
+    max-width: 1080px;
+    margin: 0 auto;
   }
 
   .card {
     background: var(--paper);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 15px 16px;
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
     cursor: pointer;
-    transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s;
+    box-shadow: var(--shadow-sm);
   }
 
   .card:hover {
-    transform: translateY(-1px);
-    border-color: #cfc6b8;
-    box-shadow: 0 8px 20px rgba(0,0,0,.05);
+    transform: translateY(-3px);
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-md);
   }
 
   .tap-layout {
     display: grid;
-    grid-template-columns: 58px 1fr;
-    gap: 13px;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
     align-items: start;
   }
 
   .tap-number {
-    width: 58px;
-    min-height: 58px;
-    border-radius: 14px;
-    background: var(--black);
+    width: 56px;
+    min-height: 56px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(145deg, #18181b 0%, #09090b 100%);
     color: #fff;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     line-height: 1;
+    box-shadow: 0 4px 12px rgba(9, 9, 11, 0.2);
   }
 
   .tap-number small {
-    font-size: 9px;
-    letter-spacing: .12em;
-    color: #aaa;
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 600;
+    margin-bottom: 3px;
+    text-transform: uppercase;
   }
 
   .tap-number strong {
-    font-size: 24px;
-    font-weight: 800;
+    font-size: 22px;
+    font-weight: 700;
   }
 
   .card-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
   }
 
   .name {
-    font-weight: 750;
+    font-weight: 700;
     font-size: 16px;
-    margin: 0 0 4px;
-    letter-spacing: -.01em;
+    margin: 0 0 5px;
+    letter-spacing: -0.02em;
+    color: var(--black);
   }
 
   .desc {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--muted);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   .abv {
@@ -230,7 +428,7 @@
     font-weight: 700;
     background: var(--black);
     color: #fff;
-    padding: 5px 9px;
+    padding: 6px 10px;
     border-radius: 999px;
     white-space: nowrap;
   }
@@ -238,130 +436,169 @@
   .tags {
     display: flex;
     gap: 6px;
-    margin-top: 11px;
+    margin-top: 14px;
     flex-wrap: wrap;
   }
 
   .tag {
     font-size: 10.5px;
-    font-weight: 650;
-    background: #f0ece5;
-    color: #555;
-    padding: 5px 9px;
-    border-radius: 7px;
+    font-weight: 600;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 5px 10px;
+    border-radius: 999px;
   }
 
   .tag.gf { background: var(--green); color: var(--green-text); }
   .tag.new { background: var(--black); color: #fff; }
 
   .details-hint {
-    font-size: 10.5px;
-    color: #aaa;
-    margin-top: 10px;
+    font-size: 11px;
+    color: #a1a1aa;
+    margin-top: 12px;
+    font-weight: 500;
   }
 
   .new-banner {
-    margin: 14px 14px 0;
-    background: var(--black);
-    border-radius: 16px;
-    padding: 17px;
+    margin: 20px 24px 0;
+    max-width: 1032px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
+    border-radius: var(--radius-lg);
+    padding: 24px;
     color: #fff;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .new-banner-label {
     font-size: 10px;
-    font-weight: 800;
-    letter-spacing: .12em;
-    color: #999;
-    margin: 0 0 6px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0 0 8px;
+    text-transform: uppercase;
   }
 
   .new-banner-name {
-    font-size: 17px;
-    font-weight: 750;
-    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
   }
 
   .new-banner-desc {
-    font-size: 12px;
-    color: #bbb;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.58);
     margin: 0;
-    line-height: 1.45;
+    line-height: 1.55;
   }
 
   .new-banner-dots {
     display: flex;
-    gap: 5px;
-    margin-top: 11px;
+    gap: 6px;
+    margin-top: 16px;
   }
 
   .new-banner-dot {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: #444;
+    background: rgba(255, 255, 255, 0.22);
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
   }
 
-  .new-banner-dot.active { background: #fff; }
+  .new-banner-dot.active {
+    background: #fff;
+    transform: scale(1.15);
+  }
 
+  /* ── Games ── */
   .game-card, .flash-card {
     background: var(--paper);
     border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 28px 18px;
-    margin: 14px;
+    border-radius: var(--radius-xl);
+    padding: 36px 28px;
+    margin: 20px 24px;
+    max-width: 1032px;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
+    box-shadow: var(--shadow-md);
   }
 
   .game-question {
-    font-size: 14.5px;
-    color: #222;
-    margin-bottom: 22px;
-    line-height: 1.6;
+    font-size: 16px;
+    color: var(--black);
+    margin-bottom: 28px;
+    line-height: 1.65;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   .game-options {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
   .game-option {
-    padding: 13px 14px;
-    border: 1px solid #ddd6cc;
-    border-radius: 11px;
-    background: #fff;
-    font-size: 13.5px;
-    font-weight: 600;
+    padding: 15px 18px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
     text-align: left;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
   }
 
-  .game-option.correct { background: #e9f5ec; border-color: #1e7a3d; color: #1e7a3d; }
-  .game-option.wrong { background: #fbeaea; border-color: #b33; color: #b33; }
+  .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
+    border-color: rgba(9, 9, 11, 0.18);
+    background: #fafafa;
+    transform: translateX(4px);
+  }
 
-  .game-next {
-    margin-top: 18px;
-    padding: 11px 22px;
+  .game-option.correct { background: var(--green); border-color: var(--green-text); color: var(--green-text); }
+  .game-option.wrong { background: #fef2f2; border-color: #ef4444; color: #dc2626; }
+
+  .game-next,
+  .auth-panel .game-next {
+    margin-top: 24px;
+    padding: 13px 26px;
     background: var(--black);
     color: #fff;
     border: none;
-    border-radius: 999px;
-    font-size: 13.5px;
-    font-weight: 650;
+    border-radius: var(--radius-md);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(9, 9, 11, 0.2);
   }
+
+  .game-next:hover {
+    background: #27272a;
+    box-shadow: 0 6px 20px rgba(9, 9, 11, 0.24);
+  }
+
+  .game-next:active { transform: scale(0.98); }
 
   .game-score, .flash-count {
     text-align: center;
     font-size: 12px;
-    color: #999;
-    margin: 10px 16px 0;
+    color: var(--muted);
+    margin: 14px 24px 0;
     font-weight: 600;
   }
 
   .flash-card {
-    min-height: 150px;
+    min-height: 180px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -371,24 +608,564 @@
   .flash-nav {
     display: flex;
     justify-content: space-between;
-    padding: 0 16px;
-    margin-top: 12px;
+    padding: 0 24px;
+    margin-top: 14px;
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .flash-nav button {
-    padding: 9px 18px;
-    border: 1px solid #ddd6cc;
-    border-radius: 999px;
+  .flash-nav button,
+  .game-back {
+    padding: 10px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
     background: var(--paper);
+    font-family: var(--font);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s var(--ease);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .flash-nav button:hover,
+  .game-back:hover {
+    color: var(--black);
+    border-color: rgba(9, 9, 11, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .game-back {
+    display: inline-flex;
+    align-items: center;
+    margin: 20px 24px 0;
+    max-width: 1080px;
+  }
+
+  .game-hub {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 20px 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .game-tile {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 20px 18px;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .game-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .game-tile:hover::before { opacity: 1; }
+
+  .game-tile-icon {
+    font-size: 22px;
+    margin-bottom: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f4f4f5 0%, #e4e4e7 100%);
+    border-radius: var(--radius-sm);
+    position: relative;
+    z-index: 1;
+  }
+
+  .game-tile-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 5px;
+    color: var(--black);
+    position: relative;
+    z-index: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .game-tile-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+
+  .speed-header {
+    margin: 20px 24px 0;
+    max-width: 1032px;
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .speed-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .speed-bar-track {
+    height: 6px;
+    background: #e4e4e7;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .speed-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #27272a, #09090b);
+    border-radius: 999px;
+    transition: width 0.3s linear;
+  }
+
+  .speed-bar-fill.urgent { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+  .game-option.disabled {
+    pointer-events: none;
+    opacity: 0.65;
+  }
+
+  .streak-badge {
+    display: inline-block;
+    background: var(--green);
+    color: var(--green-text);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+
+  /* ── Sections ── */
+  .coffee-intro {
+    margin: 0 auto;
+    padding: 32px 24px 24px;
+    max-width: 1080px;
+    border-bottom: none;
+  }
+
+  .coffee-intro h2 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--black);
+    line-height: 1.2;
+  }
+
+  .coffee-intro p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 540px;
+  }
+
+  .coffee-subtabs,
+  .coffee-filters {
+    display: flex;
+    gap: 8px;
+    padding: 0 24px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .coffee-subtabs::-webkit-scrollbar,
+  .coffee-filters::-webkit-scrollbar { display: none; }
+
+  .coffee-subtab {
+    padding: 8px 15px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+    font-family: var(--font);
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s var(--ease);
+  }
+
+  .coffee-subtab.active {
+    background: var(--black);
+    border-color: var(--black);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(9, 9, 11, 0.15);
+  }
+
+  .coffee-list {
+    padding: 0 24px 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .coffee-section-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin: 0 0 6px;
+    text-transform: uppercase;
+  }
+
+  .coffee-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+
+  .manual-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #3f3f46;
+  }
+
+  .manual-body p { margin: 0 0 16px; }
+
+  .manual-body ul {
+    margin: 0 0 18px;
+    padding-left: 22px;
+  }
+
+  .manual-body li { margin-bottom: 8px; }
+
+  .manual-body table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0 0 18px;
+    font-size: 13px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .manual-body th,
+  .manual-body td {
+    border-bottom: 1px solid var(--line);
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .manual-body tr:last-child td,
+  .manual-body tr:last-child th { border-bottom: none; }
+
+  .manual-body th {
+    background: #fafafa;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  .manual-callout {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 14px 16px;
+    margin: 0 0 18px;
+    font-size: 14px;
+    line-height: 1.65;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  /* ── Dashboard ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    padding: 0 24px 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .metric-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .metric-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--black));
+  }
+
+  .metric-card.wide { grid-column: 1 / -1; }
+
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+
+  .metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--black);
+  }
+
+  .metric-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 10px 0 0;
+    font-weight: 500;
+  }
+
+  .progress-table {
+    width: calc(100% - 48px);
+    max-width: 1032px;
+    margin: 0 auto 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    font-size: 13px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .progress-table th,
+  .progress-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+
+  .progress-table th {
+    background: #fafafa;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .progress-table tr:last-child td { border-bottom: none; }
+  .progress-table tr.clickable { cursor: pointer; transition: background 0.15s; }
+  .progress-table tr.clickable:hover { background: #fafafa; }
+
+  .auth-panel {
+    margin: 32px 24px;
+    padding: 28px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .auth-panel h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .auth-panel label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 6px;
+  }
+
+  .auth-panel .hint {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 0 0 16px;
+  }
+
+  .auth-error {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-bottom: 16px;
+    border: 1px solid #fecaca;
+  }
+
+  .rec-list {
+    padding: 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .rec-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s var(--ease), box-shadow 0.2s;
+  }
+
+  .rec-card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .rec-card.kind-inactive { border-left-color: #ef4444; }
+  .rec-card.kind-improve { border-left-color: #f59e0b; }
+  .rec-card.kind-missing { border-left-color: var(--black); }
+  .rec-card.kind-start { border-left-color: var(--green-text); }
+  .rec-card.kind-advanced { border-left-color: #3b82f6; }
+
+  .rec-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 5px;
+    color: var(--black);
+  }
+
+  .rec-message {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 10px;
+    line-height: 1.6;
+  }
+
+  .rec-action {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+
+  .rec-snippet {
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 4px;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 24px 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .chart-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px 18px 14px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+  }
+
+  .chart-card:hover { box-shadow: var(--shadow-md); }
+
+  .chart-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 3px;
+    color: var(--black);
+    letter-spacing: -0.01em;
+  }
+
+  .chart-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+
+  .chart-wrap {
+    position: relative;
+    width: 100%;
   }
 
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.62);
+    background: rgba(9, 9, 11, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: none;
     align-items: flex-end;
     justify-content: center;
@@ -401,122 +1178,390 @@
   .modal {
     background: var(--paper);
     width: 100%;
-    max-width: 680px;
+    max-width: 560px;
     max-height: 88vh;
     overflow-y: auto;
-    border-radius: 22px 22px 0 0;
-    padding: 22px 18px 28px;
-    box-shadow: 0 -16px 40px rgba(0,0,0,.25);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 28px 24px 36px;
+    box-shadow: var(--shadow-lg);
+    animation: modalUp 0.35s var(--ease) both;
+  }
+
+  @keyframes modalUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .modal-handle {
-    width: 42px;
-    height: 5px;
-    background: #d7d0c5;
+    width: 36px;
+    height: 4px;
+    background: #e4e4e7;
     border-radius: 999px;
-    margin: -6px auto 17px;
+    margin: -10px auto 22px;
   }
 
   .modal-close {
     float: right;
-    border: none;
-    background: #eee9e1;
+    border: 1px solid var(--line);
+    background: #fafafa;
     width: 34px;
     height: 34px;
-    border-radius: 50%;
-    font-size: 20px;
+    border-radius: var(--radius-sm);
+    font-size: 18px;
+    line-height: 1;
     cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .modal-close:hover {
+    background: #f4f4f5;
+    color: var(--black);
   }
 
   .modal-title {
     font-size: 24px;
-    margin: 4px 44px 5px 0;
-    letter-spacing: -.02em;
+    font-weight: 700;
+    margin: 0 44px 8px 0;
+    letter-spacing: -0.03em;
   }
 
   .modal-style {
-    margin: 0 0 16px;
-    color: #777;
-    font-size: 13px;
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 14px;
   }
 
   .detail-section {
     border-top: 1px solid var(--line);
-    padding-top: 15px;
-    margin-top: 15px;
+    padding-top: 18px;
+    margin-top: 18px;
   }
 
   .detail-label {
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     font-size: 10px;
-    letter-spacing: .12em;
-    font-weight: 800;
-    color: #999;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--muted);
     text-transform: uppercase;
   }
 
   .detail-text {
     margin: 0;
     font-size: 14px;
-    line-height: 1.65;
-    color: #333;
+    line-height: 1.7;
+    color: #3f3f46;
     white-space: pre-wrap;
   }
 
-  @media (min-width: 700px) {
-    .list, .filter-wrap { max-width: 760px; margin-left: auto; margin-right: auto; }
-    .new-banner { max-width: 732px; margin-left: auto; margin-right: auto; }
+  .app-footer {
+    text-align: center;
+    padding: 28px 24px 36px;
+    font-size: 11px;
+    color: #a1a1aa;
+    letter-spacing: 0.04em;
+  }
+
+  @media (min-width: 768px) {
+    .game-hub { grid-template-columns: repeat(4, 1fr); }
+    .chart-grid { grid-template-columns: 1fr 1fr; }
+    .chart-card.wide { grid-column: 1 / -1; }
     .modal-backdrop { align-items: center; padding: 24px; }
-    .modal { border-radius: 22px; }
+    .modal { border-radius: var(--radius-xl); }
+    .toolbar-inner { flex-wrap: nowrap; }
+  }
+
+  @media (max-width: 640px) {
+    .header-inner,
+    .toolbar-inner,
+    .filter-wrap,
+    .list,
+    .coffee-intro,
+    .metrics-grid,
+    .chart-grid,
+    .rec-list { padding-left: 16px; padding-right: 16px; }
+
+    .toolbar { top: 62px; }
+    .search-wrap { max-width: none; order: 3; flex-basis: 100%; }
+    .coffee-intro h2 { font-size: 24px; }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .metric-card.wide { grid-column: auto; }
+    .progress-table { width: calc(100% - 32px); }
+  }
+
+  /* ── AI Chat ── */
+  .chat-fab {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 90;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #18181b 0%, #09090b 100%);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 8px 28px rgba(9, 9, 11, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s;
+  }
+
+  .chat-fab:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(9, 9, 11, 0.32);
+  }
+
+  .chat-fab.open { border-radius: 14px; }
+
+  .chat-panel {
+    position: fixed;
+    right: 20px;
+    bottom: 88px;
+    z-index: 89;
+    width: min(400px, calc(100vw - 32px));
+    height: min(560px, calc(100vh - 120px));
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: chatSlideUp 0.3s var(--ease) both;
+  }
+
+  .chat-panel.open { display: flex; }
+
+  @keyframes chatSlideUp {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .chat-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
+  }
+
+  .chat-header h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .chat-header p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .chat-mode-badge {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fafafa;
+  }
+
+  .chat-msg {
+    max-width: 92%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--black);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+  }
+
+  .chat-msg.assistant {
+    align-self: flex-start;
+    background: var(--paper);
+    color: #27272a;
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 6px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .chat-msg.typing {
+    color: var(--muted);
+    font-style: italic;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0 4px;
+  }
+
+  .chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 16px 12px;
+    background: #fafafa;
+  }
+
+  .chat-suggestion {
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 7px 11px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chat-suggestion:hover {
+    color: var(--black);
+    border-color: rgba(9, 9, 11, 0.18);
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px 14px 14px;
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .chat-input-row input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font);
+    font-size: 14px;
+    background: #fafafa;
+    box-shadow: none;
+  }
+
+  .chat-input-row input:focus {
+    background: var(--paper);
+    box-shadow: 0 0 0 4px rgba(9, 9, 11, 0.06);
+  }
+
+  .chat-send {
+    border: none;
+    background: var(--black);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .chat-send:hover { background: #27272a; }
+  .chat-send:disabled { opacity: 0.45; cursor: not-allowed; }
+  .chat-send:active:not(:disabled) { transform: scale(0.96); }
+
+  @media (max-width: 640px) {
+    .chat-panel {
+      right: 12px;
+      left: 12px;
+      width: auto;
+      bottom: 84px;
+    }
+    .chat-fab { right: 16px; bottom: 16px; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true">
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3"/>
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3" transform="rotate(60 50 50)"/>
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3" transform="rotate(120 50 50)"/>
-      <rect x="43" y="32" width="14" height="40" rx="2" fill="#fff"/>
-      <rect x="46" y="22" width="8" height="12" fill="#fff"/>
-      <rect x="47" y="16" width="6" height="8" rx="1" fill="#fff"/>
-    </svg>
-    <div class="brand-text">
-      <h1>MANHATTAN PROJECT</h1>
-      <p>BEER COMPANY</p>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3" transform="rotate(60 50 50)"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3" transform="rotate(120 50 50)"/>
+          <rect x="43" y="32" width="14" height="40" rx="2" fill="#fff"/>
+          <rect x="46" y="22" width="8" height="12" fill="#fff"/>
+          <rect x="47" y="16" width="6" height="8" rx="1" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>MANHATTAN PROJECT</h1>
+        <p>Staff Training</p>
+      </div>
     </div>
-  </div>
-
-  <input type="text" id="search" placeholder="Search beer, style, or flavor">
-
-  <div class="tabs">
-    <div class="tab active" data-type="ontap">On Tap</div>
-    <div class="tab" data-type="beer">All Beers</div>
-    <div class="tab" data-type="food">Food</div>
-    <div class="tab" data-type="flash">Flashcards</div>
-    <div class="tab" data-type="quiz">Quiz</div>
-    <div class="tab" data-type="practice">Practice</div>
+    <div class="auth-bar" id="authBar">
+      <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
+      <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
+    </div>
   </div>
 </header>
 
-<div id="filterWrap" class="filter-wrap">
-  <div class="filters">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="light">Light & Crisp</button>
-    <button class="filter-btn" data-filter="hoppy">Hoppy</button>
-    <button class="filter-btn" data-filter="dark">Dark & Roasty</button>
-    <button class="filter-btn" data-filter="fruity">Fruity / Sour</button>
-    <button class="filter-btn" data-filter="highabv">High ABV</button>
-    <button class="filter-btn" data-filter="gf">Gluten-Reduced</button>
-    <button class="filter-btn" data-filter="new">New Taps</button>
+<div class="toolbar" id="toolbar">
+  <div class="toolbar-inner">
+    <div class="tabs" id="mainTabs">
+      <div class="tab active" data-type="ontap">On Tap</div>
+      <div class="tab" data-type="beer">All Beers</div>
+      <div class="tab" data-type="food">Food</div>
+      <div class="tab" data-type="coffee">Coffee</div>
+      <div class="tab" data-type="games">Games</div>
+      <div class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</div>
+      <div class="tab tab-admin-only" data-type="team" style="display:none;">Team</div>
+    </div>
+    <div class="search-wrap" id="searchWrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
+      </svg>
+      <input type="text" id="search" placeholder="Search beer, style, or flavor">
+    </div>
+  </div>
+
+  <div id="filterWrap" class="filter-wrap">
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="highabv">High ABV</button>
+      <button class="filter-btn" data-filter="gf">Gluten-Reduced</button>
+      <button class="filter-btn" data-filter="new">New Taps</button>
+    </div>
   </div>
 </div>
 
+<main id="appMain" class="app-main">
 <div id="content">
   <div class="status"><strong>Loading beer list…</strong>Please wait a moment.</div>
 </div>
+</main>
+
+<footer class="app-footer">Manhattan Project Beer Co. · Internal Staff Training</footer>
 
 <div id="modalBackdrop" class="modal-backdrop" onclick="closeModal(event)">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -526,7 +1571,52 @@
   </div>
 </div>
 
+<div id="authBackdrop" class="modal-backdrop" onclick="closeAuthModal(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">×</button>
+    <div id="authContent"></div>
+  </div>
+</div>
+
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Training assistant">
+  <div class="chat-header">
+    <h3>Training Assistant</h3>
+    <p>Ask about beers on tap, coffee standards, or training games — site content only.</p>
+    <span class="chat-mode-badge" id="chatModeBadge">Loading…</span>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What's on tap?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Gluten-reduced beers</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Espresso dial-in standard</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Which training game first?</button>
+  </div>
+  <form class="chat-input-row" onsubmit="sendChatMessage(event)">
+    <input type="text" id="chatInput" placeholder="Ask about beer, coffee, or training…" autocomplete="off" maxlength="800">
+    <button class="chat-send" id="chatSendBtn" type="submit" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+    </button>
+  </form>
+</div>
+
+<button class="chat-fab" id="chatFab" type="button" onclick="toggleChatPanel()" aria-label="Open training assistant">
+  <svg id="chatFabIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+  </svg>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
+const API_BASE = "";
+let currentUser = null;
+let authToken = localStorage.getItem("mp_auth_token") || "";
+let authMode = "login";
+let teamDetailId = null;
+let myProgressData = null;
+let teamData = null;
 const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
 
@@ -534,14 +1624,339 @@ let beers = [];
 let foods = [];
 let activeType = "ontap";
 let activeFilter = "all";
-let flashIndex = 0;
+let activeGame = null;
+let gameSession = null;
 let flashFlipped = false;
 let quizItem = null;
-let quizScore = { right: 0, total: 0 };
 let practiceItem = null;
-let practiceScore = { right: 0, total: 0 };
+let tapItem = null;
+let abvItem = null;
+let styleItem = null;
+let reverseItem = null;
+let speedItem = null;
 let newTapIndex = 0;
 let newTapTimer = null;
+let coffeeMode = "guide";
+let coffeeCategory = "all";
+let coffeeQuizItem = null;
+let coffeeFlashIndex = 0;
+let coffeeFlashFlipped = false;
+let coffeeSession = null;
+
+const COFFEE_CATEGORY_LABELS = {
+  fundamentals: "Fundamentals",
+  bar: "Bar Skills",
+  reference: "Reference"
+};
+
+const COFFEE_SECTIONS = [
+  {
+    id: 1,
+    category: "fundamentals",
+    title: "Coffee as a System",
+    summary: "Farm-to-cup framework and the barista mindset.",
+    body: `<p>Coffee quality is shaped long before the barista touches the grinder. What ends up in the cup is the result of a chain of decisions: where the coffee was grown, how it was processed, how it was roasted, and how it was brewed.</p>
+<div class="manual-callout"><strong>Core mindset:</strong> A barista is not just following recipes. A barista is reading the coffee, controlling variables, and chasing balance — with sweetness as the clearest sign that extraction is in a good place.</div>
+<p><strong>The farm-to-cup framework:</strong></p>
+<ul>
+<li><strong>Origin</strong> determines raw potential: acidity, sweetness, body, and aromatics.</li>
+<li><strong>Processing</strong> shapes fruit character, cleanliness, or fermentation character.</li>
+<li><strong>Roasting</strong> changes solubility and defines extraction behavior.</li>
+<li><strong>Brewing</strong> is the final stage where the barista reveals or obscures that potential.</li>
+</ul>`
+  },
+  {
+    id: 2,
+    category: "fundamentals",
+    title: "Origins and Terroir",
+    summary: "How climate, elevation, and region influence flavor.",
+    body: `<p>Coffee is the seed of a fruit grown in tropical regions known as the coffee belt. Origin matters because growing conditions influence seed density, sweetness development, acidity structure, and flavor expression.</p>
+<p><strong>What shapes flavor at origin?</strong></p>
+<ul>
+<li><strong>Climate:</strong> Temperature swings influence cherry maturation and sugar development.</li>
+<li><strong>Elevation:</strong> Higher elevation often produces denser, more vibrant coffees.</li>
+<li><strong>Soil and rainfall:</strong> Nutrient availability and water stress affect flavor.</li>
+<li><strong>Variety:</strong> Different cultivars express different sweetness, acidity, and texture.</li>
+</ul>
+<table><tr><th>Region</th><th>Typical profile</th><th>Training notes</th></tr>
+<tr><td>Ethiopia</td><td>Floral, citrus, berry, tea-like</td><td>High aromatics and lively acidity; teaches clarity.</td></tr>
+<tr><td>Kenya</td><td>Currant, citrus, structured acidity</td><td>Intense and vivid; acidity can still be sweet when extracted well.</td></tr>
+<tr><td>Colombia</td><td>Balanced, caramel, red fruit</td><td>Approachable and balanced; good reference point.</td></tr>
+<tr><td>Brazil</td><td>Chocolate, nut, low acidity, heavy body</td><td>Useful for espresso blends and body-driven drinks.</td></tr>
+<tr><td>Central America</td><td>Cocoa, citrus, stone fruit, clean finish</td><td>Clear and structured; bridges classic and brighter profiles.</td></tr></table>
+<div class="manual-callout"><strong>Teaching note:</strong> Origin creates tendencies, not guarantees. Processing, roast, and brewing can shift how those tendencies show up.</div>`
+  },
+  {
+    id: 3,
+    category: "fundamentals",
+    title: "Processing Methods",
+    summary: "Washed, natural, honey, and how process affects the cup.",
+    body: `<p>After harvest, the coffee fruit must be removed from the seed. Processing has a major impact on flavor, body, sweetness, and cleanliness.</p>
+<table><tr><th>Process</th><th>What happens</th><th>Cup effect</th></tr>
+<tr><td>Washed</td><td>Fruit removed before drying</td><td>Cleaner, brighter, more transparent</td></tr>
+<tr><td>Natural</td><td>Seed dries inside the fruit</td><td>Fruit-forward, rounder, heavier body</td></tr>
+<tr><td>Honey / Pulped natural</td><td>Some mucilage left during drying</td><td>Bridges washed and natural; sweet with round texture</td></tr>
+<tr><td>Experimental</td><td>Extended or alternative fermentation</td><td>Highly expressive; describe accurately without overselling</td></tr></table>
+<p><strong>How to explain process to customers:</strong></p>
+<ul>
+<li><strong>Washed:</strong> fruit removed early — cleaner and more transparent.</li>
+<li><strong>Natural:</strong> dried in the fruit — often fruitier and fuller.</li>
+<li><strong>Honey:</strong> in between — often sweet with round texture and moderate clarity.</li>
+</ul>`
+  },
+  {
+    id: 4,
+    category: "fundamentals",
+    title: "Roasting and Solubility",
+    summary: "How roast level affects extraction and recipe choice.",
+    body: `<p>Roasting transforms green coffee into a brittle, aromatic product. Roast development changes flavor, solubility, and how easily water extracts the coffee.</p>
+<ul>
+<li><strong>Lighter roasts</strong> tend to be denser and harder to extract.</li>
+<li><strong>Darker roasts</strong> are more soluble and generally extract more easily.</li>
+<li><strong>Roast level</strong> affects recipe choice, grind behavior, and flavor balance.</li>
+</ul>
+<table><tr><th>Roast</th><th>Cup tendencies</th><th>Brewing implication</th></tr>
+<tr><td>Light</td><td>Brighter, nuanced, more acidity</td><td>Often needs finer grind, more energy, or longer ratios</td></tr>
+<tr><td>Medium</td><td>Balanced sweetness and structure</td><td>Usually easiest training reference</td></tr>
+<tr><td>Dark</td><td>Heavier body, roast character, lower perceived acidity</td><td>Often best at shorter ratios; can tip bitter quickly</td></tr></table>
+<p><strong>Coffee age:</strong> Freshly roasted coffee releases CO₂. Very fresh coffee can resist even extraction. As coffee ages it often extracts more easily but loses aromatic intensity.</p>
+<div class="manual-callout"><strong>Training cue:</strong> When coffee behaves differently than a few days ago, consider age, humidity, hopper refill, and roast — not just the grinder.</div>`
+  },
+  {
+    id: 5,
+    category: "fundamentals",
+    title: "Extraction and Brew Variables",
+    summary: "The five variables and how to diagnose under/over extraction.",
+    body: `<p>Brewing is extraction: water dissolves soluble material from coffee. The goal is balanced extraction, not maximum extraction.</p>
+<p><strong>How flavor extracts:</strong></p>
+<ul>
+<li>Early: salts and sharper acids</li>
+<li>Middle: sweetness and balance</li>
+<li>Late: bitters and drying compounds</li>
+</ul>
+<table><tr><th>If it tastes like…</th><th>Likely problem</th><th>First response</th></tr>
+<tr><td>Sharp, sour, thin</td><td>Under-extracted</td><td>Grind finer or increase extraction energy</td></tr>
+<tr><td>Dry, bitter, hollow</td><td>Over-extracted</td><td>Grind coarser or reduce extraction energy</td></tr>
+<tr><td>Flat and muted</td><td>Recipe or coffee mismatch</td><td>Check freshness, ratio, dose</td></tr>
+<tr><td>Sweet and clear</td><td>Balanced extraction</td><td>Record the recipe and protect consistency</td></tr></table>
+<p><strong>The five main brew variables:</strong> Grind · Time · Temperature · Ratio · Water</p>
+<div class="manual-callout"><strong>Standard shop rule:</strong> Hold dose and target yield constant during routine dial-in. Adjust grind first. Change ratio only when the coffee or menu intent calls for it.</div>`
+  },
+  {
+    id: 6,
+    category: "bar",
+    title: "Espresso Fundamentals and Dialing In",
+    summary: "Dose, yield, ratio, and the dial-in procedure.",
+    body: `<p>Espresso is coffee brewed under pressure. It is concentrated, fast-moving, and extremely sensitive to small changes.</p>
+<p><strong>Key terms:</strong> Dose · Yield · Time · Ratio · Channeling</p>
+<table><tr><th>Dose</th><th>Yield</th><th>Notes</th></tr>
+<tr><td>20.5 g</td><td>36 g</td><td>Use flavor first; many coffees land around mid-20s to low-30s seconds. Record the recipe and adjust grind to maintain it.</td></tr></table>
+<p><strong>Dial-in procedure:</strong></p>
+<ul>
+<li>Purge the grinder and group head if needed.</li>
+<li>Dose accurately and prepare the puck the same way every time.</li>
+<li>Pull a shot at the target recipe.</li>
+<li>Observe flow: color, texture, speed, and evenness.</li>
+<li>Taste the shot. Ask what is missing: sweetness, clarity, body, or balance.</li>
+<li>Adjust grind and repeat until sweet and balanced.</li>
+</ul>
+<p><strong>Grind changes:</strong> Sour or sharp → finer. Bitter or drying → coarser. Good flavor but messy flow → improve distribution and tamp before changing recipe.</p>
+<p><strong>Ratio strategy:</strong> Darker coffees often feel best at 1:1 to 1:2. Balanced coffees near 1:2. Brighter coffees may show more clarity at 1:2.5 to 1:3.</p>
+<div class="manual-callout"><strong>Important:</strong> Taste guides adjustments, not numbers alone. Time is a reference. Flavor is the decision-maker.</div>`
+  },
+  {
+    id: 7,
+    category: "bar",
+    title: "Milk Science and Steaming",
+    summary: "Stretching, vortex, texture targets, and temperature.",
+    body: `<p>Milk steaming has two jobs: add the right amount of air, then integrate that air into smooth texture. Good milk should look glossy, feel fluid, and pour as one unified texture.</p>
+<p><strong>Steaming sequence:</strong></p>
+<ul>
+<li>Fill the pitcher for the drink size.</li>
+<li>Purge the steam wand.</li>
+<li>Stretch with the tip near the surface to add air.</li>
+<li>Reposition for a rolling vortex.</li>
+<li>Heat to target range, allowing for carryover.</li>
+<li>Wipe and purge immediately; tap and swirl until glossy.</li>
+</ul>
+<table><tr><th>Drink</th><th>Texture goal</th><th>Trainer cue</th></tr>
+<tr><td>Latte</td><td>Thin microfoam, fluid and glossy</td><td>Like wet paint, not dry foam</td></tr>
+<tr><td>Cappuccino</td><td>Slightly more aerated but integrated</td><td>Creamy, not stiff or meringue-like</td></tr>
+<tr><td>Cortado</td><td>Minimal foam, silky body</td><td>Texture control and restraint</td></tr></table>
+<p><strong>Temperature guidance:</strong> Whole milk often 140–155°F. Oat milk often 135–145°F. Train alt milks by texture and stability, not temperature alone.</p>
+<p><strong>Common problems:</strong> Large bubbles (too much air) · Flat milk (not enough stretch) · Screaming sound (wrong tip placement) · Separated milk (poor vortex, overheated, or sat too long)</p>`
+  },
+  {
+    id: 8,
+    category: "bar",
+    title: "Drink Builds and Recipe Standards",
+    summary: "Core menu builds, sizes, and iced drink standards.",
+    body: `<table><tr><th>Drink</th><th>Size</th><th>Build</th><th>Notes</th></tr>
+<tr><td>Macchiato</td><td>~3 oz</td><td>Espresso + small amount of textured milk</td><td>Short and strong — not a mini latte</td></tr>
+<tr><td>Cortado</td><td>~4 oz</td><td>Equal parts espresso and milk</td><td>Balance and texture are the focus</td></tr>
+<tr><td>Cappuccino</td><td>~5–6 oz</td><td>Espresso + textured milk, slightly more foam</td><td>Light but still integrated</td></tr>
+<tr><td>Latte</td><td>8 oz+</td><td>Espresso + more milk, thin microfoam</td><td>Milk-forward, smooth, approachable</td></tr>
+<tr><td>Americano</td><td>Varies</td><td>Espresso over hot water</td><td>Protect crema and serve cleanly</td></tr>
+<tr><td>Mocha</td><td>Varies</td><td>Chocolate plus latte build</td><td>Chocolate should support, not bury, the espresso</td></tr></table>
+<p><strong>Iced drinks:</strong> Build intentionally — syrup, espresso, dilution logic, milk, then ice. Iced drinks change texture and sweetness perception; taste and presentation both matter.</p>`
+  },
+  {
+    id: 9,
+    category: "bar",
+    title: "Workflow and Bar Communication",
+    summary: "Sequencing, callouts, and when to remake a drink.",
+    body: `<p>Speed comes from sequencing and communication, not panic. A fast barista who works out of order creates remakes.</p>
+<p><strong>Workflow standards:</strong></p>
+<ul>
+<li>Start espresso as early as possible when the drink requires it.</li>
+<li>Steam milk during extraction when appropriate.</li>
+<li>Do not let shots sit without purpose.</li>
+<li>Group similar tasks during rushes without losing order accuracy.</li>
+<li>Call out needs clearly: shots down, milk ready, remake, iced, or alt milk.</li>
+</ul>
+<p><strong>When to remake a drink:</strong></p>
+<ul>
+<li>Shot tastes clearly wrong or falls well outside standard.</li>
+<li>Milk texture is poor enough to affect quality.</li>
+<li>Drink was built incorrectly.</li>
+<li>Presentation is clearly below shop standard.</li>
+</ul>
+<div class="manual-callout"><strong>Shift principle:</strong> Protect quality first, then build speed around that quality.</div>`
+  },
+  {
+    id: 10,
+    category: "bar",
+    title: "Cleaning, Maintenance, and Care",
+    summary: "During-shift, opening, and closing standards.",
+    body: `<p><strong>During shift:</strong></p>
+<ul>
+<li>Purge and wipe the steam wand after every use.</li>
+<li>Rinse milk pitchers immediately after steaming.</li>
+<li>Knock out pucks promptly and keep baskets clean.</li>
+<li>Keep the counter, grinder area, and machine top organized.</li>
+</ul>
+<p><strong>Opening:</strong> Purge group heads · Check grinder retention · Dial in espresso before service · Verify milk, cups, syrups, and support items are stocked.</p>
+<p><strong>Closing:</strong> Backflush per protocol · Soak baskets and portafilters · Brush group heads and clean screens · Wipe grinders and surrounding surfaces · Reset the station for the next shift.</p>`
+  },
+  {
+    id: 11,
+    category: "bar",
+    title: "Customer Education and Hospitality",
+    summary: "Guest-facing language and hospitality rules.",
+    body: `<p><strong>Useful guest-facing language:</strong></p>
+<ul>
+<li><strong>Origin:</strong> "This coffee is from Ethiopia, and it tends to show floral and citrus notes."</li>
+<li><strong>Process:</strong> "This one is natural processed, so you may notice more fruit and sweetness."</li>
+<li><strong>Roast:</strong> "This roast is lighter, so it can taste brighter and more detailed."</li>
+<li><strong>Recommendation:</strong> "If you want something chocolatey and approachable, I would point you here."</li>
+</ul>
+<p><strong>Hospitality rules:</strong></p>
+<ul>
+<li>Do not lecture customers who want a simple answer.</li>
+<li>Use flavor language people can understand.</li>
+<li>Never make curiosity feel embarrassing.</li>
+<li>If a guest wants something off-script but reasonable, find a way to say yes when possible.</li>
+</ul>`
+  },
+  {
+    id: 12,
+    category: "reference",
+    title: "Training Path and Skill Checklists",
+    summary: "Phased training sequence and evaluation checklist.",
+    body: `<p><strong>Suggested training sequence:</strong></p>
+<ul>
+<li><strong>Phase 1:</strong> Farm-to-cup overview, terminology, and tasting basics.</li>
+<li><strong>Phase 2:</strong> Espresso prep, puck prep consistency, and basic dial-in logic.</li>
+<li><strong>Phase 3:</strong> Milk steaming fundamentals and basic drink builds.</li>
+<li><strong>Phase 4:</strong> Workflow under moderate volume and remake judgment.</li>
+<li><strong>Phase 5:</strong> Hospitality, guest guidance, and deeper tasting practice.</li>
+</ul>
+<p><strong>Skills to evaluate:</strong> Farm-to-cup flow · Washed vs natural · Roast impact · Consistent espresso recipe · Grounded taste adjustments · Latte milk texture · Core drink builds · Station cleanliness · Rush communication · Guest questions</p>`
+  },
+  {
+    id: 13,
+    category: "reference",
+    title: "Troubleshooting Guide",
+    summary: "Quick fixes for shots, milk, and workflow problems.",
+    body: `<table><tr><th>Problem</th><th>Likely causes</th><th>Response</th></tr>
+<tr><td>Shot runs very fast</td><td>Grind too coarse, low dose, channeling</td><td>Check puck prep, then go finer</td></tr>
+<tr><td>Shot runs very slow</td><td>Grind too fine, overdosed basket</td><td>Go coarser and verify dose</td></tr>
+<tr><td>Espresso tastes sour</td><td>Under-extraction, channeling</td><td>Go finer first, then inspect prep and ratio</td></tr>
+<tr><td>Espresso tastes bitter</td><td>Over-extraction or too much roast character</td><td>Go coarser or shorten ratio if appropriate</td></tr>
+<tr><td>Milk has big bubbles</td><td>Too much air added</td><td>Reduce stretching and refine tip position</td></tr>
+<tr><td>Milk is flat</td><td>Not enough air or weak vortex</td><td>Add a little more air earlier and improve roll</td></tr>
+<tr><td>Drinks are late in rushes</td><td>Poor sequencing or weak communication</td><td>Simplify order of operations and use verbal callouts</td></tr></table>`
+  },
+  {
+    id: 14,
+    category: "reference",
+    title: "Quick Reference Charts",
+    summary: "Service shortcuts and the final standard.",
+    body: `<table><tr><th>Reference</th><th>Guide</th></tr>
+<tr><td>Sweetness test</td><td>If sweetness increases and harshness drops after an adjustment, move further in that direction carefully.</td></tr>
+<tr><td>Shot correction</td><td>Sharp → finer. Dry → coarser. Uneven → improve prep.</td></tr>
+<tr><td>Milk cue</td><td>Glossy and fluid is the target. Dry foam is not integrated.</td></tr>
+<tr><td>Guest explanation</td><td>Origin = where. Process = how prepared. Roast = how developed. Brew = what we control.</td></tr></table>
+<div class="manual-callout"><strong>Final standard:</strong> A strong coffee program is built on repetition, consistency, and taste awareness. Train judgment so staff can make good decisions when coffee, weather, or service conditions change.</div>`
+  }
+];
+
+const COFFEE_QUIZ = [
+  { q: "What is the clearest sign that extraction is in a good place?", a: "Sweetness", w: ["Maximum bitterness", "Fast shot time", "Dark crema color"] },
+  { q: "Washed processing tends to produce cups that are…", a: "Cleaner and brighter", w: ["Fruit-forward and jammy", "Heavier with low clarity", "Always more bitter"] },
+  { q: "Espresso tastes sharp and sour. The first adjustment is usually…", a: "Grind finer", w: ["Grind coarser", "Raise steam temperature", "Add more milk"] },
+  { q: "What is the starting dose in the house espresso standard?", a: "20.5 g", w: ["18.0 g", "22.0 g", "25.0 g"] },
+  { q: "What is the starting yield in the house espresso standard?", a: "36 g", w: ["25 g", "45 g", "54 g"] },
+  { q: "Latte milk texture should look…", a: "Glossy and fluid, like wet paint", w: ["Stiff and dry like meringue", "Completely flat with large bubbles", "Thick enough to hold a peak"] },
+  { q: "During routine dial-in, what should you hold constant first?", a: "Dose and target yield", w: ["Only shot time", "Steam wand angle", "Cup size"] },
+  { q: "Origin flavor descriptions should be taught as…", a: "Tendencies, not guarantees", w: ["Fixed rules that never change", "Marketing language only", "Unrelated to processing or roast"] },
+  { q: "Whole milk is often steamed to which temperature range?", a: "140–155°F", w: ["100–110°F", "165–180°F", "212°F"] },
+  { q: "When explaining coffee to a guest, Origin means…", a: "Where the coffee was grown", w: ["How the coffee was roasted", "How long the shot ran", "Which milk was used"] },
+  { q: "Espresso tastes dry and bitter. The usual grind move is…", a: "Grind coarser", w: ["Grind finer", "Increase dose only", "Stretch milk longer"] },
+  { q: "Natural processed coffee often tastes…", a: "Fruitier and fuller", w: ["Cleaner and more transparent", "Always darker and smoky", "Identical to washed coffee"] }
+];
+
+const COFFEE_FLASHCARDS = [
+  { front: "Farm to cup — 4 stages", back: "Origin → Processing → Roasting → Brewing" },
+  { front: "Under-extracted tastes…", back: "Sharp, sour, thin" },
+  { front: "Over-extracted tastes…", back: "Dry, bitter, hollow" },
+  { front: "Balanced extraction tastes…", back: "Sweet and clear" },
+  { front: "Washed process — guest explanation", back: "Fruit removed early, so the cup tends to taste cleaner and more transparent." },
+  { front: "Natural process — guest explanation", back: "Dried in the fruit, so the cup often tastes fruitier and fuller." },
+  { front: "Dial-in starting recipe", back: "20.5 g dose · 36 g yield · adjust grind to taste" },
+  { front: "Sour shot → adjust…", back: "Grind finer (then check puck prep if still uneven)" },
+  { front: "Bitter shot → adjust…", back: "Grind coarser (or shorten ratio if appropriate)" },
+  { front: "Latte milk texture target", back: "Thin microfoam — glossy, fluid, like wet paint" },
+  { front: "Cappuccino vs latte foam", back: "Cappuccino: slightly more aerated but still integrated. Latte: thinner microfoam." },
+  { front: "When to purge the steam wand", back: "Before steaming and immediately after — wipe every use" },
+  { front: "Opening standard before service", back: "Purge group heads, check grinder, dial in espresso, verify stock" },
+  { front: "When to remake a drink", back: "Bad shot, poor milk texture, wrong build, or presentation below standard" },
+  { front: "Guest language cheat sheet", back: "Origin = where · Process = how prepared · Roast = how developed · Brew = what we control" }
+];
+
+const GAME_ROUNDS = {
+  quiz: 10,
+  practice: 10,
+  tap: 10,
+  abv: 10,
+  style: 10,
+  reverse: 10,
+  speed: 12,
+  flash: 15,
+  coffeeQuiz: 10,
+  coffeeFlash: 15
+};
+
+const GAMES = [
+  { id: "speed", icon: "⚡", title: "Speed Round", desc: "12 mixed questions from current taps" },
+  { id: "tap", icon: "🍺", title: "Tap Match", desc: "10 questions — match tap numbers to beers" },
+  { id: "quiz", icon: "📝", title: "Flavor Quiz", desc: "10 questions — match on-tap flavor profiles" },
+  { id: "practice", icon: "💬", title: "Guest Match", desc: "10 questions — on-tap guest guidance scenarios" },
+  { id: "abv", icon: "📊", title: "ABV Challenge", desc: "10 questions — pick ABV from current taps" },
+  { id: "style", icon: "🏷️", title: "Style Match", desc: "10 questions — pick the style of on-tap beers" },
+  { id: "reverse", icon: "🔄", title: "Pick the Profile", desc: "10 questions — match on-tap flavor profiles" },
+  { id: "flash", icon: "🃏", title: "Flashcards", desc: "15 cards — current tap list only" }
+];
 
 function parseCSV(text) {
   const rows = [];
@@ -625,6 +2040,7 @@ async function loadData() {
 
     render();
     startNewTapRotation();
+    updateSearchPlaceholder();
   } catch (error) {
     console.error(error);
     content.innerHTML = `
@@ -636,22 +2052,42 @@ async function loadData() {
   }
 }
 
-function getFlavorProfile(item) {
-  return (
-    item["Flavor Profile"] ||
-    item["Flavor Prodfile"] ||
-    item["Flavor profile"] ||
-    item["flavor profile"] ||
-    ""
-  );
+function col(item, field) {
+  return (item[field] || "").trim();
 }
 
-function getDesc(item) {
-  return item["Description / ingredients"] || getFlavorProfile(item) || "";
+function getFlavorProfile(item) {
+  return col(item, "Flavor Profile");
+}
+
+function getDescription(item) {
+  return col(item, "Description / ingredients");
+}
+
+function getStyle(item) {
+  return col(item, "Style");
+}
+
+function getGuestGuidance(item) {
+  return col(item, "Guest Guidance");
+}
+
+function getABVText(item) {
+  const value = col(item, "abv") || col(item, "ABV");
+  if (!value) return "";
+  return value.includes("%") ? value : value + "%";
 }
 
 function isYes(val) {
   return (val || "").toLowerCase().trim().startsWith("yes");
+}
+
+function isOnTap(item) {
+  return isYes(item["On Tap"]);
+}
+
+function onTapGameBeer(extra = () => true) {
+  return b => col(b, "Name") && isOnTap(b) && extra(b);
 }
 
 function getTapNumber(item) {
@@ -667,47 +2103,19 @@ function getABVNumber(item) {
 
 function getSearchText(item) {
   return [
-    item.Name,
-    item.Style,
-    getDesc(item),
+    col(item, "Name"),
+    getStyle(item),
     getFlavorProfile(item),
-    item["Guest Guidance"]
+    getDescription(item),
+    getGuestGuidance(item)
   ].join(" ").toLowerCase();
 }
 
 function matchesFilter(item) {
   if (activeFilter === "all") return true;
-
-  const text = getSearchText(item);
-
-  if (activeFilter === "light") {
-    return /(light|crisp|clean|lager|pils|pilsner|kolsch|kölsch|blonde|helles|rice lager)/i.test(text);
-  }
-
-  if (activeFilter === "hoppy") {
-    return /(hoppy|hop|ipa|pale ale|dipa|double ipa|west coast|haz(y|e))/i.test(text);
-  }
-
-  if (activeFilter === "dark") {
-    return /(dark|roast|roasty|stout|porter|coffee|chocolate|brown ale|schwarz)/i.test(text);
-  }
-
-  if (activeFilter === "fruity") {
-    return /(fruit|fruity|berry|citrus|tropical|peach|mango|cherry|sour|tart|gose|berliner|smoothie)/i.test(text);
-  }
-
-  if (activeFilter === "highabv") {
-    return getABVNumber(item) >= 8;
-  }
-
-  if (activeFilter === "gf") {
-    return isYes(item["Gluten-Reduced"]);
-  }
-
-  if (activeFilter === "new") {
-    return isYes(item["New Tap"]);
-  }
-
+  if (activeFilter === "highabv") return getABVNumber(item) >= 8;
+  if (activeFilter === "gf") return isYes(item["Gluten-Reduced"]);
+  if (activeFilter === "new") return isYes(item["New Tap"]);
   return true;
 }
 
@@ -725,22 +2133,1297 @@ function shuffle(arr) {
 function render() {
   const content = document.getElementById("content");
   const filterWrap = document.getElementById("filterWrap");
+  const searchWrap = document.getElementById("searchWrap");
 
-  const showFilters =
-    activeType === "beer" ||
-    activeType === "ontap";
+  const showFilters = activeType === "beer" || activeType === "ontap";
+  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee";
 
   filterWrap.style.display = showFilters ? "block" : "none";
+  if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
 
   if (activeType === "beer" || activeType === "food" || activeType === "ontap") {
+    destroyCharts();
     renderList(content);
-  } else if (activeType === "flash") {
-    renderFlash(content);
-  } else if (activeType === "quiz") {
-    renderQuiz(content);
-  } else if (activeType === "practice") {
-    renderPractice(content);
+  } else if (activeType === "coffee") {
+    destroyCharts();
+    renderCoffee(content);
+  } else if (activeType === "games") {
+    destroyCharts();
+    renderGames(content);
+  } else if (activeType === "progress") {
+    renderMyProgress(content);
+  } else if (activeType === "team") {
+    renderTeamDashboard(content);
   }
+
+  content.classList.remove("is-entering");
+  requestAnimationFrame(() => content.classList.add("is-entering"));
+}
+
+const ACTIVITY_LABELS = {
+  quiz: "Flavor Quiz",
+  practice: "Guest Match",
+  tap: "Tap Match",
+  abv: "ABV Challenge",
+  style: "Style Match",
+  reverse: "Pick the Profile",
+  speed: "Speed Round",
+  flash: "Beer Flashcards",
+  coffee_quiz: "Coffee Quiz",
+  coffee_flash: "Coffee Flashcards"
+};
+
+async function apiFetch(path, options = {}) {
+  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
+
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Request failed.");
+  return data;
+}
+
+function updateAuthUI() {
+  const authBar = document.getElementById("authBar");
+  document.querySelectorAll(".tab-auth-only").forEach(el => {
+    el.style.display = currentUser ? "" : "none";
+  });
+  document.querySelectorAll(".tab-admin-only").forEach(el => {
+    el.style.display = currentUser && currentUser.role === "admin" ? "" : "none";
+  });
+
+  if (!currentUser) {
+    authBar.innerHTML = `
+      <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
+      <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
+    `;
+    return;
+  }
+
+  authBar.innerHTML = `
+    <div class="auth-user">
+      <strong>${escapeHTML(currentUser.name)}</strong>
+      ${currentUser.role === "admin" ? "Admin" : "Employee"}
+    </div>
+    <button class="auth-btn" onclick="logout()">Log out</button>
+  `;
+}
+
+async function initAuth() {
+  if (!authToken) {
+    updateAuthUI();
+    return;
+  }
+  try {
+    const data = await apiFetch("/api/auth/me");
+    currentUser = data.user;
+    updateAuthUI();
+  } catch {
+    authToken = "";
+    localStorage.removeItem("mp_auth_token");
+    currentUser = null;
+    updateAuthUI();
+  }
+}
+
+function openAuthModal(mode) {
+  authMode = mode;
+  renderAuthModal();
+  document.getElementById("authBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAuthModal(event) {
+  if (event && event.target !== document.getElementById("authBackdrop")) return;
+  document.getElementById("authBackdrop").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function renderAuthModal() {
+  const isRegister = authMode === "register";
+  document.getElementById("authContent").innerHTML = `
+    <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
+      <h3>${isRegister ? "Create employee account" : "Log in"}</h3>
+      <p class="hint">${isRegister
+        ? "Staff sign up here to track training progress. The first account becomes admin. Managers can also register with the admin setup key."
+        : "Log in to save your quiz scores and track training progress."}</p>
+      <div id="authError"></div>
+      <label for="authName">Full name</label>
+      <input id="authName" type="text" placeholder="Your name" ${isRegister ? "" : "style='display:none'"}>
+      <label for="authEmail">Email</label>
+      <input id="authEmail" type="email" placeholder="you@example.com">
+      <label for="authPassword">Password</label>
+      <input id="authPassword" type="password" placeholder="At least 6 characters">
+      ${isRegister ? `
+        <label for="authAdminKey">Admin setup key (optional)</label>
+        <input id="authAdminKey" type="password" placeholder="Only for manager/admin accounts">
+      ` : ""}
+      <button class="game-next" style="width:100%;" onclick="submitAuth()">${isRegister ? "Create account" : "Log in"}</button>
+      <p class="hint" style="margin-top:14px;text-align:center;">
+        ${isRegister
+          ? `Already have an account? <a href="#" onclick="openAuthModal('login'); return false;">Log in</a>`
+          : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
+      </p>
+    </div>
+  `;
+}
+
+async function submitAuth() {
+  const errorEl = document.getElementById("authError");
+  errorEl.innerHTML = "";
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  try {
+    let data;
+    if (authMode === "register") {
+      const name = document.getElementById("authName").value.trim();
+      const adminKey = document.getElementById("authAdminKey")?.value || "";
+      data = await apiFetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password, adminKey })
+      });
+    } else {
+      data = await apiFetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password })
+      });
+    }
+
+    authToken = data.token;
+    localStorage.setItem("mp_auth_token", authToken);
+    currentUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+    if (activeType === "progress" || activeType === "team") render();
+  } catch (err) {
+    errorEl.innerHTML = `<div class="auth-error">${escapeHTML(err.message)}</div>`;
+  }
+}
+
+function logout() {
+  authToken = "";
+  currentUser = null;
+  myProgressData = null;
+  teamData = null;
+  teamDetailId = null;
+  localStorage.removeItem("mp_auth_token");
+  updateAuthUI();
+  if (activeType === "progress" || activeType === "team") {
+    activeType = "ontap";
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
+  }
+  render();
+}
+
+async function recordProgress(activityType, category, score, total) {
+  if (!currentUser) return;
+  try {
+    await apiFetch("/api/progress", {
+      method: "POST",
+      body: JSON.stringify({ activity_type: activityType, category, score, total })
+    });
+    myProgressData = null;
+    teamData = null;
+  } catch (err) {
+    console.warn("Could not save progress:", err.message);
+  }
+}
+
+function formatActivityLabel(type, category) {
+  const label = ACTIVITY_LABELS[type] || type;
+  return category === "coffee" ? label : label;
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  return new Date(value + "Z").toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function renderRecommendationCard(rec, compact) {
+  if (!rec) return "";
+  if (compact) {
+    return `<div class="rec-snippet"><strong>Next:</strong> ${escapeHTML(rec.title)} — ${escapeHTML(rec.message)}</div>`;
+  }
+  return `
+    <div class="rec-card kind-${escapeHTML(rec.kind || "missing")}">
+      <p class="rec-title">${escapeHTML(rec.title)}</p>
+      <p class="rec-message">${escapeHTML(rec.message)}</p>
+      ${rec.action ? `<span class="rec-action">Assign: ${escapeHTML(rec.action)}</span>` : ""}
+    </div>
+  `;
+}
+
+function renderRecommendationsList(recommendations) {
+  if (!recommendations || !recommendations.length) {
+    return `<div class="status"><strong>On track.</strong>No immediate training gaps detected.</div>`;
+  }
+  return `
+    <div class="coffee-intro" style="margin-bottom:0;">
+      <h2>Suggested next steps</h2>
+      <p>Based on completed games, accuracy, and training gaps.</p>
+    </div>
+    <div class="rec-list">
+      ${recommendations.map(rec => renderRecommendationCard(rec)).join("")}
+    </div>
+  `;
+}
+
+let activeCharts = [];
+
+const CHART_THEME = {
+  black: "#09090b",
+  brown: "#a67c52",
+  green: "#15803d",
+  amber: "#f59e0b",
+  red: "#ef4444",
+  grid: "rgba(9,9,11,0.08)",
+  fill: "rgba(9,9,11,0.05)"
+};
+
+function destroyCharts() {
+  activeCharts.forEach(chart => chart.destroy());
+  activeCharts = [];
+}
+
+function baseChartOptions(extra = {}) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: CHART_THEME.black,
+        padding: 10,
+        cornerRadius: 8
+      }
+    },
+    ...extra
+  };
+}
+
+function addChart(canvasId, config) {
+  if (typeof Chart === "undefined") return null;
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+  const chart = new Chart(canvas, config);
+  activeCharts.push(chart);
+  return chart;
+}
+
+function chartCard(id, title, subtitle, wide) {
+  return `
+    <div class="chart-card${wide ? " wide" : ""}">
+      <p class="chart-title">${escapeHTML(title)}</p>
+      ${subtitle ? `<p class="chart-sub">${escapeHTML(subtitle)}</p>` : ""}
+      <div class="chart-wrap" style="height:${wide ? 240 : 200}px">
+        <canvas id="${id}"></canvas>
+      </div>
+    </div>
+  `;
+}
+
+function accuracyColor(value) {
+  if (value >= 75) return CHART_THEME.green;
+  if (value >= 60) return CHART_THEME.amber;
+  return CHART_THEME.red;
+}
+
+function renderProgressChartsHtml(prefix) {
+  return `
+    <div class="chart-grid">
+      ${chartCard(`${prefix}-activity`, "Accuracy by activity", "Goal: 75%+ on floor-critical games")}
+      ${chartCard(`${prefix}-category`, "Beer vs coffee", "Share of training sessions")}
+      ${chartCard(`${prefix}-trend`, "Session scores over time", "Most recent sessions, oldest → newest", true)}
+    </div>
+  `;
+}
+
+function renderTeamChartsHtml() {
+  return `
+    <div class="chart-grid">
+      ${chartCard("team-accuracy", "Team accuracy", "Overall % correct across all sessions")}
+      ${chartCard("team-sessions", "Sessions completed", "Total training rounds logged")}
+      ${chartCard("team-avg-activity", "Average accuracy by game", "Combined team performance per activity type", true)}
+    </div>
+  `;
+}
+
+function initProgressCharts(stats, prefix) {
+  destroyCharts();
+
+  if (stats.by_activity.length) {
+    addChart(`${prefix}-activity`, {
+      type: "bar",
+      data: {
+        labels: stats.by_activity.map(r => formatActivityLabel(r.activity_type, r.category)),
+        datasets: [{
+          data: stats.by_activity.map(r => r.accuracy),
+          backgroundColor: stats.by_activity.map(r => accuracyColor(r.accuracy)),
+          borderRadius: 6,
+          maxBarThickness: 36
+        }]
+      },
+      options: baseChartOptions({
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            grid: { color: CHART_THEME.grid },
+            ticks: { callback: v => v + "%", font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ctx.parsed.y + "% accuracy" } }
+        }
+      })
+    });
+
+    const beerSessions = stats.by_activity.filter(r => r.category === "beer").reduce((n, r) => n + r.attempts, 0);
+    const coffeeSessions = stats.by_activity.filter(r => r.category === "coffee").reduce((n, r) => n + r.attempts, 0);
+
+    if (beerSessions + coffeeSessions > 0) {
+      addChart(`${prefix}-category`, {
+        type: "doughnut",
+        data: {
+          labels: ["Beer training", "Coffee training"],
+          datasets: [{
+            data: [beerSessions, coffeeSessions],
+            backgroundColor: [CHART_THEME.black, CHART_THEME.brown],
+            borderWidth: 0
+          }]
+        },
+        options: baseChartOptions({
+          cutout: "62%",
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: { boxWidth: 10, font: { size: 11 } }
+            }
+          }
+        })
+      });
+    }
+  }
+
+  if (stats.recent.length) {
+    const chronological = [...stats.recent].reverse();
+    addChart(`${prefix}-trend`, {
+      type: "line",
+      data: {
+        labels: chronological.map((r, i) => {
+          const label = formatActivityLabel(r.activity_type, r.category);
+          return label.length > 12 ? label.slice(0, 11) + "…" : label;
+        }),
+        datasets: [{
+          label: "Score %",
+          data: chronological.map(r => Math.round((r.score / r.total) * 100)),
+          borderColor: CHART_THEME.black,
+          backgroundColor: CHART_THEME.fill,
+          fill: true,
+          tension: 0.35,
+          pointBackgroundColor: CHART_THEME.black,
+          pointRadius: 4
+        }]
+      },
+      options: baseChartOptions({
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            grid: { color: CHART_THEME.grid },
+            ticks: { callback: v => v + "%", font: { size: 11 } }
+          },
+          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel(ctx) {
+                const row = chronological[ctx.dataIndex];
+                return `${row.score} / ${row.total} correct`;
+              }
+            }
+          }
+        }
+      })
+    });
+  }
+}
+
+function initTeamCharts(employees) {
+  destroyCharts();
+  const staff = employees.filter(e => e.role === "employee");
+  if (!staff.length) return;
+
+  const names = staff.map(e => e.name.split(" ")[0]);
+
+  addChart("team-accuracy", {
+    type: "bar",
+    data: {
+      labels: names,
+      datasets: [{
+        data: staff.map(e => e.accuracy),
+        backgroundColor: staff.map(e => accuracyColor(e.accuracy)),
+        borderRadius: 6,
+        maxBarThickness: 40
+      }]
+    },
+    options: baseChartOptions({
+      scales: {
+        y: {
+          min: 0,
+          max: 100,
+          grid: { color: CHART_THEME.grid },
+          ticks: { callback: v => v + "%", font: { size: 11 } }
+        },
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      },
+      plugins: {
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y + "% accuracy" } }
+      }
+    })
+  });
+
+  addChart("team-sessions", {
+    type: "bar",
+    data: {
+      labels: names,
+      datasets: [{
+        data: staff.map(e => e.sessions_completed),
+        backgroundColor: CHART_THEME.brown,
+        borderRadius: 6,
+        maxBarThickness: 40
+      }]
+    },
+    options: baseChartOptions({
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: CHART_THEME.grid },
+          ticks: { stepSize: 1, font: { size: 11 } }
+        },
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      },
+      plugins: {
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y + " sessions" } }
+      }
+    })
+  });
+
+  fetchTeamActivityBreakdown(staff).then(rows => {
+    if (!rows.length) return;
+    addChart("team-avg-activity", {
+      type: "bar",
+      data: {
+        labels: rows.map(r => formatActivityLabel(r.activity_type, r.category)),
+        datasets: [{
+          data: rows.map(r => r.accuracy),
+          backgroundColor: rows.map(r => accuracyColor(r.accuracy)),
+          borderRadius: 6,
+          maxBarThickness: 36
+        }]
+      },
+      options: baseChartOptions({
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            grid: { color: CHART_THEME.grid },
+            ticks: { callback: v => v + "%", font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } }
+          }
+        }
+      })
+    });
+  });
+}
+
+async function fetchTeamActivityBreakdown(staff) {
+  if (!staff.length || !authToken) return [];
+  try {
+    const details = await Promise.all(
+      staff.map(emp => apiFetch(`/api/admin/employees/${emp.id}`))
+    );
+    const map = {};
+    details.forEach(d => {
+      d.stats.by_activity.forEach(row => {
+        const key = row.activity_type + "|" + row.category;
+        if (!map[key]) {
+          map[key] = { activity_type: row.activity_type, category: row.category, correct: 0, questions: 0 };
+        }
+        map[key].correct += row.correct;
+        map[key].questions += row.questions;
+      });
+    });
+    return Object.values(map)
+      .map(r => ({ ...r, accuracy: r.questions ? Math.round((r.correct / r.questions) * 100) : 0 }))
+      .sort((a, b) => b.questions - a.questions)
+      .slice(0, 10);
+  } catch {
+    return [];
+  }
+}
+
+async function renderMyProgress(content) {
+  if (!currentUser) {
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    return;
+  }
+
+  content.innerHTML = `<div class="status"><strong>Loading your progress…</strong></div>`;
+
+  try {
+    if (!myProgressData) myProgressData = await apiFetch("/api/progress/me");
+    const s = myProgressData.summary;
+
+    content.innerHTML = `
+      <div class="coffee-intro">
+        <h2>My Progress</h2>
+        <p>Hi ${escapeHTML(currentUser.name)} — here's your training activity across beer and coffee modules.</p>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">Sessions</p>
+          <p class="metric-value">${s.sessions_completed}</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Accuracy</p>
+          <p class="metric-value">${s.accuracy}%</p>
+          <p class="metric-sub">${s.total_correct} / ${s.total_questions} correct</p>
+        </div>
+        <div class="metric-card wide">
+          <p class="metric-label">Last activity</p>
+          <p class="metric-sub" style="margin:0;font-size:14px;color:#333;">${formatDate(s.last_activity)}</p>
+        </div>
+      </div>
+      ${myProgressData.by_activity.length || myProgressData.recent.length ? renderProgressChartsHtml("my-progress") : ""}
+      ${myProgressData.by_activity.length ? `
+        <table class="progress-table">
+          <tr><th>Activity</th><th>Attempts</th><th>Accuracy</th><th>Last played</th></tr>
+          ${myProgressData.by_activity.map(row => `
+            <tr>
+              <td>${escapeHTML(formatActivityLabel(row.activity_type, row.category))}</td>
+              <td>${row.attempts}</td>
+              <td>${row.accuracy}%</td>
+              <td>${formatDate(row.last_played)}</td>
+            </tr>
+          `).join("")}
+        </table>
+      ` : `<div class="status"><strong>No training sessions yet.</strong>Complete a game or coffee quiz while logged in to start tracking progress.</div>`}
+      ${myProgressData.recent.length ? `
+        <table class="progress-table">
+          <tr><th>Recent session</th><th>Score</th><th>When</th></tr>
+          ${myProgressData.recent.map(row => `
+            <tr>
+              <td>${escapeHTML(formatActivityLabel(row.activity_type, row.category))}</td>
+              <td>${row.score} / ${row.total}</td>
+              <td>${formatDate(row.completed_at)}</td>
+            </tr>
+          `).join("")}
+        </table>
+      ` : ""}
+    `;
+    if (myProgressData.by_activity.length || myProgressData.recent.length) {
+      setTimeout(() => initProgressCharts(myProgressData, "my-progress"), 0);
+    } else {
+      destroyCharts();
+    }
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Could not load progress.</strong>${escapeHTML(err.message)}</div>`;
+    destroyCharts();
+  }
+}
+
+async function renderTeamDashboard(content) {
+  if (!currentUser || currentUser.role !== "admin") {
+    content.innerHTML = `<div class="status"><strong>Admin access required.</strong>Log in with a manager/admin account to view team progress.</div>`;
+    return;
+  }
+
+  content.innerHTML = `<div class="status"><strong>Loading team dashboard…</strong></div>`;
+
+  try {
+    if (teamDetailId) {
+      const data = await apiFetch(`/api/admin/employees/${teamDetailId}`);
+      const s = data.stats.summary;
+      content.innerHTML = `
+        <div class="coffee-intro">
+          <h2>${escapeHTML(data.user.name)}</h2>
+          <p>${escapeHTML(data.user.email)} · ${data.user.role}</p>
+        </div>
+        <div style="padding:0 20px 12px;max-width:960px;margin:0 auto;"><button class="game-back" onclick="teamDetailId=null; render();">← Back to team</button></div>
+        <div class="metrics-grid">
+          <div class="metric-card"><p class="metric-label">Sessions</p><p class="metric-value">${s.sessions_completed}</p></div>
+          <div class="metric-card"><p class="metric-label">Accuracy</p><p class="metric-value">${s.accuracy}%</p><p class="metric-sub">${s.total_correct} / ${s.total_questions}</p></div>
+        </div>
+        ${data.user.role === "employee" ? renderRecommendationsList(data.recommendations) : ""}
+        ${data.stats.by_activity.length || data.stats.recent.length ? renderProgressChartsHtml("emp-detail") : ""}
+        ${data.stats.by_activity.length ? `
+          <table class="progress-table">
+            <tr><th>Activity</th><th>Attempts</th><th>Accuracy</th><th>Last played</th></tr>
+            ${data.stats.by_activity.map(row => `
+              <tr>
+                <td>${escapeHTML(formatActivityLabel(row.activity_type, row.category))}</td>
+                <td>${row.attempts}</td>
+                <td>${row.accuracy}%</td>
+                <td>${formatDate(row.last_played)}</td>
+              </tr>
+            `).join("")}
+          </table>
+        ` : `<div class="status"><strong>No sessions recorded yet.</strong></div>`}
+      `;
+      if (data.stats.by_activity.length || data.stats.recent.length) {
+        setTimeout(() => initProgressCharts(data.stats, "emp-detail"), 0);
+      } else {
+        destroyCharts();
+      }
+      return;
+    }
+
+    if (!teamDetailId) teamData = await apiFetch("/api/admin/employees");
+
+    content.innerHTML = `
+      <div class="coffee-intro">
+        <h2>Team Dashboard</h2>
+        <p>Monitor employee training progress and suggested next steps for each team member.</p>
+      </div>
+      ${teamData.employees.some(emp => emp.role === "employee") ? renderTeamChartsHtml() : ""}
+      <table class="progress-table">
+        <tr><th>Employee</th><th>Sessions</th><th>Accuracy</th><th>Last active</th><th>Suggested next step</th></tr>
+        ${teamData.employees.filter(emp => emp.role === "employee").map(emp => `
+          <tr class="clickable" onclick="teamDetailId=${emp.id}; render();">
+            <td><strong>${escapeHTML(emp.name)}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(emp.email)}</span></td>
+            <td>${emp.sessions_completed}</td>
+            <td>${emp.accuracy}%</td>
+            <td>${formatDate(emp.last_activity)}</td>
+            <td>${emp.next_step
+              ? `<strong>${escapeHTML(emp.next_step.title)}</strong><br><span style="color:#666;font-size:12px;">${escapeHTML(emp.next_step.message)}</span>`
+              : `<span style="color:#888;">On track</span>`}
+            </td>
+          </tr>
+        `).join("")}
+      </table>
+      ${teamData.employees.filter(emp => emp.role !== "employee").length ? `
+        <div class="status" style="margin-top:0;"><strong>Managers/admins</strong> are listed separately and don't receive training suggestions.</div>
+      ` : ""}
+    `;
+    if (teamData.employees.some(emp => emp.role === "employee")) {
+      setTimeout(() => initTeamCharts(teamData.employees), 0);
+    } else {
+      destroyCharts();
+    }
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Could not load team dashboard.</strong>${escapeHTML(err.message)}</div>`;
+    destroyCharts();
+  }
+}
+
+function markSessionRecorded(session) {
+  if (session && !session.recorded) {
+    session.recorded = true;
+    return true;
+  }
+  return false;
+}
+
+function updateSearchPlaceholder() {
+  const search = document.getElementById("search");
+  const placeholders = {
+    ontap: "Search beer, style, or flavor",
+    beer: "Search beer, style, or flavor",
+    food: "Search food items",
+    coffee: "Search coffee manual topics",
+    games: "Search beer, style, or flavor"
+  };
+  search.placeholder = placeholders[activeType] || "Search";
+}
+
+function renderCoffee(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  const subtabs = `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${coffeeMode === "guide" ? " active" : ""}" onclick="coffeeMode='guide'; render();">Manual</button>
+      <button class="coffee-subtab${coffeeMode === "quiz" ? " active" : ""}" onclick="startCoffeeQuiz();">Training Quiz</button>
+      <button class="coffee-subtab${coffeeMode === "flash" ? " active" : ""}" onclick="startCoffeeFlash();">Flashcards</button>
+    </div>
+  `;
+
+  if (coffeeMode === "guide") {
+    renderCoffeeGuide(content, subtabs, query);
+  } else if (coffeeMode === "quiz") {
+    content.innerHTML = subtabs + renderCoffeeQuizInner();
+  } else if (coffeeMode === "flash") {
+    content.innerHTML = subtabs + renderCoffeeFlashInner();
+  }
+}
+
+function renderCoffeeGuide(content, subtabs, query) {
+  const categories = `
+    <div class="coffee-filters">
+      <button class="filter-btn${coffeeCategory === "all" ? " active" : ""}" onclick="coffeeCategory='all'; render();">All</button>
+      <button class="filter-btn${coffeeCategory === "fundamentals" ? " active" : ""}" onclick="coffeeCategory='fundamentals'; render();">Fundamentals</button>
+      <button class="filter-btn${coffeeCategory === "bar" ? " active" : ""}" onclick="coffeeCategory='bar'; render();">Bar Skills</button>
+      <button class="filter-btn${coffeeCategory === "reference" ? " active" : ""}" onclick="coffeeCategory='reference'; render();">Reference</button>
+    </div>
+  `;
+
+  const filtered = COFFEE_SECTIONS.filter(section => {
+    const matchesCategory = coffeeCategory === "all" || section.category === coffeeCategory;
+    const haystack = (section.title + " " + section.summary + " " + section.body).toLowerCase();
+    const matchesSearch = !query || haystack.includes(query);
+    return matchesCategory && matchesSearch;
+  });
+
+  content.innerHTML = subtabs + `
+    <div class="coffee-intro">
+      <h2>Coffee Training Manual</h2>
+      <p>Farm-to-cup fundamentals, bar standards, and practical training guidance. Read Sections 1–5 first, use 6–11 for hands-on training, and 12–14 for shift standards and troubleshooting.</p>
+    </div>
+    ${categories}
+    ${filtered.length ? `<div class="list coffee-list">${filtered.map(section => `
+      <div class="card coffee-card" onclick="openCoffeeSection(${section.id})">
+        <p class="coffee-section-num">Section ${section.id}</p>
+        <div class="card-top">
+          <div>
+            <p class="name">${escapeHTML(section.title)}</p>
+            <p class="desc">${escapeHTML(section.summary)}</p>
+          </div>
+          <span class="coffee-tag">${escapeHTML(COFFEE_CATEGORY_LABELS[section.category])}</span>
+        </div>
+        <div class="details-hint">Tap to read full section</div>
+      </div>
+    `).join("")}</div>` : `<div class="status"><strong>No sections match.</strong>Try a different search or category.</div>`}
+  `;
+}
+
+function openCoffeeSection(id) {
+  const section = COFFEE_SECTIONS.find(s => s.id === id);
+  if (!section) return;
+
+  document.getElementById("modalContent").innerHTML = `
+    <p class="coffee-section-num">Section ${section.id} · ${escapeHTML(COFFEE_CATEGORY_LABELS[section.category])}</p>
+    <h2 class="modal-title" id="modalTitle">${escapeHTML(section.title)}</h2>
+    <p class="modal-style">${escapeHTML(section.summary)}</p>
+    <div class="detail-section manual-body">${section.body}</div>
+  `;
+
+  document.getElementById("modalBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function startCoffeeQuiz() {
+  coffeeMode = "quiz";
+  const total = Math.min(GAME_ROUNDS.coffeeQuiz, COFFEE_QUIZ.length);
+  coffeeSession = {
+    queue: shuffle(COFFEE_QUIZ).slice(0, total),
+    index: 0,
+    right: 0,
+    complete: false,
+    recorded: false
+  };
+  coffeeQuizItem = null;
+  prepareCoffeeQuizQuestion();
+  render();
+}
+
+function prepareCoffeeQuizQuestion() {
+  if (!coffeeSession || coffeeSession.complete) return;
+  const item = coffeeSession.queue[coffeeSession.index];
+  coffeeQuizItem = {
+    question: item.q,
+    correct: item.a,
+    options: shuffle([item.a, ...item.w.slice(0, 3)]),
+    answered: false
+  };
+}
+
+function renderCoffeeQuizInner() {
+  if (!coffeeSession) {
+    return `<div class="status" style="margin:14px;"><strong>Start the quiz</strong> using the Training Quiz tab above.</div>`;
+  }
+  if (coffeeSession.complete) {
+    const total = coffeeSession.queue.length;
+    const pct = Math.round((coffeeSession.right / total) * 100);
+    return `
+      <div class="game-card">
+        <p class="game-question" style="font-size:20px;font-weight:750;">Quiz complete!</p>
+        <p style="font-size:15px;color:#555;margin:0;">You got <strong>${coffeeSession.right}</strong> out of <strong>${total}</strong> correct (${pct}%)</p>
+        <button class="game-next" onclick="startCoffeeQuiz()">Play Again</button>
+      </div>
+    `;
+  }
+  if (!coffeeQuizItem) prepareCoffeeQuizQuestion();
+
+  return `
+    <div class="game-card">
+      <p class="game-question">${escapeHTML(coffeeQuizItem.question)}</p>
+      <div class="game-options">
+        ${coffeeQuizItem.options.map(o => {
+          let cls = "game-option";
+          if (coffeeQuizItem.answered) {
+            cls += " disabled";
+            if (o === coffeeQuizItem.correct) cls += " correct";
+            else if (o === coffeeQuizItem.selected) cls += " wrong";
+          }
+          return `<div class="${cls}" onclick="answerCoffeeQuiz('${escapeForAttribute(o)}')">${escapeHTML(o)}</div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="game-score">Question ${coffeeSession.index + 1} of ${coffeeSession.queue.length} · Score: ${coffeeSession.right} / ${coffeeSession.index}</div>
+  `;
+}
+
+function answerCoffeeQuiz(answer) {
+  if (!coffeeQuizItem || coffeeQuizItem.answered) return;
+  coffeeQuizItem.answered = true;
+  coffeeQuizItem.selected = answer;
+  const correct = answer === coffeeQuizItem.correct;
+  setTimeout(() => {
+    if (correct) coffeeSession.right++;
+    coffeeSession.index++;
+    if (coffeeSession.index >= coffeeSession.queue.length) {
+      coffeeSession.complete = true;
+      if (markSessionRecorded(coffeeSession)) {
+        recordProgress("coffee_quiz", "coffee", coffeeSession.right, coffeeSession.queue.length);
+      }
+    } else {
+      prepareCoffeeQuizQuestion();
+    }
+    render();
+  }, 450);
+  render();
+}
+
+function startCoffeeFlash() {
+  coffeeMode = "flash";
+  coffeeFlashFlipped = false;
+  coffeeSession = {
+    queue: shuffle(COFFEE_FLASHCARDS).slice(0, Math.min(GAME_ROUNDS.coffeeFlash, COFFEE_FLASHCARDS.length)),
+    index: 0,
+    complete: false,
+    recorded: false
+  };
+  render();
+}
+
+function renderCoffeeFlashInner() {
+  if (!coffeeSession) {
+    return `<div class="status" style="margin:14px;"><strong>Start flashcards</strong> using the Flashcards tab above.</div>`;
+  }
+  if (coffeeSession.complete) {
+    return `
+      <div class="game-card">
+        <p class="game-question" style="font-size:20px;font-weight:750;">Deck complete!</p>
+        <p style="font-size:15px;color:#555;margin:0;">You reviewed <strong>${coffeeSession.queue.length}</strong> cards from the training manual.</p>
+        <button class="game-next" onclick="startCoffeeFlash()">Play Again</button>
+      </div>
+    `;
+  }
+
+  const card = coffeeSession.queue[coffeeSession.index];
+
+  return `
+    <div class="flash-card" onclick="coffeeFlashFlipped = !coffeeFlashFlipped; render();">
+      ${!coffeeFlashFlipped ? `
+        <p style="font-size:17px;font-weight:750;margin:0 0 7px;">${escapeHTML(card.front)}</p>
+        <p style="font-size:12.5px;color:#999;">Tap to reveal answer</p>
+      ` : `
+        <p style="font-size:14px;color:#555;line-height:1.6;margin:0;">${escapeHTML(card.back)}</p>
+      `}
+    </div>
+    <div class="flash-nav">
+      <button onclick="coffeeFlashFlipped = false; if (coffeeSession.index > 0) coffeeSession.index--; render();">Previous</button>
+      <button onclick="coffeeFlashFlipped = false; coffeeSession.index++; if (coffeeSession.index >= coffeeSession.queue.length) { coffeeSession.complete = true; if (markSessionRecorded(coffeeSession)) recordProgress('coffee_flash', 'coffee', coffeeSession.queue.length, coffeeSession.queue.length); } render();">${coffeeSession.index + 1 >= coffeeSession.queue.length ? "Finish" : "Next"}</button>
+    </div>
+    <div class="flash-count">Card ${coffeeSession.index + 1} of ${coffeeSession.queue.length}</div>
+  `;
+}
+
+function startGame(id) {
+  activeGame = id;
+  gameSession = null;
+  quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = null;
+  flashFlipped = false;
+
+  if (id === "flash") {
+    const pool = beers.filter(onTapGameBeer(b =>
+      getFlavorProfile(b) || getStyle(b) || getDescription(b)
+    ));
+    if (pool.length === 0) {
+      render();
+      return;
+    }
+    const total = Math.min(GAME_ROUNDS.flash, pool.length);
+    gameSession = {
+      id: "flash",
+      queue: shuffle(pool).slice(0, total),
+      index: 0,
+      right: 0,
+      complete: false,
+      recorded: false
+    };
+  } else if (id === "speed") {
+    if (!beginRound("speed", onTapGameBeer(b =>
+      getFlavorProfile(b) ||
+      getGuestGuidance(b) ||
+      getTapNumber(b) ||
+      getABVNumber(b) > 0 ||
+      getStyle(b)
+    ))) {
+      render();
+      return;
+    }
+    prepareSpeedQuestion();
+  } else {
+    const starters = {
+      quiz: () => beginRound("quiz", onTapGameBeer(b => getFlavorProfile(b))),
+      practice: () => beginRound("practice", onTapGameBeer(b => getGuestGuidance(b))),
+      tap: () => beginRound("tap", onTapGameBeer(b => getTapNumber(b))),
+      abv: () => beginRound("abv", onTapGameBeer(b => getABVNumber(b) > 0)),
+      style: () => beginRound("style", onTapGameBeer(b => getStyle(b))),
+      reverse: () => beginRound("reverse", onTapGameBeer(b => getFlavorProfile(b)))
+    };
+    if (!starters[id] || !starters[id]()) {
+      render();
+      return;
+    }
+    prepareRoundQuestion(id);
+  }
+
+  render();
+}
+
+function beginRound(id, filterFn) {
+  const pool = beers.filter(filterFn);
+  if (pool.length < 4) return false;
+
+  const total = Math.min(GAME_ROUNDS[id], pool.length);
+  gameSession = {
+    id,
+    pool,
+    queue: shuffle(pool).slice(0, total),
+    index: 0,
+    right: 0,
+    complete: false,
+    recorded: false
+  };
+  return true;
+}
+
+function advanceRound(correct) {
+  if (!gameSession || gameSession.complete) return;
+  gameSession.right += correct ? 1 : 0;
+  gameSession.index++;
+
+  if (gameSession.index >= gameSession.queue.length) {
+    gameSession.complete = true;
+    if (markSessionRecorded(gameSession)) {
+      const category = gameSession.id.startsWith("coffee") ? "coffee" : "beer";
+      recordProgress(gameSession.id, category, gameSession.right, gameSession.queue.length);
+    }
+    return;
+  }
+
+  prepareRoundQuestion(gameSession.id);
+  if (gameSession.id === "speed") prepareSpeedQuestion();
+}
+
+function sessionProgressLabel() {
+  if (!gameSession) return "";
+  if (gameSession.complete) {
+    return `Round complete · ${gameSession.right} / ${gameSession.queue.length} correct`;
+  }
+  return `Question ${gameSession.index + 1} of ${gameSession.queue.length} · Score: ${gameSession.right} / ${gameSession.index}`;
+}
+
+function renderRoundComplete(title) {
+  const total = gameSession.queue.length;
+  const pct = Math.round((gameSession.right / total) * 100);
+  return `
+    <div class="game-card">
+      <p class="game-question" style="font-size:20px;font-weight:750;">${title}</p>
+      <p style="font-size:15px;color:#555;margin:0;">You got <strong>${gameSession.right}</strong> out of <strong>${total}</strong> correct (${pct}%)</p>
+      <button class="game-next" onclick="startGame('${activeGame}')">Play Again</button>
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `;
+}
+
+function pickWrongBeers(pool, correct, count) {
+  return shuffle(pool.filter(b => b.Name !== correct.Name)).slice(0, count);
+}
+
+function uniqueSheetValues(pool, getter, exclude) {
+  const seen = new Set();
+  const values = [];
+  shuffle(pool).forEach(item => {
+    const value = getter(item);
+    if (!value || value === exclude || seen.has(value)) return;
+    seen.add(value);
+    values.push(value);
+  });
+  return values;
+}
+
+function prepareRoundQuestion(id) {
+  const correct = gameSession.queue[gameSession.index];
+  const pool = gameSession.pool;
+
+  if (id === "quiz") {
+    quizItem = {
+      correct,
+      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
+      answered: false
+    };
+  } else if (id === "practice") {
+    practiceItem = {
+      correct,
+      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
+      answered: false
+    };
+  } else if (id === "tap") {
+    tapItem = {
+      correct,
+      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
+      answered: false
+    };
+  } else if (id === "abv") {
+    const correctAbv = getABVNumber(correct);
+    const wrongAbvs = uniqueSheetValues(
+      pool.filter(b => b.Name !== correct.Name),
+      b => String(getABVNumber(b)),
+      String(correctAbv)
+    ).slice(0, 3).map(v => parseFloat(v));
+
+    if (wrongAbvs.length < 3) {
+      gameSession.queue = gameSession.queue.filter(b => b.Name !== correct.Name);
+      if (gameSession.index >= gameSession.queue.length) {
+        gameSession.complete = true;
+        return;
+      }
+      prepareRoundQuestion("abv");
+      return;
+    }
+
+    abvItem = {
+      correct,
+      correctAbv,
+      options: shuffle([
+        { label: getABVText(correct), value: correctAbv },
+        ...wrongAbvs.map(v => ({
+          label: v + "%",
+          value: v
+        }))
+      ]),
+      answered: false
+    };
+  } else if (id === "style") {
+    const wrongStyles = uniqueSheetValues(
+      pool.filter(b => b.Name !== correct.Name),
+      getStyle,
+      getStyle(correct)
+    ).slice(0, 3);
+
+    if (wrongStyles.length < 3) {
+      gameSession.complete = true;
+      return;
+    }
+
+    styleItem = {
+      correct,
+      options: shuffle([
+        { label: getStyle(correct), isCorrect: true },
+        ...wrongStyles.map(s => ({ label: s, isCorrect: false }))
+      ]),
+      answered: false
+    };
+  } else if (id === "reverse") {
+    const wrongProfiles = uniqueSheetValues(
+      pool.filter(b => b.Name !== correct.Name),
+      getFlavorProfile,
+      getFlavorProfile(correct)
+    ).slice(0, 3);
+
+    if (wrongProfiles.length < 3) {
+      gameSession.complete = true;
+      return;
+    }
+
+    reverseItem = {
+      correct,
+      options: shuffle([
+        { text: getFlavorProfile(correct), isCorrect: true },
+        ...wrongProfiles.map(t => ({ text: t, isCorrect: false }))
+      ]),
+      answered: false
+    };
+  }
+}
+
+function prepareSpeedQuestion() {
+  if (!gameSession || gameSession.complete) return;
+
+  const correct = gameSession.queue[gameSession.index];
+  const pool = gameSession.pool;
+  const types = [];
+
+  if (getFlavorProfile(correct)) types.push("quiz");
+  if (getGuestGuidance(correct)) types.push("practice");
+  if (getTapNumber(correct)) types.push("tap");
+  if (getABVNumber(correct) > 0) types.push("abv");
+  if (getStyle(correct)) types.push("style");
+
+  if (types.length === 0) {
+    gameSession.index++;
+    if (gameSession.index >= gameSession.queue.length) {
+      gameSession.complete = true;
+      return;
+    }
+    prepareSpeedQuestion();
+    return;
+  }
+
+  const type = pickRandom(types);
+
+  if (type === "quiz") {
+    speedItem = {
+      type: "quiz",
+      correct,
+      question: getFlavorProfile(correct),
+      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getFlavorProfile(b)), correct, 3)]),
+      answered: false
+    };
+  } else if (type === "practice") {
+    speedItem = {
+      type: "practice",
+      correct,
+      question: getGuestGuidance(correct),
+      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getGuestGuidance(b)), correct, 3)]),
+      answered: false
+    };
+  } else if (type === "tap") {
+    speedItem = {
+      type: "tap",
+      correct,
+      question: `Tap ${getTapNumber(correct)}`,
+      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getTapNumber(b)), correct, 3)]),
+      answered: false
+    };
+  } else if (type === "abv") {
+    const correctAbv = getABVNumber(correct);
+    const wrongAbvs = uniqueSheetValues(
+      pool.filter(b => b.Name !== correct.Name && getABVNumber(b) > 0),
+      b => String(getABVNumber(b)),
+      String(correctAbv)
+    ).slice(0, 3).map(v => parseFloat(v));
+
+    speedItem = {
+      type: "abv",
+      correct,
+      correctAbv,
+      question: `${col(correct, "Name")} — pick ABV`,
+      options: shuffle([
+        { label: getABVText(correct), value: correctAbv },
+        ...wrongAbvs.map(v => ({ label: v + "%", value: v }))
+      ]),
+      answered: false
+    };
+  } else if (type === "style") {
+    speedItem = {
+      type: "style",
+      correct,
+      question: col(correct, "Name"),
+      options: shuffle([
+        { label: getStyle(correct), isCorrect: true },
+        ...uniqueSheetValues(pool.filter(b => b.Name !== correct.Name), getStyle, getStyle(correct))
+          .slice(0, 3)
+          .map(s => ({ label: s, isCorrect: false }))
+      ]),
+      answered: false
+    };
+  }
+}
+
+function wrapGame(html) {
+  return `
+    <button class="game-back" onclick="activeGame=null; gameSession=null; render();">← All Games</button>
+    ${html}
+  `;
+}
+
+function renderGameHub(content) {
+  content.innerHTML = `
+    <div class="coffee-intro">
+      <h2>Training Games</h2>
+      <p>Practice current tap list knowledge with quizzes, flashcards, and timed challenges. Scores are saved when you're logged in.</p>
+    </div>
+    <div class="game-hub">
+      ${GAMES.map(g => `
+        <div class="game-tile" onclick="startGame('${g.id}')">
+          <div class="game-tile-icon">${g.icon}</div>
+          <p class="game-tile-title">${g.title}</p>
+          <p class="game-tile-desc">${g.desc}</p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderGames(content) {
+  if (!activeGame) {
+    renderGameHub(content);
+    return;
+  }
+
+  switch (activeGame) {
+    case "flash": renderFlash(content); break;
+    case "quiz": renderQuiz(content); break;
+    case "practice": renderPractice(content); break;
+    case "tap": renderTapMatch(content); break;
+    case "abv": renderABVChallenge(content); break;
+    case "style": renderStyleMatch(content); break;
+    case "reverse": renderReverseQuiz(content); break;
+    case "speed": renderSpeedRound(content); break;
+    default: renderGameHub(content);
+  }
+}
+
+function pickRandom(pool) {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function renderChoiceGame(content, item, questionHTML, getOptionHTML, onAnswer) {
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p class="game-question">${questionHTML}</p>
+      <div class="game-options">
+        ${item.options.map(o => {
+          let cls = "game-option";
+          if (item.answered) {
+            cls += " disabled";
+            if (o.Name === item.correct.Name) cls += " correct";
+            else if (o.Name === item.selected) cls += " wrong";
+          }
+          return `<div class="${cls}" onclick="${onAnswer}('${escapeForAttribute(o.Name)}')">${getOptionHTML(o)}</div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `);
 }
 
 function renderNewTapBanner() {
@@ -754,14 +3437,15 @@ function renderNewTapBanner() {
   if (newTapIndex >= newBeers.length) newTapIndex = 0;
 
   const b = newBeers[newTapIndex];
-  const desc = getDesc(b).slice(0, 105);
+  const style = getStyle(b);
+  const flavor = getFlavorProfile(b);
 
   return `
     <div class="new-banner" onclick="openBeerByName('${escapeForAttribute(b.Name)}')" style="cursor:pointer;">
       <p class="new-banner-label">NEWLY TAPPED</p>
       <p class="new-banner-name">${escapeHTML(b.Name)}</p>
       <p class="new-banner-desc">
-        ${escapeHTML(b.Style || "")}${desc ? " — " + escapeHTML(desc) : ""}
+        ${escapeHTML(style)}${flavor ? " — " + escapeHTML(flavor.slice(0, 105)) : ""}
       </p>
       <div class="new-banner-dots">
         ${newBeers.map((_, i) =>
@@ -797,7 +3481,7 @@ function renderList(content) {
 
   if (activeType === "ontap") {
     source = source
-      .filter(b => isYes(b["On Tap"]))
+      .filter(isOnTap)
       .sort((a, b) => {
         const tapA = Number(getTapNumber(a) || 999);
         const tapB = Number(getTapNumber(b) || 999);
@@ -845,25 +3529,21 @@ function renderList(content) {
 }
 
 function renderBeerCard(item) {
-  const desc = getDesc(item);
-  const abvValue = item.abv || item.ABV || "";
-  const abv = abvValue
-    ? String(abvValue).replace("%", "") + "%"
-    : "";
-
+  const style = getStyle(item);
+  const flavor = getFlavorProfile(item);
+  const description = getDescription(item);
+  const abv = getABVText(item);
   const gf = isYes(item["Gluten-Reduced"]);
   const isNew = isYes(item["New Tap"]);
-  const guidance = item["Guest Guidance"] || "";
+  const guidance = getGuestGuidance(item);
   const tapNumber = getTapNumber(item);
 
+  const subtitle = [style, flavor || description].filter(Boolean).join(" — ");
   const cardBody = `
     <div class="card-top">
       <div>
-        <p class="name">${escapeHTML(item.Name || "")}</p>
-        <p class="desc">
-          ${escapeHTML(item.Style || "")}
-          ${desc ? " — " + escapeHTML(desc.slice(0, 115)) + (desc.length > 115 ? "…" : "") : ""}
-        </p>
+        <p class="name">${escapeHTML(col(item, "Name"))}</p>
+        ${subtitle ? `<p class="desc">${escapeHTML(subtitle.slice(0, 130))}${subtitle.length > 130 ? "…" : ""}</p>` : ""}
       </div>
       ${abv ? `<span class="abv">${escapeHTML(abv)} ABV</span>` : ""}
     </div>
@@ -874,7 +3554,7 @@ function renderBeerCard(item) {
       ${guidance ? `<span class="tag">${escapeHTML(guidance)}</span>` : ""}
     </div>
 
-    <div class="details-hint">Tap to read the full flavor profile</div>
+    <div class="details-hint">Tap to view sheet details</div>
   `;
 
   if (activeType === "ontap") {
@@ -905,19 +3585,22 @@ function openBeerByName(name) {
   if (!item) return;
 
   const flavor = getFlavorProfile(item);
-  const description = item["Description / ingredients"] || "";
-  const guidance = item["Guest Guidance"] || "";
+  const description = getDescription(item);
+  const guidance = getGuestGuidance(item);
   const tapNumber = getTapNumber(item);
-  const abvValue = item.abv || item.ABV || "";
+  const abv = getABVText(item);
   const gf = isYes(item["Gluten-Reduced"]);
   const isNew = isYes(item["New Tap"]);
+  const style = getStyle(item);
 
   document.getElementById("modalContent").innerHTML = `
-    <h2 class="modal-title" id="modalTitle">${escapeHTML(item.Name || "")}</h2>
+    <h2 class="modal-title" id="modalTitle">${escapeHTML(col(item, "Name"))}</h2>
     <p class="modal-style">
-      ${escapeHTML(item.Style || "")}
-      ${abvValue ? " · " + escapeHTML(String(abvValue).replace("%", "") + "% ABV") : ""}
-      ${tapNumber ? " · Tap " + escapeHTML(tapNumber) : ""}
+      ${[
+        style,
+        abv ? abv + " ABV" : "",
+        tapNumber ? "Tap " + tapNumber : ""
+      ].filter(Boolean).map(v => escapeHTML(v)).join(" · ")}
     </p>
 
     <div class="tags">
@@ -925,16 +3608,14 @@ function openBeerByName(name) {
       ${gf ? `<span class="tag gf">Gluten-reduced</span>` : ""}
     </div>
 
-    <div class="detail-section">
-      <p class="detail-label">Flavor profile</p>
-      <p class="detail-text">${
-        flavor
-          ? escapeHTML(flavor)
-          : "No flavor profile has been added yet."
-      }</p>
-    </div>
+    ${flavor ? `
+      <div class="detail-section">
+        <p class="detail-label">Flavor profile</p>
+        <p class="detail-text">${escapeHTML(flavor)}</p>
+      </div>
+    ` : ""}
 
-    ${description && description !== flavor ? `
+    ${description ? `
       <div class="detail-section">
         <p class="detail-label">Description / ingredients</p>
         <p class="detail-text">${escapeHTML(description)}</p>
@@ -978,175 +3659,360 @@ function escapeForAttribute(value) {
 }
 
 function renderFlash(content) {
-  const pool = beers.filter(b => getDesc(b) || b.Style);
-
-  if (pool.length === 0) {
-    content.innerHTML = '<div class="status"><strong>No beers loaded yet.</strong>Add beer information to the spreadsheet first.</div>';
+  if (!gameSession || gameSession.id !== "flash") {
+    content.innerHTML = wrapGame('<div class="status"><strong>No flashcard deck ready.</strong>Mark at least one on-tap beer with flavor, style, or description info in the spreadsheet.</div>');
     return;
   }
 
-  if (flashIndex >= pool.length) flashIndex = 0;
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(`
+      <div class="game-card">
+        <p class="game-question" style="font-size:20px;font-weight:750;">Deck complete!</p>
+        <p style="font-size:15px;color:#555;margin:0;">You reviewed <strong>${gameSession.queue.length}</strong> cards from the sheet.</p>
+        <button class="game-next" onclick="startGame('flash')">Play Again</button>
+      </div>
+    `);
+    return;
+  }
 
-  const b = pool[flashIndex];
+  const b = gameSession.queue[gameSession.index];
+  const style = getStyle(b);
+  const abv = getABVText(b);
+  const flavor = getFlavorProfile(b);
+  const description = getDescription(b);
+  const guidance = getGuestGuidance(b);
 
-  content.innerHTML = `
+  const backLines = [
+    style ? `<strong>Style:</strong> ${escapeHTML(style)}` : "",
+    abv ? `<strong>ABV:</strong> ${escapeHTML(abv)}` : "",
+    flavor ? `<strong>Flavor profile:</strong> ${escapeHTML(flavor)}` : "",
+    description ? `<strong>Description:</strong> ${escapeHTML(description)}` : "",
+    guidance ? `<strong>Guest guidance:</strong> ${escapeHTML(guidance)}` : ""
+  ].filter(Boolean).join("<br><br>");
+
+  content.innerHTML = wrapGame(`
     <div class="flash-card" onclick="flashFlipped = !flashFlipped; render();">
       ${!flashFlipped ? `
-        <p style="font-size:19px;font-weight:750;margin:0 0 7px;">${escapeHTML(b.Name)}</p>
-        <p style="font-size:12.5px;color:#999;">Tap to reveal details</p>
+        <p style="font-size:19px;font-weight:750;margin:0 0 7px;">${escapeHTML(col(b, "Name"))}</p>
+        <p style="font-size:12.5px;color:#999;">Tap to reveal sheet details</p>
       ` : `
-        <p style="font-size:17px;font-weight:750;margin:0 0 7px;">${escapeHTML(b.Name)}</p>
-        <p style="font-size:12.5px;color:#666;margin:0 0 9px;">
-          ${escapeHTML(b.Style || "")}
-          ${b.abv ? " · " + escapeHTML(String(b.abv).replace("%", "") + "%") : ""}
-        </p>
-        <p style="font-size:12.5px;color:#555;line-height:1.55;">
-          ${escapeHTML(getDesc(b).slice(0, 220))}
-        </p>
+        <p style="font-size:17px;font-weight:750;margin:0 0 7px;">${escapeHTML(col(b, "Name"))}</p>
+        <p style="font-size:12.5px;color:#555;line-height:1.55;text-align:left;">${backLines || "No extra details in the sheet for this beer."}</p>
       `}
     </div>
 
     <div class="flash-nav">
-      <button onclick="flashIndex = (flashIndex - 1 + ${pool.length}) % ${pool.length}; flashFlipped = false; render();">Previous</button>
-      <button onclick="flashIndex = (flashIndex + 1) % ${pool.length}; flashFlipped = false; render();">Next</button>
+      <button onclick="flashFlipped = false; if (gameSession.index > 0) { gameSession.index--; } render();">Previous</button>
+      <button onclick="flashFlipped = false; gameSession.index++; if (gameSession.index >= gameSession.queue.length) { gameSession.complete = true; if (markSessionRecorded(gameSession)) recordProgress('flash', 'beer', gameSession.queue.length, gameSession.queue.length); } render();">${gameSession.index + 1 >= gameSession.queue.length ? "Finish" : "Next"}</button>
     </div>
 
-    <div class="flash-count">${flashIndex + 1} of ${pool.length}</div>
-  `;
-}
-
-function newQuiz() {
-  const pool = beers.filter(b => getDesc(b) && b.Name);
-
-  if (pool.length < 4) {
-    quizItem = null;
-    return;
-  }
-
-  const correct = pool[Math.floor(Math.random() * pool.length)];
-  const wrongPool = shuffle(pool.filter(b => b.Name !== correct.Name)).slice(0, 3);
-  const options = shuffle([correct, ...wrongPool]);
-
-  quizItem = { correct, options, answered: false };
+    <div class="flash-count">Card ${gameSession.index + 1} of ${gameSession.queue.length}</div>
+  `);
 }
 
 function renderQuiz(content) {
-  if (!quizItem) newQuiz();
-
-  if (!quizItem) {
-    content.innerHTML = '<div class="status"><strong>Not enough beer data loaded yet.</strong>Add at least four beers with descriptions.</div>';
+  if (!gameSession || gameSession.id !== "quiz") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Mark at least four on-tap beers with Flavor Profile in the spreadsheet.</div>');
     return;
   }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Round complete!"));
+    return;
+  }
+  if (!quizItem) prepareRoundQuestion("quiz");
 
-  const desc = getDesc(quizItem.correct).slice(0, 190);
-
-  content.innerHTML = `
-    <div class="game-card">
-      <p class="game-question">
-        Which beer matches this description?<br><br>
-        “${escapeHTML(desc)}”
-      </p>
-
-      <div class="game-options">
-        ${quizItem.options.map(o => {
-          let cls = "game-option";
-
-          if (quizItem.answered) {
-            if (o.Name === quizItem.correct.Name) cls += " correct";
-            else if (o.Name === quizItem.selected) cls += " wrong";
-          }
-
-          return `<div class="${cls}" onclick="answerQuiz('${escapeForAttribute(o.Name)}')">${escapeHTML(o.Name)}</div>`;
-        }).join("")}
-      </div>
-
-      ${quizItem.answered
-        ? `<button class="game-next" onclick="newQuiz(); render();">Next question</button>`
-        : ""}
-    </div>
-
-    <div class="game-score">Score: ${quizScore.right} / ${quizScore.total}</div>
-  `;
+  renderChoiceGame(
+    content,
+    quizItem,
+    `Which beer matches this flavor profile?<br><br>“${escapeHTML(getFlavorProfile(quizItem.correct))}”`,
+    o => escapeHTML(col(o, "Name")),
+    "answerQuiz"
+  );
 }
 
 function answerQuiz(name) {
-  if (quizItem.answered) return;
-
+  if (!quizItem || quizItem.answered) return;
   quizItem.answered = true;
   quizItem.selected = name;
-  quizScore.total++;
-
-  if (name === quizItem.correct.Name) {
-    quizScore.right++;
-  }
-
+  const correct = name === quizItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
-function newPractice() {
-  const pool = beers.filter(b => b["Guest Guidance"] && b.Name);
-
-  if (pool.length < 4) {
-    practiceItem = null;
-    return;
-  }
-
-  const correct = pool[Math.floor(Math.random() * pool.length)];
-  const wrongPool = shuffle(pool.filter(b => b.Name !== correct.Name)).slice(0, 3);
-  const options = shuffle([correct, ...wrongPool]);
-
-  practiceItem = { correct, options, answered: false };
-}
-
 function renderPractice(content) {
-  if (!practiceItem) newPractice();
-
-  if (!practiceItem) {
-    content.innerHTML = '<div class="status"><strong>Guest Guidance is needed.</strong>Add guidance to at least four beers in the spreadsheet.</div>';
+  if (!gameSession || gameSession.id !== "practice") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Guest Guidance needed.</strong>Mark at least four on-tap beers with Guest Guidance in the spreadsheet.</div>');
     return;
   }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Round complete!"));
+    return;
+  }
+  if (!practiceItem) prepareRoundQuestion("practice");
 
-  content.innerHTML = `
-    <div class="game-card">
-      <p class="game-question">
-        A guest says: “${escapeHTML(practiceItem.correct["Guest Guidance"])}”
-        <br><br>
-        Which beer do you recommend?
-      </p>
-
-      <div class="game-options">
-        ${practiceItem.options.map(o => {
-          let cls = "game-option";
-
-          if (practiceItem.answered) {
-            if (o.Name === practiceItem.correct.Name) cls += " correct";
-            else if (o.Name === practiceItem.selected) cls += " wrong";
-          }
-
-          return `<div class="${cls}" onclick="answerPractice('${escapeForAttribute(o.Name)}')">${escapeHTML(o.Name)}</div>`;
-        }).join("")}
-      </div>
-
-      ${practiceItem.answered
-        ? `<button class="game-next" onclick="newPractice(); render();">Next</button>`
-        : ""}
-    </div>
-
-    <div class="game-score">Score: ${practiceScore.right} / ${practiceScore.total}</div>
-  `;
+  renderChoiceGame(
+    content,
+    practiceItem,
+    `A guest says: “${escapeHTML(getGuestGuidance(practiceItem.correct))}”<br><br>Which beer do you recommend?`,
+    o => escapeHTML(col(o, "Name")),
+    "answerPractice"
+  );
 }
 
 function answerPractice(name) {
-  if (practiceItem.answered) return;
-
+  if (!practiceItem || practiceItem.answered) return;
   practiceItem.answered = true;
   practiceItem.selected = name;
-  practiceScore.total++;
+  const correct = name === practiceItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
 
-  if (name === practiceItem.correct.Name) {
-    practiceScore.right++;
+function renderTapMatch(content) {
+  if (!gameSession || gameSession.id !== "tap") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Need on-tap data.</strong>Mark at least four on-tap beers with tap numbers in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Round complete!"));
+    return;
+  }
+  if (!tapItem) prepareRoundQuestion("tap");
+
+  renderChoiceGame(
+    content,
+    tapItem,
+    `What beer is on <strong>Tap ${escapeHTML(getTapNumber(tapItem.correct))}</strong>?`,
+    o => escapeHTML(col(o, "Name")),
+    "answerTap"
+  );
+}
+
+function answerTap(name) {
+  if (!tapItem || tapItem.answered) return;
+  tapItem.answered = true;
+  tapItem.selected = name;
+  const correct = name === tapItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderABVChallenge(content) {
+  if (!gameSession || gameSession.id !== "abv") {
+    content.innerHTML = wrapGame('<div class="status"><strong>ABV data needed.</strong>Mark at least four on-tap beers with ABV and three different values in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Round complete!"));
+    return;
+  }
+  if (!abvItem) prepareRoundQuestion("abv");
+
+  const b = abvItem.correct;
+  const style = getStyle(b);
+
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p class="game-question">
+        What's the ABV of <strong>${escapeHTML(col(b, "Name"))}</strong>?${style ? `<br><span style="color:#888;font-size:13px;">${escapeHTML(style)}</span>` : ""}
+      </p>
+      <div class="game-options">
+        ${abvItem.options.map(o => {
+          let cls = "game-option";
+          if (abvItem.answered) {
+            cls += " disabled";
+            if (o.value === abvItem.correctAbv) cls += " correct";
+            else if (o.value === abvItem.selected) cls += " wrong";
+          }
+          return `<div class="${cls}" onclick="answerABV(${o.value})">${escapeHTML(o.label)}</div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `);
+}
+
+function answerABV(value) {
+  if (!abvItem || abvItem.answered) return;
+  abvItem.answered = true;
+  abvItem.selected = value;
+  const correct = value === abvItem.correctAbv;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderStyleMatch(content) {
+  if (!gameSession || gameSession.id !== "style") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Style data needed.</strong>Mark at least four on-tap beers with Style and three different styles in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Round complete!"));
+    return;
+  }
+  if (!styleItem) prepareRoundQuestion("style");
+
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p class="game-question">What style is <strong>${escapeHTML(col(styleItem.correct, "Name"))}</strong>?</p>
+      <div class="game-options">
+        ${styleItem.options.map((o, i) => {
+          let cls = "game-option";
+          if (styleItem.answered) {
+            cls += " disabled";
+            if (o.isCorrect) cls += " correct";
+            else if (i === styleItem.selected) cls += " wrong";
+          }
+          return `<div class="${cls}" onclick="answerStyle(${i})">${escapeHTML(o.label)}</div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `);
+}
+
+function answerStyle(index) {
+  if (!styleItem || styleItem.answered) return;
+  styleItem.answered = true;
+  styleItem.selected = index;
+  const correct = styleItem.options[index].isCorrect;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderReverseQuiz(content) {
+  if (!gameSession || gameSession.id !== "reverse") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough flavor profiles.</strong>Mark at least four on-tap beers with unique Flavor Profile values in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Round complete!"));
+    return;
+  }
+  if (!reverseItem) prepareRoundQuestion("reverse");
+
+  const style = getStyle(reverseItem.correct);
+
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p class="game-question">
+        Which flavor profile matches <strong>${escapeHTML(col(reverseItem.correct, "Name"))}</strong>?${style ? `<br><span style="color:#888;font-size:13px;">${escapeHTML(style)}</span>` : ""}
+      </p>
+      <div class="game-options">
+        ${reverseItem.options.map((o, i) => {
+          let cls = "game-option";
+          if (reverseItem.answered) {
+            cls += " disabled";
+            if (o.isCorrect) cls += " correct";
+            else if (i === reverseItem.selected) cls += " wrong";
+          }
+          return `<div class="${cls}" onclick="answerReverse(${i})">${escapeHTML(o.text)}</div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `);
+}
+
+function answerReverse(index) {
+  if (!reverseItem || reverseItem.answered) return;
+  reverseItem.answered = true;
+  reverseItem.selected = index;
+  const correct = reverseItem.options[index].isCorrect;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderSpeedRound(content) {
+  if (!gameSession || gameSession.id !== "speed") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong>Add flavor, guidance, tap, ABV, or style info for at least four on-tap beers.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Speed Round complete!"));
+    return;
+  }
+  if (!speedItem) prepareSpeedQuestion();
+
+  let questionHTML = "";
+  if (speedItem.type === "quiz") {
+    questionHTML = `Which beer has this flavor profile?<br><br>“${escapeHTML(speedItem.question)}”`;
+  } else if (speedItem.type === "practice") {
+    questionHTML = `Guest says: “${escapeHTML(speedItem.question)}” — which beer?`;
+  } else if (speedItem.type === "tap") {
+    questionHTML = `What beer is on <strong>${escapeHTML(speedItem.question)}</strong>?`;
+  } else if (speedItem.type === "abv") {
+    questionHTML = escapeHTML(speedItem.question);
+  } else if (speedItem.type === "style") {
+    questionHTML = `What style is <strong>${escapeHTML(speedItem.question)}</strong>?`;
   }
 
+  let optionsHTML = "";
+  if (speedItem.type === "abv") {
+    optionsHTML = speedItem.options.map(o => {
+      let cls = "game-option";
+      if (speedItem.answered) {
+        cls += " disabled";
+        if (o.value === speedItem.correctAbv) cls += " correct";
+        else if (o.value === speedItem.selected) cls += " wrong";
+      }
+      return `<div class="${cls}" onclick="answerSpeedABV(${o.value})">${escapeHTML(o.label)}</div>`;
+    }).join("");
+  } else if (speedItem.type === "style") {
+    optionsHTML = speedItem.options.map((o, i) => {
+      let cls = "game-option";
+      if (speedItem.answered) {
+        cls += " disabled";
+        if (o.isCorrect) cls += " correct";
+        else if (i === speedItem.selected) cls += " wrong";
+      }
+      return `<div class="${cls}" onclick="answerSpeedStyle(${i})">${escapeHTML(o.label)}</div>`;
+    }).join("");
+  } else {
+    optionsHTML = speedItem.options.map(o => {
+      let cls = "game-option";
+      if (speedItem.answered) {
+        cls += " disabled";
+        if (o.Name === speedItem.correct.Name) cls += " correct";
+        else if (o.Name === speedItem.selected) cls += " wrong";
+      }
+      return `<div class="${cls}" onclick="answerSpeedName('${escapeForAttribute(o.Name)}')">${escapeHTML(col(o, "Name"))}</div>`;
+    }).join("");
+  }
+
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p class="game-question">${questionHTML}</p>
+      <div class="game-options">${optionsHTML}</div>
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `);
+}
+
+function answerSpeedName(name) {
+  if (!speedItem || speedItem.answered || gameSession.complete) return;
+  speedItem.answered = true;
+  speedItem.selected = name;
+  const correct = name === speedItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function answerSpeedABV(value) {
+  if (!speedItem || speedItem.answered || gameSession.complete) return;
+  speedItem.answered = true;
+  speedItem.selected = value;
+  const correct = value === speedItem.correctAbv;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function answerSpeedStyle(index) {
+  if (!speedItem || speedItem.answered || gameSession.complete) return;
+  speedItem.answered = true;
+  speedItem.selected = index;
+  const correct = speedItem.options[index].isCorrect;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
@@ -1154,9 +4020,19 @@ document.getElementById("search").addEventListener("input", render);
 
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll("#mainTabs .tab").forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
     activeType = tab.dataset.type;
+    if (activeType !== "games") {
+      activeGame = null;
+      gameSession = null;
+    }
+    if (activeType !== "coffee") {
+      coffeeMode = "guide";
+      if (activeType !== "progress" && activeType !== "team") coffeeSession = null;
+    }
+    if (activeType === "team") teamDetailId = null;
+    updateSearchPlaceholder();
     render();
   });
 });
@@ -1172,11 +4048,229 @@ document.querySelectorAll(".filter-btn").forEach(button => {
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
-    closeModal();
+    if (chatOpen) {
+      toggleChatPanel(false);
+    } else {
+      closeModal();
+    }
   }
 });
 
+function stripHtmlForChat(html) {
+  return String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function formatBeerForChat(beer) {
+  const tap = col(beer, "Tap") || col(beer, "tap") || col(beer, "Tap Number");
+  const abv = getABVNumber(beer) || col(beer, "ABV") || col(beer, "abv");
+  const parts = [
+    col(beer, "Name"),
+    tap ? `Tap ${tap}` : null,
+    getStyle(beer) || null,
+    abv ? `ABV ${abv}${String(abv).includes("%") ? "" : "%"}` : null,
+    getFlavorProfile(beer) ? `Flavor: ${getFlavorProfile(beer)}` : null,
+    getDescription(beer) ? `Description: ${getDescription(beer)}` : null,
+    getGuestGuidance(beer) ? `Guest guidance: ${getGuestGuidance(beer)}` : null,
+    isYes(col(beer, "Gluten-Reduced")) ? "Gluten-reduced" : null,
+    isYes(col(beer, "New Tap")) ? "New tap" : null
+  ].filter(Boolean);
+  return parts.join(" | ");
+}
+
+function chatTerms(query) {
+  return String(query || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2);
+}
+
+function chatScore(text, terms) {
+  const lower = String(text || "").toLowerCase();
+  let score = 0;
+  for (const term of terms) {
+    if (lower.includes(term)) score += term.length > 4 ? 3 : 1;
+  }
+  return score;
+}
+
+function localChatAnswer(message) {
+  const terms = chatTerms(message);
+  const q = message.toLowerCase();
+
+  if (/^(hi|hello|hey)\b/.test(q)) {
+    return "Hi! I can help with beers on the tap list, coffee bar training, and training games on this site. What would you like to know?";
+  }
+
+  if (/tap|on tap|what'?s pouring|what is pouring/.test(q) && beers.length) {
+    const onTap = beers
+      .filter(b => (col(b, "Tap") || col(b, "tap")) && col(b, "Name"))
+      .sort((a, b) => Number(col(a, "Tap") || col(a, "tap")) - Number(col(b, "Tap") || col(b, "tap")));
+    if (onTap.length) {
+      return "Current tap list:\n\n" + onTap.map(b => "• " + formatBeerForChat(b)).join("\n");
+    }
+  }
+
+  if (/gluten|gf\b/.test(q)) {
+    const gf = beers.filter(b => isYes(col(b, "Gluten-Reduced")));
+    if (gf.length) {
+      return "Gluten-reduced beers:\n\n" + gf.map(b => "• " + formatBeerForChat(b)).join("\n");
+    }
+  }
+
+  const beerHits = beers
+    .map(beer => ({ beer, score: chatScore(formatBeerForChat(beer), terms) }))
+    .filter(row => row.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+
+  if (beerHits.length) {
+    return "Here's what I found in the beer menu:\n\n" +
+      beerHits.map(({ beer }) => "• " + formatBeerForChat(beer)).join("\n\n") +
+      "\n\nCheck the On Tap or All Beers tab for full details.";
+  }
+
+  const coffeeHits = COFFEE_SECTIONS
+    .map(section => ({
+      section,
+      score: chatScore(`${section.title} ${section.summary} ${stripHtmlForChat(section.body)}`, terms)
+    }))
+    .filter(row => row.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  if (coffeeHits.length) {
+    return "From the coffee training manual:\n\n" +
+      coffeeHits.map(({ section }) => {
+        const excerpt = stripHtmlForChat(section.body).slice(0, 360);
+        return `${section.title}\n${section.summary}\n${excerpt}${excerpt.length >= 360 ? "…" : ""}`;
+      }).join("\n\n");
+  }
+
+  if (/game|quiz|flashcard|training/.test(q)) {
+    return "Training games on this site:\n\n" +
+      GAMES.map(g => `• ${g.title} — ${g.desc}`).join("\n") +
+      "\n\nFor coffee: open the Coffee tab → Training Quiz or Flashcards.";
+  }
+
+  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', or 'training games'. I only answer from content on this site.";
+}
+
+let chatOpen = false;
+let chatHistory = [];
+let chatBusy = false;
+let chatMode = "local";
+let chatApiAvailable = false;
+
+function toggleChatPanel(force) {
+  chatOpen = typeof force === "boolean" ? force : !chatOpen;
+  document.getElementById("chatPanel").classList.toggle("open", chatOpen);
+  document.getElementById("chatFab").classList.toggle("open", chatOpen);
+  document.getElementById("chatFabIcon").innerHTML = chatOpen
+    ? `<path d="M18 6L6 18"/><path d="M6 6l12 12"/>`
+    : `<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>`;
+
+  if (chatOpen) {
+    if (!chatHistory.length) {
+      appendChatMessage(
+        "assistant",
+        "Hi! I can answer questions about beers on the tap list, coffee bar training, and training games on this site. What do you need?"
+      );
+    }
+    document.getElementById("chatInput").focus();
+  }
+}
+
+function appendChatMessage(role, content, extraClass) {
+  const wrap = document.getElementById("chatMessages");
+  const el = document.createElement("div");
+  el.className = `chat-msg ${role}${extraClass ? " " + extraClass : ""}`;
+  el.textContent = content;
+  wrap.appendChild(el);
+  wrap.scrollTop = wrap.scrollHeight;
+  return el;
+}
+
+function setChatBusy(busy) {
+  chatBusy = busy;
+  document.getElementById("chatSendBtn").disabled = busy;
+  document.getElementById("chatInput").disabled = busy;
+}
+
+async function initChat() {
+  try {
+    const response = await fetch(`${API_BASE}/api/chat/status`);
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) throw new Error("not json");
+    const data = await response.json();
+    if (!response.ok || !data.mode) throw new Error("unavailable");
+    chatApiAvailable = true;
+    chatMode = data.mode;
+    document.getElementById("chatModeBadge").textContent =
+      data.enabled ? "AI · site content only" : "Quick search · add API key for AI";
+  } catch {
+    chatApiAvailable = false;
+    document.getElementById("chatModeBadge").textContent = "On-device search";
+  }
+}
+
+function askChatSuggestion(button) {
+  const text = button.textContent.trim();
+  document.getElementById("chatInput").value = text;
+  sendChatMessage(null, text);
+}
+
+async function sendChatMessage(event, presetText) {
+  if (event) event.preventDefault();
+  if (chatBusy) return;
+
+  const input = document.getElementById("chatInput");
+  const message = (presetText || input.value).trim();
+  if (!message) return;
+
+  if (!chatOpen) toggleChatPanel(true);
+
+  input.value = "";
+  appendChatMessage("user", message);
+  chatHistory.push({ role: "user", content: message });
+
+  const typingEl = appendChatMessage("assistant", "Thinking…", "typing");
+  setChatBusy(true);
+
+  try {
+    let reply;
+    let mode = chatMode;
+
+    if (chatApiAvailable) {
+      const data = await apiFetch("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          message,
+          history: chatHistory.slice(0, -1)
+        })
+      });
+      reply = data.reply;
+      mode = data.mode || chatMode;
+    } else {
+      reply = localChatAnswer(message);
+    }
+
+    typingEl.remove();
+    appendChatMessage("assistant", reply);
+    chatHistory.push({ role: "assistant", content: reply });
+    chatMode = mode;
+  } catch (err) {
+    typingEl.remove();
+    const reply = localChatAnswer(message);
+    appendChatMessage("assistant", reply);
+    chatHistory.push({ role: "assistant", content: reply });
+    chatApiAvailable = false;
+    document.getElementById("chatModeBadge").textContent = "On-device search";
+  } finally {
+    setChatBusy(false);
+    input.focus();
+  }
+}
+
 loadData();
+initAuth();
+initChat();
 </script>
 
 </body>

@@ -450,6 +450,9 @@
   }
 
   .tag.gf { background: var(--green); color: var(--green-text); }
+  .tag.dairy { background: #eff6ff; color: #1d4ed8; }
+  .tag.nuts { background: #fef3c7; color: #b45309; }
+  .tag.gluten { background: #fef2f2; color: #b91c1c; }
   .tag.new { background: var(--black); color: #fff; }
 
   .details-hint {
@@ -1057,6 +1060,164 @@
     border: 1px solid #fecaca;
   }
 
+  .shift-survey-panel {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px 32px;
+  }
+
+  .shift-survey-panel textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: vertical;
+    background: var(--paper);
+  }
+
+  .shift-survey-panel textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.15);
+  }
+
+  .survey-rating-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin: 16px 0 20px;
+  }
+
+  .survey-rating-btn {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: var(--radius-md);
+    padding: 14px 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+    text-align: center;
+  }
+
+  .survey-rating-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .survey-rating-btn.selected {
+    border-color: var(--accent);
+    background: rgba(166, 124, 82, 0.08);
+    box-shadow: 0 0 0 1px rgba(166, 124, 82, 0.25);
+  }
+
+  .survey-rating-num {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .survey-rating-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .survey-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    padding: 16px 18px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .shift-report-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shift-report-card + .shift-report-card { margin-top: 12px; }
+
+  .shift-report-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .shift-report-stars {
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .shift-report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 16px 0 20px;
+  }
+
+  .shift-report-stat {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+  }
+
+  .shift-report-stat strong {
+    display: block;
+    font-size: 28px;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+
+  .shift-report-stat span {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+
+  .shift-date-picker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 16px 0 20px;
+  }
+
+  .shift-date-picker input {
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    background: var(--paper);
+  }
+
+  @media (max-width: 640px) {
+    .survey-rating-row { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .survey-rating-label { font-size: 9px; }
+    .survey-rating-num { font-size: 18px; }
+  }
+
   .rec-list {
     padding: 0 24px 24px;
     display: flex;
@@ -1174,6 +1335,580 @@
   }
 
   .modal-backdrop.show { display: flex; }
+
+  .briefing-backdrop {
+    z-index: 110;
+  }
+
+  .briefing-modal {
+    max-width: 520px;
+  }
+
+  .briefing-header {
+    margin: 0 44px 6px 0;
+  }
+
+  .briefing-header h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .briefing-header p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .briefing-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 18px 0 20px;
+  }
+
+  .briefing-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: #fafafa;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .briefing-item:hover {
+    border-color: var(--line-strong);
+    background: var(--paper);
+  }
+
+  .briefing-item.viewed {
+    opacity: 0.72;
+  }
+
+  .briefing-item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .briefing-item-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+
+  .briefing-item-title {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .briefing-item-summary {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .briefing-item-arrow {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .briefing-viewed-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--green-text);
+  }
+
+  .briefing-back {
+    border: none;
+    background: transparent;
+    color: var(--accent);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 0 12px;
+  }
+
+  .briefing-done {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .merch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    padding: 0 24px 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .merch-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .merch-card-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #f4f4f5;
+    display: block;
+  }
+
+  .merch-card-image.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .merch-card-body { padding: 16px; }
+
+  .merch-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+    margin: 0 0 8px;
+  }
+
+  .merch-size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  .merch-size-table th,
+  .merch-size-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+
+  .merch-size-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .merch-qty.low { color: #b45309; font-weight: 700; }
+  .merch-qty.out { color: #b91c1c; font-weight: 700; }
+
+  .inventory-table-wrap {
+    padding: 0 24px 32px;
+    max-width: 1080px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+
+  .inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .inventory-table th,
+  .inventory-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  .inventory-table th {
+    background: #fafafa;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .inventory-table tr:last-child td { border-bottom: none; }
+
+  .inventory-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .inventory-status.in-stock { background: #ecfdf5; color: #047857; }
+  .inventory-status.low { background: #fffbeb; color: #b45309; }
+  .inventory-status.out { background: #fef2f2; color: #b91c1c; }
+  .inventory-status.on-order { background: #eff6ff; color: #1d4ed8; }
+
+  .inventory-ordered-yes { color: #047857; font-weight: 600; }
+  .inventory-ordered-no { color: var(--muted); }
+
+  .inventory-inline-input {
+    width: 72px;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 13px;
+  }
+
+  .inventory-inline-input.wide { width: 100%; min-width: 120px; }
+
+  .inventory-filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 24px 16px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .inventory-filter-btn {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .inventory-filter-btn.active,
+  .inventory-filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--black);
+    background: rgba(166, 124, 82, 0.08);
+  }
+
+  .inventory-admin-panel {
+    margin: 0 24px 24px;
+    padding: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    max-width: 1032px;
+  }
+
+  .inventory-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .inventory-admin-grid label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .inventory-admin-grid input,
+  .inventory-admin-grid select,
+  .inventory-admin-grid textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    background: var(--paper);
+  }
+
+  .inventory-admin-grid textarea {
+    min-height: 72px;
+    resize: vertical;
+  }
+
+  .inventory-row-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .inventory-row-actions button {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .inventory-row-actions button:hover { border-color: var(--accent); }
+
+  .review-platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    padding: 0 24px 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .review-platform-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .review-platform-card h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .review-platform-card a {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .review-platform-card a:hover { text-decoration: underline; }
+
+  .review-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 0 24px 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .review-summary-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .review-summary-card.positive { border-left: 4px solid #059669; }
+  .review-summary-card.negative { border-left: 4px solid #dc2626; }
+
+  .review-summary-card h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+  }
+
+  .review-summary-card ul {
+    margin: 0;
+    padding-left: 18px;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .review-list {
+    padding: 0 24px 32px;
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .review-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .review-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .review-source-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: rgba(166, 124, 82, 0.12);
+    color: var(--black);
+  }
+
+  .review-stars {
+    color: var(--accent);
+    letter-spacing: 1px;
+    font-size: 14px;
+  }
+
+  .review-meta {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .review-text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .review-sync-note {
+    margin: 0 24px 20px;
+    max-width: 1032px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .merch-admin-panel {
+    margin: 0 24px 20px;
+    max-width: 1032px;
+    padding: 18px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-md);
+    background: #fafafa;
+  }
+
+  .merch-admin-panel h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+  }
+
+  .merch-admin-panel label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 10px 0 6px;
+  }
+
+  .merch-admin-panel input,
+  .merch-admin-panel textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 14px;
+  }
+
+  .merch-admin-panel textarea { min-height: 72px; resize: vertical; }
+
+  .merch-size-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .merch-size-inputs input {
+    width: 72px;
+  }
+
+  .idea-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .idea-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .idea-vote-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 14px;
+  }
+
+  .vote-btn {
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s var(--ease);
+  }
+
+  .vote-btn.active {
+    background: var(--black);
+    border-color: var(--black);
+    color: #fff;
+  }
+
+  .vote-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .vote-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
 
   .modal {
     background: var(--paper);
@@ -1533,8 +2268,14 @@
       <div class="tab" data-type="beer">All Beers</div>
       <div class="tab" data-type="food">Food</div>
       <div class="tab" data-type="coffee">Coffee</div>
+      <div class="tab" data-type="bar">Wine + Cocktails</div>
+      <div class="tab" data-type="merch">Merch</div>
+      <div class="tab" data-type="inventory">Inventory</div>
+      <div class="tab" data-type="reviews">Reviews</div>
       <div class="tab" data-type="games">Games</div>
       <div class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</div>
+      <div class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</div>
+      <div class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</div>
       <div class="tab tab-admin-only" data-type="team" style="display:none;">Team</div>
     </div>
     <div class="search-wrap" id="searchWrap">
@@ -1576,6 +2317,22 @@
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">×</button>
     <div id="authContent"></div>
+  </div>
+</div>
+
+<div id="briefingBackdrop" class="modal-backdrop briefing-backdrop" onclick="closeBriefingModal(event)">
+  <div class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeBriefingModal()" aria-label="Close">×</button>
+    <div id="briefingContent"></div>
+  </div>
+</div>
+
+<div id="shiftDigestBackdrop" class="modal-backdrop briefing-backdrop" onclick="closeShiftDigestModal(event)">
+  <div class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="shiftDigestTitle">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeShiftDigestModal()" aria-label="Close">×</button>
+    <div id="shiftDigestContent"></div>
   </div>
 </div>
 
@@ -1622,6 +2379,18 @@ const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
 
 let beers = [];
 let foods = [];
+let foodCategory = "all";
+let merchSection = "stock";
+let merchItems = [];
+let merchIdeas = [];
+let merchLoading = false;
+let inventoryItems = [];
+let inventoryLoading = false;
+let inventoryFilter = "all";
+let inventoryCategory = "all";
+let reviewsData = null;
+let reviewsLoading = false;
+let reviewPlatform = "all";
 let activeType = "ontap";
 let activeFilter = "all";
 let activeGame = null;
@@ -1636,18 +2405,238 @@ let reverseItem = null;
 let speedItem = null;
 let newTapIndex = 0;
 let newTapTimer = null;
+let coffeeSection = "menu";
+let barSection = "all";
 let coffeeMode = "guide";
 let coffeeCategory = "all";
+let briefingView = "list";
+let briefingActiveItem = null;
+let briefingViewedKeys = new Set();
+let currentBriefingItems = [];
 let coffeeQuizItem = null;
 let coffeeFlashIndex = 0;
 let coffeeFlashFlipped = false;
 let coffeeSession = null;
+let shiftSurveyRating = 0;
+let shiftReportDate = "";
 
 const COFFEE_CATEGORY_LABELS = {
   fundamentals: "Fundamentals",
   bar: "Bar Skills",
   reference: "Reference"
 };
+
+/** Regular beans on bar — edit as rotations change. */
+const COFFEE_BEANS = [
+  {
+    name: "House Espresso Blend",
+    origin: "House blend",
+    roast: "For espresso bar",
+    notes: "Base for espresso, lattes, cappuccinos, and flavored drinks on the caffeine bar.",
+    active: true
+  },
+  {
+    name: "Pour Over Rotation",
+    origin: "Rotating single-origin",
+    roast: "Varies",
+    notes: "Ask your barista for today's offering — $5 pour over.",
+    active: true
+  },
+  {
+    name: "Drip / Batch Brew",
+    origin: "Rotating",
+    roast: "Varies",
+    notes: "Regular drip $3 · Bottomless drip $5.",
+    active: true
+  }
+];
+
+/** Milk options at the caffeine bar. */
+const COFFEE_MILK_OPTIONS = [
+  { name: "Whole milk", description: "Default for steamed drinks unless guest asks otherwise." },
+  { name: "Oat milk", description: "Available on request for lattes, cappuccinos, and other milk drinks." }
+];
+
+/** Caffeine bar menu — grouped like the in-house menu board. dairy: true = contains milk/dairy. Milk drinks: whole milk or oat milk on request. */
+const COFFEE_MENU_DRINKS = [
+  { group: "Purists", name: "Espresso", price: "$3", description: "Straight espresso shot.", dairy: false },
+  { group: "Purists", name: "Americano", price: "$3", description: "Espresso + hot water.", dairy: false },
+  { group: "Purists", name: "Short Long Black", price: "$3", description: "Short espresso with water — stronger than a standard americano.", dairy: false },
+  { group: "Purists", name: "Cortado", price: "$3.50", description: "Espresso cut with steamed milk (whole or oat).", dairy: true },
+  { group: "Purists", name: "Cappuccino", price: "$4", description: "Espresso + textured milk, slightly more foam. Whole or oat milk.", dairy: true },
+  { group: "Purists", name: "Latte", price: "$5", description: "Espresso + steamed milk, thin microfoam. Whole or oat milk.", dairy: true },
+  { group: "Purists", name: "Cold Brew Nitro", price: "$4", description: "Nitrogen-infused cold brew on tap.", dairy: false },
+  { group: "Purists", name: "Drip", price: "$3", description: "Batch brewed coffee.", dairy: false },
+  { group: "Purists", name: "Bottomless Drip", price: "$5", description: "Batch brewed coffee — refills while dining.", dairy: false },
+  { group: "Pour Over", name: "Rotating Offerings", price: "$5", description: "Single-origin or feature coffee — ask your barista what's on.", dairy: false },
+  { group: "Flavored", name: "Vietnamese", price: "$5.50", description: "Sweetened condensed milk + espresso over ice.", dairy: true },
+  { group: "Flavored", name: "Dutch Apple Pie", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with Dutch apple pie flavor. Whole or oat milk.", dairy: true },
+  { group: "Flavored", name: "Tres Leches", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with tres leches flavor. Whole or oat milk.", dairy: true },
+  { group: "Flavored", name: "Strawberry Matcha", price: "$5.50", description: "Matcha with strawberry, vanilla, and rose.", dairy: true, tags: ["Matcha"] },
+  { group: "Flavored", name: "Seasonal", price: "$5 / $6", description: "Rotating seasonal flavor — cappuccino ($5) or latte ($6). Whole or oat milk. See Seasonal Lattes tab when active.", dairy: true },
+  { group: "Tea", name: "Hot Tea", price: "$2.50", description: "Hot brewed tea — ask what's available.", dairy: false },
+  { group: "Tea", name: "Iced Tea", price: "$2", description: "Iced brewed tea.", dairy: false },
+  { group: "Tea", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade.", dairy: false }
+];
+
+/** Wine, Shirley (rotating), and NA beverages — from the taproom drink menu. */
+const BAR_MENU_DRINKS = [
+  { group: "Wine", section: "wine", name: "Chardonnay", price: "$12 / $48", description: "La Ribera Vineyard Mendocino — Moniker, WA.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Rosé", price: "$10 / $40", description: "G.D. Vajra, Piedmont, Italy.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Orange Wine", price: "$12 / $48", description: "Domo Arigato Mr. Ramato — Field Recordings, CA.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Malbec", price: "$12 / $48", description: "Domaine Bousquet, Mendoza, Argentina.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Cabernet Sauvignon", price: "$12 / $48", description: "Milbrandt Vineyards, Wahluke Slope, WA.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Prosecco", price: "$10 / $40", description: "Cielo, Veneto, Italy.", detail: "Glass / bottle", dairy: false },
+  { group: "Shirley", section: "cocktails", name: "Rotating Shirley", price: "Market", description: "House Shirley Temple program — flavors rotate. Check the board for today's selection.", detail: "Non-alcoholic", dairy: false, rotating: true },
+  { group: "Shirley", section: "cocktails", name: "Classic Shirley", price: "Market", description: "Ginger ale or soda with grenadine and a cherry — ask bar for current build.", detail: "Non-alcoholic", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Lemonade", price: "$2.50", description: "House lemonade.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Italian Cream Soda", price: "$3", description: "Sparkling cream soda — ask for available flavors.", dairy: true },
+  { group: "NA Beverages", section: "other", name: "Arnold Palmer", price: "$2.50", description: "Iced tea and lemonade.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Iced Tea", price: "$2", description: "Iced brewed tea.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Hot Tea", price: "$2.50", description: "Hot brewed tea.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Soda", price: "$2", description: "Fountain soda.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Ginger Beer", price: "$3", description: "Lady Bird ginger beer.", dairy: false }
+];
+
+/** Seasonal latte lineup — set isNew: true when launching. */
+const SEASONAL_LATTES = [
+  {
+    name: "Seasonal Latte",
+    season: "Rotating",
+    available: true,
+    isNew: false,
+    description: "Check the caffeine bar board for the current seasonal cappuccino or latte flavor.",
+    build: "Seasonal syrup/flavor · espresso · steamed milk.",
+    training: "Ask the bar lead what's running this week and how to describe it to guests."
+  }
+];
+
+const FOOD_CATEGORY_LABELS = {
+  breakfast: "Breakfast",
+  lunch: "Lunch",
+  dinner: "Dinner",
+  weekly: "Weekly Specials"
+};
+
+const FOOD_SIDE_NOTE = "After lunch, items that include a side can be served with fries, rice, or salad — ask the guest which they prefer.";
+
+const AREPA_GUEST_DESCRIPTION = "Arepas are Venezuelan grilled corn cakes — crispy outside, soft and slightly sweet inside. A naturally gluten-free alternative to bread that we stuff with savory fillings.";
+
+/** Manhattan Project food menu. Fried items use beef tallow unless noted. Flour tortillas and brioche buns are not GF. */
+const FOOD_MENU = [
+  // ── Breakfast (Mon–Sat until 11 am) ──
+  { id: "chorizo-egg-taco", name: "Chorizo Egg Taco", category: "breakfast", section: "Breakfast", price: "$3", description: "Chorizo, egg, and potato on a flour tortilla with cheddar cheese.", glutenFree: false, dairy: true, nuts: false, notes: "Flour tortilla — not GF." },
+  { id: "black-bean-taco", name: "Black Bean Taco", category: "breakfast", section: "Breakfast", price: "$3", description: "Black beans, bacon, avocado, and cheddar on a flour tortilla.", glutenFree: false, dairy: true, nuts: false, notes: "Flour tortilla — not GF." },
+  { id: "sausage-egg-sandwich", name: "Sausage Egg Sandwich", category: "breakfast", section: "Breakfast", price: "$6", description: "Sausage and egg with garlic aioli and cheddar cheese on a bun.", glutenFree: false, dairy: true, nuts: false, notes: "Brioche-style bun — not GF." },
+  { id: "egg-bacon-arepa", name: "Egg + Bacon Arepa", category: "breakfast", section: "Breakfast", price: "$6", description: "Fried egg and bacon on a grilled corn arepa.", glutenFree: true, dairy: false, nuts: false, guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "pancake-sandwich", name: "Pancake Sandwich", category: "breakfast", section: "Breakfast", price: "$12", description: "Eggs, bacon, and cheddar between pancakes with a side of breakfast potatoes.", glutenFree: true, dairy: true, nuts: false, notes: "GF pancakes. Side of breakfast potatoes included." },
+  { id: "chicken-waffles", name: "Chicken + Waffles", category: "breakfast", section: "Breakfast", price: "$14", description: "Fried chicken with waffles, pecan butter, and maple syrup. Optional eggs on the side.", glutenFree: true, dairy: false, nuts: true, notes: "Contains pecan butter — ask about nut allergies." },
+  { id: "breakfast-plate", name: "Breakfast Plate", category: "breakfast", section: "Breakfast", price: "$12", description: "Two eggs, bacon, and breakfast potatoes.", glutenFree: true, dairy: false, nuts: false, notes: "Potatoes fried in beef tallow." },
+  { id: "two-pancakes", name: "Two Pancakes", category: "breakfast", section: "Breakfast", price: "$6", description: "Two GF pancakes — optional breakfast sides available.", glutenFree: true, dairy: null, nuts: false },
+  { id: "yogurt-fruit-bowl", name: "Yogurt + Fruit Bowl", category: "breakfast", section: "Breakfast", price: "$7", description: "House-composed bowl with non-fat Greek yogurt, seasonal fruit, and house-made granola.", glutenFree: true, dairy: true, nuts: null, notes: "Confirm granola allergens with kitchen if guest asks." },
+
+  // ── Lunch (regular menu) ──
+  { id: "fried-chicken-lunch", name: "Fried Chicken Lunch", category: "lunch", section: "Lunch Menu", price: "$15", description: "Two pieces of fried chicken with Nam Jim, two sides, and an 8 oz beer.", glutenFree: true, dairy: false, nuts: false, notes: "Suggest Nam Jim for best flavor. Side choice: fries, rice, or salad. Beer served separately." },
+  { id: "arepas-lunch", name: "Arepas Lunch", category: "lunch", section: "Lunch Menu", price: "$13", description: "Two arepas and a side salad.", glutenFree: true, dairy: null, nuts: false, notes: "Side choice when applicable: fries, rice, or salad.", guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "saturday-soft-pretzel", name: "Saturday Soft Pretzel", category: "lunch", section: "Lunch Menu", price: "$10", description: "Soft pretzel with house-made queso and Hoppenheimer mustard.", glutenFree: false, dairy: true, nuts: false, notes: "House-made sauces. Pretzel — not GF." },
+
+  // ── Dinner ──
+  { id: "fried-chicken-2pc", name: "Fried Chicken — Two Piece", category: "dinner", section: "Chicken", price: "$7", description: "Traditional or tossed in Thai chili or Buffalo. Served with Nam Jim.", glutenFree: true, dairy: false, nuts: false, notes: "Always offer Nam Jim — suggest it for the best taste." },
+  { id: "fried-chicken-half", name: "Fried Chicken — Half", category: "dinner", section: "Chicken", price: "$15", description: "Traditional or tossed in Thai chili or Buffalo. Served with Nam Jim.", glutenFree: true, dairy: false, nuts: false, notes: "Suggest Nam Jim for the best taste." },
+  { id: "fried-chicken-whole", name: "Fried Chicken — Whole", category: "dinner", section: "Chicken", price: "$30", description: "Traditional or tossed in Thai chili or Buffalo. Served with Nam Jim.", glutenFree: true, dairy: false, nuts: false, notes: "Suggest Nam Jim for the best taste." },
+  { id: "chicken-tenders", name: "Chicken Tenders", category: "dinner", section: "Chicken", price: "$9", description: "Three hand-battered tenders with Nam Jim. Add combo with fries +$4.", glutenFree: true, dairy: false, nuts: false, notes: "Suggest Nam Jim. Combo side: fries, rice, or salad." },
+  { id: "bacon-cheeseburger", name: "Bacon Cheeseburger", category: "dinner", section: "Grill", price: "$14", description: "6 oz patty on a brioche bun with pickled green tomatoes, onions, spicy mustard, aioli, and bacon. Add combo with fries +$4.", glutenFree: false, dairy: true, nuts: false, notes: "Brioche bun — not GF. Combo side: fries, rice, or salad." },
+  { id: "steak-frites", name: "Steak Frites", category: "dinner", section: "Grill", price: "$20", description: "6 oz cut skirt steak with chimichurri and fries.", glutenFree: true, dairy: false, nuts: false, notes: "Fries cooked in beef tallow." },
+  { id: "steak-chimichurri-nachos-sm", name: "Steak Chimichurri Nachos (Small)", category: "dinner", section: "Grill", price: "$12", description: "Housemade tortilla chips, cheddar, black beans, onions, and fresh jalapeño.", glutenFree: true, dairy: true, nuts: false },
+  { id: "steak-chimichurri-nachos-lg", name: "Steak Chimichurri Nachos (Large)", category: "dinner", section: "Grill", price: "$22", description: "Housemade tortilla chips, cheddar, black beans, onions, and fresh jalapeño.", glutenFree: true, dairy: true, nuts: false },
+  { id: "bowl-avocado", name: "Build a Bowl — Avocado", category: "dinner", section: "Build a Bowl", price: "$15", description: "Base of quinoa or rice with sautéed veggies and avocado.", glutenFree: true, dairy: false, nuts: false },
+  { id: "bowl-two-eggs", name: "Build a Bowl — Two Eggs", category: "dinner", section: "Build a Bowl", price: "$15", description: "Base of quinoa or rice with sautéed veggies and two eggs.", glutenFree: true, dairy: false, nuts: false },
+  { id: "bowl-burger-patty", name: "Build a Bowl — Burger Patty", category: "dinner", section: "Build a Bowl", price: "$16", description: "Base of quinoa or rice with sautéed veggies and a 6 oz burger patty.", glutenFree: true, dairy: false, nuts: false },
+  { id: "bowl-steak", name: "Build a Bowl — Steak", category: "dinner", section: "Build a Bowl", price: "$20", description: "Base of quinoa or rice with sautéed veggies and steak.", glutenFree: true, dairy: false, nuts: false },
+  { id: "bowl-salmon", name: "Build a Bowl — Salmon", category: "dinner", section: "Build a Bowl", price: "$20", description: "Base of quinoa or rice with sautéed veggies and salmon.", glutenFree: true, dairy: false, nuts: false },
+  { id: "arepa-braised-pork", name: "Arepa — Braised Pork", category: "dinner", section: "Arepas", price: "$6", description: "Braised pork, cilantro, lime, and cotija on a grilled corn arepa. Add avocado +$2.", glutenFree: true, dairy: true, nuts: false, guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "arepa-pickled-tomato", name: "Arepa — Pickled Green Tomato", category: "dinner", section: "Arepas", price: "$6", description: "Pickled green tomato and white cheddar on a grilled corn arepa. Add bacon +$2.", glutenFree: true, dairy: true, nuts: false, guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "arepa-black-bean", name: "Arepa — Black Bean", category: "dinner", section: "Arepas", price: "$6", description: "Black beans, avocado, and cotija on a grilled corn arepa.", glutenFree: true, dairy: true, nuts: false, guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "arepa-fried-egg", name: "Arepa — Fried Egg", category: "dinner", section: "Arepas", price: "$6", description: "Fried egg, white cheddar, and bacon on a grilled corn arepa.", glutenFree: true, dairy: true, nuts: false, guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "arepa-caprese", name: "Arepa — Caprese", category: "dinner", section: "Arepas", price: "$8", description: "Heirloom tomatoes, fresh mozzarella, red onion, pesto, and balsamic on a grilled corn arepa.", glutenFree: true, dairy: true, nuts: true, notes: "Pesto contains nuts.", guestDescription: AREPA_GUEST_DESCRIPTION },
+  { id: "cobb-salad", name: "Cobb Salad", category: "dinner", section: "Salads", price: "$14", description: "Avocado, bacon, corn, egg, cheddar, and herb yogurt dressing.", glutenFree: true, dairy: true, nuts: false, notes: "Add tossed chicken +$2 or steak +$8." },
+  { id: "salmon-salad", name: "Salmon Salad", category: "dinner", section: "Salads", price: "$22", description: "Salmon with feta, olives, tomatoes, cucumbers, purple onion, and lemon oregano vinaigrette.", glutenFree: true, dairy: true, nuts: false },
+  { id: "asian-chopped-salad", name: "Asian Chopped Salad", category: "dinner", section: "Salads", price: "$18", description: "Grilled chicken, almonds, fried rice noodles, bell pepper, carrots, herbs, and sesame dressing.", glutenFree: true, dairy: false, nuts: true },
+  { id: "cheese-board-sm", name: "Cheese Board (Small)", category: "dinner", section: "Snacks + Sides", price: "$16", description: "Smoked gouda, herb-crusted goat cheese, and gruyère with hummus, arepa chips, seasoned nuts, fruit, and jam.", glutenFree: true, dairy: true, nuts: true },
+  { id: "cheese-board-lg", name: "Cheese Board (Large)", category: "dinner", section: "Snacks + Sides", price: "$30", description: "Smoked gouda, herb-crusted goat cheese, and gruyère with hummus, arepa chips, seasoned nuts, fruit, and jam.", glutenFree: true, dairy: true, nuts: true },
+  { id: "hummus", name: "Hummus", category: "dinner", section: "Snacks + Sides", price: "$10", description: "House hummus made from chickpeas, served with carrots, cucumber, radish, and cauliflower plus arepa chips.", glutenFree: true, dairy: false, nuts: false },
+  { id: "french-fries", name: "French Fries", category: "dinner", section: "Snacks + Sides", price: "$8", description: "Served with aioli. Cooked in beef tallow.", glutenFree: true, dairy: true, nuts: false, notes: "Aioli contains dairy/egg." },
+  { id: "truffle-fries", name: "Truffle Fries", category: "dinner", section: "Snacks + Sides", price: "$10", description: "Tossed in truffle oil, topped with Parmesan, served with aioli. Cooked in beef tallow.", glutenFree: true, dairy: true, nuts: false },
+  { id: "chips-salsa", name: "Chips and Salsa", category: "dinner", section: "Snacks + Sides", price: "$7", description: "House-made chips with house-made salsa.", glutenFree: true, dairy: false, nuts: false },
+  { id: "chips-queso", name: "Chips and Queso", category: "dinner", section: "Snacks + Sides", price: "$8", description: "White cheddar queso with jalapeño on top, flavored with house-made salsa.", glutenFree: true, dairy: true, nuts: false },
+  { id: "pork-rinds", name: "Pork Rinds", category: "dinner", section: "Snacks + Sides", price: "$5", description: "Crispy pork rinds. Add queso +$6.", glutenFree: true, dairy: null, nuts: false },
+  { id: "jasmine-rice", name: "Jasmine Rice", category: "dinner", section: "Snacks + Sides", price: "$2", description: "Side of jasmine rice.", glutenFree: true, dairy: false, nuts: false },
+  { id: "biltong", name: "Biltong", category: "dinner", section: "Snacks + Sides", price: "$8", description: "Air-dried South African cured beef — dried for 50 hours.", glutenFree: true, dairy: false, nuts: false },
+  { id: "sauce-garlic-aioli", name: "Garlic Aioli", category: "dinner", section: "Sauces", price: "$1", description: "Housemade daily.", glutenFree: true, dairy: true, nuts: false, notes: "Contains egg/dairy." },
+  { id: "sauce-curry-aioli", name: "Curry Aioli", category: "dinner", section: "Sauces", price: "$1", description: "Housemade daily.", glutenFree: true, dairy: true, nuts: false },
+  { id: "sauce-hoppenheimer", name: "Hoppenheimer Mustard", category: "dinner", section: "Sauces", price: "$1", description: "House mustard — less spicy than Dijon, with a wasabi-like bite. Made with our hop beer.", glutenFree: true, dairy: false, nuts: false },
+  { id: "sauce-nam-jim", name: "Nam Jim", category: "dinner", section: "Sauces", price: "$1", description: "Lime, garlic, cilantro, and fish sauce — pair with fried chicken.", glutenFree: true, dairy: false, nuts: false, notes: "Suggest with chicken for best taste." },
+  { id: "sauce-chimichurri", name: "Chimichurri", category: "dinner", section: "Sauces", price: "$1", description: "Parsley, cilantro, garlic, and avocado oil.", glutenFree: true, dairy: false, nuts: false },
+  { id: "sauce-herb-yogurt", name: "Herb Yogurt", category: "dinner", section: "Sauces", price: "$1", description: "Yogurt and garlic aioli base with parsley, dill, and chives.", glutenFree: true, dairy: true, nuts: false },
+  { id: "sauce-thai-chili", name: "Sweet Thai Chili", category: "dinner", section: "Sauces", price: "$1", description: "Sweet Thai chili with soy sauce and sesame oil.", glutenFree: false, dairy: false, nuts: false, notes: "Contains soy — not GF." },
+  { id: "sauce-buffalo", name: "Buffalo", category: "dinner", section: "Sauces", price: "$1", description: "Housemade daily.", glutenFree: true, dairy: null, nuts: false },
+  { id: "horchata-dessert", name: "Horchata Dessert", category: "dinner", section: "Dessert", price: "$6", description: "Crispy arepa with cajeta sauce and ice cream.", glutenFree: true, dairy: true, nuts: false },
+  { id: "seasonal-creme-brulee", name: "Seasonal Crème Brûlée", category: "dinner", section: "Dessert", price: "$7", description: "Silky custard topped with caramelized sugar crust and mango compote.", glutenFree: true, dairy: true, nuts: false, isSpecial: true },
+  { id: "ice-cream", name: "Ice Cream", category: "dinner", section: "Dessert", price: "$5", description: "Scoop of cinnamon ice cream.", glutenFree: true, dairy: true, nuts: null }
+];
+
+const WEEKLY_SPECIALS = [
+  {
+    id: "monday-lunch",
+    day: "monday",
+    dayLabel: "Monday",
+    meal: "Lunch",
+    schedule: "11 am until sold out",
+    name: "This Week's Monday Lunch",
+    price: "Market price",
+    description: "Update with this week's Monday lunch dish, components, and guest-facing description.",
+    build: "Add plating, sides, and any modifications for the line.",
+    training: "Staff talking points: how to describe it, upsell pairings, and allergen reminders for this week.",
+    glutenFree: null,
+    dairy: null,
+    nuts: null,
+    active: true
+  },
+  {
+    id: "taco-tuesday",
+    day: "tuesday",
+    dayLabel: "Tuesday",
+    meal: "Lunch",
+    schedule: "11 am until sold out",
+    name: "This Week's Taco Tuesday",
+    price: "Market price",
+    description: "Update with this week's taco filling, toppings, and salsa.",
+    build: "Tortilla · protein · toppings · salsa — confirm GF/dairy with kitchen each week.",
+    training: "How to describe the taco to guests and what's different this week.",
+    glutenFree: false,
+    dairy: null,
+    nuts: null,
+    active: true,
+    notes: "Flour tortillas are not GF unless noted otherwise for the week."
+  },
+  {
+    id: "wednesday-dinner",
+    day: "wednesday",
+    dayLabel: "Wednesday",
+    meal: "Dinner",
+    schedule: "4 pm until sold out",
+    name: "This Week's Wednesday Dinner",
+    price: "Market price",
+    description: "Update with this week's Wednesday dinner feature.",
+    build: "Add the full plate build and any beer or coffee pairings you want staff to mention.",
+    training: "Staff talking points for tonight's dinner special.",
+    glutenFree: null,
+    dairy: null,
+    nuts: null,
+    active: true
+  }
+];
 
 const COFFEE_SECTIONS = [
   {
@@ -2036,6 +3025,13 @@ async function loadData() {
       } catch (foodError) {
         console.warn("Food data could not be loaded:", foodError);
       }
+    } else {
+      foods = FOOD_MENU.map(item => ({
+        Name: item.name,
+        "Description / ingredients": item.description,
+        Special: item.isSpecial ? "Yes" : "",
+        "New Special": item.isNew ? "Yes" : ""
+      }));
     }
 
     render();
@@ -2080,6 +3076,19 @@ function getABVText(item) {
 
 function isYes(val) {
   return (val || "").toLowerCase().trim().startsWith("yes");
+}
+
+function isFoodSpecial(item) {
+  return (
+    isYes(item["New"]) ||
+    isYes(item["Special"]) ||
+    isYes(item["New Special"]) ||
+    isYes(item["Food Special"])
+  );
+}
+
+function getStaffNotes(item) {
+  return col(item, "Staff Notes") || col(item, "Training Notes");
 }
 
 function isOnTap(item) {
@@ -2136,22 +3145,43 @@ function render() {
   const searchWrap = document.getElementById("searchWrap");
 
   const showFilters = activeType === "beer" || activeType === "ontap";
-  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee";
+  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "reviews";
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
 
-  if (activeType === "beer" || activeType === "food" || activeType === "ontap") {
+  if (activeType === "beer" || activeType === "ontap") {
     destroyCharts();
     renderList(content);
+  } else if (activeType === "food") {
+    destroyCharts();
+    renderFood(content);
   } else if (activeType === "coffee") {
     destroyCharts();
     renderCoffee(content);
+  } else if (activeType === "bar") {
+    destroyCharts();
+    renderBarMenu(content);
+  } else if (activeType === "merch") {
+    destroyCharts();
+    renderMerch(content);
+  } else if (activeType === "inventory") {
+    destroyCharts();
+    renderInventory(content);
+  } else if (activeType === "reviews") {
+    destroyCharts();
+    renderReviews(content);
   } else if (activeType === "games") {
     destroyCharts();
     renderGames(content);
   } else if (activeType === "progress") {
     renderMyProgress(content);
+  } else if (activeType === "shift-survey") {
+    destroyCharts();
+    renderShiftSurvey(content);
+  } else if (activeType === "shift-reports") {
+    destroyCharts();
+    renderShiftReports(content);
   } else if (activeType === "team") {
     renderTeamDashboard(content);
   }
@@ -2183,6 +3213,29 @@ async function apiFetch(path, options = {}) {
   return data;
 }
 
+function roleLabel(role) {
+  if (role === "admin") return "Admin";
+  if (role === "merch") return "Merch";
+  if (role === "shift_lead") return "Shift Lead";
+  return "Employee";
+}
+
+function isShiftLeadManager() {
+  return currentUser && (currentUser.role === "admin" || currentUser.role === "shift_lead");
+}
+
+function canSubmitShiftSurvey() {
+  return currentUser && (currentUser.role === "employee" || currentUser.role === "shift_lead");
+}
+
+function isInventoryManager() {
+  return currentUser && (currentUser.role === "admin" || currentUser.role === "shift_lead");
+}
+
+function isMerchManager() {
+  return currentUser && (currentUser.role === "admin" || currentUser.role === "merch");
+}
+
 function updateAuthUI() {
   const authBar = document.getElementById("authBar");
   document.querySelectorAll(".tab-auth-only").forEach(el => {
@@ -2190,6 +3243,12 @@ function updateAuthUI() {
   });
   document.querySelectorAll(".tab-admin-only").forEach(el => {
     el.style.display = currentUser && currentUser.role === "admin" ? "" : "none";
+  });
+  document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
+    el.style.display = isShiftLeadManager() ? "" : "none";
+  });
+  document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
+    el.style.display = canSubmitShiftSurvey() ? "" : "none";
   });
 
   if (!currentUser) {
@@ -2203,7 +3262,7 @@ function updateAuthUI() {
   authBar.innerHTML = `
     <div class="auth-user">
       <strong>${escapeHTML(currentUser.name)}</strong>
-      ${currentUser.role === "admin" ? "Admin" : "Employee"}
+      ${roleLabel(currentUser.role)}
     </div>
     <button class="auth-btn" onclick="logout()">Log out</button>
   `;
@@ -2245,7 +3304,7 @@ function renderAuthModal() {
     <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
       <h3>${isRegister ? "Create employee account" : "Log in"}</h3>
       <p class="hint">${isRegister
-        ? "Staff sign up here to track training progress. The first account becomes admin. Managers can also register with the admin setup key."
+        ? "Staff sign up here to track training progress. The first account becomes admin. Managers, merch leads, and shift leads can register with a setup key."
         : "Log in to save your quiz scores and track training progress."}</p>
       <div id="authError"></div>
       <label for="authName">Full name</label>
@@ -2257,6 +3316,10 @@ function renderAuthModal() {
       ${isRegister ? `
         <label for="authAdminKey">Admin setup key (optional)</label>
         <input id="authAdminKey" type="password" placeholder="Only for manager/admin accounts">
+        <label for="authMerchKey">Merch setup key (optional)</label>
+        <input id="authMerchKey" type="password" placeholder="Only for merch manager accounts">
+        <label for="authShiftLeadKey">Shift lead setup key (optional)</label>
+        <input id="authShiftLeadKey" type="password" placeholder="Only for shift lead accounts">
       ` : ""}
       <button class="game-next" style="width:100%;" onclick="submitAuth()">${isRegister ? "Create account" : "Log in"}</button>
       <p class="hint" style="margin-top:14px;text-align:center;">
@@ -2280,9 +3343,11 @@ async function submitAuth() {
     if (authMode === "register") {
       const name = document.getElementById("authName").value.trim();
       const adminKey = document.getElementById("authAdminKey")?.value || "";
+      const merchKey = document.getElementById("authMerchKey")?.value || "";
+      const shiftLeadKey = document.getElementById("authShiftLeadKey")?.value || "";
       data = await apiFetch("/api/auth/register", {
         method: "POST",
-        body: JSON.stringify({ name, email, password, adminKey })
+        body: JSON.stringify({ name, email, password, adminKey, merchKey, shiftLeadKey })
       });
     } else {
       data = await apiFetch("/api/auth/login", {
@@ -2296,7 +3361,10 @@ async function submitAuth() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
-    if (activeType === "progress" || activeType === "team") render();
+    if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") render();
+    await maybeShowDailyBriefing();
+    await maybePromptShiftSurvey();
+    await maybeShowShiftDigest();
   } catch (err) {
     errorEl.innerHTML = `<div class="auth-error">${escapeHTML(err.message)}</div>`;
   }
@@ -2308,13 +3376,259 @@ function logout() {
   myProgressData = null;
   teamData = null;
   teamDetailId = null;
+  briefingView = "list";
+  briefingActiveItem = null;
+  currentBriefingItems = [];
   localStorage.removeItem("mp_auth_token");
   updateAuthUI();
-  if (activeType === "progress" || activeType === "team") {
+  if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") {
     activeType = "ontap";
     document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
   }
   render();
+}
+
+function collectNewAnnouncements() {
+  const items = [];
+
+  beers
+    .filter(b => col(b, "Name") && isOnTap(b) && isYes(b["New Tap"]))
+    .forEach(b => {
+      const summary = [getStyle(b), getFlavorProfile(b) || getDescription(b)].filter(Boolean).join(" — ");
+      items.push({
+        key: `beer:${col(b, "Name")}`,
+        type: "beer",
+        label: "New on tap",
+        title: col(b, "Name"),
+        summary: summary || "New beer on the tap list."
+      });
+    });
+
+  foods
+    .filter(f => col(f, "Name") && isFoodSpecial(f))
+    .forEach(f => {
+      items.push({
+        key: `food:${col(f, "Name")}`,
+        type: "food",
+        label: "Food special",
+        title: col(f, "Name"),
+        summary: getDescription(f) || getFlavorProfile(f) || "New food special on the menu."
+      });
+    });
+
+  FOOD_MENU
+    .filter(item => item.isNew || item.isSpecial)
+    .forEach(item => {
+      if (items.some(entry => entry.key === `food:${item.name}`)) return;
+      items.push({
+        key: `food:${item.name}`,
+        type: "food",
+        label: "Food special",
+        title: item.name,
+        summary: item.description || "New or featured item on the food menu."
+      });
+    });
+
+  SEASONAL_LATTES
+    .filter(l => l.available && l.isNew)
+    .forEach(l => {
+      items.push({
+        key: `latte:${l.name}`,
+        type: "latte",
+        label: "Seasonal latte",
+        title: l.name,
+        summary: l.description || l.season
+      });
+    });
+
+  const todayWeekly = getTodayWeeklySpecial();
+  if (todayWeekly && todayWeekly.active) {
+    items.push({
+      key: getWeeklySpecialViewKey(todayWeekly),
+      type: "weekly",
+      specialId: todayWeekly.id,
+      label: `${todayWeekly.dayLabel} special`,
+      title: todayWeekly.name,
+      summary: todayWeekly.description
+    });
+  }
+
+  return items;
+}
+
+async function maybeShowDailyBriefing() {
+  if (!currentUser || currentUser.role !== "employee") return;
+
+  const items = collectNewAnnouncements();
+  if (!items.length) return;
+
+  try {
+    const state = await apiFetch("/api/announcements/state");
+    if (state.briefingShownToday) return;
+
+    briefingViewedKeys = new Set(state.viewedKeys || []);
+    currentBriefingItems = items;
+    briefingView = "list";
+    briefingActiveItem = null;
+
+    await apiFetch("/api/announcements/briefing-shown", { method: "POST" });
+    openBriefingModal();
+  } catch (err) {
+    console.warn("Daily briefing unavailable:", err.message);
+  }
+}
+
+function openBriefingModal() {
+  renderBriefingModal();
+  document.getElementById("briefingBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeBriefingModal(event) {
+  if (event && event.target !== document.getElementById("briefingBackdrop")) return;
+  document.getElementById("briefingBackdrop").classList.remove("show");
+  document.body.style.overflow = "";
+  briefingView = "list";
+  briefingActiveItem = null;
+}
+
+function renderBriefingModal() {
+  const el = document.getElementById("briefingContent");
+  if (!el) return;
+
+  if (briefingView === "detail" && briefingActiveItem) {
+    el.innerHTML = `
+      <button type="button" class="briefing-back" onclick="briefingView='list'; briefingActiveItem=null; renderBriefingModal();">← Back to what's new</button>
+      ${buildAnnouncementTrainingHtml(briefingActiveItem)}
+      <button type="button" class="game-next briefing-done" onclick="closeBriefingModal()">Done</button>
+    `;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="briefing-header">
+      <h2 id="briefingTitle">What's new today</h2>
+      <p>Quick read on new taps, weekly food specials, seasonal drinks, and more. Tap each item to learn what to know before your shift.</p>
+    </div>
+    <div class="briefing-list">
+      ${currentBriefingItems.map(item => {
+        const viewed = briefingViewedKeys.has(item.key);
+        return `
+          <button type="button" class="briefing-item${viewed ? " viewed" : ""}" onclick="openBriefingItem('${escapeForAttribute(item.key)}')">
+            <div class="briefing-item-body">
+              <p class="briefing-item-label">${escapeHTML(item.label)}</p>
+              <p class="briefing-item-title">${escapeHTML(item.title)}</p>
+              <p class="briefing-item-summary">${escapeHTML(item.summary)}</p>
+              ${viewed ? `<span class="briefing-viewed-tag">Reviewed</span>` : ""}
+            </div>
+            <span class="briefing-item-arrow" aria-hidden="true">›</span>
+          </button>
+        `;
+      }).join("")}
+    </div>
+    <button type="button" class="game-next briefing-done" onclick="closeBriefingModal()">Got it — start training</button>
+  `;
+}
+
+async function openBriefingItem(itemKey) {
+  const item = currentBriefingItems.find(entry => entry.key === itemKey);
+  if (!item) return;
+
+  briefingActiveItem = item;
+  briefingView = "detail";
+  briefingViewedKeys.add(itemKey);
+  renderBriefingModal();
+
+  try {
+    await apiFetch("/api/announcements/view", {
+      method: "POST",
+      body: JSON.stringify({ itemKey })
+    });
+  } catch (err) {
+    console.warn("Could not save announcement view:", err.message);
+  }
+}
+
+function buildAnnouncementTrainingHtml(item) {
+  if (item.type === "beer") {
+    const beer = beers.find(b => col(b, "Name") === item.title);
+    if (!beer) {
+      return `<p class="detail-text">This beer is no longer on the list. Check the On Tap tab for current taps.</p>`;
+    }
+
+    const flavor = getFlavorProfile(beer);
+    const description = getDescription(beer);
+    const guidance = getGuestGuidance(beer);
+    const tapNumber = getTapNumber(beer);
+    const abv = getABVText(beer);
+    const style = getStyle(beer);
+    const gf = isYes(beer["Gluten-Reduced"]);
+
+    return `
+      <p class="coffee-section-num">${escapeHTML(item.label)}</p>
+      <h2 class="modal-title">${escapeHTML(item.title)}</h2>
+      <p class="modal-style">${[style, abv ? abv + " ABV" : "", tapNumber ? "Tap " + tapNumber : ""].filter(Boolean).map(v => escapeHTML(v)).join(" · ")}</p>
+      <div class="tags">${gf ? `<span class="tag gf">Gluten-reduced</span>` : ""}</div>
+      ${flavor ? `<div class="detail-section"><p class="detail-label">Flavor profile</p><p class="detail-text">${escapeHTML(flavor)}</p></div>` : ""}
+      ${description ? `<div class="detail-section"><p class="detail-label">Description</p><p class="detail-text">${escapeHTML(description)}</p></div>` : ""}
+      ${guidance ? `<div class="detail-section manual-callout"><p class="detail-label">What to tell guests</p><p class="detail-text">${escapeHTML(guidance)}</p></div>` : ""}
+      ${getStaffNotes(beer) ? `<div class="detail-section"><p class="detail-label">Staff notes</p><p class="detail-text">${escapeHTML(getStaffNotes(beer))}</p></div>` : ""}
+    `;
+  }
+
+  if (item.type === "food") {
+    const food = FOOD_MENU.find(entry => entry.name === item.title) ||
+      foods.find(f => col(f, "Name") === item.title);
+    if (!food) {
+      return `<p class="detail-text">This food item is no longer on the list. Check the Food tab for current specials.</p>`;
+    }
+
+    if (food.id) {
+      return buildFoodDetailHtml(food);
+    }
+
+    const description = getDescription(food);
+    const flavor = getFlavorProfile(food);
+    const guidance = getGuestGuidance(food);
+    const staffNotes = getStaffNotes(food);
+
+    return `
+      <p class="coffee-section-num">${escapeHTML(item.label)}</p>
+      <h2 class="modal-title">${escapeHTML(item.title)}</h2>
+      ${description ? `<div class="detail-section"><p class="detail-label">Description / ingredients</p><p class="detail-text">${escapeHTML(description)}</p></div>` : ""}
+      ${flavor ? `<div class="detail-section"><p class="detail-label">Flavor profile</p><p class="detail-text">${escapeHTML(flavor)}</p></div>` : ""}
+      ${guidance ? `<div class="detail-section manual-callout"><p class="detail-label">What to tell guests</p><p class="detail-text">${escapeHTML(guidance)}</p></div>` : ""}
+      ${staffNotes ? `<div class="detail-section"><p class="detail-label">Staff notes</p><p class="detail-text">${escapeHTML(staffNotes)}</p></div>` : ""}
+    `;
+  }
+
+  if (item.type === "latte") {
+    const latte = SEASONAL_LATTES.find(entry => entry.name === item.title);
+    if (!latte) {
+      return `<p class="detail-text">This seasonal drink is no longer listed. Check Coffee → Seasonal Lattes.</p>`;
+    }
+
+    return `
+      <p class="coffee-section-num">${escapeHTML(item.label)} · ${escapeHTML(latte.season)}</p>
+      <h2 class="modal-title">${escapeHTML(latte.name)}</h2>
+      <p class="modal-style">${escapeHTML(latte.description)}</p>
+      <div class="detail-section">
+        <p class="detail-label">Build</p>
+        <p class="detail-text">${escapeHTML(latte.build)}</p>
+      </div>
+      ${latte.training ? `<div class="detail-section manual-callout"><p class="detail-label">Staff talking points</p><p class="detail-text">${escapeHTML(latte.training)}</p></div>` : ""}
+    `;
+  }
+
+  if (item.type === "weekly") {
+    const special = WEEKLY_SPECIALS.find(entry => entry.id === item.specialId) || getTodayWeeklySpecial();
+    if (!special) {
+      return `<p class="detail-text">No weekly special configured. Check Food → Weekly Specials.</p>`;
+    }
+    return buildWeeklySpecialTrainingHtml(special);
+  }
+
+  return `<p class="detail-text">No training details available for this item.</p>`;
 }
 
 async function recordProgress(activityType, category, score, total) {
@@ -2676,6 +3990,296 @@ async function fetchTeamActivityBreakdown(staff) {
   }
 }
 
+function formatSurveyTimestamp(value) {
+  if (!value) return "";
+  const normalized = String(value).includes("T") ? value : String(value).replace(" ", "T");
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+}
+
+const SHIFT_SURVEY_LABELS = {
+  1: "Rough",
+  2: "OK",
+  3: "Good",
+  4: "Great",
+  5: "Excellent"
+};
+
+function getLocalHour() {
+  return new Date().getHours();
+}
+
+function formatShiftDateLabel(dateKey) {
+  if (!dateKey) return "";
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+}
+
+function renderSurveyStars(rating) {
+  return "★".repeat(rating) + "☆".repeat(5 - rating);
+}
+
+function selectShiftSurveyRating(rating) {
+  shiftSurveyRating = rating;
+  document.querySelectorAll(".survey-rating-btn").forEach(btn => {
+    btn.classList.toggle("selected", Number(btn.dataset.rating) === rating);
+  });
+}
+
+async function renderShiftSurvey(content) {
+  if (!currentUser) {
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to submit your shift survey</h3><p class="hint">Anonymous end-of-shift feedback goes to the shift lead at the end of the day.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    return;
+  }
+
+  if (!canSubmitShiftSurvey()) {
+    content.innerHTML = `<div class="status"><strong>Shift surveys are for floor staff.</strong>Shift leads and managers can review responses under Shift Reports.</div>`;
+    return;
+  }
+
+  const shiftDate = getLocalDateKey();
+  content.innerHTML = `<div class="status"><strong>Loading shift survey…</strong></div>`;
+
+  try {
+    const status = await apiFetch(`/api/shift-surveys/status?date=${encodeURIComponent(shiftDate)}`);
+
+    if (status.submitted) {
+      content.innerHTML = `
+        <div class="shift-survey-panel">
+          <div class="coffee-intro">
+            <h2>End of Shift Survey</h2>
+            <p>Thanks — your anonymous feedback for ${escapeHTML(formatShiftDateLabel(shiftDate))} was submitted.</p>
+          </div>
+          <div class="survey-success">
+            <strong>Survey received.</strong> Your response is anonymous to the shift lead. You can submit one survey per shift day.
+            ${status.submittedAt ? `<br><span style="opacity:0.85;">Submitted ${escapeHTML(formatSurveyTimestamp(status.submittedAt))}</span>` : ""}
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    shiftSurveyRating = 0;
+    content.innerHTML = `
+      <div class="shift-survey-panel">
+        <div class="coffee-intro">
+          <h2>End of Shift Survey</h2>
+          <p>Anonymous feedback about how your shift went. Responses are compiled and sent to the shift lead at the end of the day — your name is never shown.</p>
+          <p style="margin-top:8px;font-size:14px;color:var(--muted);">${escapeHTML(formatShiftDateLabel(shiftDate))}</p>
+        </div>
+        <div class="auth-panel" style="max-width:none;margin:0;padding:24px;">
+          <div id="shiftSurveyError"></div>
+          <label>How did your shift go?</label>
+          <div class="survey-rating-row">
+            ${[1, 2, 3, 4, 5].map(rating => `
+              <button type="button" class="survey-rating-btn" data-rating="${rating}" onclick="selectShiftSurveyRating(${rating})">
+                <span class="survey-rating-num">${rating}</span>
+                <span class="survey-rating-label">${escapeHTML(SHIFT_SURVEY_LABELS[rating])}</span>
+              </button>
+            `).join("")}
+          </div>
+          <label for="shiftSurveyComments">Tell us more (optional)</label>
+          <textarea id="shiftSurveyComments" placeholder="What went well? What was hard? Anything the shift lead should know?"></textarea>
+          <button class="game-next" style="width:100%;margin-top:16px;" onclick="submitShiftSurvey()">Submit anonymous survey</button>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Could not load survey.</strong>${escapeHTML(err.message)}</div>`;
+  }
+}
+
+async function submitShiftSurvey() {
+  const errorEl = document.getElementById("shiftSurveyError");
+  if (errorEl) errorEl.innerHTML = "";
+
+  if (!shiftSurveyRating) {
+    if (errorEl) {
+      errorEl.innerHTML = `<div class="auth-error">Please rate your shift from 1 to 5.</div>`;
+    }
+    return;
+  }
+
+  const comments = document.getElementById("shiftSurveyComments")?.value || "";
+
+  try {
+    await apiFetch("/api/shift-surveys", {
+      method: "POST",
+      body: JSON.stringify({
+        shiftDate: getLocalDateKey(),
+        rating: shiftSurveyRating,
+        comments
+      })
+    });
+    sessionStorage.setItem(`shift-survey-prompt-${getLocalDateKey()}`, "done");
+    render();
+  } catch (err) {
+    if (errorEl) {
+      errorEl.innerHTML = `<div class="auth-error">${escapeHTML(err.message)}</div>`;
+    }
+  }
+}
+
+async function renderShiftReports(content) {
+  if (!currentUser) {
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to view shift reports</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    return;
+  }
+
+  if (!isShiftLeadManager()) {
+    content.innerHTML = `<div class="status"><strong>Shift lead access required.</strong>Only shift leads and admins can view end-of-day survey reports.</div>`;
+    return;
+  }
+
+  if (!shiftReportDate) shiftReportDate = getLocalDateKey();
+  content.innerHTML = `<div class="status"><strong>Loading shift reports…</strong></div>`;
+
+  try {
+    const data = await apiFetch(`/api/shift-surveys/daily?date=${encodeURIComponent(shiftReportDate)}`);
+
+    content.innerHTML = `
+      <div class="coffee-intro">
+        <h2>Shift Reports</h2>
+        <p>Anonymous end-of-shift feedback from floor staff. Responses are grouped by day and delivered here at the end of each shift day.</p>
+      </div>
+      <div class="shift-survey-panel" style="max-width:860px;">
+        <div class="shift-date-picker">
+          <label for="shiftReportDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Report date</label>
+          <input type="date" id="shiftReportDateInput" value="${escapeForAttribute(shiftReportDate)}" onchange="shiftReportDate=this.value; render();">
+          <button class="game-next" type="button" onclick="shiftReportDate=getLocalDateKey(); render();">Today</button>
+        </div>
+        <div class="shift-report-summary">
+          <div class="shift-report-stat">
+            <strong>${data.count}</strong>
+            <span>Responses</span>
+          </div>
+          <div class="shift-report-stat">
+            <strong>${data.averageRating ?? "—"}</strong>
+            <span>Avg rating</span>
+          </div>
+          <div class="shift-report-stat">
+            <strong>${data.digestViewed ? "Yes" : "No"}</strong>
+            <span>Digest viewed</span>
+          </div>
+        </div>
+        ${data.count ? `
+          <div class="rec-list" style="padding:0;">
+            ${data.surveys.map(survey => `
+              <div class="shift-report-card">
+                <div class="shift-report-meta">
+                  <span>Anonymous response #${survey.number}</span>
+                  <span class="shift-report-stars" aria-label="${survey.rating} out of 5">${renderSurveyStars(survey.rating)}</span>
+                </div>
+                <p style="margin:0 0 8px;font-size:14px;color:var(--muted);">${escapeHTML(SHIFT_SURVEY_LABELS[survey.rating] || "")} · ${survey.rating}/5</p>
+                <p style="margin:0;font-size:15px;line-height:1.6;">${survey.comments ? escapeHTML(survey.comments) : "<em>No written comments.</em>"}</p>
+                <p style="margin:10px 0 0;font-size:12px;color:var(--muted);">Submitted ${escapeHTML(formatSurveyTimestamp(survey.submittedAt))}</p>
+              </div>
+            `).join("")}
+          </div>
+          <button class="game-next" style="margin-top:20px;" onclick="markShiftDigestViewed('${escapeForAttribute(shiftReportDate)}')">${data.digestViewed ? "Mark reviewed again" : "Mark end-of-day digest as reviewed"}</button>
+        ` : `<div class="status"><strong>No surveys yet for this date.</strong>Staff submit anonymous feedback from the End of Shift tab after their shift.</div>`}
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Could not load shift reports.</strong>${escapeHTML(err.message)}</div>`;
+  }
+}
+
+async function markShiftDigestViewed(shiftDate, rerender = true) {
+  try {
+    await apiFetch("/api/shift-surveys/digest-viewed", {
+      method: "POST",
+      body: JSON.stringify({ shiftDate })
+    });
+    if (rerender) render();
+  } catch (err) {
+    console.warn("Could not mark digest viewed:", err.message);
+  }
+}
+
+async function maybePromptShiftSurvey() {
+  if (!canSubmitShiftSurvey()) return;
+  if (getLocalHour() < 15) return;
+
+  const dateKey = getLocalDateKey();
+  if (sessionStorage.getItem(`shift-survey-prompt-${dateKey}`)) return;
+
+  try {
+    const status = await apiFetch(`/api/shift-surveys/status?date=${encodeURIComponent(dateKey)}`);
+    if (status.submitted) {
+      sessionStorage.setItem(`shift-survey-prompt-${dateKey}`, "done");
+      return;
+    }
+
+    sessionStorage.setItem(`shift-survey-prompt-${dateKey}`, "shown");
+    document.getElementById("shiftDigestContent").innerHTML = `
+      <div class="briefing-header">
+        <h2 id="shiftDigestTitle">End of shift check-in</h2>
+        <p>Before you head out, take a minute to tell the shift lead how today went. Your feedback is anonymous.</p>
+      </div>
+      <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activeType='shift-survey'; document.querySelectorAll('#mainTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.type === 'shift-survey')); render();">Fill out survey</button>
+      <button type="button" class="briefing-back" style="margin-top:12px;" onclick="closeShiftDigestModal()">Remind me later</button>
+    `;
+    document.getElementById("shiftDigestBackdrop").classList.add("show");
+    document.body.style.overflow = "hidden";
+  } catch (err) {
+    console.warn("Shift survey prompt unavailable:", err.message);
+  }
+}
+
+async function maybeShowShiftDigest() {
+  if (!isShiftLeadManager()) return;
+  if (getLocalHour() < 21) return;
+
+  const dateKey = getLocalDateKey();
+  if (sessionStorage.getItem(`shift-digest-shown-${dateKey}`)) return;
+
+  try {
+    const data = await apiFetch(`/api/shift-surveys/daily?date=${encodeURIComponent(dateKey)}`);
+    if (!data.count || data.digestViewed) return;
+
+    sessionStorage.setItem(`shift-digest-shown-${dateKey}`, "1");
+    renderShiftDigestModal(data);
+    document.getElementById("shiftDigestBackdrop").classList.add("show");
+    document.body.style.overflow = "hidden";
+    await apiFetch("/api/shift-surveys/digest-viewed", {
+      method: "POST",
+      body: JSON.stringify({ shiftDate: dateKey })
+    });
+  } catch (err) {
+    console.warn("Shift digest unavailable:", err.message);
+  }
+}
+
+function renderShiftDigestModal(data) {
+  document.getElementById("shiftDigestContent").innerHTML = `
+    <div class="briefing-header">
+      <h2 id="shiftDigestTitle">End of day shift reports</h2>
+      <p>${data.count} anonymous ${data.count === 1 ? "response" : "responses"} for ${escapeHTML(formatShiftDateLabel(data.shiftDate))}. Average rating: ${data.averageRating ?? "—"} / 5.</p>
+    </div>
+    <div class="briefing-list">
+      ${data.surveys.map(survey => `
+        <div class="briefing-item" style="cursor:default;">
+          <div class="briefing-item-body">
+            <p class="briefing-item-label">Anonymous #${survey.number}</p>
+            <p class="briefing-item-title">${renderSurveyStars(survey.rating)} · ${escapeHTML(SHIFT_SURVEY_LABELS[survey.rating] || "")}</p>
+            <p class="briefing-item-summary">${survey.comments ? escapeHTML(survey.comments) : "No written comments."}</p>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+    <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activeType='shift-reports'; document.querySelectorAll('#mainTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.type === 'shift-reports')); render();">Open full report</button>
+    <button type="button" class="briefing-back" style="margin-top:12px;" onclick="closeShiftDigestModal()">Close</button>
+  `;
+}
+
+function closeShiftDigestModal(event) {
+  if (event && event.target !== document.getElementById("shiftDigestBackdrop")) return;
+  document.getElementById("shiftDigestBackdrop").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
 async function renderMyProgress(content) {
   if (!currentUser) {
     content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
@@ -2761,7 +4365,7 @@ async function renderTeamDashboard(content) {
       content.innerHTML = `
         <div class="coffee-intro">
           <h2>${escapeHTML(data.user.name)}</h2>
-          <p>${escapeHTML(data.user.email)} · ${data.user.role}</p>
+          <p>${escapeHTML(data.user.email)} · ${escapeHTML(roleLabel(data.user.role))}</p>
         </div>
         <div style="padding:0 20px 12px;max-width:960px;margin:0 auto;"><button class="game-back" onclick="teamDetailId=null; render();">← Back to team</button></div>
         <div class="metrics-grid">
@@ -2816,7 +4420,7 @@ async function renderTeamDashboard(content) {
         `).join("")}
       </table>
       ${teamData.employees.filter(emp => emp.role !== "employee").length ? `
-        <div class="status" style="margin-top:0;"><strong>Managers/admins</strong> are listed separately and don't receive training suggestions.</div>
+        <div class="status" style="margin-top:0;"><strong>Managers & merch</strong> are listed separately and don't receive training suggestions.</div>
       ` : ""}
     `;
     if (teamData.employees.some(emp => emp.role === "employee")) {
@@ -2838,40 +4442,1215 @@ function markSessionRecorded(session) {
   return false;
 }
 
+function renderDietTags(item) {
+  const tags = [];
+  if (item.glutenFree === true) tags.push(`<span class="tag gf">GF</span>`);
+  if (item.glutenFree === false) tags.push(`<span class="tag gluten">Contains gluten</span>`);
+  if (item.dairy === true) tags.push(`<span class="tag dairy">Dairy</span>`);
+  if (item.nuts === true) tags.push(`<span class="tag nuts">Nuts</span>`);
+  if (item.isSpecial) tags.push(`<span class="tag new">Special</span>`);
+  if (item.isNew) tags.push(`<span class="tag new">New</span>`);
+  return tags.length ? `<div class="tags">${tags.join("")}</div>` : "";
+}
+
+function buildFoodDetailHtml(item) {
+  const showSideNote = item.category === "lunch" || item.category === "dinner";
+  return `
+    <p class="coffee-section-num">${escapeHTML(FOOD_CATEGORY_LABELS[item.category] || item.category)} · ${escapeHTML(item.section)}</p>
+    <h2 class="modal-title">${escapeHTML(item.name)}</h2>
+    <p class="modal-style">${escapeHTML(item.price)}</p>
+    ${renderDietTags(item)}
+    <div class="detail-section">
+      <p class="detail-label">Description</p>
+      <p class="detail-text">${escapeHTML(item.description)}</p>
+    </div>
+    ${item.guestDescription ? `<div class="detail-section manual-callout"><p class="detail-label">How to describe to guests</p><p class="detail-text">${escapeHTML(item.guestDescription)}</p></div>` : ""}
+    ${item.notes ? `<div class="detail-section manual-callout"><p class="detail-label">Staff notes</p><p class="detail-text">${escapeHTML(item.notes)}</p></div>` : ""}
+    ${showSideNote ? `<div class="detail-section"><p class="detail-label">Side options</p><p class="detail-text">${escapeHTML(FOOD_SIDE_NOTE)}</p></div>` : ""}
+    <div class="detail-section">
+      <p class="detail-label">Kitchen reminder</p>
+      <p class="detail-text">Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are <strong>not</strong> gluten-free.</p>
+    </div>
+  `;
+}
+
+function getLocalDateKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getLocalDayKey() {
+  return ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
+}
+
+function getTodayWeeklySpecial() {
+  const today = getLocalDayKey();
+  return WEEKLY_SPECIALS.find(special => special.active && special.day === today) || null;
+}
+
+function getWeeklySpecialViewKey(special) {
+  return `weekly:${special.id}:${getLocalDateKey()}`;
+}
+
+function buildWeeklySpecialTrainingHtml(special) {
+  return `
+    <p class="coffee-section-num">${escapeHTML(special.dayLabel)} ${escapeHTML(special.meal)} · ${escapeHTML(special.schedule)}</p>
+    <h2 class="modal-title">${escapeHTML(special.name)}</h2>
+    <p class="modal-style">${escapeHTML(special.price)}</p>
+    ${renderDietTags(special)}
+    <div class="detail-section">
+      <p class="detail-label">This week</p>
+      <p class="detail-text">${escapeHTML(special.description)}</p>
+    </div>
+    ${special.build ? `<div class="detail-section"><p class="detail-label">Build / plate</p><p class="detail-text">${escapeHTML(special.build)}</p></div>` : ""}
+    ${special.training ? `<div class="detail-section manual-callout"><p class="detail-label">Staff talking points</p><p class="detail-text">${escapeHTML(special.training)}</p></div>` : ""}
+    ${special.notes ? `<div class="detail-section"><p class="detail-label">Notes</p><p class="detail-text">${escapeHTML(special.notes)}</p></div>` : ""}
+  `;
+}
+
+async function openWeeklySpecialTraining(specialId) {
+  const special = WEEKLY_SPECIALS.find(entry => entry.id === specialId);
+  if (!special) return;
+
+  document.getElementById("modalContent").innerHTML = buildWeeklySpecialTrainingHtml(special);
+  document.getElementById("modalBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+
+  if (currentUser) {
+    try {
+      await apiFetch("/api/announcements/view", {
+        method: "POST",
+        body: JSON.stringify({ itemKey: getWeeklySpecialViewKey(special) })
+      });
+    } catch (err) {
+      console.warn("Could not save weekly special view:", err.message);
+    }
+  }
+}
+
+async function maybePromptWeeklySpecial() {
+  if (foodCategory !== "weekly" || !currentUser || currentUser.role !== "employee") return;
+
+  const special = getTodayWeeklySpecial();
+  if (!special || !special.active) return;
+
+  const viewKey = getWeeklySpecialViewKey(special);
+  try {
+    const state = await apiFetch("/api/announcements/state");
+    if ((state.viewedKeys || []).includes(viewKey)) return;
+  } catch {
+    return;
+  }
+
+  openWeeklySpecialTraining(special.id);
+}
+
+function openFoodItem(id) {
+  const item = FOOD_MENU.find(entry => entry.id === id);
+  if (!item) return;
+
+  document.getElementById("modalContent").innerHTML = buildFoodDetailHtml(item);
+  document.getElementById("modalBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function renderFood(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  const categoryTabs = `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${foodCategory === "all" ? " active" : ""}" onclick="foodCategory='all'; render();">All</button>
+      <button class="coffee-subtab${foodCategory === "breakfast" ? " active" : ""}" onclick="foodCategory='breakfast'; render();">Breakfast</button>
+      <button class="coffee-subtab${foodCategory === "lunch" ? " active" : ""}" onclick="foodCategory='lunch'; render();">Lunch</button>
+      <button class="coffee-subtab${foodCategory === "dinner" ? " active" : ""}" onclick="foodCategory='dinner'; render();">Dinner</button>
+      <button class="coffee-subtab${foodCategory === "weekly" ? " active" : ""}" onclick="foodCategory='weekly'; render();">Weekly Specials</button>
+    </div>
+  `;
+
+  if (foodCategory === "weekly") {
+    renderWeeklySpecials(content, categoryTabs, query);
+    queueMicrotask(() => maybePromptWeeklySpecial());
+    return;
+  }
+
+  const filtered = FOOD_MENU.filter(item => {
+    const matchesCategory = foodCategory === "all" || item.category === foodCategory;
+    const haystack = (item.name + " " + item.section + " " + item.description + " " + (item.notes || "")).toLowerCase();
+    const matchesSearch = !query || haystack.includes(query);
+    return matchesCategory && matchesSearch;
+  });
+
+  const sections = [];
+  filtered.forEach(item => {
+    if (!sections.includes(item.section)) sections.push(item.section);
+  });
+
+  content.innerHTML = categoryTabs + `
+    <div class="coffee-intro">
+      <h2>Food Menu</h2>
+      <p>Breakfast is served Monday–Saturday until 11 am. Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are not gluten-free.</p>
+      <p style="margin-top:8px;font-size:14px;">${escapeHTML(FOOD_SIDE_NOTE)}</p>
+    </div>
+    ${filtered.length ? sections.map(section => {
+      const sectionItems = filtered.filter(item => item.section === section);
+      return `
+        <div class="coffee-list" style="padding-top:0;">
+          <p class="coffee-section-num">${escapeHTML(section)}</p>
+          ${sectionItems.map(item => `
+            <div class="card coffee-card" onclick="openFoodItem('${escapeForAttribute(item.id)}')">
+              <div class="card-top">
+                <div>
+                  <p class="name">${escapeHTML(item.name)}</p>
+                  <p class="desc">${escapeHTML(item.price)} · ${escapeHTML(FOOD_CATEGORY_LABELS[item.category])}</p>
+                </div>
+              </div>
+              <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
+              ${renderDietTags(item)}
+              <div class="details-hint">Tap for full details</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }).join("") : `<div class="status"><strong>No food items match.</strong>Try a different search or category.</div>`}
+  `;
+}
+
+function renderWeeklySpecials(content, categoryTabs, query) {
+  const todayKey = getLocalDayKey();
+  const filtered = WEEKLY_SPECIALS.filter(special => {
+    const haystack = (special.name + " " + special.dayLabel + " " + special.description + " " + special.training).toLowerCase();
+    return special.active && (!query || haystack.includes(query));
+  });
+
+  const todaySpecial = getTodayWeeklySpecial();
+
+  content.innerHTML = categoryTabs + `
+    <div class="coffee-intro">
+      <h2>Weekly Specials</h2>
+      <p>Monday lunch, Taco Tuesday, and Wednesday dinner change every week. Today's special is highlighted — tap to review the current dish before your shift.</p>
+      ${todaySpecial ? `<p style="margin-top:10px;font-size:14px;color:var(--green-text);font-weight:600;">Today is ${escapeHTML(todaySpecial.dayLabel)} — tap today's special to review before your shift.</p>` : ""}
+    </div>
+    ${filtered.length ? `<div class="list coffee-list" style="padding-top:0;">${filtered.map(special => {
+      const isToday = special.day === todayKey;
+      return `
+        <div class="card coffee-card${isToday ? "" : ""}" onclick="openWeeklySpecialTraining('${escapeForAttribute(special.id)}')" style="${isToday ? "border-color:var(--accent);box-shadow:0 0 0 1px rgba(166,124,82,0.25);" : ""}">
+          <div class="card-top">
+            <div>
+              <p class="name">${escapeHTML(special.name)}</p>
+              <p class="desc">${escapeHTML(special.dayLabel)} ${escapeHTML(special.meal)} · ${escapeHTML(special.schedule)}</p>
+            </div>
+            ${isToday ? `<span class="coffee-tag">Today</span>` : `<span class="coffee-tag">${escapeHTML(special.dayLabel)}</span>`}
+          </div>
+          <p class="desc" style="margin-top:10px;">${escapeHTML(special.description)}</p>
+          ${renderDietTags(special)}
+          <div class="details-hint">Tap to learn this week's special</div>
+        </div>
+      `;
+    }).join("")}</div>` : `<div class="status"><strong>No weekly specials match.</strong>Try a different search.</div>`}
+  `;
+}
+
+function formatMerchPrice(item) {
+  return `$${item.price}`;
+}
+
+const INVENTORY_CATEGORIES = ["Kitchen", "Bar", "Coffee", "Beer", "Paper & Supplies", "Cleaning", "General"];
+
+function inventoryStatusMeta(item) {
+  if (item.quantity <= 0 && item.ordered) {
+    return { label: "On order", className: "on-order" };
+  }
+  if (item.quantity <= 0) {
+    return { label: "Out", className: "out" };
+  }
+  if (item.quantity <= 2) {
+    return { label: "Low", className: "low" };
+  }
+  return { label: "In stock", className: "in-stock" };
+}
+
+function formatInventoryQuantity(item) {
+  const qty = Number(item.quantity);
+  const formatted = Number.isInteger(qty) ? qty : qty.toFixed(1);
+  return `${formatted} ${item.unit}`;
+}
+
+async function loadInventoryData(force) {
+  if (inventoryLoading) return;
+  if (!force && inventoryItems.length) return;
+
+  inventoryLoading = true;
+  try {
+    const response = await fetch(`${API_BASE}/api/inventory`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Could not load inventory.");
+    inventoryItems = data.items || [];
+  } finally {
+    inventoryLoading = false;
+  }
+}
+
+function renderInventoryAdminForm() {
+  if (!isInventoryManager()) return "";
+  const categoryOptions = INVENTORY_CATEGORIES.map(category => `
+    <option value="${escapeForAttribute(category)}">${escapeHTML(category)}</option>
+  `).join("");
+
+  return `
+    <div class="inventory-admin-panel">
+      <h3 style="margin:0 0 16px;font-size:18px;">Add product</h3>
+      <div class="inventory-admin-grid">
+        <div style="grid-column:1/-1;">
+          <label for="inventoryName">Product name</label>
+          <input id="inventoryName" type="text" placeholder="Brioche buns">
+        </div>
+        <div>
+          <label for="inventoryCategory">Category</label>
+          <select id="inventoryCategory">${categoryOptions}</select>
+        </div>
+        <div>
+          <label for="inventoryQuantity">Quantity on hand</label>
+          <input id="inventoryQuantity" type="number" min="0" step="0.1" value="0">
+        </div>
+        <div>
+          <label for="inventoryUnit">Unit</label>
+          <input id="inventoryUnit" type="text" placeholder="cases, lbs, each">
+        </div>
+        <div style="grid-column:1/-1;">
+          <label for="inventorySupplier">Supplier / where we buy it</label>
+          <input id="inventorySupplier" type="text" placeholder="Sysco, Local bakery, Restaurant Depot">
+        </div>
+        <div>
+          <label for="inventoryOrdered">More ordered?</label>
+          <select id="inventoryOrdered">
+            <option value="0">Not ordered yet</option>
+            <option value="1">Order placed</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label for="inventoryNotes">Notes (optional)</label>
+          <textarea id="inventoryNotes" placeholder="Par level, delivery day, storage location, etc."></textarea>
+        </div>
+      </div>
+      <p id="inventoryFormError" class="auth-error" style="margin-top:12px;"></p>
+      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitInventoryItem()">Add product</button>
+    </div>
+  `;
+}
+
+function renderInventoryTable(query) {
+  const categories = ["all", ...new Set(inventoryItems.map(item => item.category))].filter(Boolean);
+
+  let filtered = inventoryItems.filter(item => {
+    const haystack = (item.name + " " + item.category + " " + item.supplier + " " + item.notes + " " + item.unit).toLowerCase();
+    const matchesSearch = !query || haystack.includes(query);
+    const matchesCategory = inventoryCategory === "all" || item.category === inventoryCategory;
+    const status = inventoryStatusMeta(item);
+
+    let matchesFilter = true;
+    if (inventoryFilter === "in-stock") matchesFilter = item.quantity > 0;
+    else if (inventoryFilter === "out") matchesFilter = item.quantity <= 0 && !item.ordered;
+    else if (inventoryFilter === "on-order") matchesFilter = item.ordered;
+    else if (inventoryFilter === "low") matchesFilter = status.className === "low";
+
+    return matchesSearch && matchesCategory && matchesFilter;
+  });
+
+  const categoryButtons = categories.map(category => `
+    <button type="button" class="inventory-filter-btn${inventoryCategory === category ? " active" : ""}" onclick="inventoryCategory='${escapeForAttribute(category)}'; render();">${category === "all" ? "All categories" : escapeHTML(category)}</button>
+  `).join("");
+
+  const filterButtons = [
+    ["all", "All products"],
+    ["in-stock", "In stock"],
+    ["low", "Low"],
+    ["out", "Out"],
+    ["on-order", "Ordered"]
+  ].map(([key, label]) => `
+    <button type="button" class="inventory-filter-btn${inventoryFilter === key ? " active" : ""}" onclick="inventoryFilter='${key}'; render();">${label}</button>
+  `).join("");
+
+  if (!filtered.length) {
+    return `
+      <div class="inventory-filter-row">${categoryButtons}</div>
+      <div class="inventory-filter-row">${filterButtons}</div>
+      <div class="status"><strong>No products match.</strong>Try a different search or filter, or add a product if you're a manager.</div>
+    `;
+  }
+
+  const manager = isInventoryManager();
+
+  return `
+    <div class="inventory-filter-row">${categoryButtons}</div>
+    <div class="inventory-filter-row">${filterButtons}</div>
+    <div class="inventory-table-wrap">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>On hand</th>
+            <th>Status</th>
+            <th>Supplier</th>
+            <th>Ordered?</th>
+            ${manager ? "<th>Update</th>" : ""}
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(item => {
+            const status = inventoryStatusMeta(item);
+            return `
+              <tr>
+                <td>
+                  <strong>${escapeHTML(item.name)}</strong>
+                  ${item.notes ? `<div style="font-size:12px;color:var(--muted);margin-top:4px;">${escapeHTML(item.notes)}</div>` : ""}
+                </td>
+                <td>${escapeHTML(item.category)}</td>
+                <td>${manager ? `
+                  <input class="inventory-inline-input" id="invQty_${item.id}" type="number" min="0" step="0.1" value="${item.quantity}">
+                  <span style="font-size:12px;color:var(--muted);">${escapeHTML(item.unit)}</span>
+                ` : escapeHTML(formatInventoryQuantity(item))}
+                </td>
+                <td><span class="inventory-status ${status.className}">${status.label}</span></td>
+                <td>${manager ? `<input class="inventory-inline-input wide" id="invSupplier_${item.id}" type="text" value="${escapeForAttribute(item.supplier)}">` : (item.supplier ? escapeHTML(item.supplier) : "—")}</td>
+                <td>${manager ? `
+                  <select class="inventory-inline-input wide" id="invOrdered_${item.id}">
+                    <option value="0"${item.ordered ? "" : " selected"}>Not yet</option>
+                    <option value="1"${item.ordered ? " selected" : ""}>Yes — on order</option>
+                  </select>
+                ` : `<span class="${item.ordered ? "inventory-ordered-yes" : "inventory-ordered-no"}">${item.ordered ? "Yes — on order" : "Not yet"}</span>`}
+                </td>
+                ${manager ? `
+                  <td>
+                    <div class="inventory-row-actions">
+                      <button type="button" onclick="updateInventoryItem(${item.id})">Save</button>
+                      <button type="button" onclick="deleteInventoryItem(${item.id})">Remove</button>
+                    </div>
+                  </td>
+                ` : ""}
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function submitInventoryItem() {
+  if (!isInventoryManager()) return;
+  const errorEl = document.getElementById("inventoryFormError");
+  if (errorEl) errorEl.textContent = "";
+
+  try {
+    await apiFetch("/api/inventory", {
+      method: "POST",
+      body: JSON.stringify({
+        name: document.getElementById("inventoryName").value.trim(),
+        category: document.getElementById("inventoryCategory").value,
+        quantity: Number(document.getElementById("inventoryQuantity").value),
+        unit: document.getElementById("inventoryUnit").value.trim() || "each",
+        supplier: document.getElementById("inventorySupplier").value.trim(),
+        ordered: document.getElementById("inventoryOrdered").value === "1",
+        notes: document.getElementById("inventoryNotes").value.trim()
+      })
+    });
+    await loadInventoryData(true);
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+  }
+}
+
+async function updateInventoryItem(itemId) {
+  if (!isInventoryManager()) return;
+  try {
+    await apiFetch(`/api/inventory/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        quantity: Number(document.getElementById(`invQty_${itemId}`)?.value),
+        supplier: document.getElementById(`invSupplier_${itemId}`)?.value.trim(),
+        ordered: document.getElementById(`invOrdered_${itemId}`)?.value === "1"
+      })
+    });
+    await loadInventoryData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function deleteInventoryItem(itemId) {
+  if (!isInventoryManager()) return;
+  if (!confirm("Remove this product from inventory?")) return;
+  try {
+    await apiFetch(`/api/inventory/${itemId}`, { method: "DELETE" });
+    await loadInventoryData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function renderInventory(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  content.innerHTML = `<div class="status"><strong>Loading inventory…</strong></div>`;
+
+  try {
+    await loadInventoryData(false);
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Inventory could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+    return;
+  }
+
+  content.innerHTML = `
+    <div class="coffee-intro">
+      <h2>Product Inventory</h2>
+      <p>What we have on hand, what's running low, where we buy it, and whether more is already on order.</p>
+      ${isInventoryManager() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Manager view — you can add products and update counts below.</p>` : ""}
+    </div>
+    ${renderInventoryAdminForm()}
+    ${renderInventoryTable(query)}
+  `;
+}
+
+function renderReviewStars(rating) {
+  const stars = Math.round(Number(rating) || 0);
+  if (!stars) return "—";
+  return "★".repeat(stars) + "☆".repeat(5 - stars);
+}
+
+function formatReviewDate(value) {
+  if (!value) return "Recent";
+  const date = new Date(String(value).includes("T") ? value : `${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+async function loadReviewsData(force) {
+  if (reviewsLoading) return reviewsData;
+  if (!force && reviewsData) return reviewsData;
+
+  reviewsLoading = true;
+  try {
+    reviewsData = await fetch(`${API_BASE}/api/reviews`).then(r => r.json().then(data => {
+      if (!r.ok) throw new Error(data.error || "Could not load reviews.");
+      return data;
+    }));
+    return reviewsData;
+  } finally {
+    reviewsLoading = false;
+  }
+}
+
+async function refreshReviewsFromServer() {
+  if (!currentUser || currentUser.role !== "admin") return;
+  try {
+    const data = await apiFetch("/api/reviews/refresh", { method: "POST" });
+    reviewsData = data;
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function renderReviewPlatformCards(sources) {
+  return `
+    <div class="review-platform-grid">
+      ${sources.map(source => `
+        <div class="review-platform-card">
+          <h3>${escapeHTML(source.name)}</h3>
+          ${source.rating ? `<p style="margin:0;font-size:14px;"><span class="review-stars">${renderReviewStars(source.rating)}</span> ${source.rating.toFixed(1)}${source.reviewCount ? ` · ${source.reviewCount.toLocaleString()} reviews` : ""}</p>` : `<p style="margin:0;font-size:14px;color:var(--muted);">View public profile</p>`}
+          <a href="${escapeHTML(source.profileUrl)}" target="_blank" rel="noopener noreferrer">Open ${escapeHTML(source.name)} page →</a>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderReviewSummary(summary) {
+  if (!summary) return "";
+  return `
+    <div class="coffee-intro" style="padding-bottom:8px;">
+      <h2>Guest feedback summary</h2>
+      <p>${escapeHTML(summary.overallTone || "")}</p>
+      ${summary.generatedAt ? `<p style="margin-top:8px;font-size:13px;color:var(--muted);">Updated ${escapeHTML(formatReviewDate(summary.generatedAt))}${summary.mode === "ai" ? " · AI summary" : ""}</p>` : ""}
+    </div>
+    <div class="review-summary-grid">
+      <div class="review-summary-card positive">
+        <h3>What's going well</h3>
+        <ul>${(summary.positives || []).map(item => `<li>${escapeHTML(item)}</li>`).join("") || "<li>No positive themes yet.</li>"}</ul>
+      </div>
+      <div class="review-summary-card negative">
+        <h3>Areas to watch</h3>
+        <ul>${(summary.negatives || []).length ? summary.negatives.map(item => `<li>${escapeHTML(item)}</li>`).join("") : "<li>No recurring negatives in recent reviews.</li>"}</ul>
+      </div>
+    </div>
+  `;
+}
+
+function renderReviewCards(reviews, sources, query) {
+  const sourceMap = Object.fromEntries((sources || []).map(source => [source.id, source.name]));
+  const filtered = (reviews || []).filter(review => {
+    const matchesPlatform = reviewPlatform === "all" || review.sourceId === reviewPlatform;
+    const haystack = (review.text + " " + review.author + " " + (sourceMap[review.sourceId] || "")).toLowerCase();
+    const matchesSearch = !query || haystack.includes(query);
+    return matchesPlatform && matchesSearch;
+  });
+
+  const platformTabs = ["all", ...(sources || []).map(source => source.id)].map(key => {
+    const label = key === "all" ? "All platforms" : (sourceMap[key] || key);
+    return `<button type="button" class="inventory-filter-btn${reviewPlatform === key ? " active" : ""}" onclick="reviewPlatform='${escapeForAttribute(key)}'; render();">${escapeHTML(label)}</button>`;
+  }).join("");
+
+  return `
+    <div class="inventory-filter-row">${platformTabs}</div>
+    <div class="coffee-intro" style="padding-top:0;">
+      <h2>Recent reviews</h2>
+      <p>Latest guest comments pulled from our public profiles — use these talking points to know what guests love and where we can improve.</p>
+    </div>
+    ${filtered.length ? `<div class="review-list">${filtered.map(review => `
+      <div class="review-card">
+        <div class="review-card-top">
+          <div>
+            <span class="review-source-tag">${escapeHTML(sourceMap[review.sourceId] || review.sourceId)}</span>
+            <span class="review-meta"> · ${escapeHTML(review.author || "Guest")} · ${escapeHTML(formatReviewDate(review.reviewDate))}</span>
+          </div>
+          <span class="review-stars" aria-label="${review.rating || 0} out of 5">${renderReviewStars(review.rating)}</span>
+        </div>
+        <p class="review-text">${escapeHTML(review.text)}</p>
+      </div>
+    `).join("")}</div>` : `<div class="status"><strong>No reviews match.</strong>Try another platform or search term.</div>`}
+  `;
+}
+
+async function renderReviews(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  content.innerHTML = `<div class="status"><strong>Loading guest reviews…</strong></div>`;
+
+  try {
+    const data = await loadReviewsData(false);
+    const live = data.liveSync || {};
+    const syncNote = !live.google && !live.yelp
+      ? `<div class="review-sync-note"><strong>Sample reviews loaded.</strong> Add <code>GOOGLE_PLACES_API_KEY</code>, <code>GOOGLE_PLACE_ID</code>, and/or <code>YELP_API_KEY</code> in your <code>.env</code> to sync live reviews automatically. Platform links below always point to our public pages.</div>`
+      : `<div class="review-sync-note" style="background:#ecfdf5;border-color:#a7f3d0;color:#065f46;"><strong>Live sync enabled:</strong> ${[live.google ? "Google" : null, live.yelp ? "Yelp" : null].filter(Boolean).join(" + ")} reviews refresh every 6 hours${live.aiSummary ? " with AI summary" : ""}.</div>`;
+
+    content.innerHTML = `
+      <div class="coffee-intro">
+        <h2>Guest Reviews</h2>
+        <p>What people are saying on Google, Yelp, and other platforms — plus a staff-friendly summary of positives and negatives.</p>
+        ${currentUser && currentUser.role === "admin" ? `<button class="game-next" style="margin-top:12px;" type="button" onclick="refreshReviewsFromServer()">Refresh live reviews</button>` : ""}
+      </div>
+      ${syncNote}
+      ${renderReviewPlatformCards(data.sources || [])}
+      ${renderReviewSummary(data.summary)}
+      ${renderReviewCards(data.reviews || [], data.sources || [], query)}
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Reviews could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+  }
+}
+
+function merchStockLevelClass(qty) {
+  if (qty <= 0) return "out";
+  if (qty <= 2) return "low";
+  return "";
+}
+
+async function loadMerchData(force) {
+  if (merchLoading) return;
+  if (!force && merchItems.length && merchIdeas.length) return;
+
+  merchLoading = true;
+  try {
+    const [stockRes, ideasRes] = await Promise.all([
+      fetch(`${API_BASE}/api/merch`),
+      fetch(`${API_BASE}/api/merch/ideas`, {
+        headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
+      })
+    ]);
+    const stockData = await stockRes.json();
+    const ideasData = await ideasRes.json();
+    if (!stockRes.ok) throw new Error(stockData.error || "Could not load merch.");
+    if (!ideasRes.ok) throw new Error(ideasData.error || "Could not load ideas.");
+    merchItems = stockData.items || [];
+    merchIdeas = ideasData.ideas || [];
+  } finally {
+    merchLoading = false;
+  }
+}
+
+function readImageInput(inputId, previewId) {
+  const input = document.getElementById(inputId);
+  const preview = previewId ? document.getElementById(previewId) : null;
+  if (!input?.files?.[0]) return Promise.resolve("");
+  const file = input.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    alert("Image must be under 2 MB.");
+    return Promise.resolve("");
+  }
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (preview) {
+        preview.src = reader.result;
+        preview.style.display = "block";
+      }
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function parseMerchSizesFromForm(prefix) {
+  const labels = (document.getElementById(`${prefix}SizeLabels`)?.value || "")
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
+  return labels.map(label => ({
+    size_label: label,
+    quantity: Math.max(0, Number(document.getElementById(`${prefix}Size_${label}`)?.value) || 0)
+  }));
+}
+
+async function submitMerchItem() {
+  if (!isMerchManager()) return;
+  const errorEl = document.getElementById("merchItemError");
+  if (errorEl) errorEl.textContent = "";
+
+  try {
+    const image_url = await readImageInput("merchItemImage", "merchItemPreview");
+    const price = parseFloat(document.getElementById("merchItemPrice").value);
+    const data = await apiFetch("/api/merch", {
+      method: "POST",
+      body: JSON.stringify({
+        name: document.getElementById("merchItemName").value.trim(),
+        description: document.getElementById("merchItemDesc").value.trim(),
+        price_cents: Math.round(price * 100),
+        image_url,
+        sizes: parseMerchSizesFromForm("merchItem")
+      })
+    });
+    merchItems = (await fetch(`${API_BASE}/api/merch`).then(r => r.json())).items;
+    document.getElementById("merchItemForm").reset();
+    if (document.getElementById("merchItemPreview")) {
+      document.getElementById("merchItemPreview").style.display = "none";
+    }
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+  }
+}
+
+async function updateMerchInventory(itemId) {
+  if (!isMerchManager()) return;
+  const item = merchItems.find(entry => entry.id === itemId);
+  if (!item) return;
+
+  const sizes = item.sizes.map(size => ({
+    size_label: size.size_label,
+    quantity: Math.max(0, Number(document.getElementById(`merchQty_${itemId}_${size.size_label}`)?.value) || 0)
+  }));
+
+  try {
+    await apiFetch(`/api/merch/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ sizes })
+    });
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function submitMerchIdea() {
+  if (!isMerchManager()) return;
+  const errorEl = document.getElementById("merchIdeaError");
+  if (errorEl) errorEl.textContent = "";
+
+  try {
+    const image_url = await readImageInput("merchIdeaImage", "merchIdeaPreview");
+    const data = await apiFetch("/api/merch/ideas", {
+      method: "POST",
+      body: JSON.stringify({
+        title: document.getElementById("merchIdeaTitle").value.trim(),
+        description: document.getElementById("merchIdeaDesc").value.trim(),
+        image_url
+      })
+    });
+    merchIdeas = data.ideas || [];
+    document.getElementById("merchIdeaForm").reset();
+    if (document.getElementById("merchIdeaPreview")) {
+      document.getElementById("merchIdeaPreview").style.display = "none";
+    }
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+  }
+}
+
+async function toggleMerchVote(ideaId) {
+  if (!currentUser) {
+    openAuthModal("login");
+    return;
+  }
+  try {
+    const data = await apiFetch(`/api/merch/ideas/${ideaId}/vote`, { method: "POST" });
+    merchIdeas = data.ideas || [];
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function archiveMerchIdea(ideaId) {
+  if (!isMerchManager()) return;
+  if (!confirm("Remove this idea from the board?")) return;
+  try {
+    await apiFetch(`/api/merch/ideas/${ideaId}`, { method: "DELETE" });
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function renderMerchAdminStockForm() {
+  if (!isMerchManager()) return "";
+  const defaultSizes = "S,M,L,XL,2XL";
+  return `
+    <div class="merch-admin-panel" id="merchItemForm">
+      <h3>Add merch item</h3>
+      <label for="merchItemName">Item name</label>
+      <input id="merchItemName" type="text" placeholder="MP Logo Tee — Black">
+      <label for="merchItemDesc">Description</label>
+      <textarea id="merchItemDesc" placeholder="What staff should know when selling this item."></textarea>
+      <label for="merchItemPrice">Price (USD)</label>
+      <input id="merchItemPrice" type="number" min="0" step="0.01" placeholder="28.00">
+      <label for="merchItemSizeLabels">Sizes (comma-separated)</label>
+      <input id="merchItemSizeLabels" type="text" value="${defaultSizes}" oninput="renderMerchSizeInputs('merchItem')">
+      <div class="merch-size-inputs" id="merchItemSizeInputs">${defaultSizes.split(",").map(label => `
+        <label>${label.trim()} qty<input id="merchItemSize_${label.trim()}" type="number" min="0" value="0"></label>
+      `).join("")}</div>
+      <label for="merchItemImage">Photo (optional)</label>
+      <input id="merchItemImage" type="file" accept="image/*">
+      <img id="merchItemPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
+      <p id="merchItemError" class="auth-error" style="margin-top:10px;"></p>
+      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchItem()">Save item</button>
+    </div>
+  `;
+}
+
+function renderMerchSizeInputs(prefix) {
+  const wrap = document.getElementById(`${prefix}SizeInputs`);
+  if (!wrap) return;
+  const labels = (document.getElementById(`${prefix}SizeLabels`)?.value || "")
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
+  wrap.innerHTML = labels.map(label => `
+    <label>${escapeHTML(label)} qty<input id="${prefix}Size_${escapeForAttribute(label)}" type="number" min="0" value="0"></label>
+  `).join("");
+}
+
+function renderMerchAdminIdeaForm() {
+  if (!isMerchManager()) return "";
+  return `
+    <div class="merch-admin-panel" id="merchIdeaForm">
+      <h3>Post a new merch idea</h3>
+      <label for="merchIdeaTitle">Idea title</label>
+      <input id="merchIdeaTitle" type="text" placeholder="Winter beanie with woven label">
+      <label for="merchIdeaDesc">Description</label>
+      <textarea id="merchIdeaDesc" placeholder="Tell the team what you're thinking — style, use case, price range."></textarea>
+      <label for="merchIdeaImage">Mockup or reference photo (optional)</label>
+      <input id="merchIdeaImage" type="file" accept="image/*">
+      <img id="merchIdeaPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
+      <p id="merchIdeaError" class="auth-error" style="margin-top:10px;"></p>
+      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchIdea()">Post idea</button>
+    </div>
+  `;
+}
+
+function renderMerchStockCards(query) {
+  const filtered = merchItems.filter(item => {
+    const haystack = (item.name + " " + item.description + " " + item.sizes.map(s => s.size_label).join(" ")).toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  if (!filtered.length) {
+    return `<div class="status"><strong>No merch in stock yet.</strong>${isMerchManager() ? " Add items using the form above." : ""}</div>`;
+  }
+
+  return `<div class="merch-grid">${filtered.map(item => `
+    <div class="merch-card">
+      ${item.image_url
+        ? `<img class="merch-card-image" src="${item.image_url}" alt="${escapeHTML(item.name)}">`
+        : `<div class="merch-card-image placeholder">No photo</div>`}
+      <div class="merch-card-body">
+        <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(item.name)}</p>
+        <p class="merch-price">${escapeHTML(formatMerchPrice(item))}</p>
+        <p class="desc">${escapeHTML(item.description)}</p>
+        <table class="merch-size-table">
+          <thead><tr><th>Size</th><th>Left</th></tr></thead>
+          <tbody>
+            ${item.sizes.map(size => `
+              <tr>
+                <td>${escapeHTML(size.size_label)}</td>
+                <td class="merch-qty ${merchStockLevelClass(size.quantity)}">
+                  ${isMerchManager()
+                    ? `<input id="merchQty_${item.id}_${escapeForAttribute(size.size_label)}" type="number" min="0" value="${size.quantity}" style="width:64px;padding:4px 6px;">`
+                    : (size.quantity <= 0 ? "Out" : size.quantity)}
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <p class="desc" style="margin-top:10px;font-size:12px;color:var(--muted);">${item.total_quantity} total in stock</p>
+        ${isMerchManager() ? `<button class="game-next" style="width:100%;margin-top:10px;" type="button" onclick="updateMerchInventory(${item.id})">Update counts</button>` : ""}
+      </div>
+    </div>
+  `).join("")}</div>`;
+}
+
+function renderMerchIdeaCards(query) {
+  const filtered = merchIdeas.filter(idea => {
+    const haystack = (idea.title + " " + idea.description).toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  if (!filtered.length) {
+    return `<div class="status"><strong>No ideas posted yet.</strong>${isMerchManager() ? " Post the first concept above." : " Check back soon."}</div>`;
+  }
+
+  return `<div class="merch-grid">${filtered.map(idea => `
+    <div class="idea-card">
+      ${idea.image_url
+        ? `<img class="merch-card-image" src="${idea.image_url}" alt="${escapeHTML(idea.title)}">`
+        : `<div class="merch-card-image placeholder">Concept sketch</div>`}
+      <div class="idea-card-body">
+        <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(idea.title)}</p>
+        <p class="desc">${escapeHTML(idea.description)}</p>
+        <div class="idea-vote-row">
+          <button type="button" class="vote-btn${idea.user_voted ? " active" : ""}" onclick="toggleMerchVote(${idea.id})" ${!currentUser ? "" : ""}>
+            ${idea.user_voted ? "Voted" : "Vote"}
+          </button>
+          <span class="vote-count">${idea.vote_count} vote${idea.vote_count === 1 ? "" : "s"}</span>
+        </div>
+        ${isMerchManager() ? `<button class="auth-btn" style="margin-top:10px;width:100%;" type="button" onclick="archiveMerchIdea(${idea.id})">Remove idea</button>` : ""}
+      </div>
+    </div>
+  `).join("")}</div>`;
+}
+
+async function renderMerch(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  content.innerHTML = `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; render();">In Stock</button>
+      <button class="coffee-subtab${merchSection === "ideas" ? " active" : ""}" onclick="merchSection='ideas'; render();">Up & Coming</button>
+    </div>
+    <div class="status"><strong>Loading merch…</strong></div>
+  `;
+
+  try {
+    await loadMerchData(true);
+  } catch (err) {
+    content.innerHTML = `
+      <div class="coffee-subtabs">
+        <button class="coffee-subtab active">In Stock</button>
+        <button class="coffee-subtab">Up & Coming</button>
+      </div>
+      <div class="status"><strong>Merch could not be loaded.</strong>${escapeHTML(err.message)}</div>
+    `;
+    return;
+  }
+
+  if (merchSection === "stock") {
+    content.innerHTML = `
+      <div class="coffee-subtabs">
+        <button class="coffee-subtab active" onclick="merchSection='stock'; render();">In Stock</button>
+        <button class="coffee-subtab" onclick="merchSection='ideas'; render();">Up & Coming</button>
+      </div>
+      <div class="coffee-intro">
+        <h2>Merch in Stock</h2>
+        <p>What we have on the floor — sizes and counts update when managers save new inventory.</p>
+      </div>
+      ${renderMerchAdminStockForm()}
+      ${renderMerchStockCards(query)}
+    `;
+    renderMerchSizeInputs("merchItem");
+    return;
+  }
+
+  content.innerHTML = `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab" onclick="merchSection='stock'; render();">In Stock</button>
+      <button class="coffee-subtab active" onclick="merchSection='ideas'; render();">Up & Coming</button>
+    </div>
+    <div class="coffee-intro">
+      <h2>Up & Coming</h2>
+      <p>New merch concepts from the team — log in to vote for your favorites.</p>
+    </div>
+    ${renderMerchAdminIdeaForm()}
+    ${renderMerchIdeaCards(query)}
+  `;
+}
+
 function updateSearchPlaceholder() {
   const search = document.getElementById("search");
+  const coffeePlaceholders = {
+    menu: "Search beans or menu drinks",
+    manual: "Search coffee manual topics",
+    seasonal: "Search seasonal lattes"
+  };
+  const barPlaceholders = {
+    all: "Search wine, Shirley, or NA drinks",
+    wine: "Search wine",
+    cocktails: "Search Shirley / cocktails",
+    other: "Search NA beverages"
+  };
   const placeholders = {
     ontap: "Search beer, style, or flavor",
     beer: "Search beer, style, or flavor",
-    food: "Search food items",
-    coffee: "Search coffee manual topics",
+    food: foodCategory === "weekly" ? "Search weekly specials" : "Search food items",
+    merch: merchSection === "ideas" ? "Search merch ideas" : "Search merch",
+    inventory: "Search products, suppliers, or categories",
+    reviews: "Search reviews or platforms",
+    coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
+    bar: barPlaceholders[barSection] || "Search drinks",
     games: "Search beer, style, or flavor"
   };
   search.placeholder = placeholders[activeType] || "Search";
 }
 
+function renderCoffeeSectionTabs() {
+  return `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${coffeeSection === "menu" ? " active" : ""}" onclick="coffeeSection='menu'; render();">Menu</button>
+      <button class="coffee-subtab${coffeeSection === "manual" ? " active" : ""}" onclick="coffeeSection='manual'; coffeeMode='guide'; render();">Training Manual</button>
+      <button class="coffee-subtab${coffeeSection === "seasonal" ? " active" : ""}" onclick="coffeeSection='seasonal'; render();">Seasonal Lattes</button>
+    </div>
+  `;
+}
+
+function renderCoffeeTrainingTabs() {
+  return `
+    <div class="coffee-filters">
+      <button class="filter-btn${coffeeMode === "guide" ? " active" : ""}" onclick="coffeeMode='guide'; render();">Manual</button>
+      <button class="filter-btn${coffeeMode === "quiz" ? " active" : ""}" onclick="startCoffeeQuiz();">Training Quiz</button>
+      <button class="filter-btn${coffeeMode === "flash" ? " active" : ""}" onclick="startCoffeeFlash();">Flashcards</button>
+    </div>
+  `;
+}
+
 function renderCoffee(content) {
   updateSearchPlaceholder();
   const query = document.getElementById("search").value.toLowerCase().trim();
+  const sectionTabs = renderCoffeeSectionTabs();
 
-  const subtabs = `
-    <div class="coffee-subtabs">
-      <button class="coffee-subtab${coffeeMode === "guide" ? " active" : ""}" onclick="coffeeMode='guide'; render();">Manual</button>
-      <button class="coffee-subtab${coffeeMode === "quiz" ? " active" : ""}" onclick="startCoffeeQuiz();">Training Quiz</button>
-      <button class="coffee-subtab${coffeeMode === "flash" ? " active" : ""}" onclick="startCoffeeFlash();">Flashcards</button>
-    </div>
-  `;
-
-  if (coffeeMode === "guide") {
-    renderCoffeeGuide(content, subtabs, query);
+  if (coffeeSection === "menu") {
+    renderCoffeeMenu(content, sectionTabs, query);
+  } else if (coffeeSection === "seasonal") {
+    renderCoffeeSeasonal(content, sectionTabs, query);
+  } else if (coffeeMode === "guide") {
+    renderCoffeeGuide(content, sectionTabs, query);
   } else if (coffeeMode === "quiz") {
-    content.innerHTML = subtabs + renderCoffeeQuizInner();
+    content.innerHTML = sectionTabs + renderCoffeeTrainingTabs() + renderCoffeeQuizInner();
   } else if (coffeeMode === "flash") {
-    content.innerHTML = subtabs + renderCoffeeFlashInner();
+    content.innerHTML = sectionTabs + renderCoffeeTrainingTabs() + renderCoffeeFlashInner();
   }
 }
 
-function renderCoffeeGuide(content, subtabs, query) {
+function renderCoffeeMenu(content, sectionTabs, query) {
+  const beans = COFFEE_BEANS.filter(item => {
+    const haystack = (item.name + " " + item.origin + " " + item.roast + " " + item.notes).toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  const drinks = COFFEE_MENU_DRINKS.filter(item => {
+    const haystack = (item.group + " " + item.name + " " + item.price + " " + item.description).toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  const drinkGroups = [];
+  drinks.forEach(item => {
+    if (!drinkGroups.includes(item.group)) drinkGroups.push(item.group);
+  });
+
+  const empty = !beans.length && !drinks.length;
+
+  content.innerHTML = sectionTabs + `
+    <div class="coffee-intro">
+      <h2>Caffeine Bar</h2>
+      <p>Manhattan Project coffee menu — purists, pour over, flavored builds, matcha, and tea.</p>
+    </div>
+    <div class="coffee-list" style="padding-top:0;">
+      <p class="coffee-section-num">Milk options</p>
+      ${COFFEE_MILK_OPTIONS.map(option => `
+        <div class="card coffee-card">
+          <div class="card-top">
+            <div>
+              <p class="name">${escapeHTML(option.name)}</p>
+              <p class="desc">${escapeHTML(option.description)}</p>
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+    ${empty ? `<div class="status"><strong>No menu items match.</strong>Try a different search.</div>` : ""}
+    ${beans.length ? `
+      <div class="coffee-list" style="padding-top:0;">
+        <p class="coffee-section-num">On bar</p>
+        ${beans.map(item => `
+          <div class="card coffee-card">
+            <div class="card-top">
+              <div>
+                <p class="name">${escapeHTML(item.name)}</p>
+                <p class="desc">${escapeHTML(item.origin)} · ${escapeHTML(item.roast)}</p>
+              </div>
+              ${item.active ? `<span class="coffee-tag">On bar</span>` : `<span class="coffee-tag">Off rotation</span>`}
+            </div>
+            <p class="desc" style="margin-top:10px;">${escapeHTML(item.notes)}</p>
+          </div>
+        `).join("")}
+      </div>
+    ` : ""}
+    ${drinkGroups.map(group => {
+      const groupDrinks = drinks.filter(item => item.group === group);
+      if (!groupDrinks.length) return "";
+      return `
+        <div class="coffee-list">
+          <p class="coffee-section-num">${escapeHTML(group)}</p>
+          ${groupDrinks.map(item => `
+            <div class="card coffee-card">
+              <div class="card-top">
+                <div>
+                  <p class="name">${escapeHTML(item.name)}</p>
+                  <p class="desc">${escapeHTML(item.price)}</p>
+                </div>
+              </div>
+              <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
+              ${item.dairy || (item.tags || []).length ? `<div class="tags">${item.dairy ? `<span class="tag dairy">Dairy</span>` : ""}${(item.tags || []).map(tag => `<span class="tag new">${escapeHTML(tag)}</span>`).join("")}</div>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }).join("")}
+  `;
+}
+
+function renderBarSectionTabs() {
+  return `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${barSection === "all" ? " active" : ""}" onclick="barSection='all'; render();">All</button>
+      <button class="coffee-subtab${barSection === "wine" ? " active" : ""}" onclick="barSection='wine'; render();">Wine</button>
+      <button class="coffee-subtab${barSection === "cocktails" ? " active" : ""}" onclick="barSection='cocktails'; render();">Shirley & Cocktails</button>
+      <button class="coffee-subtab${barSection === "other" ? " active" : ""}" onclick="barSection='other'; render();">NA Beverages</button>
+    </div>
+  `;
+}
+
+function renderBarMenu(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+  const sectionTabs = renderBarSectionTabs();
+
+  const drinks = BAR_MENU_DRINKS.filter(item => {
+    const matchesSection = barSection === "all" || item.section === barSection;
+    const haystack = (item.group + " " + item.name + " " + item.price + " " + item.description + " " + (item.detail || "")).toLowerCase();
+    return matchesSection && (!query || haystack.includes(query));
+  });
+
+  const drinkGroups = [];
+  drinks.forEach(item => {
+    if (!drinkGroups.includes(item.group)) drinkGroups.push(item.group);
+  });
+
+  content.innerHTML = sectionTabs + `
+    <div class="coffee-intro">
+      <h2>Wine + Cocktails</h2>
+      <p>Wine by the glass or bottle, rotating Shirley Temples, and non-alcoholic beverages from the taproom drink menu.</p>
+      <p style="margin-top:8px;font-size:14px;color:var(--muted);">Wine prices shown as glass / bottle. Shirley flavors rotate — check the board for today's selection.</p>
+    </div>
+    ${drinks.length ? drinkGroups.map(group => {
+      const groupDrinks = drinks.filter(item => item.group === group);
+      return `
+        <div class="coffee-list">
+          <p class="coffee-section-num">${escapeHTML(group)}</p>
+          ${groupDrinks.map(item => `
+            <div class="card coffee-card">
+              <div class="card-top">
+                <div>
+                  <p class="name">${escapeHTML(item.name)}</p>
+                  <p class="desc">${escapeHTML(item.price)}${item.detail ? ` · ${escapeHTML(item.detail)}` : ""}</p>
+                </div>
+                ${item.rotating ? `<span class="coffee-tag">Rotating</span>` : ""}
+              </div>
+              <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
+              ${item.dairy ? `<div class="tags"><span class="tag dairy">Dairy</span></div>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }).join("") : `<div class="status"><strong>No drinks match.</strong>Try a different search or section.</div>`}
+  `;
+}
+
+function renderCoffeeSeasonal(content, sectionTabs, query) {
+  const lattes = SEASONAL_LATTES.filter(item => {
+    const haystack = (item.name + " " + item.season + " " + item.description + " " + item.build).toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  content.innerHTML = sectionTabs + `
+    <div class="coffee-intro">
+      <h2>Seasonal Lattes</h2>
+      <p>Rotating specialty lattes — recipes, builds, and guest-facing descriptions.</p>
+    </div>
+    ${lattes.length ? `<div class="list coffee-list" style="padding-top:0;">${lattes.map(item => `
+      <div class="card coffee-card" onclick="openSeasonalLatte('${escapeForAttribute(item.name)}')">
+        <div class="card-top">
+          <div>
+            <p class="name">${escapeHTML(item.name)}</p>
+            <p class="desc">${escapeHTML(item.season)}</p>
+          </div>
+          <span class="coffee-tag">${item.available ? "Available now" : "Coming soon"}</span>
+        </div>
+        <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
+        <div class="details-hint">Tap for full build</div>
+      </div>
+    `).join("")}</div>` : `<div class="status"><strong>No seasonal lattes match.</strong>Try a different search or add drinks to the seasonal list.</div>`}
+  `;
+}
+
+function openSeasonalLatte(name) {
+  const item = SEASONAL_LATTES.find(entry => entry.name === name);
+  if (!item) return;
+
+  document.getElementById("modalContent").innerHTML = `
+    <p class="coffee-section-num">${escapeHTML(item.season)} · ${item.available ? "Available now" : "Coming soon"}</p>
+    <h2 class="modal-title" id="modalTitle">${escapeHTML(item.name)}</h2>
+    <p class="modal-style">${escapeHTML(item.description)}</p>
+    <div class="detail-section manual-body">
+      <p><strong>Build</strong></p>
+      <p>${escapeHTML(item.build)}</p>
+      ${item.training ? `<p><strong>Staff talking points</strong></p><p>${escapeHTML(item.training)}</p>` : ""}
+    </div>
+  `;
+
+  document.getElementById("modalBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function renderCoffeeGuide(content, sectionTabs, query) {
   const categories = `
     <div class="coffee-filters">
       <button class="filter-btn${coffeeCategory === "all" ? " active" : ""}" onclick="coffeeCategory='all'; render();">All</button>
@@ -2888,7 +5667,7 @@ function renderCoffeeGuide(content, subtabs, query) {
     return matchesCategory && matchesSearch;
   });
 
-  content.innerHTML = subtabs + `
+  content.innerHTML = sectionTabs + renderCoffeeTrainingTabs() + `
     <div class="coffee-intro">
       <h2>Coffee Training Manual</h2>
       <p>Farm-to-cup fundamentals, bar standards, and practical training guidance. Read Sections 1–5 first, use 6–11 for hands-on training, and 12–14 for shift standards and troubleshooting.</p>
@@ -3535,6 +6314,7 @@ function renderBeerCard(item) {
   const abv = getABVText(item);
   const gf = isYes(item["Gluten-Reduced"]);
   const isNew = isYes(item["New Tap"]);
+  const isSpecial = activeType === "food" && isFoodSpecial(item);
   const guidance = getGuestGuidance(item);
   const tapNumber = getTapNumber(item);
 
@@ -3550,6 +6330,7 @@ function renderBeerCard(item) {
 
     <div class="tags">
       ${isNew ? `<span class="tag new">New</span>` : ""}
+      ${isSpecial ? `<span class="tag new">Special</span>` : ""}
       ${gf ? `<span class="tag gf">Gluten-reduced</span>` : ""}
       ${guidance ? `<span class="tag">${escapeHTML(guidance)}</span>` : ""}
     </div>
@@ -4028,10 +6809,15 @@ document.querySelectorAll(".tab").forEach(tab => {
       gameSession = null;
     }
     if (activeType !== "coffee") {
+      coffeeSection = "menu";
       coffeeMode = "guide";
       if (activeType !== "progress" && activeType !== "team") coffeeSession = null;
     }
+    if (activeType !== "food") foodCategory = "all";
+    if (activeType !== "merch") merchSection = "stock";
+    if (activeType !== "bar") barSection = "all";
     if (activeType === "team") teamDetailId = null;
+    if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
     updateSearchPlaceholder();
     render();
   });
@@ -4048,7 +6834,13 @@ document.querySelectorAll(".filter-btn").forEach(button => {
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
-    if (chatOpen) {
+    if (document.getElementById("briefingBackdrop").classList.contains("show")) {
+      closeBriefingModal();
+    } else if (document.getElementById("shiftDigestBackdrop").classList.contains("show")) {
+      closeShiftDigestModal();
+    } else if (document.getElementById("authBackdrop").classList.contains("show")) {
+      closeAuthModal();
+    } else if (chatOpen) {
       toggleChatPanel(false);
     } else {
       closeModal();
@@ -4268,9 +7060,16 @@ async function sendChatMessage(event, presetText) {
   }
 }
 
-loadData();
-initAuth();
-initChat();
+async function bootstrap() {
+  await loadData();
+  await initAuth();
+  await maybeShowDailyBriefing();
+  await maybePromptShiftSurvey();
+  await maybeShowShiftDigest();
+  initChat();
+}
+
+bootstrap();
 </script>
 
 </body>

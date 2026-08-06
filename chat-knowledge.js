@@ -4,7 +4,10 @@ const BEER_CSV_URL =
 const SITE_OVERVIEW = `
 Manhattan Project staff training portal covers:
 - On Tap / All Beers: live beer menu from the tap list spreadsheet (name, tap number, style, ABV, flavor profile, description, guest guidance, gluten-reduced, new taps).
-- Coffee tab: 14-section barista training manual, coffee quiz, and flashcards.
+- Food tab: Breakfast, Lunch, Dinner, and Weekly Specials (Mon lunch, Taco Tue, Wed dinner) with dietary tags.
+- Merch tab: In Stock and Up & Coming ideas with voting. Merch managers (merch role or admin) manage inventory and post ideas.
+- Coffee tab: Menu (caffeine bar — purists, pour over, flavored, matcha, tea), Training Manual, Seasonal Lattes. Employees get a daily "what's new" briefing on first login when new taps, food specials, or seasonal lattes are flagged.
+- Wine + Cocktails tab: wine by the glass/bottle, rotating Shirley Temples, and NA beverages (lemonade, Italian cream soda, ginger beer, etc.).
 - Games tab: beer training games (Flavor Quiz, Guest Match, Tap Match, ABV Challenge, Style Match, Pick the Profile, Speed Round, Beer Flashcards) — all use on-tap beers from the spreadsheet only.
 - My Progress / Team: training scores when logged in (not guest-facing product info).
 `.trim();

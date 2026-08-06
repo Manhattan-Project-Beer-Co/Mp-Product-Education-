@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: mp-product-education
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_SETUP_KEY
+        sync: false
+      - key: MERCH_SETUP_KEY
+        sync: false
+      - key: SHIFT_LEAD_SETUP_KEY
+        sync: false

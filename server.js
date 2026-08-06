@@ -203,6 +203,17 @@ function todayDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function maybeAutoSeedOnFirstBoot() {
+  try {
+    const { count } = db.prepare("SELECT COUNT(*) AS count FROM users").get();
+    if (count > 0) return;
+    console.log("No users found — seeding demo data for first deploy...");
+    require("child_process").execSync("node seed.js", { stdio: "inherit", cwd: __dirname });
+  } catch (err) {
+    console.warn("First-boot seed skipped:", err.message);
+  }
+}
+
 app.use(express.json({ limit: "6mb" }));
 
 app.use((req, res, next) => {
@@ -1368,5 +1379,6 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`MP Training server running at http://localhost:${PORT}`);
+  maybeAutoSeedOnFirstBoot();
+  console.log(`MP Training server running on port ${PORT}`);
 });

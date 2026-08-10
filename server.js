@@ -15,6 +15,7 @@ const {
   getLiveSyncStatus
 } = require("./reviews");
 const { MERCH_CATALOG } = require("./merch-catalog");
+const { registerMpInventory } = require("./mp-inventory-api");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -1930,6 +1931,8 @@ app.post("/api/reviews/refresh", authRequired, adminRequired, async (req, res) =
     res.status(500).json({ error: err.message || "Could not refresh reviews." });
   }
 });
+
+registerMpInventory(app, db, { authRequired, inventoryManagerRequired, optionalAuth });
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));

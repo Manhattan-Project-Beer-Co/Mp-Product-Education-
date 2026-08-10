@@ -2266,6 +2266,99 @@
   .inventory-status.out { background: #fef2f2; color: #b91c1c; }
   .inventory-status.on-order { background: #eff6ff; color: #1d4ed8; }
 
+  .ops-inv-subtabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto 16px;
+    padding: 0 24px;
+  }
+  .ops-inv-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto 18px;
+    padding: 0 24px;
+  }
+  .ops-inv-kpi {
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .ops-inv-kpi strong {
+    display: block;
+    font-size: 22px;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+  .ops-inv-section {
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    margin: 0 0 14px;
+    overflow: hidden;
+  }
+  .ops-inv-section-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .ops-inv-section-head h3 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .ops-inv-section-meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .ops-inv-ready {
+    color: var(--green-text);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .ops-inv-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 1.4fr) 90px 70px 70px 90px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .ops-inv-row:last-child { border-bottom: none; }
+  .ops-inv-row input[type="number"] {
+    width: 72px;
+    padding: 6px 8px;
+  }
+  .ops-inv-need {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .ops-inv-need.zero { color: var(--muted); font-weight: 500; }
+  .ops-inv-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) {
+    .ops-inv-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+  }
+
   .inventory-ordered-yes { color: #047857; font-weight: 600; }
   .inventory-ordered-no { color: var(--muted); }
 
@@ -3378,6 +3471,10 @@ let inventoryItems = [];
 let inventoryLoading = false;
 let inventoryFilter = "all";
 let inventoryCategory = "all";
+let opsInventory = null;
+let opsInventorySection = "all";
+let opsInventoryView = "count"; // count | order | dash
+let opsInventoryBusy = false;
 let reviewsData = null;
 let reviewsLoading = false;
 let reviewPlatform = "all";
@@ -5944,15 +6041,9 @@ function formatMerchPrice(item) {
 const INVENTORY_CATEGORIES = ["Kitchen", "Bar", "Coffee", "Beer", "Paper & Supplies", "Cleaning", "General"];
 
 function inventoryStatusMeta(item) {
-  if (item.quantity <= 0 && item.ordered) {
-    return { label: "On order", className: "on-order" };
-  }
-  if (item.quantity <= 0) {
-    return { label: "Out", className: "out" };
-  }
-  if (item.quantity <= 2) {
-    return { label: "Low", className: "low" };
-  }
+  if (item.quantity <= 0 && item.ordered) return { label: "On order", className: "on-order" };
+  if (item.quantity <= 0) return { label: "Out", className: "out" };
+  if (item.quantity <= 2) return { label: "Low", className: "low" };
   return { label: "In stock", className: "in-stock" };
 }
 
@@ -5965,7 +6056,6 @@ function formatInventoryQuantity(item) {
 async function loadInventoryData(force) {
   if (inventoryLoading) return;
   if (!force && inventoryItems.length) return;
-
   inventoryLoading = true;
   try {
     const response = await fetch(`${API_BASE}/api/inventory`);
@@ -5977,229 +6067,283 @@ async function loadInventoryData(force) {
   }
 }
 
-function renderInventoryAdminForm() {
-  if (!isInventoryManager()) return "";
-  const categoryOptions = INVENTORY_CATEGORIES.map(category => `
-    <option value="${escapeForAttribute(category)}">${escapeHTML(category)}</option>
-  `).join("");
-
-  return `
-    <div class="inventory-admin-panel">
-      <h3 style="margin:0 0 16px;font-size:18px;">Add product</h3>
-      <div class="inventory-admin-grid">
-        <div style="grid-column:1/-1;">
-          <label for="inventoryName">Product name</label>
-          <input id="inventoryName" type="text" placeholder="Brioche buns">
-        </div>
-        <div>
-          <label for="inventoryCategory">Category</label>
-          <select id="inventoryCategory">${categoryOptions}</select>
-        </div>
-        <div>
-          <label for="inventoryQuantity">Quantity on hand</label>
-          <input id="inventoryQuantity" type="number" min="0" step="0.1" value="0">
-        </div>
-        <div>
-          <label for="inventoryUnit">Unit</label>
-          <input id="inventoryUnit" type="text" placeholder="cases, lbs, each">
-        </div>
-        <div style="grid-column:1/-1;">
-          <label for="inventorySupplier">Supplier / where we buy it</label>
-          <input id="inventorySupplier" type="text" placeholder="Sysco, Local bakery, Restaurant Depot">
-        </div>
-        <div>
-          <label for="inventoryOrdered">More ordered?</label>
-          <select id="inventoryOrdered">
-            <option value="0">Not ordered yet</option>
-            <option value="1">Order placed</option>
-          </select>
-        </div>
-        <div style="grid-column:1/-1;">
-          <label for="inventoryNotes">Notes (optional)</label>
-          <textarea id="inventoryNotes" placeholder="Par level, delivery day, storage location, etc."></textarea>
-        </div>
-      </div>
-      <p id="inventoryFormError" class="auth-error" style="margin-top:12px;"></p>
-      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitInventoryItem()">Add product</button>
-    </div>
-  `;
+async function loadOpsInventory(force = false) {
+  if (opsInventoryBusy) return opsInventory;
+  if (!force && opsInventory) return opsInventory;
+  opsInventoryBusy = true;
+  try {
+    const response = await fetch(`${API_BASE}/api/ops-inventory`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Could not load ops inventory.");
+    opsInventory = data;
+    return opsInventory;
+  } finally {
+    opsInventoryBusy = false;
+  }
 }
 
-function renderInventoryTable(query) {
-  const categories = ["all", ...new Set(inventoryItems.map(item => item.category))].filter(Boolean);
+function applyOpsInventoryPayload(data) {
+  if (data?.catalog) opsInventory = data.catalog;
+  else if (data?.items) opsInventory = data;
+  return opsInventory;
+}
 
-  let filtered = inventoryItems.filter(item => {
-    const haystack = (item.name + " " + item.category + " " + item.supplier + " " + item.notes + " " + item.unit).toLowerCase();
-    const matchesSearch = !query || haystack.includes(query);
-    const matchesCategory = inventoryCategory === "all" || item.category === inventoryCategory;
-    const status = inventoryStatusMeta(item);
+async function updateOpsStock(itemId) {
+  if (!currentUser) {
+    alert("Sign in to update counts.");
+    return;
+  }
+  const el = document.getElementById("opsStock_" + itemId);
+  if (!el) return;
+  try {
+    const data = await apiFetch(`/api/ops-inventory/items/${encodeURIComponent(itemId)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ inStock: Number(el.value) })
+    });
+    applyOpsInventoryPayload(data);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
 
-    let matchesFilter = true;
-    if (inventoryFilter === "in-stock") matchesFilter = item.quantity > 0;
-    else if (inventoryFilter === "out") matchesFilter = item.quantity <= 0 && !item.ordered;
-    else if (inventoryFilter === "on-order") matchesFilter = item.ordered;
-    else if (inventoryFilter === "low") matchesFilter = status.className === "low";
+async function toggleOpsSectionReady(sectionId, makeReady) {
+  if (!currentUser) {
+    alert("Sign in to mark sections ready.");
+    return;
+  }
+  try {
+    const data = await apiFetch(
+      `/api/ops-inventory/sections/${encodeURIComponent(sectionId)}/ready`,
+      { method: makeReady ? "POST" : "DELETE" }
+    );
+    applyOpsInventoryPayload(data);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
 
-    return matchesSearch && matchesCategory && matchesFilter;
+async function saveOpsWeek() {
+  if (!currentUser) {
+    alert("Sign in to save a weekly count.");
+    return;
+  }
+  try {
+    const data = await apiFetch("/api/ops-inventory/week", {
+      method: "POST",
+      body: JSON.stringify({ weekLabel: new Date().toISOString().slice(0, 10) })
+    });
+    applyOpsInventoryPayload(data);
+    alert("Weekly count saved. Usage will refine pars over time.");
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function submitOpsOrder() {
+  if (!isInventoryManager()) {
+    alert("Shift leads and admins submit the e-order.");
+    return;
+  }
+  try {
+    const data = await apiFetch("/api/ops-inventory/orders", {
+      method: "POST",
+      body: JSON.stringify({})
+    });
+    applyOpsInventoryPayload(data);
+    const text = data.order?.shareText || "";
+    if (text && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    }
+    alert(`Order submitted (${data.order?.itemCount || 0} lines, ${data.order?.formatTotalCost || ""}).${text ? " Order text copied." : ""}`);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function resetOpsInventorySeed() {
+  if (!isInventoryManager()) return;
+  if (!confirm("Reset ops inventory to the Manhattan catalog seed? Counts and order history will clear.")) return;
+  try {
+    const data = await apiFetch("/api/ops-inventory/reset-seed", { method: "POST" });
+    applyOpsInventoryPayload(data);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function renderOpsCountView(query) {
+  const sections = (opsInventory.sections || []).filter((section) => {
+    if (opsInventorySection !== "all" && section.id !== opsInventorySection) return false;
+    return true;
   });
 
-  const categoryButtons = categories.map(category => `
-    <button type="button" class="inventory-filter-btn${inventoryCategory === category ? " active" : ""}" onclick="inventoryCategory='${escapeForAttribute(category)}'; render();">${category === "all" ? "All categories" : escapeHTML(category)}</button>
-  `).join("");
+  return sections.map((section) => {
+    const items = (opsInventory.items || []).filter((item) => {
+      if (item.sectionId !== section.id) return false;
+      if (!query) return true;
+      const hay = `${item.name} ${item.vendor} ${item.unit} ${item.sectionName}`.toLowerCase();
+      return hay.includes(query);
+    });
+    if (!items.length && query) return "";
 
-  const filterButtons = [
-    ["all", "All products"],
-    ["in-stock", "In stock"],
-    ["low", "Low"],
-    ["out", "Out"],
-    ["on-order", "Ordered"]
-  ].map(([key, label]) => `
-    <button type="button" class="inventory-filter-btn${inventoryFilter === key ? " active" : ""}" onclick="inventoryFilter='${key}'; render();">${label}</button>
-  `).join("");
-
-  if (!filtered.length) {
     return `
-      <div class="inventory-filter-row">${categoryButtons}</div>
-      <div class="inventory-filter-row">${filterButtons}</div>
-      <div class="status"><strong>No products match.</strong>Try a different search or filter, or add a product if you're a manager.</div>
+      <div class="ops-inv-section">
+        <div class="ops-inv-section-head">
+          <div>
+            <h3>${escapeHTML(section.name)}</h3>
+            <div class="ops-inv-section-meta">${escapeHTML(section.ownerName)} · ${escapeHTML(section.distributorName)} · lead ${section.leadTimeDays}d · ${section.orderCount} to order</div>
+          </div>
+          <div class="ops-inv-actions">
+            ${section.ready ? `<span class="ops-inv-ready">Ready</span>` : ""}
+            ${currentUser ? `
+              <button type="button" class="auth-btn" onclick="toggleOpsSectionReady('${escapeForAttribute(section.id)}', ${section.ready ? "false" : "true"})">
+                ${section.ready ? "Unmark ready" : "Mark ready"}
+              </button>
+            ` : ""}
+          </div>
+        </div>
+        <div class="ops-inv-row" style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;">
+          <div>Item</div><div>In stock</div><div>Par</div><div>Need</div><div></div>
+        </div>
+        ${items.map((item) => `
+          <div class="ops-inv-row">
+            <div>
+              <strong>${escapeHTML(item.name)}</strong>
+              <div class="ops-inv-section-meta">${escapeHTML(item.unit)}${item.vendor ? ` · ${escapeHTML(item.vendor)}` : ""} · ${escapeHTML(item.parSource)}</div>
+            </div>
+            <div>
+              ${currentUser ? `<input id="opsStock_${escapeForAttribute(item.id)}" type="number" min="0" step="1" value="${item.inStock}">` : item.inStock}
+            </div>
+            <div>${item.par}</div>
+            <div class="ops-inv-need ${item.neededForOrder > 0 ? "" : "zero"}">${item.neededForOrder}</div>
+            <div>
+              ${currentUser ? `<button type="button" class="auth-btn" onclick="updateOpsStock('${escapeForAttribute(item.id)}')">Save</button>` : ""}
+            </div>
+          </div>
+        `).join("") || `<div class="ops-inv-row"><div style="grid-column:1/-1;color:var(--muted);">No items in this section.</div></div>`}
+      </div>
     `;
-  }
+  }).join("") || `<div class="status"><strong>No sections match.</strong></div>`;
+}
 
-  const manager = isInventoryManager();
+function renderOpsOrderView() {
+  const lines = opsInventory.orderLines || [];
+  const byDist = {};
+  lines.forEach((line) => {
+    if (!byDist[line.distributorName]) byDist[line.distributorName] = [];
+    byDist[line.distributorName].push(line);
+  });
+
+  const blocks = Object.keys(byDist).sort().map((dist) => `
+    <div class="ops-inv-section">
+      <div class="ops-inv-section-head">
+        <div>
+          <h3>${escapeHTML(dist)}</h3>
+          <div class="ops-inv-section-meta">${byDist[dist].length} lines</div>
+        </div>
+      </div>
+      ${byDist[dist].map((line) => `
+        <div class="ops-inv-row">
+          <div>
+            <strong>${escapeHTML(line.name)}</strong>
+            <div class="ops-inv-section-meta">${escapeHTML(line.sectionName)} · ${escapeHTML(line.ownerName)}</div>
+          </div>
+          <div>${line.inStock}</div>
+          <div>${line.par}</div>
+          <div class="ops-inv-need">${line.neededForOrder} ${escapeHTML(line.unit)}</div>
+          <div>${escapeHTML((line.weeklyCost || 0).toFixed ? "$" + line.weeklyCost.toFixed(2) : "")}</div>
+        </div>
+      `).join("")}
+    </div>
+  `).join("");
 
   return `
-    <div class="inventory-filter-row">${categoryButtons}</div>
-    <div class="inventory-filter-row">${filterButtons}</div>
-    <div class="inventory-table-wrap">
-      <table class="inventory-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Category</th>
-            <th>On hand</th>
-            <th>Status</th>
-            <th>Supplier</th>
-            <th>Ordered?</th>
-            ${manager ? "<th>Update</th>" : ""}
-          </tr>
-        </thead>
-        <tbody>
-          ${filtered.map(item => {
-            const status = inventoryStatusMeta(item);
-            return `
-              <tr>
-                <td>
-                  <strong>${escapeHTML(item.name)}</strong>
-                  ${item.notes ? `<div style="font-size:12px;color:var(--muted);margin-top:4px;">${escapeHTML(item.notes)}</div>` : ""}
-                </td>
-                <td>${escapeHTML(item.category)}</td>
-                <td>${manager ? `
-                  <input class="inventory-inline-input" id="invQty_${item.id}" type="number" min="0" step="0.1" value="${item.quantity}">
-                  <span style="font-size:12px;color:var(--muted);">${escapeHTML(item.unit)}</span>
-                ` : escapeHTML(formatInventoryQuantity(item))}
-                </td>
-                <td><span class="inventory-status ${status.className}">${status.label}</span></td>
-                <td>${manager ? `<input class="inventory-inline-input wide" id="invSupplier_${item.id}" type="text" value="${escapeForAttribute(item.supplier)}">` : (item.supplier ? escapeHTML(item.supplier) : "—")}</td>
-                <td>${manager ? `
-                  <select class="inventory-inline-input wide" id="invOrdered_${item.id}">
-                    <option value="0"${item.ordered ? "" : " selected"}>Not yet</option>
-                    <option value="1"${item.ordered ? " selected" : ""}>Yes — on order</option>
-                  </select>
-                ` : `<span class="${item.ordered ? "inventory-ordered-yes" : "inventory-ordered-no"}">${item.ordered ? "Yes — on order" : "Not yet"}</span>`}
-                </td>
-                ${manager ? `
-                  <td>
-                    <div class="inventory-row-actions">
-                      <button type="button" onclick="updateInventoryItem(${item.id})">Save</button>
-                      <button type="button" onclick="deleteInventoryItem(${item.id})">Remove</button>
-                    </div>
-                  </td>
-                ` : ""}
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
+    <div class="ops-inv-actions" style="max-width:1200px;margin:0 auto 16px;padding:0 24px;">
+      ${isInventoryManager() ? `<button type="button" class="game-next" onclick="submitOpsOrder()">Submit e-order</button>` : `<div class="status" style="margin:0;"><strong>Order preview</strong>Shift leads / admins can submit.</div>`}
     </div>
+    ${blocks || `<div class="status"><strong>Nothing to order.</strong>Everything is at par.</div>`}
   `;
 }
 
-async function submitInventoryItem() {
-  if (!isInventoryManager()) return;
-  const errorEl = document.getElementById("inventoryFormError");
-  if (errorEl) errorEl.textContent = "";
-
-  try {
-    await apiFetch("/api/inventory", {
-      method: "POST",
-      body: JSON.stringify({
-        name: document.getElementById("inventoryName").value.trim(),
-        category: document.getElementById("inventoryCategory").value,
-        quantity: Number(document.getElementById("inventoryQuantity").value),
-        unit: document.getElementById("inventoryUnit").value.trim() || "each",
-        supplier: document.getElementById("inventorySupplier").value.trim(),
-        ordered: document.getElementById("inventoryOrdered").value === "1",
-        notes: document.getElementById("inventoryNotes").value.trim()
-      })
-    });
-    await loadInventoryData(true);
-    render();
-  } catch (err) {
-    if (errorEl) errorEl.textContent = err.message;
-  }
-}
-
-async function updateInventoryItem(itemId) {
-  if (!isInventoryManager()) return;
-  try {
-    await apiFetch(`/api/inventory/${itemId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        quantity: Number(document.getElementById(`invQty_${itemId}`)?.value),
-        supplier: document.getElementById(`invSupplier_${itemId}`)?.value.trim(),
-        ordered: document.getElementById(`invOrdered_${itemId}`)?.value === "1"
-      })
-    });
-    await loadInventoryData(true);
-    render();
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function deleteInventoryItem(itemId) {
-  if (!isInventoryManager()) return;
-  if (!confirm("Remove this product from inventory?")) return;
-  try {
-    await apiFetch(`/api/inventory/${itemId}`, { method: "DELETE" });
-    await loadInventoryData(true);
-    render();
-  } catch (err) {
-    alert(err.message);
-  }
+function renderOpsDashView() {
+  const s = opsInventory.stats || {};
+  const sections = opsInventory.sections || [];
+  return `
+    <div class="ops-inv-kpis">
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Items</span><strong>${s.itemCount || 0}</strong></div>
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Sections ready</span><strong>${s.readyCount || 0}/${s.sectionCount || 0}</strong></div>
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Order lines</span><strong>${s.orderLineCount || 0}</strong></div>
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Est. weekly cost</span><strong>${escapeHTML(s.formatTotalWeeklyCost || "$0.00")}</strong></div>
+    </div>
+    <div class="list" style="padding-top:0;">
+      ${sections.map((section) => `
+        <div class="ops-inv-section">
+          <div class="ops-inv-section-head">
+            <div>
+              <h3>${escapeHTML(section.name)}</h3>
+              <div class="ops-inv-section-meta">${escapeHTML(section.ownerName)} · ${section.orderCount} needed · ${escapeHTML("$" + (section.weeklyCost || 0).toFixed(2))}</div>
+            </div>
+            ${section.ready ? `<span class="ops-inv-ready">Ready</span>` : `<span class="ops-inv-section-meta">Not ready</span>`}
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 async function renderInventory(content) {
   updateSearchPlaceholder();
   const query = document.getElementById("search").value.toLowerCase().trim();
-
   content.innerHTML = `<div class="status"><strong>Loading inventory…</strong></div>`;
 
   try {
-    await loadInventoryData(false);
+    await loadOpsInventory(false);
   } catch (err) {
-    content.innerHTML = `<div class="status"><strong>Inventory could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+    content.innerHTML = `<div class="status"><strong>Ops inventory could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
     return;
   }
 
+  const sectionOptions = [`<option value="all">All sections</option>`]
+    .concat((opsInventory.sections || []).map((s) => `
+      <option value="${escapeForAttribute(s.id)}" ${opsInventorySection === s.id ? "selected" : ""}>${escapeHTML(s.name)}</option>
+    `)).join("");
+
+  const body = opsInventoryView === "order"
+    ? renderOpsOrderView()
+    : opsInventoryView === "dash"
+      ? renderOpsDashView()
+      : `<div class="list" style="padding-top:0;">
+          <div style="max-width:1200px;margin:0 auto 12px;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <select id="opsSectionFilter" onchange="opsInventorySection=this.value; render();">${sectionOptions}</select>
+            ${currentUser ? `<button type="button" class="auth-btn" onclick="saveOpsWeek()">Save weekly count</button>` : ""}
+            ${isInventoryManager() ? `<button type="button" class="auth-btn" onclick="resetOpsInventorySeed()">Reset to seed</button>` : ""}
+          </div>
+          ${renderOpsCountView(query)}
+        </div>`;
+
   content.innerHTML = `
-    <div class="coffee-intro">
-      <h2>Product Inventory</h2>
-      <p>What we have on hand, what's running low, where we buy it, and whether more is already on order.</p>
-      ${isInventoryManager() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Manager view — you can add products and update counts below.</p>` : ""}
+    <div class="coffee-intro launchpad-intro">
+      <h2>Ops Inventory</h2>
+      <p>Manhattan catalog with Wayward par math — count stock, mark sections ready, and build the distributor order.</p>
+      ${!currentUser ? `<p style="margin-top:8px;font-size:14px;color:var(--muted);">Sign in to update counts and mark sections ready.</p>` : ""}
     </div>
-    ${renderInventoryAdminForm()}
-    ${renderInventoryTable(query)}
+    <div class="ops-inv-subtabs coffee-subtabs" style="padding:0 24px;max-width:1200px;margin:0 auto 8px;">
+      <button class="coffee-subtab${opsInventoryView === "count" ? " active" : ""}" onclick="opsInventoryView='count'; render();">Count</button>
+      <button class="coffee-subtab${opsInventoryView === "order" ? " active" : ""}" onclick="opsInventoryView='order'; render();">Order</button>
+      <button class="coffee-subtab${opsInventoryView === "dash" ? " active" : ""}" onclick="opsInventoryView='dash'; render();">Dashboard</button>
+    </div>
+    <div class="ops-inv-kpis">
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Catalog</span><strong>${opsInventory.stats?.itemCount || 0}</strong></div>
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Need to order</span><strong>${opsInventory.stats?.orderLineCount || 0}</strong></div>
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Ready</span><strong>${opsInventory.stats?.readyCount || 0}</strong></div>
+      <div class="ops-inv-kpi"><span class="ops-inv-section-meta">Est. cost</span><strong>${escapeHTML(opsInventory.stats?.formatTotalWeeklyCost || "$0.00")}</strong></div>
+    </div>
+    ${body}
   `;
 }
 
@@ -6695,7 +6839,7 @@ function updateSearchPlaceholder() {
     beer: "Search beer, style, or flavor",
     food: foodCategory === "weekly" ? "Search weekly specials" : "Search food items",
     merch: merchSection === "ideas" ? "Search merch ideas" : "Search merch",
-    inventory: "Search products, suppliers, or categories",
+    inventory: "Search inventory items or sections",
     reviews: "Search reviews or platforms",
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",

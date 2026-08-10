@@ -3289,6 +3289,7 @@
       <button type="button" class="tab" data-type="bar">Wine + Cocktails</button>
       <button type="button" class="tab" data-type="merch">Merch</button>
       <button type="button" class="tab" data-type="inventory">Inventory</button>
+      <button type="button" class="tab" data-type="sops">SOPs</button>
       <button type="button" class="tab" data-type="reviews">Reviews</button>
       <button type="button" class="tab" data-type="games">Launch Pad</button>
       <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
@@ -3475,6 +3476,10 @@ let opsInventory = null;
 let opsInventorySection = "all";
 let opsInventoryView = "count"; // count | order | dash
 let opsInventoryBusy = false;
+let sopDocuments = [];
+let sopCategory = "all";
+let sopEditId = null;
+let sopLoading = false;
 let reviewsData = null;
 let reviewsLoading = false;
 let reviewPlatform = "all";
@@ -4255,7 +4260,7 @@ function render() {
   const searchWrap = document.getElementById("searchWrap");
 
   const showFilters = activeType === "beer" || activeType === "ontap";
-  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "reviews";
+  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "sops" || activeType === "reviews";
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
@@ -4279,6 +4284,9 @@ function render() {
   } else if (activeType === "inventory") {
     destroyCharts();
     renderInventory(content);
+  } else if (activeType === "sops") {
+    destroyCharts();
+    renderSops(content);
   } else if (activeType === "reviews") {
     destroyCharts();
     renderReviews(content);
@@ -4342,6 +4350,10 @@ function canSubmitShiftSurvey() {
 
 function isInventoryManager() {
   return currentUser && (currentUser.role === "admin" || currentUser.role === "shift_lead");
+}
+
+function isAdmin() {
+  return currentUser && currentUser.role === "admin";
 }
 
 function isMerchManager() {
@@ -6347,6 +6359,306 @@ async function renderInventory(content) {
   `;
 }
 
+const SOP_CATEGORIES = ["Opening", "Closing", "Bar", "Kitchen", "Floor", "Safety", "General"];
+
+async function loadSopsData(force) {
+  if (sopLoading) return sopDocuments;
+  if (!force && sopDocuments.length) return sopDocuments;
+
+  sopLoading = true;
+  try {
+    const data = await fetch(`${API_BASE}/api/sops`).then(r => r.json());
+    sopDocuments = data.documents || [];
+    return sopDocuments;
+  } finally {
+    sopLoading = false;
+  }
+}
+
+function readSopTextFile(inputId) {
+  return new Promise((resolve, reject) => {
+    const input = document.getElementById(inputId);
+    const file = input?.files?.[0];
+    if (!file) return resolve("");
+    if (file.size > 500000) return reject(new Error("Text file too large (500 KB max)."));
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Could not read file."));
+    reader.readAsText(file);
+  });
+}
+
+function readSopAttachment(inputId) {
+  return new Promise((resolve, reject) => {
+    const input = document.getElementById(inputId);
+    const file = input?.files?.[0];
+    if (!file) return resolve(null);
+    if (file.size > 4 * 1024 * 1024) return reject(new Error("Attachment too large (4 MB max)."));
+    const reader = new FileReader();
+    reader.onload = () => resolve({ name: file.name, url: reader.result });
+    reader.onerror = () => reject(new Error("Could not read attachment."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function plainTextToSopHtml(text) {
+  const trimmed = String(text || "").trim();
+  if (!trimmed) return "";
+  if (/<[a-z][\s\S]*>/i.test(trimmed)) return trimmed;
+  return trimmed
+    .split(/\n{2,}/)
+    .map(block => `<p>${escapeHTML(block.trim()).replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
+
+function resetSopForm() {
+  sopEditId = null;
+  ["sopTitle", "sopSummary", "sopBody", "sopSortOrder"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === "sopSortOrder" ? "0" : "";
+  });
+  const category = document.getElementById("sopCategoryInput");
+  if (category) category.value = "General";
+  ["sopFileUpload", "sopAttachmentUpload"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  const errorEl = document.getElementById("sopFormError");
+  if (errorEl) errorEl.textContent = "";
+  const submitBtn = document.getElementById("sopSubmitBtn");
+  if (submitBtn) submitBtn.textContent = "Save SOP";
+}
+
+async function importSopFileIntoBody() {
+  try {
+    const text = await readSopTextFile("sopFileUpload");
+    if (!text) return;
+    const bodyEl = document.getElementById("sopBody");
+    if (bodyEl) bodyEl.value = plainTextToSopHtml(text);
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function renderSopAdminForm() {
+  if (!isAdmin()) return "";
+  const editing = sopEditId ? sopDocuments.find(doc => doc.id === sopEditId) : null;
+  const categoryOptions = SOP_CATEGORIES.map(category => `
+    <option value="${escapeForAttribute(category)}"${editing?.category === category ? " selected" : ""}>${escapeHTML(category)}</option>
+  `).join("");
+
+  return `
+    <div class="inventory-admin-panel" id="sopAdminForm">
+      <h3 style="margin:0 0 8px;font-size:18px;">${editing ? "Edit SOP" : "Upload SOP"}</h3>
+      <p class="desc" style="margin:0 0 16px;line-height:1.55;">Add procedures staff can search, read, and ask the training assistant about. Upload a .txt, .md, or .html file or paste content below.</p>
+      <div class="inventory-admin-grid">
+        <div style="grid-column:1/-1;">
+          <label for="sopTitle">Title</label>
+          <input id="sopTitle" type="text" placeholder="Taproom opening checklist" value="${escapeForAttribute(editing?.title || "")}">
+        </div>
+        <div>
+          <label for="sopCategoryInput">Category</label>
+          <select id="sopCategoryInput">${categoryOptions}</select>
+        </div>
+        <div>
+          <label for="sopSortOrder">Sort order</label>
+          <input id="sopSortOrder" type="number" min="0" step="1" value="${editing?.sort_order ?? 0}">
+        </div>
+        <div style="grid-column:1/-1;">
+          <label for="sopSummary">Short summary</label>
+          <input id="sopSummary" type="text" placeholder="One line for search and cards" value="${escapeForAttribute(editing?.summary || "")}">
+        </div>
+        <div style="grid-column:1/-1;">
+          <label for="sopBody">Procedure content</label>
+          <textarea id="sopBody" placeholder="Steps, checklists, and notes. HTML is supported for headings and lists.">${(editing?.body || "").replace(/<\//textarea/gi, "&lt;/textarea")}</textarea>
+        </div>
+        <div>
+          <label for="sopFileUpload">Import text file (.txt, .md, .html)</label>
+          <input id="sopFileUpload" type="file" accept=".txt,.md,.html,.htm,text/plain,text/markdown,text/html" onchange="importSopFileIntoBody()">
+        </div>
+        <div>
+          <label for="sopAttachmentUpload">Optional attachment (PDF, doc, image)</label>
+          <input id="sopAttachmentUpload" type="file" accept="*/*">
+        </div>
+      </div>
+      <p id="sopFormError" class="auth-error" style="margin-top:12px;"></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button id="sopSubmitBtn" class="game-next" type="button" onclick="submitSopDocument()">${editing ? "Update SOP" : "Save SOP"}</button>
+        ${editing ? `<button class="auth-btn" type="button" onclick="resetSopForm(); render();">Cancel edit</button>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function renderSopCards(query) {
+  const categories = ["all", ...new Set(sopDocuments.map(doc => doc.category))].filter(Boolean);
+  const categoryButtons = categories.map(category => `
+    <button type="button" class="inventory-filter-btn${sopCategory === category ? " active" : ""}" onclick="sopCategory='${escapeForAttribute(category)}'; render();">${category === "all" ? "All categories" : escapeHTML(category)}</button>
+  `).join("");
+
+  const filtered = sopDocuments.filter(doc => {
+    const haystack = (doc.title + " " + doc.category + " " + doc.summary + " " + stripHtmlForChat(doc.body)).toLowerCase();
+    const matchesSearch = !query || haystack.includes(query);
+    const matchesCategory = sopCategory === "all" || doc.category === sopCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  if (!filtered.length) {
+    return `
+      <div class="inventory-filter-row">${categoryButtons}</div>
+      <div class="status"><strong>No SOPs match.</strong>${isAdmin() ? " Upload one using the form above." : " Check back soon or ask a manager."}</div>
+    `;
+  }
+
+  return `
+    <div class="inventory-filter-row">${categoryButtons}</div>
+    <div class="list coffee-list">
+      ${filtered.map(doc => `
+        <div class="card coffee-card" onclick="openSopDocument(${doc.id})">
+          <div class="card-top">
+            <div>
+              <p class="name">${escapeHTML(doc.title)}</p>
+              <p class="desc">${escapeHTML(doc.summary || "Tap to read the full procedure.")}</p>
+            </div>
+            <span class="coffee-tag">${escapeHTML(doc.category)}</span>
+          </div>
+          <div class="details-hint">${doc.attachment_name ? "Includes attachment · " : ""}Tap to read</div>
+          ${isAdmin() ? `
+            <div style="display:flex;gap:8px;margin-top:12px;" onclick="event.stopPropagation()">
+              <button class="auth-btn" type="button" onclick="editSopDocument(${doc.id})">Edit</button>
+              <button class="auth-btn" type="button" onclick="deleteSopDocument(${doc.id})">Remove</button>
+            </div>
+          ` : ""}
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function openSopDocument(id) {
+  const doc = sopDocuments.find(entry => entry.id === id);
+  if (!doc) return;
+
+  document.getElementById("modalContent").innerHTML = `
+    <p class="coffee-section-num">${escapeHTML(doc.category)}</p>
+    <h2 class="modal-title" id="modalTitle">${escapeHTML(doc.title)}</h2>
+    ${doc.summary ? `<p class="modal-style">${escapeHTML(doc.summary)}</p>` : ""}
+    <div class="detail-section manual-body">${doc.body || `<p>No written steps yet.</p>`}</div>
+    ${doc.attachment_url ? `
+      <p style="margin-top:16px;">
+        <a class="game-next" style="display:inline-block;text-decoration:none;" href="${doc.attachment_url}" download="${escapeForAttribute(doc.attachment_name || "sop-attachment")}">Download ${escapeHTML(doc.attachment_name || "attachment")}</a>
+      </p>
+    ` : ""}
+  `;
+
+  document.getElementById("modalBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function editSopDocument(id) {
+  sopEditId = id;
+  render();
+  document.getElementById("sopAdminForm")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function submitSopDocument() {
+  if (!isAdmin()) return;
+  const errorEl = document.getElementById("sopFormError");
+  if (errorEl) errorEl.textContent = "";
+
+  const title = document.getElementById("sopTitle")?.value.trim();
+  const category = document.getElementById("sopCategoryInput")?.value.trim() || "General";
+  const summary = document.getElementById("sopSummary")?.value.trim();
+  const body = document.getElementById("sopBody")?.value.trim();
+  const sort_order = Number(document.getElementById("sopSortOrder")?.value) || 0;
+
+  if (!title) {
+    if (errorEl) errorEl.textContent = "Title is required.";
+    return;
+  }
+
+  try {
+    let attachment_name = "";
+    let attachment_url = "";
+    const attachment = await readSopAttachment("sopAttachmentUpload");
+    if (attachment) {
+      attachment_name = attachment.name;
+      attachment_url = attachment.url;
+    } else if (sopEditId) {
+      const existing = sopDocuments.find(doc => doc.id === sopEditId);
+      attachment_name = existing?.attachment_name || "";
+      attachment_url = existing?.attachment_url || "";
+    }
+
+    const payload = {
+      title,
+      category,
+      summary,
+      body: body || plainTextToSopHtml(await readSopTextFile("sopFileUpload")),
+      sort_order,
+      attachment_name,
+      attachment_url
+    };
+
+    if (!payload.body && !payload.attachment_url) {
+      if (errorEl) errorEl.textContent = "Add procedure text or upload a file.";
+      return;
+    }
+
+    if (sopEditId) {
+      await apiFetch(`/api/sops/${sopEditId}`, { method: "PATCH", body: JSON.stringify(payload) });
+    } else {
+      await apiFetch("/api/sops", { method: "POST", body: JSON.stringify(payload) });
+    }
+
+    resetSopForm();
+    await loadSopsData(true);
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+  }
+}
+
+async function deleteSopDocument(id) {
+  if (!isAdmin()) return;
+  const doc = sopDocuments.find(entry => entry.id === id);
+  if (!doc) return;
+  if (!confirm(`Remove "${doc.title}" from the SOP library?`)) return;
+
+  try {
+    await apiFetch(`/api/sops/${id}`, { method: "DELETE" });
+    if (sopEditId === id) resetSopForm();
+    await loadSopsData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function renderSops(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  content.innerHTML = `<div class="status"><strong>Loading SOPs…</strong></div>`;
+
+  try {
+    await loadSopsData(false);
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>SOPs could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+    return;
+  }
+
+  content.innerHTML = `
+    <div class="coffee-intro">
+      <h2>Standard Operating Procedures</h2>
+      <p>Opening, closing, bar, kitchen, and floor procedures in one place. Search here or ask the training assistant — SOP content feeds both.</p>
+      ${isAdmin() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Admin view — upload and edit procedures below.</p>` : ""}
+    </div>
+    ${renderSopAdminForm()}
+    ${renderSopCards(query)}
+  `;
+}
+
 function renderReviewStars(rating) {
   const stars = Math.round(Number(rating) || 0);
   if (!stars) return "—";
@@ -6840,6 +7152,7 @@ function updateSearchPlaceholder() {
     food: foodCategory === "weekly" ? "Search weekly specials" : "Search food items",
     merch: merchSection === "ideas" ? "Search merch ideas" : "Search merch",
     inventory: "Search inventory items or sections",
+    sops: "Search SOPs, procedures, or categories",
     reviews: "Search reviews or platforms",
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",
@@ -9102,6 +9415,10 @@ function activateAppTab(type) {
   }
   if (activeType !== "food") foodCategory = "all";
   if (activeType !== "merch") merchSection = "stock";
+  if (activeType !== "sops") {
+    sopCategory = "all";
+    if (sopEditId) resetSopForm();
+  }
   if (activeType !== "bar") barSection = "all";
   if (activeType === "team") teamDetailId = null;
   if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
@@ -9201,7 +9518,7 @@ function localChatAnswer(message) {
   const q = message.toLowerCase();
 
   if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi! I can help with beers on the tap list, coffee bar training, and training games on this site. What would you like to know?";
+    return "Hi! I can help with beers on the tap list, coffee bar training, SOPs, and training games on this site. What would you like to know?";
   }
 
   if (/tap|on tap|what'?s pouring|what is pouring/.test(q) && beers.length) {
@@ -9249,13 +9566,38 @@ function localChatAnswer(message) {
       }).join("\n\n");
   }
 
+  const sopHits = sopDocuments
+    .map(doc => ({
+      doc,
+      score: chatScore(`${doc.title} ${doc.category} ${doc.summary} ${stripHtmlForChat(doc.body)}`, terms)
+    }))
+    .filter(row => row.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  if (sopHits.length) {
+    return "From the SOP library:\n\n" +
+      sopHits.map(({ doc }) => {
+        const excerpt = stripHtmlForChat(doc.body).slice(0, 360);
+        return `${doc.title} (${doc.category})\n${doc.summary || excerpt}${doc.summary ? `\n${excerpt}` : ""}${excerpt.length >= 360 ? "…" : ""}`;
+      }).join("\n\n") +
+      "\n\nOpen the SOPs tab for the full procedure.";
+  }
+
+  if (/sop|procedure|standard operating|opening checklist|closing checklist/.test(q)) {
+    return "Standard operating procedures are on the SOPs tab." +
+      (sopDocuments.length
+        ? " Categories: " + [...new Set(sopDocuments.map(doc => doc.category))].join(", ") + "."
+        : " Ask an admin to upload procedures there.");
+  }
+
   if (/game|quiz|flashcard|training/.test(q)) {
     return "Training games on this site:\n\n" +
       GAMES.map(g => `• ${g.title} — ${g.desc}`).join("\n") +
       "\n\nFor coffee: open the Coffee tab → Training Quiz or Flashcards.";
   }
 
-  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', or 'training games'. I only answer from content on this site.";
+  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', an SOP topic, or 'training games'. I only answer from content on this site.";
 }
 
 let chatOpen = false;
@@ -9276,7 +9618,7 @@ function toggleChatPanel(force) {
     if (!chatHistory.length) {
       appendChatMessage(
         "assistant",
-        "Hi! I can answer questions about beers on the tap list, coffee bar training, and training games on this site. What do you need?"
+        "Hi! I can answer questions about beers on the tap list, coffee bar training, SOPs, and training games on this site. What do you need?"
       );
     }
     document.getElementById("chatInput").focus();
@@ -9377,6 +9719,7 @@ async function sendChatMessage(event, presetText) {
 async function bootstrap() {
   await loadData();
   await initAuth();
+  loadSopsData(true).catch(() => {});
   await maybeShowDailyBriefing();
   await maybePromptShiftSurvey();
   await maybeShowShiftDigest();

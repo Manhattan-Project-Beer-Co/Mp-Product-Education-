@@ -7,6 +7,7 @@ Manhattan Project staff training portal covers:
 - Food tab: Breakfast, Lunch, Dinner, and Weekly Specials (Mon lunch, Taco Tue, Wed dinner) with dietary tags.
 - Merch tab: In Stock and Up & Coming ideas with voting. Merch managers (merch role or admin) manage inventory and post ideas.
 - Coffee tab: Menu (caffeine bar — purists, pour over, flavored, matcha, tea), Training Manual, Seasonal Lattes. Employees get a daily "what's new" briefing on first login when new taps, food specials, or seasonal lattes are flagged.
+- SOPs tab: Standard operating procedures by category (opening, closing, bar, kitchen, floor, safety, etc.). Admins upload and edit procedures; staff search and read them. SOP content is also used by the training assistant chat.
 - Wine + Cocktails tab: wine by the glass/bottle, rotating Shirley Temples, and NA beverages (lemonade, Italian cream soda, ginger beer, etc.).
 - War Games tab: beer training games (Flavor Quiz, Guest Match, Tap Match, ABV Challenge, Style Match, Pick the Profile, Speed Round, Beer Flashcards) — all use on-tap beers from the spreadsheet only.
 - My Progress / Team: training scores when logged in (not guest-facing product info).
@@ -208,7 +209,18 @@ function scoreText(text, terms) {
   return score;
 }
 
-function buildContext(query, beers) {
+function stripHtml(text) {
+  return String(text || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function formatSopForContext(doc) {
+  const parts = [`[${doc.category}] ${doc.title}`];
+  if (doc.summary) parts.push(doc.summary);
+  if (doc.body) parts.push(stripHtml(doc.body));
+  return parts.join("\n");
+}
+
+function buildContext(query, beers, sops = []) {
   const terms = tokenize(query);
   const chunks = [`=== SITE OVERVIEW ===\n${SITE_OVERVIEW}`];
 
@@ -248,10 +260,27 @@ function buildContext(query, beers) {
         .join("\n\n")
   );
 
+  if (sops.length) {
+    const sopHits = sops
+      .map(doc => ({
+        doc,
+        score: scoreText(`${doc.category} ${doc.title} ${doc.summary} ${stripHtml(doc.body)}`, terms)
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    const sopPick = sopHits.filter(row => row.score > 0).slice(0, 8);
+    const sopSelection = sopPick.length ? sopPick : sopHits.slice(0, 4);
+
+    chunks.push(
+      "=== STANDARD OPERATING PROCEDURES (SOPs) ===\n" +
+        sopSelection.map(({ doc }) => formatSopForContext(doc)).join("\n\n")
+    );
+  }
+
   return chunks.join("\n\n").slice(0, 14000);
 }
 
-function localAnswer(query, beers) {
+function localAnswer(query, beers, sops = []) {
   const terms = tokenize(query);
   const q = query.toLowerCase();
 
@@ -290,6 +319,34 @@ function localAnswer(query, beers) {
     );
   }
 
+  const sopHits = sops
+    .map(doc => ({
+      doc,
+      score: scoreText(`${doc.category} ${doc.title} ${doc.summary} ${stripHtml(doc.body)}`, terms)
+    }))
+    .filter(row => row.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  if (sopHits.length) {
+    return (
+      "From the SOP library:\n\n" +
+      sopHits
+        .map(({ doc }) => `**${doc.title}** (${doc.category})\n${doc.summary || stripHtml(doc.body).slice(0, 320)}`)
+        .join("\n\n") +
+      "\n\nOpen the **SOPs** tab for the full procedure."
+    );
+  }
+
+  if (/sop|procedure|standard operating|opening|closing checklist/.test(q)) {
+    return (
+      "Standard operating procedures live on the **SOPs** tab. " +
+      (sops.length
+        ? "Current categories: " + [...new Set(sops.map(doc => doc.category))].join(", ") + "."
+        : "Ask an admin to upload procedures there.")
+    );
+  }
+
   if (/game|quiz|flashcard|training/.test(q)) {
     return (
       "War Games on this site:\n\n" +
@@ -299,7 +356,7 @@ function localAnswer(query, beers) {
   }
 
   return (
-    "I couldn't find that in the training materials. Try asking about a specific beer, tap number, ABV, coffee dial-in, milk steaming, or a training game. " +
+    "I couldn't find that in the training materials. Try asking about a specific beer, tap number, ABV, coffee dial-in, milk steaming, an SOP topic, or a training game. " +
     "I only answer from content on this site."
   );
 }

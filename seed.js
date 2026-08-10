@@ -81,6 +81,21 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS sop_documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL DEFAULT 'General',
+    title TEXT NOT NULL,
+    summary TEXT NOT NULL DEFAULT '',
+    body TEXT NOT NULL DEFAULT '',
+    attachment_name TEXT NOT NULL DEFAULT '',
+    attachment_url TEXT NOT NULL DEFAULT '',
+    active INTEGER NOT NULL DEFAULT 1,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    updated_by INTEGER,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
 `);
 
 const TEST_PASSWORD = "test1234";
@@ -571,6 +586,63 @@ try {
   );
 } catch (err) {
   console.warn("Review seed skipped:", err.message);
+}
+
+const SOP_SAMPLES = [
+  {
+    category: "Opening",
+    title: "Taproom Opening Checklist",
+    summary: "Walk the floor before guests arrive — taps, POS, cleanliness, and safety.",
+    sort_order: 1,
+    body: `<p><strong>Before unlock</strong></p><ul><li>Walk the floor — lights, music, temperature, and restrooms.</li><li>Verify POS is online and drawer is counted.</li><li>Check tap lines are pouring cleanly; note any foam or off flavors for the lead.</li><li>Confirm ice, glassware, and to-go materials are stocked.</li><li>Review today's beer, food, and coffee specials with the opening team.</li></ul>`
+  },
+  {
+    category: "Closing",
+    title: "End-of-Night Close",
+    summary: "Secure the building, reset the bar, and leave notes for the next shift.",
+    sort_order: 1,
+    body: `<p><strong>Last hour</strong></p><ul><li>Announce last call per house policy.</li><li>Break down and sanitize bar top, wells, and coffee station.</li><li>Close out open tabs and reconcile POS with the manager.</li><li>Log low inventory on the Inventory tab.</li><li>Lock doors, set alarm, and note any issues for the opening lead.</li></ul>`
+  },
+  {
+    category: "Bar",
+    title: "Guest Allergy & Dietary Questions",
+    summary: "How to handle gluten-reduced beer, dairy, and ingredient questions.",
+    sort_order: 1,
+    body: `<p>Never guess on allergens. Use the tap list and food descriptions in this portal.</p><ul><li>Gluten-reduced beers are flagged on the beer list — confirm with kitchen for food.</li><li>For coffee drinks, whole milk is default; oat milk is available on request.</li><li>If unsure, offer to check with a manager or the kitchen before confirming.</li></ul>`
+  }
+];
+
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS sop_documents (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL DEFAULT 'General',
+      title TEXT NOT NULL,
+      summary TEXT NOT NULL DEFAULT '',
+      body TEXT NOT NULL DEFAULT '',
+      attachment_name TEXT NOT NULL DEFAULT '',
+      attachment_url TEXT NOT NULL DEFAULT '',
+      active INTEGER NOT NULL DEFAULT 1,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      updated_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
+
+  const sopCount = db.prepare("SELECT COUNT(*) AS count FROM sop_documents WHERE active = 1").get().count;
+  if (!sopCount) {
+    const insertSop = db.prepare(`
+      INSERT INTO sop_documents (category, title, summary, body, sort_order)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+    SOP_SAMPLES.forEach(sample => {
+      insertSop.run(sample.category, sample.title, sample.summary, sample.body, sample.sort_order);
+    });
+    console.log(`Seeded ${SOP_SAMPLES.length} sample SOPs.`);
+  }
+} catch (err) {
+  console.warn("SOP seed skipped:", err.message);
 }
 
 console.log("\nTest data seeded successfully.\n");

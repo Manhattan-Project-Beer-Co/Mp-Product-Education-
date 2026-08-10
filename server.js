@@ -41,7 +41,7 @@ const ALLOWED_APPROVED_ROLES = new Set(["employee", "admin", "merch", "shift_lea
 const CHAT_SYSTEM_PROMPT = `You are the Manhattan Project Beer Co. staff training assistant embedded in the internal training portal.
 
 Rules:
-- Answer ONLY using facts from the provided CONTEXT about beers, coffee training, and training games.
+- Answer ONLY using facts from the provided CONTEXT about beers, coffee training, standard operating procedures (SOPs), and training games.
 - If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Coffee, War Games).
 - Never invent beer names, tap numbers, ABVs, styles, or coffee standards.
 - Never answer questions unrelated to this training site (weather, politics, general trivia, other businesses, homework, etc.). Politely redirect to site topics.
@@ -223,6 +223,24 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (added_by) REFERENCES users(id)
   );
+
+  CREATE TABLE IF NOT EXISTS sop_documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL DEFAULT 'General',
+    title TEXT NOT NULL,
+    summary TEXT NOT NULL DEFAULT '',
+    body TEXT NOT NULL DEFAULT '',
+    attachment_name TEXT NOT NULL DEFAULT '',
+    attachment_url TEXT NOT NULL DEFAULT '',
+    active INTEGER NOT NULL DEFAULT 1,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    updated_by INTEGER,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (updated_by) REFERENCES users(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_sop_category ON sop_documents(category);
 `);
 
 const userColumns = new Set(db.prepare("PRAGMA table_info(users)").all().map((c) => c.name));
@@ -334,6 +352,48 @@ function ensureMerchCatalog() {
     console.log(`Loaded ${MERCH_CATALOG.length} merch items into taproom catalog.`);
   } catch (err) {
     console.warn("Merch catalog load skipped:", err.message);
+  }
+}
+
+function ensureSampleSops() {
+  try {
+    const { count } = db.prepare("SELECT COUNT(*) AS count FROM sop_documents WHERE active = 1").get();
+    if (count > 0) return;
+
+    const samples = [
+      {
+        category: "Opening",
+        title: "Taproom Opening Checklist",
+        summary: "Walk the floor before guests arrive — taps, POS, cleanliness, and safety.",
+        sort_order: 1,
+        body: "<p><strong>Before unlock</strong></p><ul><li>Walk the floor — lights, music, temperature, and restrooms.</li><li>Verify POS is online and drawer is counted.</li><li>Check tap lines are pouring cleanly; note any foam or off flavors for the lead.</li><li>Confirm ice, glassware, and to-go materials are stocked.</li><li>Review today's beer, food, and coffee specials with the opening team.</li></ul>"
+      },
+      {
+        category: "Closing",
+        title: "End-of-Night Close",
+        summary: "Secure the building, reset the bar, and leave notes for the next shift.",
+        sort_order: 1,
+        body: "<p><strong>Last hour</strong></p><ul><li>Announce last call per house policy.</li><li>Break down and sanitize bar top, wells, and coffee station.</li><li>Close out open tabs and reconcile POS with the manager.</li><li>Log low inventory on the Inventory tab.</li><li>Lock doors, set alarm, and note any issues for the opening lead.</li></ul>"
+      },
+      {
+        category: "Bar",
+        title: "Guest Allergy & Dietary Questions",
+        summary: "How to handle gluten-reduced beer, dairy, and ingredient questions.",
+        sort_order: 1,
+        body: "<p>Never guess on allergens. Use the tap list and food descriptions in this portal.</p><ul><li>Gluten-reduced beers are flagged on the beer list — confirm with kitchen for food.</li><li>For coffee drinks, whole milk is default; oat milk is available on request.</li><li>If unsure, offer to check with a manager or the kitchen before confirming.</li></ul>"
+      }
+    ];
+
+    const insertSop = db.prepare(`
+      INSERT INTO sop_documents (category, title, summary, body, sort_order)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+    for (const sample of samples) {
+      insertSop.run(sample.category, sample.title, sample.summary, sample.body, sample.sort_order);
+    }
+    console.log(`Loaded ${samples.length} sample SOPs.`);
+  } catch (err) {
+    console.warn("SOP seed skipped:", err.message);
   }
 }
 
@@ -1703,6 +1763,96 @@ app.delete("/api/inventory/:id", authRequired, inventoryManagerRequired, (req, r
   res.json({ ok: true });
 });
 
+function formatSop(row) {
+  return {
+    id: row.id,
+    category: row.category,
+    title: row.title,
+    summary: row.summary,
+    body: row.body,
+    attachment_name: row.attachment_name || "",
+    attachment_url: row.attachment_url || "",
+    sort_order: row.sort_order,
+    updated_at: row.updated_at
+  };
+}
+
+function getSopCatalog() {
+  return db.prepare(`
+    SELECT id, category, title, summary, body, attachment_name, attachment_url, sort_order, updated_at
+    FROM sop_documents
+    WHERE active = 1
+    ORDER BY category ASC, sort_order ASC, title ASC
+  `).all().map(formatSop);
+}
+
+app.get("/api/sops", (req, res) => {
+  res.json({ documents: getSopCatalog() });
+});
+
+app.post("/api/sops", authRequired, adminRequired, (req, res) => {
+  const title = (req.body.title || "").trim();
+  const category = (req.body.category || "General").trim();
+  const summary = (req.body.summary || "").trim();
+  const body = String(req.body.body || "").trim();
+  const attachment_name = (req.body.attachment_name || "").trim();
+  const attachment_url = (req.body.attachment_url || "").trim();
+  const sort_order = Number(req.body.sort_order) || 0;
+
+  if (!title) {
+    return res.status(400).json({ error: "SOP title is required." });
+  }
+  if (!body && !attachment_url) {
+    return res.status(400).json({ error: "SOP body text or an attachment is required." });
+  }
+
+  const result = db.prepare(`
+    INSERT INTO sop_documents (category, title, summary, body, attachment_name, attachment_url, sort_order, updated_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(category, title, summary, body, attachment_name, attachment_url, sort_order, req.user.id);
+
+  const doc = db.prepare("SELECT * FROM sop_documents WHERE id = ?").get(result.lastInsertRowid);
+  res.status(201).json({ document: formatSop(doc) });
+});
+
+app.patch("/api/sops/:id", authRequired, adminRequired, (req, res) => {
+  const doc = db.prepare("SELECT * FROM sop_documents WHERE id = ? AND active = 1").get(req.params.id);
+  if (!doc) return res.status(404).json({ error: "SOP not found." });
+
+  const title = (req.body.title ?? doc.title).trim();
+  const category = (req.body.category ?? doc.category).trim();
+  const summary = (req.body.summary ?? doc.summary).trim();
+  const body = req.body.body != null ? String(req.body.body).trim() : doc.body;
+  const attachment_name = (req.body.attachment_name ?? doc.attachment_name).trim();
+  const attachment_url = (req.body.attachment_url ?? doc.attachment_url).trim();
+  const sort_order = req.body.sort_order != null ? Number(req.body.sort_order) || 0 : doc.sort_order;
+
+  if (!title) {
+    return res.status(400).json({ error: "SOP title is required." });
+  }
+
+  db.prepare(`
+    UPDATE sop_documents
+    SET category = ?, title = ?, summary = ?, body = ?, attachment_name = ?, attachment_url = ?,
+        sort_order = ?, updated_by = ?, updated_at = datetime('now')
+    WHERE id = ?
+  `).run(category, title, summary, body, attachment_name, attachment_url, sort_order, req.user.id, doc.id);
+
+  const updated = db.prepare("SELECT * FROM sop_documents WHERE id = ?").get(doc.id);
+  res.json({ document: formatSop(updated) });
+});
+
+app.delete("/api/sops/:id", authRequired, adminRequired, (req, res) => {
+  const doc = db.prepare("SELECT id FROM sop_documents WHERE id = ? AND active = 1").get(req.params.id);
+  if (!doc) return res.status(404).json({ error: "SOP not found." });
+  db.prepare(`
+    UPDATE sop_documents
+    SET active = 0, updated_by = ?, updated_at = datetime('now')
+    WHERE id = ?
+  `).run(req.user.id, doc.id);
+  res.json({ ok: true });
+});
+
 app.get("/api/admin/employees", authRequired, adminRequired, (req, res) => {
   const employees = db.prepare(`
     SELECT u.id, u.name, u.email, u.role, u.created_at,
@@ -1783,14 +1933,15 @@ app.post("/api/chat", async (req, res) => {
       console.warn("Beer menu unavailable for chat:", fetchErr.message);
     }
 
-    const context = buildContext(message, beers);
+    const sops = getSopCatalog();
+    const context = buildContext(message, beers, sops);
 
     if (OPENAI_API_KEY) {
       const reply = await askOpenAI(message, history, context);
       return res.json({ reply, mode: "ai" });
     }
 
-    const reply = localAnswer(message, beers);
+    const reply = localAnswer(message, beers, sops);
     return res.json({ reply, mode: "local" });
   } catch (err) {
     console.error("Chat error:", err.message);
@@ -1938,6 +2089,7 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
   ensureMerchCatalog();
+  ensureSampleSops();
   console.log(`MP Training server running on port ${PORT}`);
   console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
 });

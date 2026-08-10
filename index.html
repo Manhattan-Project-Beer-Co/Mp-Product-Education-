@@ -6,31 +6,43 @@
 <title>Manhattan Project | Staff Training</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
 
   :root {
-    --black: #09090b;
-    --charcoal: #18181b;
-    --cream: #f4f5f7;
-    --paper: #ffffff;
-    --muted: #71717a;
-    --line: rgba(9, 9, 11, 0.08);
-    --line-strong: rgba(9, 9, 11, 0.14);
-    --green: #ecfdf3;
-    --green-text: #15803d;
-    --accent: #a67c52;
-    --accent-light: #faf6f1;
-    --accent-glow: rgba(166, 124, 82, 0.15);
-    --shadow-sm: 0 1px 2px rgba(9, 9, 11, 0.04);
-    --shadow-md: 0 8px 24px rgba(9, 9, 11, 0.06), 0 2px 6px rgba(9, 9, 11, 0.03);
-    --shadow-lg: 0 20px 48px rgba(9, 9, 11, 0.1);
-    --radius-sm: 10px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 24px;
-    --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --void: #0a0a0a;
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --surface-2: #1a1a1a;
+    --ink: #f5f5f5;
+    --gold: #c9a227;
+    --gold-bright: #e0b93a;
+    --gold-dim: #8b6b3c;
+    --gold-glow: rgba(201, 162, 39, 0.2);
+    --sidebar-w: 248px;
+
+    /* Legacy tokens remapped to POURMP dark/gold */
+    --black: #f5f5f5;
+    --charcoal: #1a1a1a;
+    --cream: #0d0d0d;
+    --paper: #161616;
+    --muted: #9a9a9a;
+    --line: rgba(201, 162, 39, 0.18);
+    --line-strong: rgba(201, 162, 39, 0.32);
+    --green: rgba(46, 74, 37, 0.35);
+    --green-text: #9fbf88;
+    --accent: #c9a227;
+    --accent-light: rgba(201, 162, 39, 0.08);
+    --accent-glow: rgba(201, 162, 39, 0.2);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.55);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -39,14 +51,15 @@
   body {
     font-family: var(--font);
     margin: 0;
-    background: var(--cream);
+    background: var(--bg);
     background-image:
-      radial-gradient(ellipse 90% 60% at 0% -20%, rgba(166, 124, 82, 0.09), transparent 55%),
-      radial-gradient(ellipse 70% 50% at 100% 0%, rgba(9, 9, 11, 0.04), transparent 50%);
-    color: var(--black);
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(201, 162, 39, 0.08), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(201, 162, 39, 0.04), transparent 45%);
+    color: var(--ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.55;
+    min-height: 100vh;
   }
 
   /* ── Top bar ── */
@@ -293,6 +306,47 @@
   }
 
   .auth-btn.primary:hover { background: #f4f4f5; }
+
+  .auth-btn.microsoft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #fff;
+    color: #242424;
+    border: 1px solid #8c8c8c;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .auth-btn.microsoft:hover {
+    background: #f3f3f3;
+    border-color: #8c8c8c;
+  }
+
+  .auth-btn.microsoft svg { flex-shrink: 0; }
+
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+    color: var(--muted, #71717a);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+  }
 
   .auth-user {
     font-size: 11px;
@@ -794,7 +848,7 @@
   }
 
   .game-leaderboard-table tr.me-row td {
-    background: rgba(166, 124, 82, 0.08);
+    background: rgba(201, 162, 39, 0.12);
     font-weight: 600;
   }
 
@@ -802,32 +856,386 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #fef3c7;
-    color: #92400e;
+    background: rgba(201, 162, 39, 0.2);
+    color: #c9a227;
     border-radius: 999px;
     padding: 4px 10px;
     font-size: 12px;
     font-weight: 700;
   }
 
-  .game-streak {
-    color: #15803d;
-    font-weight: 700;
-    font-size: 12px;
-  }
-
-  .game-hub-section {
-    max-width: 1080px;
+  /* ── Launch Pad combat ── */
+  .rocket-shell {
+    max-width: 640px;
     margin: 0 auto;
-    padding: 8px 24px 0;
+    padding: 0 12px 24px;
   }
 
-  .game-hub-section h3 {
-    margin: 0 0 10px;
-    font-size: 13px;
+  .galaga-cabinet {
+    border: 1px solid rgba(201, 162, 39, 0.35);
+    border-radius: 14px;
+    background: #0a0a0a;
+    box-shadow:
+      0 0 0 1px rgba(201, 162, 39, 0.12),
+      0 16px 48px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+  }
+
+  .galaga-cabinet.shake {
+    animation: cabinetShake 0.42s ease;
+  }
+
+  @keyframes cabinetShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .galaga-bezel {
+    background: linear-gradient(180deg, #121212, #0a0a0a);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.22);
+    padding: 12px 14px 10px;
+    font-family: var(--font);
+  }
+
+  .galaga-hud {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: #bdbdbd;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .galaga-hud span { color: var(--gold-bright, #e0b93a); }
+
+  .galaga-hud .combo-hot span { color: #fff; text-shadow: 0 0 12px rgba(201,162,39,0.8); }
+
+  .galaga-lives {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    vertical-align: middle;
+  }
+
+  .galaga-life {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--gold, #c9a227);
+    background: radial-gradient(circle at 35% 35%, #e0b93a, #8b6b3c);
+    box-shadow: 0 0 8px rgba(201,162,39,0.45);
+  }
+
+  .galaga-life.empty {
+    background: transparent;
+    opacity: 0.35;
+    box-shadow: none;
+  }
+
+  .galaga-mission {
+    color: var(--gold-bright, #e0b93a);
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: 0.06em;
-    color: var(--muted);
+    line-height: 1.45;
+    min-height: 2.4em;
+    text-shadow: 0 0 14px rgba(201, 162, 39, 0.28);
+  }
+
+  .rocket-arena {
+    position: relative;
+    height: min(62vh, 520px);
+    min-height: 380px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 70% 45% at 50% 0%, rgba(201,162,39,0.1), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 80% 90%, rgba(201,162,39,0.05), transparent 50%),
+      #050505;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .rocket-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #e8d48a;
+    opacity: 0.75;
+    border-radius: 50%;
+    animation: rocketTwinkle 2.4s ease-in-out infinite;
+  }
+
+  @keyframes rocketTwinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  .rocket-enemy {
+    position: absolute;
+    width: 78px;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    z-index: 2;
+    transition: filter 0.15s;
+  }
+
+  .rocket-enemy.diving {
+    z-index: 3;
+    filter: drop-shadow(0 0 10px rgba(201,162,39,0.55));
+  }
+
+  .galaga-sprite {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 6px;
+    position: relative;
+  }
+
+  .galaga-sprite svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 6px rgba(201,162,39,0.35));
+  }
+
+  .galaga-sprite .orbit-spin {
+    transform-origin: 50% 50%;
+    animation: atomSpin 6s linear infinite;
+  }
+
+  .rocket-enemy.kind-1 .orbit-spin { animation-duration: 4.5s; animation-direction: reverse; }
+  .rocket-enemy.kind-2 .orbit-spin { animation-duration: 7s; }
+  .rocket-enemy.kind-3 .orbit-spin { animation-duration: 5s; animation-direction: reverse; }
+  .rocket-enemy.diving .orbit-spin { animation-duration: 1.2s; }
+
+  @keyframes atomSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  .rocket-enemy-label {
+    display: block;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    color: #f2f2f2;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    max-width: 78px;
+    margin: 0 auto;
+    word-break: break-word;
+  }
+
+  .rocket-enemy.correct .rocket-enemy-label { color: #e0b93a; }
+  .rocket-enemy.wrong .rocket-enemy-label { color: #f0a8a8; }
+
+  .rocket-enemy.destroyed {
+    animation: rocketBoom 0.4s ease forwards;
+  }
+
+  @keyframes rocketBoom {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: none; }
+    40% { transform: translate(-50%, -50%) scale(1.35); opacity: 1; filter: brightness(1.6); }
+    100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
+  }
+
+  .rocket-ship {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 44px;
+    height: 52px;
+    transform: translateX(-50%);
+    z-index: 4;
+  }
+
+  .rocket-ship-body {
+    width: 44px;
+    height: 52px;
+    margin: 0 auto;
+    position: relative;
+    background: none;
+    filter: drop-shadow(0 0 10px rgba(201,162,39,0.55));
+  }
+
+  .rocket-ship-body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 18px 7px at 50% 52%, transparent 55%, rgba(201,162,39,0.85) 56%, transparent 58%),
+      linear-gradient(#e0b93a 0 0) 19px 4px / 6px 10px no-repeat,
+      linear-gradient(#c9a227 0 0) 16px 14px / 12px 22px no-repeat,
+      linear-gradient(#8b6b3c 0 0) 12px 36px / 8px 8px no-repeat,
+      linear-gradient(#8b6b3c 0 0) 24px 36px / 8px 8px no-repeat,
+      linear-gradient(#e8c547 0 0) 18px 34px / 8px 12px no-repeat;
+  }
+
+  .rocket-ship-body::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 14px;
+    margin: -7px 0 0 -18px;
+    border: 1.5px solid rgba(201,162,39,0.7);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(201,162,39,0.15);
+    transform: rotate(60deg);
+  }
+
+  .rocket-ship-flame {
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 8px;
+    height: 14px;
+    margin-left: -4px;
+    background: linear-gradient(180deg, #fff6c8, #e0b93a 40%, transparent);
+    border-radius: 40%;
+    animation: rocketFlame 0.25s ease-in-out infinite alternate;
+    opacity: 0.9;
+  }
+
+  @keyframes rocketFlame {
+    from { transform: scaleY(0.75); opacity: 0.65; }
+    to { transform: scaleY(1.15); opacity: 1; }
+  }
+
+  .rocket-bullet {
+    position: absolute;
+    width: 4px;
+    height: 14px;
+    margin-left: -2px;
+    border-radius: 99px;
+    background: linear-gradient(180deg, #fff6c8, #c9a227);
+    box-shadow: 0 0 10px rgba(201,162,39,0.9);
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .rocket-burst {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
+    z-index: 5;
+    background:
+      radial-gradient(circle, #fff 0 18%, transparent 19%),
+      radial-gradient(circle, #e0b93a 0 40%, transparent 41%),
+      radial-gradient(circle, rgba(201,162,39,0.5) 0 60%, transparent 61%);
+  }
+
+  .rocket-burst.show {
+    animation: rocketBurst 0.4s ease forwards;
+  }
+
+  @keyframes rocketBurst {
+    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+  }
+
+  .rocket-controls {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .rocket-controls button {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    border: 1px solid rgba(201,162,39,0.32);
+    background: #111;
+    color: #fff;
+    border-radius: 10px;
+    padding: 14px 8px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    text-transform: uppercase;
+  }
+
+  .rocket-controls button:active {
+    background: #1a1a1a;
+    transform: translateY(1px);
+  }
+
+  .rocket-controls .rocket-fire-btn {
+    background: linear-gradient(135deg, #e0b93a, #8b6b3c);
+    border-color: #c9a227;
+    color: #0a0a0a;
+  }
+
+  .rocket-hint {
+    margin: 10px 0 0;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #888;
+    letter-spacing: 0.04em;
+  }
+
+  .galaga-result {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    font-family: var(--font);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #e0b93a;
+    text-shadow: 0 0 18px rgba(201,162,39,0.55);
+    pointer-events: none;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  .galaga-result.miss { color: #f0a8a8; text-shadow: 0 0 16px rgba(180,70,70,0.45); }
+
+  .galaga-debrief {
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    transform: translate(-50%, 0);
+    z-index: 6;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #ddd;
+    background: rgba(10,10,10,0.75);
+    border: 1px solid rgba(201,162,39,0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    pointer-events: none;
+    text-align: center;
+    max-width: 86%;
+  }
+
+  .galaga-debrief strong { color: #e0b93a; }
+
+  @media (max-width: 640px) {
+    .rocket-arena { min-height: 340px; }
+    .rocket-enemy { width: 70px; }
+    .rocket-enemy-label { font-size: 10px; max-width: 70px; }
+    .galaga-mission { font-size: 12px; }
+    .galaga-result { font-size: 15px; }
   }
 
   .speed-header {
@@ -1125,6 +1533,146 @@
   .progress-table tr:last-child td { border-bottom: none; }
   .progress-table tr.clickable { cursor: pointer; transition: background 0.15s; }
   .progress-table tr.clickable:hover { background: #fafafa; }
+
+  .approve-panel {
+    max-width: 960px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+  }
+
+  .approve-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+    padding: 18px 20px;
+  }
+
+  .approve-card h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .approve-card > p {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .approve-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .approve-form input,
+  .approve-form select {
+    font-family: var(--font);
+    font-size: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    color: var(--black);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .approve-form input {
+    flex: 1 1 220px;
+    min-width: 180px;
+  }
+
+  .approve-form button {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    background: var(--black);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .approve-form button:hover { opacity: 0.9; }
+
+  .approve-error {
+    color: #b91c1c;
+    font-size: 13px;
+    margin: 0 0 10px;
+  }
+
+  .approve-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #f4f4f5;
+    color: #52525b;
+  }
+
+  .approve-status.joined {
+    background: #ecfdf5;
+    color: #047857;
+  }
+
+  .approve-remove {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: transparent;
+    color: #52525b;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .approve-remove:hover {
+    background: #fafafa;
+    color: var(--black);
+  }
+
+  .approve-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .approve-edit-select {
+    font-family: var(--font);
+    font-size: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    color: var(--black);
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .approve-edit {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    color: var(--black);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .approve-edit:hover { background: #fafafa; }
+
+  .approve-edit:disabled,
+  .approve-remove:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 
   .auth-panel {
     margin: 32px 24px;
@@ -1608,36 +2156,6 @@
     font-weight: 700;
     color: var(--black);
     margin: 0 0 8px;
-  }
-
-  .merch-shop-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--black);
-    text-decoration: none;
-    margin-bottom: 10px;
-  }
-
-  .merch-shop-link:hover { text-decoration: underline; }
-
-  .merch-online-tag {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 2px 6px;
-    border-radius: 999px;
-    background: #ecfdf5;
-    color: #15803d;
-  }
-
-  .merch-online-tag.sold-out {
-    background: #fef2f2;
-    color: #b91c1c;
   }
 
   .merch-pending-note {
@@ -2380,52 +2898,319 @@
     }
     .chat-fab { right: 16px; bottom: 16px; }
   }
+
+  /* ── POURMP shell + dark surface overrides ── */
+  .app-shell { display: flex; min-height: 100vh; }
+  .app-sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: #0a0a0a !important;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 40;
+    padding: 20px 14px 16px;
+  }
+  .sidebar-brand { display: flex; align-items: center; gap: 12px; padding: 6px 10px 22px; }
+  .sidebar-brand-mark {
+    width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--gold);
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 40% 35%, rgba(201,162,39,0.25), transparent 60%);
+    flex-shrink: 0;
+  }
+  .sidebar-brand-text strong { display:block; color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; line-height: 1.25; }
+  .sidebar-brand-text span { display:block; margin-top: 2px; color: var(--muted); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .sidebar-nav { display:flex; flex-direction:column; gap:4px; flex:1; overflow-y:auto; }
+  .sidebar-nav.tabs,
+  .app-sidebar .tabs {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  .sidebar-nav .tab {
+    display:flex; align-items:center; width:100%; text-align:left; padding:11px 12px;
+    border-radius:10px; border:1px solid transparent; background:transparent !important;
+    color:#d4d4d4 !important;
+    font-family:var(--font); font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+    cursor:pointer; transition: background .2s, border-color .2s, color .2s; box-shadow:none !important;
+  }
+  .sidebar-nav .tab:hover {
+    color:#fff !important;
+    background: rgba(255,255,255,0.06) !important;
+  }
+  .sidebar-nav .tab.active {
+    color:#fff !important;
+    background: linear-gradient(135deg, rgba(201,162,39,0.28), rgba(139,107,60,0.16)) !important;
+    border-color: var(--gold) !important;
+    box-shadow:none !important;
+  }
+  .sidebar-user { margin-top:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background:#101010; }
+  .sidebar-user-name { font-size:13px; font-weight:700; color:#fff; }
+  .sidebar-user-role { margin-top:2px; font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+  .sidebar-user .auth-bar { margin-top:10px; flex-direction:column; align-items:stretch; gap:8px; }
+  .sidebar-user .auth-btn { width:100%; justify-content:center; }
+  .app-stage { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .stage-title {
+    margin:0; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color: var(--gold); flex:1; min-width:120px;
+  }
+
+  .site-header { display:none; border-bottom:1px solid var(--line); background: rgba(10,10,10,0.92); }
+  .toolbar {
+    top:0; background: rgba(13,13,13,0.94); border-bottom:1px solid var(--line); box-shadow:none;
+  }
+  .toolbar-inner { max-width:1200px; padding:14px 28px; }
+  .tabs { display:none !important; }
+  .sidebar-nav.tabs {
+    display:flex !important;
+    flex-direction:column;
+    gap:4px;
+    flex:1;
+    overflow-y:auto;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  #mobileTabs { display:none !important; }
+  .brand-text h1 { color: var(--gold); }
+  .brand-mark { border-radius:50%; border-color: var(--gold); background: radial-gradient(circle at 40% 35%, rgba(201,162,39,0.25), transparent 60%); }
+
+  .filter-wrap { max-width:1200px; padding:0 28px 14px; }
+  .filter-btn { background: transparent; color: var(--muted); border-color: var(--line-strong); }
+  .filter-btn:hover { color: var(--gold); border-color: var(--gold); transform:none; }
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
+    border-color: var(--gold); color:#0a0a0a; box-shadow: 0 4px 16px rgba(201,162,39,0.25);
+  }
+
+  .auth-btn {
+    border-color: var(--line-strong); background: transparent; color: #fff;
+  }
+  .auth-btn:hover { background: rgba(201,162,39,0.1); border-color: var(--gold); }
+  .auth-btn.primary {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
+    color: #0a0a0a; border-color: var(--gold);
+  }
+  .auth-btn.primary:hover { filter: brightness(1.05); background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)); }
+  .auth-btn.microsoft { background:#111; color:#fff; border-color: var(--line-strong); }
+  .auth-user strong { color:#fff; }
+
+  input[type="text"], input[type="email"], input[type="password"], select, textarea {
+    background: var(--surface) !important; color: var(--ink) !important; border-color: var(--line-strong) !important; box-shadow:none !important;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold) !important; box-shadow: 0 0 0 3px var(--gold-glow) !important;
+  }
+  input::placeholder { color: #7a7a7a !important; }
+
+  .search-wrap svg {
+    color: var(--gold);
+    opacity: 0.85;
+    stroke: currentColor;
+  }
+  .search-wrap input[type="text"]#search,
+  .search-wrap input[type="text"] {
+    background: #0f0f0f !important;
+    color: #f5f5f5 !important;
+    border: 1px solid rgba(201, 162, 39, 0.28) !important;
+    box-shadow: none !important;
+    caret-color: var(--gold);
+  }
+  .search-wrap input::placeholder {
+    color: #8a8a8a !important;
+    opacity: 1;
+  }
+  .search-wrap input:focus {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.18) !important;
+    background: #121212 !important;
+  }
+  .search-wrap input:-webkit-autofill,
+  .search-wrap input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f5f5f5 !important;
+    caret-color: var(--gold);
+    box-shadow: 0 0 0 1000px #0f0f0f inset !important;
+    transition: background-color 99999s ease-out;
+  }
+
+  .card, .game-card, .flash-card, .game-tile, .metric-card, .chart-card, .rec-card,
+  .speed-header, .approve-card, .progress-table, .inventory-table, .modal, .chat-panel,
+  .coffee-subtab, .auth-panel {
+    background: var(--paper) !important;
+    border-color: var(--line-strong) !important;
+    color: var(--ink);
+  }
+  .card:hover, .game-tile:hover { border-color: var(--gold) !important; box-shadow: 0 0 0 1px rgba(201,162,39,0.2), var(--shadow-md); }
+  .game-tile-icon { background: rgba(201,162,39,0.08) !important; color: var(--gold); border: 1px solid var(--line); }
+  .game-option { background: var(--surface) !important; color: var(--ink); border-color: var(--line-strong) !important; }
+  .game-option:hover:not(.correct):not(.wrong):not(.disabled) { background: rgba(201,162,39,0.08) !important; border-color: var(--gold) !important; }
+  .game-next, .auth-panel .game-next, .approve-form button {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)) !important;
+    color: #0a0a0a !important; border: none !important;
+  }
+  .game-back, .flash-nav button, .approve-edit {
+    background: transparent !important; color: var(--gold) !important; border: 1px solid var(--line-strong) !important;
+  }
+  .approve-remove {
+    background: rgba(120, 30, 30, 0.25) !important;
+    color: #f0a8a8 !important;
+    border: 1px solid rgba(180, 70, 70, 0.45) !important;
+  }
+  .approve-remove:hover { background: rgba(140, 40, 40, 0.4) !important; }
+  .progress-table th, .inventory-table th, .progress-table tr.clickable:hover,
+  .chat-header, .chat-messages, .briefing-item, .approve-form input, .approve-form select {
+    background: #121212 !important; color: var(--ink) !important;
+  }
+  .coffee-intro h2, .name, .game-tile-title, .metric-value { color: #fff !important; }
+  .desc, .game-tile-desc, .metric-label, .hint, .status { color: var(--muted) !important; }
+  .status { background: var(--surface); border: 1px solid var(--line); }
+  .status strong { color: var(--gold) !important; }
+  .tag { background: rgba(201,162,39,0.12); color: var(--gold); border: 1px solid var(--line); }
+  .tag.new { background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)); color:#0a0a0a; border:none; }
+  .abv { color: var(--gold); }
+  .tap-number strong { color: var(--gold); }
+  .detail-text, .modal, .auth-panel { color: var(--ink) !important; }
+  .modal { background: #141414 !important; }
+  .modal-close { color: var(--gold); }
+  .app-footer { color: #666; }
+  .chat-fab { background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)); color:#0a0a0a; }
+  .chat-panel { background:#141414 !important; }
+  .list, .coffee-intro, .metrics-grid, .chart-grid, .game-hub, .approve-panel { max-width: 1200px; }
+
+  /* Launch Pad combat accents */
+  .galaga-hud span, .galaga-mission { color: var(--gold-bright); }
+
+  @media (max-width: 900px) {
+    .app-sidebar { display:none; }
+    .site-header { display:block; }
+    #mobileTabs.tabs {
+      display:flex !important; gap:3px; flex:1; min-width:0; overflow-x:auto; scrollbar-width:none;
+      padding:4px; background:#151515; border-radius: var(--radius-md);
+    }
+    #mobileTabs .tab {
+      padding:9px 14px; border:1px solid transparent; border-radius:8px; color:var(--muted); background:transparent;
+      font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; white-space:nowrap; cursor:pointer;
+      font-family: var(--font);
+    }
+    #mobileTabs .tab.active { background: rgba(201,162,39,0.16); color:#fff; border-color: var(--gold); }
+    .stage-title { display:none; }
+    .toolbar { top: 62px; }
+  }
+
+  /* Launch Pad academy tiles */
+  .launchpad-intro h2 {
+    letter-spacing: 0.14em; text-transform: uppercase; font-size: 22px; color: var(--gold) !important;
+  }
+  .launchpad-intro p { max-width: 52ch; }
+  .game-hub {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .game-tile {
+    min-height: 220px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:28px 20px 24px;
+    background: linear-gradient(180deg, #161616, #101010) !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: 14px;
+    position: relative;
+  }
+  .game-tile::after {
+    content: "VIEW NOW →";
+    margin-top: 18px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+    color: var(--gold);
+  }
+  .game-tile-icon {
+    width: 88px; height: 88px; border-radius: 50% !important;
+    display:grid; place-items:center;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(201,162,39,0.18), transparent 62%),
+      #0f0f0f !important;
+    border: 1px solid var(--gold) !important;
+    box-shadow: inset 0 0 0 1px rgba(201,162,39,0.15);
+    margin-bottom: 14px;
+    font-size: 0 !important;
+    position: relative;
+  }
+  .game-tile-icon svg { width: 42px; height: 42px; }
+  .game-tile-title {
+    letter-spacing: 0.12em; text-transform: uppercase; font-size: 13px; margin: 0;
+  }
+  .game-tile-desc { font-size: 12px; margin: 8px 0 0; max-width: 28ch; }
+
+
+
 </style>
 </head>
 <body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
+          <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
+          <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
+          <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
+        </svg></div>
+      <div class="sidebar-brand-text">
+        <strong>MANHATTAN PROJECT</strong>
+        <span>Staff Training</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav tabs" id="mainTabs">
+      <button type="button" class="tab active" data-type="ontap">On Tap</button>
+      <button type="button" class="tab" data-type="beer">All Beers</button>
+      <button type="button" class="tab" data-type="food">Food</button>
+      <button type="button" class="tab" data-type="coffee">Coffee</button>
+      <button type="button" class="tab" data-type="bar">Wine + Cocktails</button>
+      <button type="button" class="tab" data-type="merch">Merch</button>
+      <button type="button" class="tab" data-type="inventory">Inventory</button>
+      <button type="button" class="tab" data-type="reviews">Reviews</button>
+      <button type="button" class="tab" data-type="games">Launch Pad</button>
+      <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
+      <button type="button" class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</button>
+      <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
+      <button type="button" class="tab tab-admin-only" data-type="team" style="display:none;">Team</button>
+    </nav>
+    <div class="sidebar-user" id="sidebarUser">
+      <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
+      <div class="sidebar-user-role" id="sidebarUserRole">Sign in to track training</div>
+      <div class="auth-bar" id="authBar">
+        <button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>
+      </div>
+    </div>
+  </aside>
 
+  <div class="app-stage">
 <header class="site-header">
   <div class="header-inner">
     <div class="brand">
-      <div class="brand-mark">
-        <svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3" transform="rotate(60 50 50)"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#fff" stroke-width="3" transform="rotate(120 50 50)"/>
-          <rect x="43" y="32" width="14" height="40" rx="2" fill="#fff"/>
-          <rect x="46" y="22" width="8" height="12" fill="#fff"/>
-          <rect x="47" y="16" width="6" height="8" rx="1" fill="#fff"/>
-        </svg>
-      </div>
+      <div class="brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
+          <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
+          <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
+          <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
+        </svg></div>
       <div class="brand-text">
         <h1>MANHATTAN PROJECT</h1>
         <p>Staff Training</p>
       </div>
     </div>
-    <div class="auth-bar" id="authBar">
-      <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
-      <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
-    </div>
+    <div class="auth-bar" id="authBarMobile"></div>
   </div>
 </header>
 
 <div class="toolbar" id="toolbar">
   <div class="toolbar-inner">
-    <div class="tabs" id="mainTabs">
-      <div class="tab active" data-type="ontap">On Tap</div>
-      <div class="tab" data-type="beer">All Beers</div>
-      <div class="tab" data-type="food">Food</div>
-      <div class="tab" data-type="coffee">Coffee</div>
-      <div class="tab" data-type="bar">Wine + Cocktails</div>
-      <div class="tab" data-type="merch">Merch</div>
-      <div class="tab" data-type="inventory">Inventory</div>
-      <div class="tab" data-type="reviews">Reviews</div>
-      <div class="tab" data-type="games">War Games</div>
-      <div class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</div>
-      <div class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</div>
-      <div class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</div>
-      <div class="tab tab-admin-only" data-type="team" style="display:none;">Team</div>
-    </div>
+    <h2 class="stage-title" id="stageTitle">On Tap</h2>
+    <div class="tabs" id="mobileTabs"></div>
     <div class="search-wrap" id="searchWrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
@@ -2451,6 +3236,8 @@
 </main>
 
 <footer class="app-footer">Manhattan Project Beer Co. · Internal Staff Training</footer>
+  </div>
+</div>
 
 <div id="modalBackdrop" class="modal-backdrop" onclick="closeModal(event)">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -2487,7 +3274,7 @@
 <div class="chat-panel" id="chatPanel" role="dialog" aria-label="Training assistant">
   <div class="chat-header">
     <h3>Training Assistant</h3>
-    <p>Ask about beers on tap, coffee standards, or War Games — site content only.</p>
+    <p>Ask about beers on tap, coffee standards, or training games — site content only.</p>
     <span class="chat-mode-badge" id="chatModeBadge">Loading…</span>
   </div>
   <div class="chat-messages" id="chatMessages"></div>
@@ -2495,7 +3282,7 @@
     <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What's on tap?</button>
     <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Gluten-reduced beers</button>
     <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Espresso dial-in standard</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Which War Game first?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Which training game first?</button>
   </div>
   <form class="chat-input-row" onsubmit="sendChatMessage(event)">
     <input type="text" id="chatInput" placeholder="Ask about beer, coffee, or training…" autocomplete="off" maxlength="800">
@@ -2519,9 +3306,38 @@ const API_BASE = "";
 let currentUser = null;
 let authToken = localStorage.getItem("mp_auth_token") || "";
 let authMode = "login";
+let microsoftAuthAvailable = false;
 let teamDetailId = null;
 let myProgressData = null;
 let teamData = null;
+let approvedEmailsData = null;
+
+const MS_LOGO_SVG = `<svg width="18" height="18" viewBox="0 0 21 21" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>`;
+
+function microsoftSignInButton(label = "Sign in with Microsoft") {
+  if (!microsoftAuthAvailable) return "";
+  return `
+    <button type="button" class="auth-btn microsoft" onclick="startMicrosoftSignIn()">
+      ${MS_LOGO_SVG}
+      ${label}
+    </button>
+  `;
+}
+
+function consumeAuthCallbackParams() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("auth_token");
+  const authError = params.get("auth_error");
+  if (!token && !authError) return null;
+
+  params.delete("auth_token");
+  params.delete("auth_error");
+  const clean = params.toString();
+  const nextUrl = clean ? `${window.location.pathname}?${clean}` : window.location.pathname;
+  window.history.replaceState({}, "", nextUrl);
+
+  return { token, authError };
+}
 const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
 
@@ -2551,12 +3367,13 @@ let abvItem = null;
 let styleItem = null;
 let reverseItem = null;
 let speedItem = null;
-let blindItem = null;
-let descItem = null;
-let gfItem = null;
-let battleItem = null;
 let leaderboardData = null;
 let leaderboardPeriod = "week";
+let rocketItem = null;
+let rocketTimers = [];
+let rocketRaf = null;
+let rocketKeys = { left: false, right: false };
+let rocketBulletId = 0;
 let newTapIndex = 0;
 let newTapTimer = null;
 let coffeeSection = "menu";
@@ -3085,12 +3902,8 @@ const GAME_ROUNDS = {
   style: 10,
   reverse: 10,
   speed: 12,
-  hard: 12,
+  rocket: 10,
   flash: 15,
-  blind: 10,
-  desc: 10,
-  gf: 10,
-  battle: 10,
   coffeeQuiz: 10,
   coffeeFlash: 15
 };
@@ -3103,30 +3916,22 @@ const GAME_POINT_VALUES = {
   style: 10,
   reverse: 12,
   speed: 8,
-  hard: 12,
+  rocket: 12,
   flash: 3,
-  blind: 15,
-  desc: 12,
-  gf: 10,
-  battle: 10,
   coffee_quiz: 10,
   coffee_flash: 3
 };
 
 const GAMES = [
-  { id: "speed", icon: "⚡", title: "Speed Round", desc: "12 mixed questions — earn streak bonuses" },
-  { id: "hard", icon: "🔥", title: "Hard Mode", desc: "Tough decoys + 1.5× points — 12 questions" },
-  { id: "tap", icon: "🍺", title: "Tap Match", desc: "10 questions — match tap numbers to beers" },
-  { id: "quiz", icon: "📝", title: "Flavor Quiz", desc: "10 questions — flavor clues without beer names" },
-  { id: "practice", icon: "💬", title: "Guest Match", desc: "10 scenarios — style, ABV & flavor cues only" },
-  { id: "blind", icon: "🎯", title: "Blind Pick", desc: "10 questions — style + ABV only, pick the beer" },
-  { id: "desc", icon: "📖", title: "Description Match", desc: "10 questions — read the description, pick the beer" },
-  { id: "reverse", icon: "🔄", title: "Pick the Profile", desc: "10 questions — match flavor profiles to a beer name" },
-  { id: "abv", icon: "📊", title: "ABV Challenge", desc: "10 questions — pick ABV from current taps" },
-  { id: "style", icon: "🏷️", title: "Style Match", desc: "10 questions — pick the style of on-tap beers" },
-  { id: "battle", icon: "⚔️", title: "ABV Battle", desc: "10 rounds — which of two beers is stronger?" },
-  { id: "gf", icon: "🌾", title: "GF Spotter", desc: "10 questions — spot the gluten-reduced tap" },
-  { id: "flash", icon: "🃏", title: "Flashcards", desc: "15 cards — current tap list only" }
+  { id: "rocket", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(55 50 54)"/><rect x="44" y="28" width="12" height="36" rx="2" fill="#c9a227"/><rect x="47" y="18" width="6" height="12" fill="#c9a227"/><path d="M38 68 L44 58 L56 58 L62 68 Z" fill="#8b6b3c"/></svg>`, title: "Launch Pad", desc: "Gold rocket trainer — blast the correct tap answer" },
+  { id: "speed", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M56 22 L38 52h14l-8 26 28-36H56z" fill="#c9a227"/></svg>`, title: "Speed Round", desc: "12 mixed questions from current taps" },
+  { id: "tap", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M50 28c8 10 14 18 14 28a14 14 0 0 1-28 0c0-10 6-18 14-28z" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M50 40v28M42 52h16" stroke="#c9a227" stroke-width="2"/></svg>`, title: "Tap Match", desc: "Match tap numbers to beers" },
+  { id: "quiz", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Flavor Quiz", desc: "Match on-tap flavor profiles" },
+  { id: "practice", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Guest Match", desc: "Guest guidance scenarios" },
+  { id: "abv", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "ABV Challenge", desc: "Pick ABV from current taps" },
+  { id: "style", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Style Match", desc: "Pick the style of on-tap beers" },
+  { id: "reverse", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Pick the Profile", desc: "Match on-tap flavor profiles" },
+  { id: "flash", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><rect x="34" y="30" width="32" height="42" rx="4" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M42 44h16M42 54h12" stroke="#c9a227" stroke-width="2"/></svg>`, title: "Flashcards", desc: "15 cards — current tap list only" }
 ];
 
 function parseCSV(text) {
@@ -3281,100 +4086,6 @@ function onTapGameBeer(extra = () => true) {
   return b => col(b, "Name") && isOnTap(b) && extra(b);
 }
 
-function beerNameTokens(name) {
-  if (!name) return [];
-  return name.split(/[\s\-\/]+/).filter(t => t.length > 2);
-}
-
-function stripBeerNamesFromText(text, beers) {
-  if (!text) return text;
-  let result = text;
-  const names = new Set();
-  (beers || []).forEach(b => {
-    const full = col(b, "Name");
-    if (full) names.add(full);
-    beerNameTokens(full).forEach(t => names.add(t));
-  });
-  [...names].sort((a, b) => b.length - a.length).forEach(name => {
-    if (name.length < 3) return;
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    result = result.replace(new RegExp(escaped, "gi"), "___");
-  });
-  return result.replace(/\s+/g, " ").trim();
-}
-
-function buildFlavorClue(beer, pool) {
-  const profile = getFlavorProfile(beer);
-  if (!profile) return "";
-  return stripBeerNamesFromText(profile, [beer, ...(pool || []).slice(0, 24)]);
-}
-
-function buildGuestScenario(beer, pool) {
-  const style = getStyle(beer);
-  const abv = getABVText(beer);
-  const flavor = buildFlavorClue(beer, pool);
-  const cues = [];
-  if (style) cues.push(`something in the ${style} family`);
-  if (abv) cues.push(`around ${abv} ABV`);
-  if (flavor) cues.push(`with notes like: ${flavor.toLowerCase()}`);
-  return `A guest asks for ${cues.join(", ") || "a recommendation from the tap list"}. Which beer fits best?`;
-}
-
-function buildDescriptionClue(beer, pool) {
-  const text = getDescription(beer) || getFlavorProfile(beer);
-  return stripBeerNamesFromText(text, [beer, ...(pool || []).slice(0, 24)]);
-}
-
-function isGlutenReduced(item) {
-  return isYes(item["Gluten-Reduced"]);
-}
-
-function pickSimilarWrongBeers(pool, correct, count, hardMode) {
-  if (!hardMode) return pickWrongBeers(pool, correct, count);
-  const correctStyle = getStyle(correct);
-  const sameStyle = pool.filter(b => b.Name !== correct.Name && getStyle(b) === correctStyle && correctStyle);
-  const others = pool.filter(b => b.Name !== correct.Name && getStyle(b) !== correctStyle);
-  const picked = shuffle(sameStyle).slice(0, Math.min(count, sameStyle.length));
-  if (picked.length < count) {
-    picked.push(...shuffle(others).slice(0, count - picked.length));
-  }
-  return picked.slice(0, count);
-}
-
-function gameUsesHardDecoys(gameId) {
-  return gameId === "hard" || gameSession?.hardMode;
-}
-
-function questionPointValue() {
-  if (!gameSession) return GAME_POINT_VALUES.quiz;
-  const base = GAME_POINT_VALUES[gameSession.id] || 10;
-  return gameUsesHardDecoys(gameSession.id) ? Math.round(base * 1.5) : base;
-}
-
-function scoreQuestion(correct) {
-  if (!gameSession) return;
-  if (correct) {
-    gameSession.streak = (gameSession.streak || 0) + 1;
-    let pts = questionPointValue();
-    if (gameSession.streak >= 3) {
-      pts += Math.floor(gameSession.streak / 3) * 5;
-    }
-    gameSession.points = (gameSession.points || 0) + pts;
-  } else {
-    gameSession.streak = 0;
-  }
-}
-
-function finalizeSessionPoints() {
-  if (!gameSession) return 0;
-  let points = gameSession.points || 0;
-  const total = gameSession.queue.length;
-  if (total >= 8 && gameSession.right === total) {
-    points += Math.round(questionPointValue() * total * 0.25);
-  }
-  return points;
-}
-
 function getTapNumber(item) {
   const match = (item["On Tap"] || "").match(/\d+/);
   return match ? match[0] : "";
@@ -3425,6 +4136,7 @@ function render() {
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
+  if (typeof updateStageTitle === "function") updateStageTitle();
 
   if (activeType === "beer" || activeType === "ontap") {
     destroyCharts();
@@ -3474,12 +4186,8 @@ const ACTIVITY_LABELS = {
   style: "Style Match",
   reverse: "Pick the Profile",
   speed: "Speed Round",
-  hard: "Hard Mode",
+  rocket: "Launch Pad",
   flash: "Beer Flashcards",
-  blind: "Blind Pick",
-  desc: "Description Match",
-  gf: "GF Spotter",
-  battle: "ABV Battle",
   coffee_quiz: "Coffee Quiz",
   coffee_flash: "Coffee Flashcards"
 };
@@ -3519,6 +4227,9 @@ function isMerchManager() {
 
 function updateAuthUI() {
   const authBar = document.getElementById("authBar");
+  const authBarMobile = document.getElementById("authBarMobile");
+  const userName = document.getElementById("sidebarUserName");
+  const userRole = document.getElementById("sidebarUserRole");
   document.querySelectorAll(".tab-auth-only").forEach(el => {
     el.style.display = currentUser ? "" : "none";
   });
@@ -3531,27 +4242,60 @@ function updateAuthUI() {
   document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
     el.style.display = canSubmitShiftSurvey() ? "" : "none";
   });
+  syncMobileTabs();
 
   if (!currentUser) {
-    authBar.innerHTML = `
-      <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
-      <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
-    `;
+    if (userName) userName.textContent = "Guest";
+    if (userRole) userRole.textContent = "Sign in to track training";
+    const guestHtml = microsoftAuthAvailable
+      ? `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`
+      : `
+        <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
+        <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
+      `;
+    if (authBar) authBar.innerHTML = guestHtml;
+    if (authBarMobile) authBarMobile.innerHTML = guestHtml;
     return;
   }
 
-  authBar.innerHTML = `
+  if (userName) userName.textContent = currentUser.name;
+  if (userRole) userRole.textContent = roleLabel(currentUser.role);
+  const signedHtml = `
     <div class="auth-user">
       <strong>${escapeHTML(currentUser.name)}</strong>
       ${roleLabel(currentUser.role)}
     </div>
     <button class="auth-btn" onclick="logout()">Log out</button>
   `;
+  if (authBar) authBar.innerHTML = `<button class="auth-btn" onclick="logout()">Log out</button>`;
+  if (authBarMobile) authBarMobile.innerHTML = signedHtml;
 }
 
 async function initAuth() {
+  try {
+    const providers = await fetch(`${API_BASE}/api/auth/providers`).then((r) => r.json());
+    microsoftAuthAvailable = Boolean(providers.microsoft);
+  } catch {
+    microsoftAuthAvailable = false;
+  }
+
+  const callback = consumeAuthCallbackParams();
+  if (callback?.token) {
+    authToken = callback.token;
+    localStorage.setItem("mp_auth_token", authToken);
+  }
+
   if (!authToken) {
     updateAuthUI();
+    if (callback?.authError) {
+      openAuthModal("login");
+      setTimeout(() => {
+        const errorEl = document.getElementById("authError");
+        if (errorEl) {
+          errorEl.innerHTML = `<div class="auth-error">${escapeHTML(callback.authError)}</div>`;
+        }
+      }, 0);
+    }
     return;
   }
   try {
@@ -3564,6 +4308,10 @@ async function initAuth() {
     currentUser = null;
     updateAuthUI();
   }
+}
+
+function startMicrosoftSignIn() {
+  window.location.href = `${API_BASE}/api/auth/microsoft`;
 }
 
 function openAuthModal(mode) {
@@ -3580,21 +4328,28 @@ function closeAuthModal(event) {
 }
 
 function renderAuthModal() {
-  const isRegister = authMode === "register";
+  if (microsoftAuthAvailable && authMode === "register") {
+    authMode = "login";
+  }
+  const showRegister = !microsoftAuthAvailable && authMode === "register";
   document.getElementById("authContent").innerHTML = `
     <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
-      <h3>${isRegister ? "Create employee account" : "Log in"}</h3>
-      <p class="hint">${isRegister
+      <h3>${showRegister ? "Create employee account" : "Log in"}</h3>
+      <p class="hint">${showRegister
         ? "Staff sign up here to track training progress. The first account becomes admin. Managers, merch leads, and shift leads can register with a setup key."
-        : "Log in to save your quiz scores and track training progress."}</p>
+        : microsoftAuthAvailable
+          ? "If an admin has approved your work email, sign in with Microsoft to create your account and track training."
+          : "Log in to save your quiz scores and track training progress."}</p>
       <div id="authError"></div>
+      ${!showRegister ? microsoftSignInButton() : ""}
+      ${!showRegister && microsoftAuthAvailable ? `<div class="auth-divider">or email (local accounts)</div>` : ""}
       <label for="authName">Full name</label>
-      <input id="authName" type="text" placeholder="Your name" ${isRegister ? "" : "style='display:none'"}>
+      <input id="authName" type="text" placeholder="Your name" ${showRegister ? "" : "style='display:none'"}>
       <label for="authEmail">Email</label>
       <input id="authEmail" type="email" placeholder="you@example.com">
       <label for="authPassword">Password</label>
       <input id="authPassword" type="password" placeholder="At least 6 characters">
-      ${isRegister ? `
+      ${showRegister ? `
         <label for="authAdminKey">Admin setup key (optional)</label>
         <input id="authAdminKey" type="password" placeholder="Only for manager/admin accounts">
         <label for="authMerchKey">Merch setup key (optional)</label>
@@ -3602,11 +4357,13 @@ function renderAuthModal() {
         <label for="authShiftLeadKey">Shift lead setup key (optional)</label>
         <input id="authShiftLeadKey" type="password" placeholder="Only for shift lead accounts">
       ` : ""}
-      <button class="game-next" style="width:100%;" onclick="submitAuth()">${isRegister ? "Create account" : "Log in"}</button>
+      <button class="game-next" style="width:100%;" onclick="submitAuth()">${showRegister ? "Create account" : "Log in with email"}</button>
       <p class="hint" style="margin-top:14px;text-align:center;">
-        ${isRegister
+        ${showRegister
           ? `Already have an account? <a href="#" onclick="openAuthModal('login'); return false;">Log in</a>`
-          : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
+          : microsoftAuthAvailable
+            ? "Need access? Ask a manager to approve your email on the Team page."
+            : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
       </p>
     </div>
   `;
@@ -3656,6 +4413,7 @@ function logout() {
   currentUser = null;
   myProgressData = null;
   teamData = null;
+  approvedEmailsData = null;
   teamDetailId = null;
   briefingView = "list";
   briefingActiveItem = null;
@@ -3983,8 +4741,8 @@ function renderLeaderboardSection() {
 
   const me = lb.me || {};
   const meLine = me.points
-    ? `<p style="margin:12px 0 0;font-size:13px;color:#555;">Your rank: <strong>#${me.rank || "—"}</strong> · <span class="game-points-badge">${me.points} pts</span> · ${me.accuracy || 0}% accuracy</p>`
-    : `<p style="margin:12px 0 0;font-size:13px;color:#555;">You have no points this period yet. Finish a scored game to join the board.</p>`;
+    ? `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">Your rank: <strong>#${me.rank || "—"}</strong> · <span class="game-points-badge">${me.points} pts</span> · ${me.accuracy || 0}% accuracy</p>`
+    : `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">You have no points this period yet. Finish a scored game to join the board.</p>`;
 
   return `
     <div class="game-leaderboard">
@@ -4580,7 +5338,7 @@ async function maybePromptShiftSurvey() {
         <h2 id="shiftDigestTitle">End of shift check-in</h2>
         <p>Before you head out, take a minute to tell the shift lead how today went. Your feedback is anonymous.</p>
       </div>
-      <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activeType='shift-survey'; document.querySelectorAll('#mainTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.type === 'shift-survey')); render();">Fill out survey</button>
+      <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activateAppTab('shift-survey');">Fill out survey</button>
       <button type="button" class="briefing-back" style="margin-top:12px;" onclick="closeShiftDigestModal()">Remind me later</button>
     `;
     document.getElementById("shiftDigestBackdrop").classList.add("show");
@@ -4631,7 +5389,7 @@ function renderShiftDigestModal(data) {
         </div>
       `).join("")}
     </div>
-    <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activeType='shift-reports'; document.querySelectorAll('#mainTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.type === 'shift-reports')); render();">Open full report</button>
+    <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activateAppTab('shift-reports');">Open full report</button>
     <button type="button" class="briefing-back" style="margin-top:12px;" onclick="closeShiftDigestModal()">Close</button>
   `;
 }
@@ -4668,11 +5426,6 @@ async function renderMyProgress(content) {
           <p class="metric-label">Accuracy</p>
           <p class="metric-value">${s.accuracy}%</p>
           <p class="metric-sub">${s.total_correct} / ${s.total_questions} correct</p>
-        </div>
-        <div class="metric-card">
-          <p class="metric-label">Total points</p>
-          <p class="metric-value">${s.total_points || 0}</p>
-          <p class="metric-sub">From games & quizzes</p>
         </div>
         <div class="metric-card wide">
           <p class="metric-label">Last activity</p>
@@ -4763,13 +5516,19 @@ async function renderTeamDashboard(content) {
       return;
     }
 
-    if (!teamDetailId) teamData = await apiFetch("/api/admin/employees");
+    const [employeesPayload, approvedPayload] = await Promise.all([
+      apiFetch("/api/admin/employees"),
+      apiFetch("/api/admin/approved-emails")
+    ]);
+    teamData = employeesPayload;
+    approvedEmailsData = approvedPayload;
 
     content.innerHTML = `
       <div class="coffee-intro">
         <h2>Team Dashboard</h2>
-        <p>Monitor employee training progress and suggested next steps for each team member.</p>
+        <p>Approve staff emails, then they sign in with Microsoft. Monitor training progress below.</p>
       </div>
+      ${renderApprovedEmailsPanel(approvedEmailsData.emails)}
       ${teamData.employees.some(emp => emp.role === "employee") ? renderTeamChartsHtml() : ""}
       <table class="progress-table">
         <tr><th>Employee</th><th>Sessions</th><th>Accuracy</th><th>Last active</th><th>Suggested next step</th></tr>
@@ -4798,6 +5557,140 @@ async function renderTeamDashboard(content) {
   } catch (err) {
     content.innerHTML = `<div class="status"><strong>Could not load team dashboard.</strong>${escapeHTML(err.message)}</div>`;
     destroyCharts();
+  }
+}
+
+function renderApprovedEmailsPanel(emails) {
+  const roleOptions = (selected) => `
+    <option value="employee" ${selected === "employee" ? "selected" : ""}>Employee</option>
+    <option value="admin" ${selected === "admin" ? "selected" : ""}>Admin</option>
+    <option value="merch" ${selected === "merch" ? "selected" : ""}>Merch</option>
+    <option value="shift_lead" ${selected === "shift_lead" ? "selected" : ""}>Shift lead</option>
+  `;
+
+  const rows = emails.length ? emails.map((row) => `
+    <tr>
+      <td>
+        <strong>${escapeHTML(row.email)}</strong>
+        ${row.user_name ? `<br><span style="color:#888;font-size:12px;">${escapeHTML(row.user_name)}</span>` : ""}
+        ${row.locked ? `<br><span style="color:#888;font-size:11px;">Locked bootstrap admin</span>` : ""}
+      </td>
+      <td>
+        <select class="approve-edit-select" id="approve-role-${row.id}" ${row.locked ? "disabled" : ""}>
+          ${roleOptions(row.role)}
+        </select>
+      </td>
+      <td>
+        <span class="approve-status ${row.signed_in ? "joined" : ""}">
+          ${row.signed_in ? "Signed in" : "Invited"}
+        </span>
+      </td>
+      <td>
+        <div class="approve-actions">
+          <button type="button" class="approve-edit" ${row.locked ? "disabled" : ""} onclick="updateApprovedEmailRole(${row.id})">Save role</button>
+          <button type="button" class="approve-remove" ${row.locked ? "disabled" : ""} onclick="removeApprovedEmail(${row.id})">Remove</button>
+        </div>
+      </td>
+    </tr>
+  `).join("") : `
+    <tr>
+      <td colspan="4" style="color:#888;">No approved emails yet. Add a staff member’s Microsoft work email above.</td>
+    </tr>
+  `;
+
+  return `
+    <div class="approve-panel">
+      <div class="approve-card">
+        <h3>Approved emails</h3>
+        <p>Only these Microsoft work emails can sign in. Their account is created automatically on first login. Change access type with Save role.</p>
+        <div id="approveError"></div>
+        <form class="approve-form" onsubmit="addApprovedEmail(event)">
+          <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
+          <select id="approveRoleInput">
+            <option value="employee">Employee</option>
+            <option value="admin">Admin</option>
+            <option value="merch">Merch</option>
+            <option value="shift_lead">Shift lead</option>
+          </select>
+          <button type="submit">Approve email</button>
+        </form>
+        <table class="progress-table" style="width:100%;max-width:none;margin:0;">
+          <tr><th>Email</th><th>Access type</th><th>Status</th><th></th></tr>
+          ${rows}
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+async function addApprovedEmail(event) {
+  event.preventDefault();
+  const errorEl = document.getElementById("approveError");
+  const email = document.getElementById("approveEmailInput").value.trim();
+  const role = document.getElementById("approveRoleInput").value;
+  if (errorEl) errorEl.innerHTML = "";
+
+  try {
+    await apiFetch("/api/admin/approved-emails", {
+      method: "POST",
+      body: JSON.stringify({ email, role })
+    });
+    approvedEmailsData = null;
+    teamData = null;
+    render();
+  } catch (err) {
+    if (errorEl) {
+      errorEl.innerHTML = `<p class="approve-error">${escapeHTML(err.message)}</p>`;
+    }
+  }
+}
+
+async function updateApprovedEmailRole(id) {
+  const errorEl = document.getElementById("approveError");
+  const select = document.getElementById(`approve-role-${id}`);
+  if (!select) return;
+  if (errorEl) errorEl.innerHTML = "";
+
+  try {
+    await apiFetch(`/api/admin/approved-emails/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ role: select.value })
+    });
+    approvedEmailsData = null;
+    teamData = null;
+    render();
+  } catch (err) {
+    if (errorEl) {
+      errorEl.innerHTML = `<p class="approve-error">${escapeHTML(err.message)}</p>`;
+    } else {
+      alert(err.message);
+    }
+  }
+}
+
+async function removeApprovedEmail(id) {
+  const row = approvedEmailsData?.emails?.find((item) => item.id === id);
+  const label = row?.email || "this user";
+  if (!confirm(`Remove access for ${label}? They will not be able to sign in with Microsoft until re-approved.`)) {
+    return;
+  }
+
+  const errorEl = document.getElementById("approveError");
+  if (errorEl) errorEl.innerHTML = "";
+
+  try {
+    await apiFetch(`/api/admin/approved-emails/${id}`, {
+      method: "DELETE"
+    });
+    approvedEmailsData = null;
+    teamData = null;
+    render();
+  } catch (err) {
+    if (errorEl) {
+      errorEl.innerHTML = `<p class="approve-error">${escapeHTML(err.message)}</p>`;
+    } else {
+      alert(err.message);
+    }
   }
 }
 
@@ -5431,7 +6324,7 @@ function merchStockLevelClass(qty) {
 
 async function loadMerchData(force) {
   if (merchLoading) return;
-  if (!force && merchItems.length) return;
+  if (!force && merchItems.length && merchIdeas.length) return;
 
   merchLoading = true;
   try {
@@ -5780,7 +6673,7 @@ function updateSearchPlaceholder() {
     reviews: "Search reviews or platforms",
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",
-    games: "Search war games"
+    games: "Search beer, style, or flavor"
   };
   search.placeholder = placeholders[activeType] || "Search";
 }
@@ -6186,12 +7079,27 @@ function renderCoffeeFlashInner() {
   `;
 }
 
+function clearRocketTimers() {
+  rocketTimers.forEach((id) => clearTimeout(id));
+  rocketTimers = [];
+}
+
+function stopRocketLoop() {
+  if (rocketRaf) {
+    cancelAnimationFrame(rocketRaf);
+    rocketRaf = null;
+  }
+  clearRocketTimers();
+  rocketKeys.left = false;
+  rocketKeys.right = false;
+}
+
 function startGame(id) {
   activeGame = id;
   gameSession = null;
-  quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = null;
-  blindItem = descItem = gfItem = battleItem = null;
+  quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = rocketItem = null;
   flashFlipped = false;
+  stopRocketLoop();
 
   if (id === "flash") {
     const pool = beers.filter(onTapGameBeer(b =>
@@ -6207,60 +7115,30 @@ function startGame(id) {
       queue: shuffle(pool).slice(0, total),
       index: 0,
       right: 0,
-      points: 0,
-      streak: 0,
       complete: false,
       recorded: false
     };
-  } else if (id === "speed" || id === "hard") {
+  } else if (id === "speed" || id === "rocket") {
     if (!beginRound(id, onTapGameBeer(b =>
       getFlavorProfile(b) ||
       getGuestGuidance(b) ||
       getTapNumber(b) ||
       getABVNumber(b) > 0 ||
-      getStyle(b) ||
-      getDescription(b)
+      getStyle(b)
     ))) {
       render();
       return;
     }
-    gameSession.hardMode = id === "hard";
-    prepareSpeedQuestion();
-  } else if (id === "gf") {
-    const gfPool = beers.filter(onTapGameBeer());
-    const gfBeers = gfPool.filter(isGlutenReduced);
-    const nonGfBeers = gfPool.filter(b => !isGlutenReduced(b));
-    if (gfBeers.length < 1 || nonGfBeers.length < 3) {
-      render();
-      return;
-    }
-    if (!beginRound("gf", onTapGameBeer(isGlutenReduced))) {
-      render();
-      return;
-    }
-    gameSession.gfNonPool = nonGfBeers;
-    prepareRoundQuestion("gf");
-  } else if (id === "battle") {
-    const pool = beers.filter(onTapGameBeer(b => getABVNumber(b) > 0));
-    if (pool.length < 4) {
-      render();
-      return;
-    }
-    if (!beginRound("battle", onTapGameBeer(b => getABVNumber(b) > 0))) {
-      render();
-      return;
-    }
-    prepareRoundQuestion("battle");
+    if (id === "speed") prepareSpeedQuestion();
+    else prepareRocketQuestion();
   } else {
     const starters = {
       quiz: () => beginRound("quiz", onTapGameBeer(b => getFlavorProfile(b))),
-      practice: () => beginRound("practice", onTapGameBeer(b => getFlavorProfile(b) || getStyle(b))),
+      practice: () => beginRound("practice", onTapGameBeer(b => getGuestGuidance(b))),
       tap: () => beginRound("tap", onTapGameBeer(b => getTapNumber(b))),
       abv: () => beginRound("abv", onTapGameBeer(b => getABVNumber(b) > 0)),
       style: () => beginRound("style", onTapGameBeer(b => getStyle(b))),
-      reverse: () => beginRound("reverse", onTapGameBeer(b => getFlavorProfile(b))),
-      blind: () => beginRound("blind", onTapGameBeer(b => getStyle(b) && getABVNumber(b) > 0)),
-      desc: () => beginRound("desc", onTapGameBeer(b => getDescription(b) || getFlavorProfile(b)))
+      reverse: () => beginRound("reverse", onTapGameBeer(b => getFlavorProfile(b)))
     };
     if (!starters[id] || !starters[id]()) {
       render();
@@ -6283,59 +7161,58 @@ function beginRound(id, filterFn) {
     queue: shuffle(pool).slice(0, total),
     index: 0,
     right: 0,
-    points: 0,
-    streak: 0,
     complete: false,
     recorded: false
   };
+  if (id === "rocket") {
+    gameSession.lives = 3;
+    gameSession.streak = 0;
+    gameSession.maxStreak = 0;
+    gameSession.score = 0;
+  }
   return true;
 }
 
 function advanceRound(correct) {
   if (!gameSession || gameSession.complete) return;
-  scoreQuestion(correct);
   gameSession.right += correct ? 1 : 0;
   gameSession.index++;
 
-  if (gameSession.index >= gameSession.queue.length) {
+  const rocketDead = gameSession.id === "rocket" && (gameSession.lives || 0) <= 0;
+  if (gameSession.index >= gameSession.queue.length || rocketDead) {
     gameSession.complete = true;
     if (markSessionRecorded(gameSession)) {
       const category = gameSession.id.startsWith("coffee") ? "coffee" : "beer";
-      recordProgress(
-        gameSession.id,
-        category,
-        gameSession.right,
-        gameSession.queue.length,
-        finalizeSessionPoints()
-      );
+      recordProgress(gameSession.id, category, gameSession.right, gameSession.queue.length);
     }
     return;
   }
 
   prepareRoundQuestion(gameSession.id);
-  if (gameSession.id === "speed" || gameSession.id === "hard") prepareSpeedQuestion();
+  if (gameSession.id === "speed") prepareSpeedQuestion();
+  if (gameSession.id === "rocket") prepareRocketQuestion();
 }
 
 function sessionProgressLabel() {
   if (!gameSession) return "";
-  const streak = gameSession.streak ? ` · Streak ${gameSession.streak}` : "";
-  const pts = gameSession.points ? ` · ${gameSession.points} pts` : "";
   if (gameSession.complete) {
-    return `Round complete · ${gameSession.right} / ${gameSession.queue.length} correct${pts}`;
+    return `Round complete · ${gameSession.right} / ${gameSession.queue.length} correct`;
   }
-  return `Question ${gameSession.index + 1} of ${gameSession.queue.length} · Score: ${gameSession.right} / ${gameSession.index}${pts}${streak ? `<span class="game-streak">${streak}</span>` : ""}`;
+  return `Question ${gameSession.index + 1} of ${gameSession.queue.length} · Score: ${gameSession.right} / ${gameSession.index}`;
 }
 
 function renderRoundComplete(title) {
   const total = gameSession.queue.length;
-  const pct = Math.round((gameSession.right / total) * 100);
-  const points = finalizeSessionPoints();
-  gameSession.points = points;
+  const attempted = Math.min(gameSession.index, total) || total;
+  const pct = Math.round((gameSession.right / Math.max(attempted, 1)) * 100);
+  const rocketStats = gameSession.id === "rocket"
+    ? `<p style="font-size:15px;color:var(--muted);margin:8px 0 0;">Score <strong style="color:var(--gold)">${gameSession.score || 0}</strong> · Best streak <strong style="color:var(--gold)">x${gameSession.maxStreak || 0}</strong></p>`
+    : "";
   return `
     <div class="game-card">
       <p class="game-question" style="font-size:20px;font-weight:750;">${title}</p>
-      <p style="font-size:15px;color:#555;margin:0;">You got <strong>${gameSession.right}</strong> out of <strong>${total}</strong> correct (${pct}%)</p>
-      <p style="font-size:14px;color:#555;margin:10px 0 0;"><span class="game-points-badge">${points} points earned</span></p>
+      <p style="font-size:15px;color:var(--muted);margin:0;">You got <strong style="color:#fff">${gameSession.right}</strong> out of <strong style="color:#fff">${attempted}</strong> correct (${pct}%)</p>
+      ${rocketStats}
       <button class="game-next" onclick="startGame('${activeGame}')">Play Again</button>
     </div>
     <div class="game-score">${sessionProgressLabel()}</div>
@@ -6361,65 +7238,23 @@ function uniqueSheetValues(pool, getter, exclude) {
 function prepareRoundQuestion(id) {
   const correct = gameSession.queue[gameSession.index];
   const pool = gameSession.pool;
-  const hard = gameUsesHardDecoys(id);
-  const wrongPicker = (sourcePool, count) =>
-    pickSimilarWrongBeers(sourcePool, correct, count, hard);
 
   if (id === "quiz") {
     quizItem = {
       correct,
-      question: buildFlavorClue(correct, pool),
-      options: shuffle([correct, ...wrongPicker(pool.filter(b => getFlavorProfile(b)), 3)]),
+      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
       answered: false
     };
   } else if (id === "practice") {
     practiceItem = {
       correct,
-      question: buildGuestScenario(correct, pool),
-      options: shuffle([correct, ...wrongPicker(pool, 3)]),
+      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
       answered: false
     };
   } else if (id === "tap") {
     tapItem = {
       correct,
-      options: shuffle([correct, ...wrongPicker(pool.filter(b => getTapNumber(b)), 3)]),
-      answered: false
-    };
-  } else if (id === "blind") {
-    blindItem = {
-      correct,
-      question: `${getStyle(correct)} · ${getABVText(correct)}`,
-      options: shuffle([correct, ...wrongPicker(pool, 3)]),
-      answered: false
-    };
-  } else if (id === "desc") {
-    descItem = {
-      correct,
-      question: buildDescriptionClue(correct, pool),
-      options: shuffle([correct, ...wrongPicker(pool, 3)]),
-      answered: false
-    };
-  } else if (id === "gf") {
-    const nonGf = gameSession.gfNonPool || pool.filter(b => !isGlutenReduced(b));
-    gfItem = {
-      correct,
-      options: shuffle([correct, ...pickWrongBeers(nonGf, correct, 3)]),
-      answered: false
-    };
-  } else if (id === "battle") {
-    const anchor = correct;
-    const candidates = pool.filter(b =>
-      b.Name !== anchor.Name &&
-      getABVNumber(b) > 0 &&
-      getABVNumber(b) !== getABVNumber(anchor)
-    );
-    const opponent = pickRandom(candidates.length ? candidates : pool.filter(b => b.Name !== anchor.Name));
-    const higher = getABVNumber(anchor) >= getABVNumber(opponent) ? anchor : opponent;
-    battleItem = {
-      correct: higher,
-      beerA: anchor,
-      beerB: opponent,
-      options: shuffle([anchor, opponent]),
+      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
       answered: false
     };
   } else if (id === "abv") {
@@ -6487,12 +7322,592 @@ function prepareRoundQuestion(id) {
     reverseItem = {
       correct,
       options: shuffle([
-        { text: stripBeerNamesFromText(getFlavorProfile(correct), pool), isCorrect: true },
-        ...wrongProfiles.map(t => ({ text: stripBeerNamesFromText(t, pool), isCorrect: false }))
+        { text: getFlavorProfile(correct), isCorrect: true },
+        ...wrongProfiles.map(t => ({ text: t, isCorrect: false }))
       ]),
       answered: false
     };
   }
+}
+
+function shortGalagaLabel(text, max = 12) {
+  const clean = String(text || "").trim().replace(/\s+/g, " ");
+  if (clean.length <= max) return clean;
+  return `${clean.slice(0, max - 1)}…`;
+}
+
+function buildGalagaQuestion(pool) {
+  const builders = [];
+
+  const withTap = pool.filter(b => getTapNumber(b));
+  const withStyle = pool.filter(b => getStyle(b));
+  const withAbv = pool.filter(b => getABVNumber(b) > 0);
+  const withFlavor = pool.filter(b => getFlavorProfile(b));
+
+  if (withTap.length >= 4) {
+    builders.push(() => {
+      const correct = pickRandom(withTap);
+      const options = shuffle([correct, ...pickWrongBeers(withTap, correct, 3)]).slice(0, 4).map((beer) => ({
+        id: beer.Name,
+        label: shortGalagaLabel(col(beer, "Name")),
+        isCorrect: beer.Name === correct.Name
+      }));
+      return {
+        prompt: `WHICH BEER IS ON TAP ${getTapNumber(correct)}?`,
+        options
+      };
+    });
+
+    builders.push(() => {
+      const correct = pickRandom(withTap);
+      const wrongTaps = uniqueSheetValues(
+        withTap.filter(b => b.Name !== correct.Name),
+        b => String(getTapNumber(b)),
+        String(getTapNumber(correct))
+      ).slice(0, 3);
+      if (wrongTaps.length < 3) return null;
+      return {
+        prompt: `WHAT TAP IS ${shortGalagaLabel(col(correct, "Name"), 16).toUpperCase()} ON?`,
+        options: shuffle([
+          { id: `tap-${getTapNumber(correct)}`, label: `TAP ${getTapNumber(correct)}`, isCorrect: true },
+          ...wrongTaps.map((t) => ({ id: `tap-${t}`, label: `TAP ${t}`, isCorrect: false }))
+        ])
+      };
+    });
+  }
+
+  if (withStyle.length >= 4) {
+    builders.push(() => {
+      const correct = pickRandom(withStyle);
+      const wrongStyles = uniqueSheetValues(
+        withStyle.filter(b => b.Name !== correct.Name),
+        getStyle,
+        getStyle(correct)
+      ).slice(0, 3);
+      if (wrongStyles.length < 3) return null;
+      return {
+        prompt: `WHAT STYLE IS ${shortGalagaLabel(col(correct, "Name"), 14).toUpperCase()}?`,
+        options: shuffle([
+          { id: getStyle(correct), label: shortGalagaLabel(getStyle(correct), 11), isCorrect: true },
+          ...wrongStyles.map((s) => ({ id: s, label: shortGalagaLabel(s, 11), isCorrect: false }))
+        ])
+      };
+    });
+
+    builders.push(() => {
+      const correct = pickRandom(withStyle);
+      const style = getStyle(correct);
+      const options = shuffle([correct, ...pickWrongBeers(withStyle.filter(b => getStyle(b) !== style), correct, 3)]).slice(0, 4);
+      if (options.length < 4) return null;
+      return {
+        prompt: `WHICH BEER IS A ${shortGalagaLabel(style, 14).toUpperCase()}?`,
+        options: options.map((beer) => ({
+          id: beer.Name,
+          label: shortGalagaLabel(col(beer, "Name")),
+          isCorrect: beer.Name === correct.Name
+        }))
+      };
+    });
+  }
+
+  if (withAbv.length >= 4) {
+    builders.push(() => {
+      const correct = pickRandom(withAbv);
+      const wrongAbvs = uniqueSheetValues(
+        withAbv.filter(b => b.Name !== correct.Name),
+        b => String(getABVNumber(b)),
+        String(getABVNumber(correct))
+      ).slice(0, 3);
+      if (wrongAbvs.length < 3) return null;
+      return {
+        prompt: `ABV OF ${shortGalagaLabel(col(correct, "Name"), 14).toUpperCase()}?`,
+        options: shuffle([
+          { id: String(getABVNumber(correct)), label: getABVText(correct), isCorrect: true },
+          ...wrongAbvs.map((v) => ({ id: String(v), label: `${v}%`, isCorrect: false }))
+        ])
+      };
+    });
+
+    builders.push(() => {
+      const picks = shuffle(withAbv).slice(0, 4);
+      if (picks.length < 4) return null;
+      const maxAbv = Math.max(...picks.map(getABVNumber));
+      const winners = picks.filter(b => getABVNumber(b) === maxAbv);
+      if (winners.length !== 1) return null;
+      const correct = winners[0];
+      return {
+        prompt: "WHICH HAS THE HIGHEST ABV?",
+        options: picks.map((beer) => ({
+          id: beer.Name,
+          label: shortGalagaLabel(col(beer, "Name")),
+          isCorrect: beer.Name === correct.Name
+        }))
+      };
+    });
+
+    builders.push(() => {
+      const picks = shuffle(withAbv).slice(0, 4);
+      if (picks.length < 4) return null;
+      const minAbv = Math.min(...picks.map(getABVNumber));
+      const winners = picks.filter(b => getABVNumber(b) === minAbv);
+      if (winners.length !== 1) return null;
+      const correct = winners[0];
+      return {
+        prompt: "WHICH HAS THE LOWEST ABV?",
+        options: picks.map((beer) => ({
+          id: beer.Name,
+          label: shortGalagaLabel(col(beer, "Name")),
+          isCorrect: beer.Name === correct.Name
+        }))
+      };
+    });
+  }
+
+  if (withFlavor.length >= 4) {
+    builders.push(() => {
+      const correct = pickRandom(withFlavor);
+      const flavor = getFlavorProfile(correct);
+      // Keep only punchy flavor cues, not paragraphs
+      const cue = shortGalagaLabel(flavor, 28).toUpperCase();
+      if (cue.length < 8) return null;
+      return {
+        prompt: `MATCH FLAVOR: ${cue}`,
+        options: shuffle([correct, ...pickWrongBeers(withFlavor, correct, 3)]).slice(0, 4).map((beer) => ({
+          id: beer.Name,
+          label: shortGalagaLabel(col(beer, "Name")),
+          isCorrect: beer.Name === correct.Name
+        }))
+      };
+    });
+  }
+
+  // New tap / flag questions when available
+  const newTaps = pool.filter(b => isYes(b["New Tap"]));
+  if (newTaps.length >= 1 && pool.length >= 4) {
+    builders.push(() => {
+      const correct = pickRandom(newTaps);
+      return {
+        prompt: "WHICH BEER IS NEWLY TAPPED?",
+        options: shuffle([correct, ...pickWrongBeers(pool.filter(b => !isYes(b["New Tap"])), correct, 3)]).slice(0, 4).map((beer) => ({
+          id: beer.Name,
+          label: shortGalagaLabel(col(beer, "Name")),
+          isCorrect: beer.Name === correct.Name
+        }))
+      };
+    });
+  }
+
+  if (!builders.length) return null;
+
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const built = pickRandom(builders)();
+    if (built && built.options && built.options.length === 4 && built.options.filter(o => o.isCorrect).length === 1) {
+      return built;
+    }
+  }
+  return null;
+}
+
+function prepareRocketQuestion() {
+  if (!gameSession || gameSession.complete) return;
+  stopRocketLoop();
+
+  const pool = gameSession.pool;
+  const built = buildGalagaQuestion(pool);
+
+  if (!built) {
+    gameSession.index++;
+    if (gameSession.index >= gameSession.queue.length) {
+      gameSession.complete = true;
+      return;
+    }
+    prepareRocketQuestion();
+    return;
+  }
+
+  // Keep queue progressing even though questions are generated from the full pool
+  const count = 4;
+  const spacing = 100 / (count + 1);
+  const enemies = built.options.map((option, index) => ({
+    index,
+    option,
+    baseX: spacing * (index + 1),
+    baseY: 18 + (index % 2) * 14,
+    x: spacing * (index + 1),
+    y: 18 + (index % 2) * 14,
+    alive: true,
+    hitClass: "",
+    kind: index % 4,
+    phase: Math.random() * Math.PI * 2,
+    diving: false,
+    diveT: 0,
+    nextDiveAt: 1.8 + Math.random() * 2.4
+  }));
+
+  rocketItem = {
+    prompt: built.prompt,
+    options: built.options,
+    enemies,
+    bullets: [],
+    shipX: 50,
+    formationT: 0,
+    answered: false,
+    selected: null,
+    locked: false,
+    burstX: 50,
+    burstY: 30,
+    showBurst: false,
+    lastShotAt: 0,
+    resultText: "",
+    debrief: "",
+    pointerAim: false
+  };
+}
+
+function launchPadAtomSvg(kind = 0) {
+  const rot = [0, 35, 70, 110][kind % 4];
+  return `<svg viewBox="0 0 64 64" aria-hidden="true">
+    <g class="orbit-spin" transform="rotate(${rot} 32 32)">
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2"/>
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2" transform="rotate(60 32 32)"/>
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#8b6b3c" stroke-width="1.5" transform="rotate(120 32 32)"/>
+    </g>
+    <circle cx="32" cy="32" r="5.5" fill="#e0b93a"/>
+    <circle cx="30.5" cy="30.5" r="1.6" fill="#fff6c8" opacity="0.8"/>
+  </svg>`;
+}
+
+function renderRocketRound(content) {
+  if (!gameSession) {
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Launch Pad.</strong>Add flavor, guidance, tap, ABV, or style info for at least four on-tap beers.</div>');
+    return;
+  }
+
+  if (gameSession.complete) {
+    stopRocketLoop();
+    const endedEarly = (gameSession.lives || 0) <= 0 && gameSession.index < gameSession.queue.length;
+    content.innerHTML = wrapGame(renderRoundComplete(endedEarly ? "Shields depleted" : "Launch Pad complete"));
+    return;
+  }
+
+  if (!rocketItem) prepareRocketQuestion();
+  if (!rocketItem || gameSession.complete) {
+    stopRocketLoop();
+    content.innerHTML = wrapGame(renderRoundComplete("Launch Pad complete"));
+    return;
+  }
+
+  const stage = gameSession.index + 1;
+  const score = gameSession.score || 0;
+  const streak = gameSession.streak || 0;
+  const lives = gameSession.lives == null ? 3 : gameSession.lives;
+  const livesHtml = Array.from({ length: 3 }, (_, i) =>
+    `<span class="galaga-life ${i < lives ? "" : "empty"}"></span>`
+  ).join("");
+  const stars = Array.from({ length: 36 }, (_, i) => {
+    const left = ((i * 37) % 100);
+    const top = ((i * 53) % 88);
+    const delay = ((i * 0.13) % 2).toFixed(2);
+    return `<span class="rocket-star" style="left:${left}%;top:${top}%;animation-delay:${delay}s;width:${i % 5 === 0 ? 3 : 2}px;height:${i % 5 === 0 ? 3 : 2}px;"></span>`;
+  }).join("");
+
+  const enemies = rocketItem.enemies.map((enemy) => {
+    let cls = `rocket-enemy kind-${enemy.kind}`;
+    if (enemy.diving) cls += " diving";
+    if (rocketItem.answered) {
+      if (enemy.option.isCorrect) cls += " correct";
+      else if (rocketItem.selected === enemy.index) cls += " wrong";
+    }
+    if (enemy.hitClass) cls += ` ${enemy.hitClass}`;
+    const hidden = !enemy.alive && !enemy.hitClass ? "display:none;" : "";
+    return `
+      <div class="${cls}" id="rocket-enemy-${enemy.index}" style="left:${enemy.x}%;top:${enemy.y}%;${hidden}">
+        <div class="galaga-sprite">${launchPadAtomSvg(enemy.kind)}</div>
+        <span class="rocket-enemy-label">${escapeHTML(enemy.option.label)}</span>
+      </div>
+    `;
+  }).join("");
+
+  const missClass = /CONTAMINATED|MISS|DEPLETED/.test(rocketItem.resultText || "") ? "miss" : "";
+  const debrief = rocketItem.debrief
+    ? `<div class="galaga-debrief">DEBRIEF · correct was <strong>${escapeHTML(rocketItem.debrief)}</strong></div>`
+    : "";
+
+  content.innerHTML = wrapGame(`
+    <div class="rocket-shell">
+      <div class="galaga-cabinet" id="galagaCabinet">
+        <div class="galaga-bezel">
+          <div class="galaga-hud">
+            <div>SCORE <span id="galagaScore">${score}</span></div>
+            <div class="${streak >= 2 ? "combo-hot" : ""}">STREAK <span id="galagaStreak">x${streak}</span></div>
+            <div>WAVE <span>${stage}/${gameSession.queue.length}</span></div>
+            <div>SHIELDS <span class="galaga-lives" id="galagaLives">${livesHtml}</span></div>
+          </div>
+          <div class="galaga-mission" id="galagaMission">${escapeHTML(rocketItem.prompt)}</div>
+        </div>
+        <div class="rocket-arena" id="rocketArena">
+          ${stars}
+          <div id="rocketEnemyLayer">${enemies}</div>
+          <div id="rocketBulletLayer"></div>
+          <div class="rocket-burst ${rocketItem.showBurst ? "show" : ""}" id="rocketBurst" style="left:${rocketItem.burstX}%;top:${rocketItem.burstY}%;"></div>
+          ${rocketItem.resultText ? `<div class="galaga-result ${missClass}">${escapeHTML(rocketItem.resultText)}</div>` : ""}
+          ${debrief}
+          <div class="rocket-ship" id="rocketShip" style="left:${rocketItem.shipX}%;">
+            <div class="rocket-ship-body"></div>
+            <div class="rocket-ship-flame"></div>
+          </div>
+        </div>
+      </div>
+      <div class="rocket-controls">
+        <button type="button" onpointerdown="setRocketKey('left', true)" onpointerup="setRocketKey('left', false)" onpointerleave="setRocketKey('left', false)" ontouchstart="event.preventDefault(); setRocketKey('left', true)" ontouchend="setRocketKey('left', false)">LEFT</button>
+        <button type="button" class="rocket-fire-btn" onclick="galagaFire()">FIRE</button>
+        <button type="button" onpointerdown="setRocketKey('right', true)" onpointerup="setRocketKey('right', false)" onpointerleave="setRocketKey('right', false)" ontouchstart="event.preventDefault(); setRocketKey('right', true)" ontouchend="setRocketKey('right', false)">RIGHT</button>
+      </div>
+      <p class="rocket-hint">Drag to aim · Arrows / A D to move · Space to fire · Lock the correct atom</p>
+    </div>
+  `);
+
+  bindRocketPointer();
+  if (!rocketItem.answered && !rocketItem.locked) {
+    startRocketLoop();
+  }
+}
+
+function setRocketKey(dir, pressed) {
+  if (dir === "left") rocketKeys.left = pressed;
+  if (dir === "right") rocketKeys.right = pressed;
+}
+
+function galagaFire() {
+  if (!rocketItem || rocketItem.answered || rocketItem.locked || activeGame !== "rocket") return;
+  const now = performance.now();
+  if (now - rocketItem.lastShotAt < 220) return;
+  if (rocketItem.bullets.length >= 3) return;
+  rocketItem.lastShotAt = now;
+  rocketItem.bullets.push({
+    id: ++rocketBulletId,
+    x: rocketItem.shipX,
+    y: 86
+  });
+}
+
+function startRocketLoop() {
+  if (rocketRaf) return;
+  const tick = () => {
+    if (activeGame !== "rocket" || !rocketItem || !gameSession || gameSession.complete) {
+      rocketRaf = null;
+      return;
+    }
+    if (!rocketItem.answered && !rocketItem.locked) {
+      updateGalagaFrame();
+    }
+    rocketRaf = requestAnimationFrame(tick);
+  };
+  rocketRaf = requestAnimationFrame(tick);
+}
+
+function bindRocketPointer() {
+  const arena = document.getElementById("rocketArena");
+  if (!arena) return;
+
+  const aimFromEvent = (event) => {
+    if (!rocketItem || rocketItem.answered || rocketItem.locked) return;
+    const rect = arena.getBoundingClientRect();
+    if (!rect.width) return;
+    const pct = ((event.clientX - rect.left) / rect.width) * 100;
+    rocketItem.shipX = Math.max(8, Math.min(92, pct));
+    const ship = document.getElementById("rocketShip");
+    if (ship) ship.style.left = `${rocketItem.shipX}%`;
+  };
+
+  arena.onpointerdown = (event) => {
+    if (event.target.closest("button")) return;
+    rocketItem.pointerAim = true;
+    try { arena.setPointerCapture(event.pointerId); } catch (_) {}
+    aimFromEvent(event);
+  };
+  arena.onpointermove = (event) => {
+    if (!rocketItem?.pointerAim) return;
+    aimFromEvent(event);
+  };
+  arena.onpointerup = () => {
+    if (rocketItem) rocketItem.pointerAim = false;
+  };
+  arena.onpointercancel = () => {
+    if (rocketItem) rocketItem.pointerAim = false;
+  };
+}
+
+function updateGalagaFrame() {
+  rocketItem.formationT += 0.035;
+  const t = rocketItem.formationT;
+
+  if (!rocketItem.pointerAim) {
+    if (rocketKeys.left) rocketItem.shipX -= 1.45;
+    if (rocketKeys.right) rocketItem.shipX += 1.45;
+  }
+  rocketItem.shipX = Math.max(8, Math.min(92, rocketItem.shipX));
+
+  rocketItem.enemies.forEach((enemy, i) => {
+    if (!enemy.alive) return;
+    const isCorrect = enemy.option.isCorrect;
+    const drift = isCorrect ? 16 : 11;
+    const bob = isCorrect ? 3.2 : 2.2;
+
+    if (!enemy.diving && t > enemy.nextDiveAt && (isCorrect || Math.random() < 0.12)) {
+      // Prefer diving the correct target; wrong ones dive less often
+      if (isCorrect || Math.random() < 0.35) {
+        enemy.diving = true;
+        enemy.diveT = 0;
+      } else {
+        enemy.nextDiveAt = t + 1.5 + Math.random() * 2;
+      }
+    }
+
+    if (enemy.diving) {
+      enemy.diveT += 0.045;
+      const dive = Math.sin(enemy.diveT);
+      enemy.x = enemy.baseX + Math.sin(t * 0.55 + enemy.phase) * (drift * 0.55) + Math.sin(enemy.diveT * 1.8) * 10;
+      enemy.y = enemy.baseY + dive * (isCorrect ? 34 : 22) + Math.sin(t + i) * 1.5;
+      if (enemy.diveT >= Math.PI) {
+        enemy.diving = false;
+        enemy.nextDiveAt = t + 2.2 + Math.random() * 2.8;
+        enemy.y = enemy.baseY;
+      }
+    } else {
+      enemy.x = enemy.baseX + Math.sin(t * 0.55 + enemy.phase) * drift;
+      enemy.y = enemy.baseY + Math.sin(t * 0.9 + i + enemy.phase) * bob;
+    }
+  });
+
+  rocketItem.bullets = rocketItem.bullets
+    .map((bullet) => ({ ...bullet, y: bullet.y - 2.85 }))
+    .filter((bullet) => bullet.y > -4);
+
+  for (const bullet of [...rocketItem.bullets]) {
+    for (const enemy of rocketItem.enemies) {
+      if (!enemy.alive) continue;
+      const hit =
+        Math.abs(bullet.x - enemy.x) < 12 &&
+        Math.abs(bullet.y - enemy.y) < 10;
+      if (!hit) continue;
+
+      rocketItem.bullets = rocketItem.bullets.filter((b) => b.id !== bullet.id);
+      resolveGalagaHit(enemy);
+      break;
+    }
+  }
+
+  syncGalagaDom();
+}
+
+function syncGalagaDom() {
+  const ship = document.getElementById("rocketShip");
+  if (ship) ship.style.left = `${rocketItem.shipX}%`;
+
+  rocketItem.enemies.forEach((enemy) => {
+    const el = document.getElementById(`rocket-enemy-${enemy.index}`);
+    if (!el) return;
+    el.style.left = `${enemy.x}%`;
+    el.style.top = `${enemy.y}%`;
+    el.classList.toggle("diving", Boolean(enemy.diving && enemy.alive));
+  });
+
+  const layer = document.getElementById("rocketBulletLayer");
+  if (layer) {
+    layer.innerHTML = rocketItem.bullets.map((bullet) =>
+      `<div class="rocket-bullet" style="left:${bullet.x}%;top:${bullet.y}%;"></div>`
+    ).join("");
+  }
+}
+
+function resolveGalagaHit(enemy) {
+  if (!rocketItem || rocketItem.locked || rocketItem.answered) return;
+
+  rocketItem.locked = true;
+  rocketItem.selected = enemy.index;
+  rocketItem.burstX = enemy.x;
+  rocketItem.burstY = enemy.y;
+  rocketItem.showBurst = true;
+  enemy.alive = false;
+  enemy.diving = false;
+  enemy.hitClass = "destroyed";
+
+  const correct = Boolean(enemy.option.isCorrect);
+  rocketItem.enemies.forEach((other) => {
+    const el = document.getElementById(`rocket-enemy-${other.index}`);
+    if (!el) return;
+    if (other.option.isCorrect) el.classList.add("correct");
+    if (other.index === enemy.index && !correct) el.classList.add("wrong");
+  });
+
+  if (correct) {
+    gameSession.streak = (gameSession.streak || 0) + 1;
+    gameSession.maxStreak = Math.max(gameSession.maxStreak || 0, gameSession.streak);
+    const mult = Math.min(gameSession.streak, 5);
+    gameSession.score = (gameSession.score || 0) + 1000 * mult;
+    rocketItem.resultText = mult > 1 ? `LOCKED x${mult}` : "LOCKED";
+    rocketItem.debrief = "";
+  } else {
+    gameSession.streak = 0;
+    gameSession.lives = Math.max(0, (gameSession.lives == null ? 3 : gameSession.lives) - 1);
+    const correctOpt = rocketItem.options.find((o) => o.isCorrect);
+    rocketItem.resultText = gameSession.lives <= 0 ? "DEPLETED" : "CONTAMINATED";
+    rocketItem.debrief = correctOpt ? correctOpt.label : "";
+    const cabinet = document.getElementById("galagaCabinet");
+    if (cabinet) {
+      cabinet.classList.remove("shake");
+      void cabinet.offsetWidth;
+      cabinet.classList.add("shake");
+    }
+  }
+
+  const burst = document.getElementById("rocketBurst");
+  if (burst) {
+    burst.style.left = `${enemy.x}%`;
+    burst.style.top = `${enemy.y}%`;
+    burst.classList.remove("show");
+    void burst.offsetWidth;
+    burst.classList.add("show");
+  }
+
+  const scoreEl = document.getElementById("galagaScore");
+  if (scoreEl) scoreEl.textContent = String(gameSession.score || 0);
+  const streakEl = document.getElementById("galagaStreak");
+  if (streakEl) streakEl.textContent = `x${gameSession.streak || 0}`;
+  const livesEl = document.getElementById("galagaLives");
+  if (livesEl) {
+    const lives = gameSession.lives == null ? 3 : gameSession.lives;
+    livesEl.innerHTML = Array.from({ length: 3 }, (_, i) =>
+      `<span class="galaga-life ${i < lives ? "" : "empty"}"></span>`
+    ).join("");
+  }
+
+  rocketTimers.push(setTimeout(() => {
+    if (!rocketItem) return;
+    rocketItem.answered = true;
+    rocketItem.bullets = [];
+    syncGalagaDom();
+
+    const arena = document.getElementById("rocketArena");
+    if (arena && !arena.querySelector(".galaga-result")) {
+      const banner = document.createElement("div");
+      banner.className = `galaga-result ${correct ? "" : "miss"}`;
+      banner.textContent = rocketItem.resultText;
+      arena.appendChild(banner);
+    }
+    if (arena && rocketItem.debrief && !arena.querySelector(".galaga-debrief")) {
+      const tip = document.createElement("div");
+      tip.className = "galaga-debrief";
+      tip.innerHTML = `DEBRIEF · correct was <strong>${escapeHTML(rocketItem.debrief)}</strong>`;
+      arena.appendChild(tip);
+    }
+
+    rocketTimers.push(setTimeout(() => {
+      advanceRound(correct);
+      render();
+    }, correct ? 650 : 1100));
+  }, 280));
 }
 
 function prepareSpeedQuestion() {
@@ -6500,16 +7915,13 @@ function prepareSpeedQuestion() {
 
   const correct = gameSession.queue[gameSession.index];
   const pool = gameSession.pool;
-  const hard = gameUsesHardDecoys(gameSession.id);
   const types = [];
 
   if (getFlavorProfile(correct)) types.push("quiz");
-  if (getStyle(correct) || getFlavorProfile(correct)) types.push("practice");
+  if (getGuestGuidance(correct)) types.push("practice");
   if (getTapNumber(correct)) types.push("tap");
   if (getABVNumber(correct) > 0) types.push("abv");
   if (getStyle(correct)) types.push("style");
-  if (getDescription(correct) || getFlavorProfile(correct)) types.push("desc");
-  if (getStyle(correct) && getABVNumber(correct) > 0) types.push("blind");
 
   if (types.length === 0) {
     gameSession.index++;
@@ -6522,39 +7934,21 @@ function prepareSpeedQuestion() {
   }
 
   const type = pickRandom(types);
-  const wrongPicker = (sourcePool, count) =>
-    pickSimilarWrongBeers(sourcePool, correct, count, hard);
 
   if (type === "quiz") {
     speedItem = {
       type: "quiz",
       correct,
-      question: buildFlavorClue(correct, pool),
-      options: shuffle([correct, ...wrongPicker(pool.filter(b => getFlavorProfile(b)), 3)]),
+      question: getFlavorProfile(correct),
+      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getFlavorProfile(b)), correct, 3)]),
       answered: false
     };
   } else if (type === "practice") {
     speedItem = {
       type: "practice",
       correct,
-      question: buildGuestScenario(correct, pool),
-      options: shuffle([correct, ...wrongPicker(pool, 3)]),
-      answered: false
-    };
-  } else if (type === "desc") {
-    speedItem = {
-      type: "desc",
-      correct,
-      question: buildDescriptionClue(correct, pool),
-      options: shuffle([correct, ...wrongPicker(pool, 3)]),
-      answered: false
-    };
-  } else if (type === "blind") {
-    speedItem = {
-      type: "blind",
-      correct,
-      question: `${getStyle(correct)} · ${getABVText(correct)}`,
-      options: shuffle([correct, ...wrongPicker(pool, 3)]),
+      question: getGuestGuidance(correct),
+      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getGuestGuidance(b)), correct, 3)]),
       answered: false
     };
   } else if (type === "tap") {
@@ -6602,19 +7996,18 @@ function prepareSpeedQuestion() {
 
 function wrapGame(html) {
   return `
-    <button class="game-back" onclick="activeGame=null; gameSession=null; render();">← War Games</button>
+    <button class="game-back" onclick="stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();">← Launch Pad</button>
     ${html}
   `;
 }
 
 function renderGameHub(content) {
   content.innerHTML = `
-    <div class="coffee-intro">
-      <h2>War Games</h2>
-      <p>Practice tap list knowledge, earn points, and climb the leaderboard. Streaks and perfect rounds give bonus points.</p>
+    <div class="coffee-intro launchpad-intro">
+      <h2>Launch Pad Training Academy</h2>
+      <p>Floor drills for tap knowledge — quizzes, flashcards, and the gold rocket trainer. Earn points and climb the leaderboard when signed in.</p>
     </div>
     ${renderLeaderboardSection()}
-    <div class="game-hub-section"><h3>Choose a war game</h3></div>
     <div class="game-hub">
       ${GAMES.map(g => `
         <div class="game-tile" onclick="startGame('${g.id}')">
@@ -6647,12 +8040,8 @@ function renderGames(content) {
     case "abv": renderABVChallenge(content); break;
     case "style": renderStyleMatch(content); break;
     case "reverse": renderReverseQuiz(content); break;
-    case "speed":
-    case "hard": renderSpeedRound(content); break;
-    case "blind": renderBlindPick(content); break;
-    case "desc": renderDescMatch(content); break;
-    case "gf": renderGFSpotter(content); break;
-    case "battle": renderABVBattle(content); break;
+    case "speed": renderSpeedRound(content); break;
+    case "rocket": renderRocketRound(content); break;
     default: renderGameHub(content);
   }
 }
@@ -6960,7 +8349,7 @@ function renderFlash(content) {
 
     <div class="flash-nav">
       <button onclick="flashFlipped = false; if (gameSession.index > 0) { gameSession.index--; } render();">Previous</button>
-      <button onclick="flashFlipped = false; gameSession.index++; if (gameSession.index >= gameSession.queue.length) { gameSession.complete = true; gameSession.points = gameSession.queue.length * ${GAME_POINT_VALUES.flash}; if (markSessionRecorded(gameSession)) recordProgress('flash', 'beer', gameSession.queue.length, gameSession.queue.length, gameSession.queue.length * ${GAME_POINT_VALUES.flash}); } render();">${gameSession.index + 1 >= gameSession.queue.length ? "Finish" : "Next"}</button>
+      <button onclick="flashFlipped = false; gameSession.index++; if (gameSession.index >= gameSession.queue.length) { gameSession.complete = true; if (markSessionRecorded(gameSession)) recordProgress('flash', 'beer', gameSession.queue.length, gameSession.queue.length); } render();">${gameSession.index + 1 >= gameSession.queue.length ? "Finish" : "Next"}</button>
     </div>
 
     <div class="flash-count">Card ${gameSession.index + 1} of ${gameSession.queue.length}</div>
@@ -6981,7 +8370,7 @@ function renderQuiz(content) {
   renderChoiceGame(
     content,
     quizItem,
-    `Which beer matches this flavor profile?<br><br>“${escapeHTML(quizItem.question)}”`,
+    `Which beer matches this flavor profile?<br><br>“${escapeHTML(getFlavorProfile(quizItem.correct))}”`,
     o => escapeHTML(col(o, "Name")),
     "answerQuiz"
   );
@@ -6998,7 +8387,7 @@ function answerQuiz(name) {
 
 function renderPractice(content) {
   if (!gameSession || gameSession.id !== "practice") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Mark at least four on-tap beers with flavor or style info in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Guest Guidance needed.</strong>Mark at least four on-tap beers with Guest Guidance in the spreadsheet.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -7010,7 +8399,7 @@ function renderPractice(content) {
   renderChoiceGame(
     content,
     practiceItem,
-    escapeHTML(practiceItem.question),
+    `A guest says: “${escapeHTML(getGuestGuidance(practiceItem.correct))}”<br><br>Which beer do you recommend?`,
     o => escapeHTML(col(o, "Name")),
     "answerPractice"
   );
@@ -7021,140 +8410,6 @@ function answerPractice(name) {
   practiceItem.answered = true;
   practiceItem.selected = name;
   const correct = name === practiceItem.correct.Name;
-  setTimeout(() => { advanceRound(correct); render(); }, 450);
-  render();
-}
-
-function renderBlindPick(content) {
-  if (!gameSession || gameSession.id !== "blind") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Need style + ABV data.</strong>Mark at least four on-tap beers with style and ABV in the spreadsheet.</div>');
-    return;
-  }
-  if (gameSession.complete) {
-    content.innerHTML = wrapGame(renderRoundComplete("Blind Pick complete!"));
-    return;
-  }
-  if (!blindItem) prepareRoundQuestion("blind");
-
-  renderChoiceGame(
-    content,
-    blindItem,
-    `Which beer is <strong>${escapeHTML(blindItem.question)}</strong>?<br><span style="color:#888;font-size:13px;">No beer name shown — use style and ABV only.</span>`,
-    o => escapeHTML(col(o, "Name")),
-    "answerBlind"
-  );
-}
-
-function answerBlind(name) {
-  if (!blindItem || blindItem.answered) return;
-  blindItem.answered = true;
-  blindItem.selected = name;
-  const correct = name === blindItem.correct.Name;
-  setTimeout(() => { advanceRound(correct); render(); }, 450);
-  render();
-}
-
-function renderDescMatch(content) {
-  if (!gameSession || gameSession.id !== "desc") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Need descriptions.</strong>Mark at least four on-tap beers with Description or Flavor Profile in the spreadsheet.</div>');
-    return;
-  }
-  if (gameSession.complete) {
-    content.innerHTML = wrapGame(renderRoundComplete("Description Match complete!"));
-    return;
-  }
-  if (!descItem) prepareRoundQuestion("desc");
-
-  renderChoiceGame(
-    content,
-    descItem,
-    `Which beer matches this description?<br><br>“${escapeHTML(descItem.question)}”`,
-    o => escapeHTML(col(o, "Name")),
-    "answerDesc"
-  );
-}
-
-function answerDesc(name) {
-  if (!descItem || descItem.answered) return;
-  descItem.answered = true;
-  descItem.selected = name;
-  const correct = name === descItem.correct.Name;
-  setTimeout(() => { advanceRound(correct); render(); }, 450);
-  render();
-}
-
-function renderGFSpotter(content) {
-  if (!gameSession || gameSession.id !== "gf") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Need GF data.</strong>Mark at least one gluten-reduced on-tap beer and three regular taps in the spreadsheet.</div>');
-    return;
-  }
-  if (gameSession.complete) {
-    content.innerHTML = wrapGame(renderRoundComplete("GF Spotter complete!"));
-    return;
-  }
-  if (!gfItem) prepareRoundQuestion("gf");
-
-  renderChoiceGame(
-    content,
-    gfItem,
-    `Which of these on-tap beers is <strong>gluten-reduced</strong>?`,
-    o => escapeHTML(col(o, "Name")),
-    "answerGF"
-  );
-}
-
-function answerGF(name) {
-  if (!gfItem || gfItem.answered) return;
-  gfItem.answered = true;
-  gfItem.selected = name;
-  const correct = name === gfItem.correct.Name;
-  setTimeout(() => { advanceRound(correct); render(); }, 450);
-  render();
-}
-
-function renderABVBattle(content) {
-  if (!gameSession || gameSession.id !== "battle") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Need ABV data.</strong>Mark at least four on-tap beers with different ABVs in the spreadsheet.</div>');
-    return;
-  }
-  if (gameSession.complete) {
-    content.innerHTML = wrapGame(renderRoundComplete("ABV Battle complete!"));
-    return;
-  }
-  if (!battleItem) prepareRoundQuestion("battle");
-
-  const a = battleItem.beerA;
-  const b = battleItem.beerB;
-
-  content.innerHTML = wrapGame(`
-    <div class="game-card">
-      <p class="game-question">Which beer has the <strong>higher ABV</strong>?</p>
-      <div class="game-options">
-        ${battleItem.options.map(o => {
-          let cls = "game-option";
-          if (battleItem.answered) {
-            cls += " disabled";
-            if (o.Name === battleItem.correct.Name) cls += " correct";
-            else if (o.Name === battleItem.selected) cls += " wrong";
-          }
-          const style = getStyle(o);
-          return `<div class="${cls}" onclick="answerBattle('${escapeForAttribute(o.Name)}')">
-            <strong>${escapeHTML(col(o, "Name"))}</strong>
-            ${style ? `<br><span style="color:#888;font-size:12px;">${escapeHTML(style)}</span>` : ""}
-          </div>`;
-        }).join("")}
-      </div>
-      ${battleItem.answered ? `<p style="font-size:13px;color:#666;margin:12px 0 0;">${escapeHTML(col(a, "Name"))} · ${escapeHTML(getABVText(a))} vs ${escapeHTML(col(b, "Name"))} · ${escapeHTML(getABVText(b))}</p>` : ""}
-    </div>
-    <div class="game-score">${sessionProgressLabel()}</div>
-  `);
-}
-
-function answerBattle(name) {
-  if (!battleItem || battleItem.answered) return;
-  battleItem.answered = true;
-  battleItem.selected = name;
-  const correct = name === battleItem.correct.Name;
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
@@ -7315,13 +8570,12 @@ function answerReverse(index) {
 }
 
 function renderSpeedRound(content) {
-  if (!gameSession || (gameSession.id !== "speed" && gameSession.id !== "hard")) {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong>Add flavor, style, tap, ABV, or description info for at least four on-tap beers.</div>');
+  if (!gameSession || gameSession.id !== "speed") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong>Add flavor, guidance, tap, ABV, or style info for at least four on-tap beers.</div>');
     return;
   }
   if (gameSession.complete) {
-    const title = gameSession.id === "hard" ? "Hard Mode complete!" : "Speed Round complete!";
-    content.innerHTML = wrapGame(renderRoundComplete(title));
+    content.innerHTML = wrapGame(renderRoundComplete("Speed Round complete!"));
     return;
   }
   if (!speedItem) prepareSpeedQuestion();
@@ -7330,11 +8584,7 @@ function renderSpeedRound(content) {
   if (speedItem.type === "quiz") {
     questionHTML = `Which beer has this flavor profile?<br><br>“${escapeHTML(speedItem.question)}”`;
   } else if (speedItem.type === "practice") {
-    questionHTML = escapeHTML(speedItem.question);
-  } else if (speedItem.type === "desc") {
-    questionHTML = `Which beer matches this description?<br><br>“${escapeHTML(speedItem.question)}”`;
-  } else if (speedItem.type === "blind") {
-    questionHTML = `Which beer is <strong>${escapeHTML(speedItem.question)}</strong>?`;
+    questionHTML = `Guest says: “${escapeHTML(speedItem.question)}” — which beer?`;
   } else if (speedItem.type === "tap") {
     questionHTML = `What beer is on <strong>${escapeHTML(speedItem.question)}</strong>?`;
   } else if (speedItem.type === "abv") {
@@ -7414,29 +8664,68 @@ function answerSpeedStyle(index) {
 
 document.getElementById("search").addEventListener("input", render);
 
-document.querySelectorAll(".tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll("#mainTabs .tab").forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-    activeType = tab.dataset.type;
-    if (activeType !== "games") {
-      activeGame = null;
-      gameSession = null;
+function updateStageTitle() {
+  const el = document.getElementById("stageTitle");
+  if (!el) return;
+  const active = document.querySelector("#mainTabs .tab.active");
+  el.textContent = active ? active.textContent.trim() : "Manhattan Project";
+}
+
+function syncMobileTabs() {
+  const main = document.getElementById("mainTabs");
+  const mobile = document.getElementById("mobileTabs");
+  if (!main || !mobile) return;
+  if (!mobile.dataset.ready) {
+    mobile.innerHTML = main.innerHTML;
+    mobile.dataset.ready = "1";
+  }
+  main.querySelectorAll(".tab").forEach((src) => {
+    let dst = mobile.querySelector(`.tab[data-type="${src.dataset.type}"]`);
+    if (!dst) {
+      dst = src.cloneNode(true);
+      mobile.appendChild(dst);
     }
-    if (activeType !== "coffee") {
-      coffeeSection = "menu";
-      coffeeMode = "guide";
-      if (activeType !== "progress" && activeType !== "team") coffeeSession = null;
-    }
-    if (activeType !== "food") foodCategory = "all";
-    if (activeType !== "merch") merchSection = "stock";
-    if (activeType !== "bar") barSection = "all";
-    if (activeType === "team") teamDetailId = null;
-    if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
-    updateSearchPlaceholder();
-    render();
+    dst.classList.toggle("active", src.classList.contains("active"));
+    dst.style.display = src.style.display;
+    dst.textContent = src.textContent;
   });
+}
+
+function activateAppTab(type) {
+  if (!type) return;
+  document.querySelectorAll("#mainTabs .tab, #mobileTabs .tab").forEach((t) => {
+    t.classList.toggle("active", t.dataset.type === type);
+  });
+  activeType = type;
+  if (activeType !== "games") {
+    activeGame = null;
+    gameSession = null;
+    rocketItem = null;
+    stopRocketLoop();
+  }
+  if (activeType !== "coffee") {
+    coffeeSection = "menu";
+    coffeeMode = "guide";
+    if (activeType !== "progress" && activeType !== "team") coffeeSession = null;
+  }
+  if (activeType !== "food") foodCategory = "all";
+  if (activeType !== "merch") merchSection = "stock";
+  if (activeType !== "bar") barSection = "all";
+  if (activeType === "team") teamDetailId = null;
+  if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
+  updateSearchPlaceholder();
+  updateStageTitle();
+  render();
+}
+
+document.addEventListener("click", (event) => {
+  const tab = event.target.closest("#mainTabs .tab[data-type], #mobileTabs .tab[data-type]");
+  if (!tab) return;
+  activateAppTab(tab.dataset.type);
 });
+
+syncMobileTabs();
+updateStageTitle();
 
 document.querySelectorAll(".filter-btn").forEach(button => {
   button.addEventListener("click", () => {
@@ -7448,6 +8737,19 @@ document.querySelectorAll(".filter-btn").forEach(button => {
 });
 
 document.addEventListener("keydown", event => {
+  if (activeGame === "rocket" && rocketItem && !rocketItem.answered && !rocketItem.locked) {
+    if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+      event.preventDefault();
+      rocketKeys.left = true;
+    } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
+      event.preventDefault();
+      rocketKeys.right = true;
+    } else if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      galagaFire();
+    }
+  }
+
   if (event.key === "Escape") {
     if (document.getElementById("briefingBackdrop").classList.contains("show")) {
       closeBriefingModal();
@@ -7461,6 +8763,11 @@ document.addEventListener("keydown", event => {
       closeModal();
     }
   }
+});
+
+document.addEventListener("keyup", event => {
+  if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") rocketKeys.left = false;
+  if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") rocketKeys.right = false;
 });
 
 function stripHtmlForChat(html) {
@@ -7502,7 +8809,7 @@ function localChatAnswer(message) {
   const q = message.toLowerCase();
 
   if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi! I can help with beers on the tap list, coffee bar training, and War Games on this site. What would you like to know?";
+    return "Hi! I can help with beers on the tap list, coffee bar training, and training games on this site. What would you like to know?";
   }
 
   if (/tap|on tap|what'?s pouring|what is pouring/.test(q) && beers.length) {
@@ -7551,12 +8858,12 @@ function localChatAnswer(message) {
   }
 
   if (/game|quiz|flashcard|training/.test(q)) {
-    return "War Games on this site:\n\n" +
+    return "Training games on this site:\n\n" +
       GAMES.map(g => `• ${g.title} — ${g.desc}`).join("\n") +
       "\n\nFor coffee: open the Coffee tab → Training Quiz or Flashcards.";
   }
 
-  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', or 'War Games'. I only answer from content on this site.";
+  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', or 'training games'. I only answer from content on this site.";
 }
 
 let chatOpen = false;
@@ -7577,7 +8884,7 @@ function toggleChatPanel(force) {
     if (!chatHistory.length) {
       appendChatMessage(
         "assistant",
-        "Hi! I can answer questions about beers on the tap list, coffee bar training, and War Games on this site. What do you need?"
+        "Hi! I can answer questions about beers on the tap list, coffee bar training, and training games on this site. What do you need?"
       );
     }
     document.getElementById("chatInput").focus();

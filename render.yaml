@@ -17,3 +17,13 @@ services:
         sync: false
       - key: SHIFT_LEAD_SETUP_KEY
         sync: false
+      - key: AZURE_CLIENT_ID
+        sync: false
+      - key: AZURE_CLIENT_SECRET
+        sync: false
+      - key: AZURE_TENANT_ID
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: AZURE_ADMIN_EMAILS
+        sync: false

@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const crypto = require("crypto");
 const express = require("express");
 const path = require("path");
 const bcrypt = require("bcryptjs");
@@ -22,6 +23,19 @@ const MERCH_SETUP_KEY = process.env.MERCH_SETUP_KEY || "mp-merch-setup";
 const SHIFT_LEAD_SETUP_KEY = process.env.SHIFT_LEAD_SETUP_KEY || "mp-shift-lead-setup";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const APP_BASE_URL = (process.env.APP_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
+const AZURE_CLIENT_ID = process.env.AZURE_CLIENT_ID || "";
+const AZURE_CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET || "";
+const AZURE_TENANT_ID = process.env.AZURE_TENANT_ID || "organizations";
+const AZURE_REDIRECT_URI = process.env.AZURE_REDIRECT_URI || `${APP_BASE_URL}/api/auth/microsoft/callback`;
+const AZURE_ADMIN_EMAILS = new Set(
+  (process.env.AZURE_ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+);
+const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
+const ALLOWED_APPROVED_ROLES = new Set(["employee", "admin", "merch", "shift_lead"]);
 
 const CHAT_SYSTEM_PROMPT = `You are the Manhattan Project Beer Co. staff training assistant embedded in the internal training portal.
 
@@ -44,8 +58,10 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT NOT NULL DEFAULT '',
     role TEXT NOT NULL DEFAULT 'employee',
+    auth_provider TEXT NOT NULL DEFAULT 'local',
+    microsoft_oid TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
@@ -197,8 +213,32 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_review_entries_source ON review_entries(source_id);
   CREATE INDEX IF NOT EXISTS idx_review_entries_date ON review_entries(review_date);
+
+  CREATE TABLE IF NOT EXISTS approved_emails (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    role TEXT NOT NULL DEFAULT 'employee',
+    added_by INTEGER,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (added_by) REFERENCES users(id)
+  );
 `);
 
+const userColumns = new Set(db.prepare("PRAGMA table_info(users)").all().map((c) => c.name));
+if (!userColumns.has("auth_provider")) {
+  db.exec(`ALTER TABLE users ADD COLUMN auth_provider TEXT NOT NULL DEFAULT 'local'`);
+}
+if (!userColumns.has("microsoft_oid")) {
+  db.exec(`ALTER TABLE users ADD COLUMN microsoft_oid TEXT`);
+}
+
+const seedApproved = db.prepare(`
+  INSERT OR IGNORE INTO approved_emails (email, role)
+  VALUES (?, ?)
+`);
+for (const email of AZURE_ADMIN_EMAILS) {
+  seedApproved.run(email, "admin");
+}
 function todayDate() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -273,6 +313,70 @@ function inventoryManagerRequired(req, res, next) {
     return res.status(403).json({ error: "Inventory manager access required." });
   }
   next();
+}
+
+function normalizeEmail(email) {
+  return String(email || "").trim().toLowerCase();
+}
+
+function getApprovedEmail(email) {
+  return db.prepare("SELECT * FROM approved_emails WHERE email = ?").get(normalizeEmail(email));
+}
+
+function isMicrosoftSignInAllowed(email) {
+  const normalized = normalizeEmail(email);
+  if (!normalized) return false;
+  if (AZURE_ADMIN_EMAILS.has(normalized)) return true;
+  return Boolean(getApprovedEmail(normalized));
+}
+
+function resolveApprovedRole(email, existingRole) {
+  const normalized = normalizeEmail(email);
+  if (AZURE_ADMIN_EMAILS.has(normalized)) return "admin";
+  const approved = getApprovedEmail(normalized);
+  if (approved && ALLOWED_APPROVED_ROLES.has(approved.role)) return approved.role;
+  if (existingRole && ALLOWED_APPROVED_ROLES.has(existingRole)) return existingRole;
+  return "employee";
+}
+
+function microsoftAuthorizeUrl(state) {
+  const params = new URLSearchParams({
+    client_id: AZURE_CLIENT_ID,
+    response_type: "code",
+    redirect_uri: AZURE_REDIRECT_URI,
+    response_mode: "query",
+    scope: "openid profile email User.Read",
+    state,
+    prompt: "select_account"
+  });
+  return `https://login.microsoftonline.com/${encodeURIComponent(AZURE_TENANT_ID)}/oauth2/v2.0/authorize?${params}`;
+}
+
+function upsertMicrosoftUser({ oid, email, name }) {
+  const normalized = normalizeEmail(email);
+  const existingByOid = oid
+    ? db.prepare("SELECT * FROM users WHERE microsoft_oid = ?").get(oid)
+    : null;
+  const existingByEmail = db.prepare("SELECT * FROM users WHERE email = ?").get(normalized);
+  const existing = existingByOid || existingByEmail;
+  const role = resolveApprovedRole(normalized, existing?.role);
+
+  if (existing) {
+    db.prepare(`
+      UPDATE users
+      SET name = ?, email = ?, auth_provider = 'microsoft', microsoft_oid = COALESCE(?, microsoft_oid), role = ?
+      WHERE id = ?
+    `).run(name, normalized, oid || null, role, existing.id);
+
+    return db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(existing.id);
+  }
+
+  const result = db.prepare(`
+    INSERT INTO users (name, email, password_hash, role, auth_provider, microsoft_oid)
+    VALUES (?, ?, '', ?, 'microsoft', ?)
+  `).run(name, normalized, role, oid || null);
+
+  return db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
 }
 
 function isValidShiftDate(value) {
@@ -775,8 +879,14 @@ async function askOpenAI(message, history, context) {
 }
 
 app.post("/api/auth/register", (req, res) => {
+  if (microsoftAuthEnabled) {
+    return res.status(403).json({
+      error: "Self sign-up is disabled. Ask an admin to approve your email, then sign in with Microsoft."
+    });
+  }
+
   const name = (req.body.name || "").trim();
-  const email = (req.body.email || "").trim().toLowerCase();
+  const email = normalizeEmail(req.body.email);
   const password = req.body.password || "";
   const adminKey = (req.body.adminKey || "").trim();
   const merchKey = (req.body.merchKey || "").trim();
@@ -834,16 +944,124 @@ app.post("/api/auth/register", (req, res) => {
 });
 
 app.post("/api/auth/login", (req, res) => {
-  const email = (req.body.email || "").trim().toLowerCase();
+  const email = normalizeEmail(req.body.email);
   const password = req.body.password || "";
 
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  if (!user || !bcrypt.compareSync(password, user.password_hash)) {
+  if (!user) {
+    return res.status(401).json({ error: "Invalid email or password." });
+  }
+  if (!user.password_hash || user.auth_provider === "microsoft") {
+    return res.status(401).json({
+      error: "This account uses Microsoft sign-in. Use Sign in with Microsoft."
+    });
+  }
+  if (!bcrypt.compareSync(password, user.password_hash)) {
     return res.status(401).json({ error: "Invalid email or password." });
   }
 
   const token = signToken(user);
   res.json({ token, user: publicUser(user) });
+});
+
+app.get("/api/auth/providers", (req, res) => {
+  res.json({ microsoft: microsoftAuthEnabled, allowlistRequired: microsoftAuthEnabled });
+});
+
+app.get("/api/auth/microsoft", (req, res) => {
+  if (!microsoftAuthEnabled) {
+    return res.status(503).json({
+      error: "Microsoft sign-in is not configured. Set AZURE_CLIENT_ID and AZURE_CLIENT_SECRET."
+    });
+  }
+
+  const state = jwt.sign(
+    { nonce: crypto.randomBytes(16).toString("hex"), purpose: "ms-oauth" },
+    JWT_SECRET,
+    { expiresIn: "10m" }
+  );
+  res.redirect(microsoftAuthorizeUrl(state));
+});
+
+app.get("/api/auth/microsoft/callback", async (req, res) => {
+  const fail = (message) => {
+    const params = new URLSearchParams({ auth_error: message });
+    return res.redirect(`/?${params}`);
+  };
+
+  if (!microsoftAuthEnabled) {
+    return fail("Microsoft sign-in is not configured.");
+  }
+
+  const { code, state, error, error_description: errorDescription } = req.query;
+  if (error) {
+    return fail(String(errorDescription || error));
+  }
+  if (!code || !state) {
+    return fail("Missing authorization response from Microsoft.");
+  }
+
+  try {
+    const decoded = jwt.verify(String(state), JWT_SECRET);
+    if (decoded.purpose !== "ms-oauth") {
+      return fail("Invalid sign-in state.");
+    }
+  } catch {
+    return fail("Sign-in expired. Please try again.");
+  }
+
+  try {
+    const tokenRes = await fetch(
+      `https://login.microsoftonline.com/${encodeURIComponent(AZURE_TENANT_ID)}/oauth2/v2.0/token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: AZURE_CLIENT_ID,
+          client_secret: AZURE_CLIENT_SECRET,
+          code: String(code),
+          redirect_uri: AZURE_REDIRECT_URI,
+          grant_type: "authorization_code"
+        })
+      }
+    );
+    const tokenData = await tokenRes.json();
+    if (!tokenRes.ok || !tokenData.access_token) {
+      console.error("Microsoft token error:", tokenData);
+      return fail(tokenData.error_description || "Could not complete Microsoft sign-in.");
+    }
+
+    const profileRes = await fetch("https://graph.microsoft.com/v1.0/me", {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
+    const profile = await profileRes.json();
+    if (!profileRes.ok) {
+      console.error("Microsoft profile error:", profile);
+      return fail("Could not load your Microsoft profile.");
+    }
+
+    const email = normalizeEmail(profile.mail || profile.userPrincipalName);
+    const name = String(profile.displayName || email.split("@")[0] || "Team member").trim();
+    const oid = profile.id ? String(profile.id) : null;
+
+    if (!email) {
+      return fail("Your Microsoft account did not return an email address.");
+    }
+
+    if (!isMicrosoftSignInAllowed(email)) {
+      return fail(
+        "Your email is not approved for this training portal. Ask an admin to add you, then try again."
+      );
+    }
+
+    const user = upsertMicrosoftUser({ oid, email, name });
+    const token = signToken(user);
+    const params = new URLSearchParams({ auth_token: token });
+    return res.redirect(`/?${params}`);
+  } catch (err) {
+    console.error("Microsoft auth callback error:", err.message);
+    return fail("Microsoft sign-in failed. Please try again.");
+  }
 });
 
 app.get("/api/auth/me", authRequired, (req, res) => {
@@ -872,6 +1090,106 @@ app.post("/api/progress", authRequired, (req, res) => {
 
 app.get("/api/progress/me", authRequired, (req, res) => {
   res.json(getUserStats(req.user.id));
+});
+
+app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) => {
+  const rows = db.prepare(`
+    SELECT a.id, a.email, a.role, a.created_at, a.added_by,
+           u.name AS added_by_name,
+           eu.id AS user_id,
+           eu.name AS user_name
+    FROM approved_emails a
+    LEFT JOIN users u ON u.id = a.added_by
+    LEFT JOIN users eu ON eu.email = a.email
+    ORDER BY a.created_at DESC, a.email ASC
+  `).all();
+
+  res.json({
+    emails: rows.map((row) => ({
+      id: row.id,
+      email: row.email,
+      role: row.role,
+      created_at: row.created_at,
+      added_by_name: row.added_by_name || null,
+      signed_in: Boolean(row.user_id),
+      user_name: row.user_name || null
+    }))
+  });
+});
+
+app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) => {
+  const email = normalizeEmail(req.body.email);
+  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? req.body.role : "employee";
+
+  if (!email || !email.includes("@")) {
+    return res.status(400).json({ error: "A valid email address is required." });
+  }
+
+  try {
+    db.prepare(`
+      INSERT INTO approved_emails (email, role, added_by)
+      VALUES (?, ?, ?)
+    `).run(email, role, req.user.id);
+  } catch (err) {
+    if (String(err.message).includes("UNIQUE")) {
+      db.prepare(`
+        UPDATE approved_emails
+        SET role = ?, added_by = ?
+        WHERE email = ?
+      `).run(role, req.user.id, email);
+    } else {
+      throw err;
+    }
+  }
+
+  db.prepare(`UPDATE users SET role = ? WHERE email = ?`).run(role, email);
+
+  const row = db.prepare(`
+    SELECT a.id, a.email, a.role, a.created_at, a.added_by,
+           u.name AS added_by_name,
+           eu.id AS user_id,
+           eu.name AS user_name
+    FROM approved_emails a
+    LEFT JOIN users u ON u.id = a.added_by
+    LEFT JOIN users eu ON eu.email = a.email
+    WHERE a.email = ?
+  `).get(email);
+
+  res.status(201).json({
+    email: {
+      id: row.id,
+      email: row.email,
+      role: row.role,
+      created_at: row.created_at,
+      added_by_name: row.added_by_name || null,
+      signed_in: Boolean(row.user_id),
+      user_name: row.user_name || null
+    }
+  });
+});
+
+app.delete("/api/admin/approved-emails/:email", authRequired, adminRequired, (req, res) => {
+  const email = normalizeEmail(decodeURIComponent(req.params.email));
+  if (!email) {
+    return res.status(400).json({ error: "Email is required." });
+  }
+
+  if (AZURE_ADMIN_EMAILS.has(email)) {
+    return res.status(400).json({
+      error: "This email is locked as an admin in server config and cannot be removed."
+    });
+  }
+
+  if (email === normalizeEmail(req.user.email)) {
+    return res.status(400).json({ error: "You cannot remove your own approved email." });
+  }
+
+  const result = db.prepare("DELETE FROM approved_emails WHERE email = ?").run(email);
+  if (!result.changes) {
+    return res.status(404).json({ error: "Approved email not found." });
+  }
+
+  res.json({ ok: true });
 });
 
 app.get("/api/announcements/state", authRequired, (req, res) => {
@@ -1381,4 +1699,5 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
   console.log(`MP Training server running on port ${PORT}`);
+  console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
 });

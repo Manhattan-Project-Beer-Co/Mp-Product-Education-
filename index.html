@@ -294,6 +294,47 @@
 
   .auth-btn.primary:hover { background: #f4f4f5; }
 
+  .auth-btn.microsoft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: #fff;
+    color: #242424;
+    border: 1px solid #8c8c8c;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .auth-btn.microsoft:hover {
+    background: #f3f3f3;
+    border-color: #8c8c8c;
+  }
+
+  .auth-btn.microsoft svg { flex-shrink: 0; }
+
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+    color: var(--muted, #71717a);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
   .auth-user {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.48);
@@ -1013,6 +1054,108 @@
   .progress-table tr:last-child td { border-bottom: none; }
   .progress-table tr.clickable { cursor: pointer; transition: background 0.15s; }
   .progress-table tr.clickable:hover { background: #fafafa; }
+
+  .approve-panel {
+    max-width: 960px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+  }
+
+  .approve-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+    padding: 18px 20px;
+  }
+
+  .approve-card h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .approve-card > p {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .approve-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .approve-form input,
+  .approve-form select {
+    font-family: var(--font);
+    font-size: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    color: var(--black);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .approve-form input {
+    flex: 1 1 220px;
+    min-width: 180px;
+  }
+
+  .approve-form button {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    background: var(--black);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .approve-form button:hover { opacity: 0.9; }
+
+  .approve-error {
+    color: #b91c1c;
+    font-size: 13px;
+    margin: 0 0 10px;
+  }
+
+  .approve-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #f4f4f5;
+    color: #52525b;
+  }
+
+  .approve-status.joined {
+    background: #ecfdf5;
+    color: #047857;
+  }
+
+  .approve-remove {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: transparent;
+    color: #52525b;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .approve-remove:hover {
+    background: #fafafa;
+    color: var(--black);
+  }
 
   .auth-panel {
     margin: 32px 24px;
@@ -2371,9 +2514,38 @@ const API_BASE = "";
 let currentUser = null;
 let authToken = localStorage.getItem("mp_auth_token") || "";
 let authMode = "login";
+let microsoftAuthAvailable = false;
 let teamDetailId = null;
 let myProgressData = null;
 let teamData = null;
+let approvedEmailsData = null;
+
+const MS_LOGO_SVG = `<svg width="18" height="18" viewBox="0 0 21 21" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>`;
+
+function microsoftSignInButton(label = "Sign in with Microsoft") {
+  if (!microsoftAuthAvailable) return "";
+  return `
+    <button type="button" class="auth-btn microsoft" onclick="startMicrosoftSignIn()">
+      ${MS_LOGO_SVG}
+      ${label}
+    </button>
+  `;
+}
+
+function consumeAuthCallbackParams() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("auth_token");
+  const authError = params.get("auth_error");
+  if (!token && !authError) return null;
+
+  params.delete("auth_token");
+  params.delete("auth_error");
+  const clean = params.toString();
+  const nextUrl = clean ? `${window.location.pathname}?${clean}` : window.location.pathname;
+  window.history.replaceState({}, "", nextUrl);
+
+  return { token, authError };
+}
 const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
 
@@ -3252,10 +3424,12 @@ function updateAuthUI() {
   });
 
   if (!currentUser) {
-    authBar.innerHTML = `
-      <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
-      <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
-    `;
+    authBar.innerHTML = microsoftAuthAvailable
+      ? `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`
+      : `
+        <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
+        <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
+      `;
     return;
   }
 
@@ -3269,8 +3443,30 @@ function updateAuthUI() {
 }
 
 async function initAuth() {
+  try {
+    const providers = await fetch(`${API_BASE}/api/auth/providers`).then((r) => r.json());
+    microsoftAuthAvailable = Boolean(providers.microsoft);
+  } catch {
+    microsoftAuthAvailable = false;
+  }
+
+  const callback = consumeAuthCallbackParams();
+  if (callback?.token) {
+    authToken = callback.token;
+    localStorage.setItem("mp_auth_token", authToken);
+  }
+
   if (!authToken) {
     updateAuthUI();
+    if (callback?.authError) {
+      openAuthModal("login");
+      setTimeout(() => {
+        const errorEl = document.getElementById("authError");
+        if (errorEl) {
+          errorEl.innerHTML = `<div class="auth-error">${escapeHTML(callback.authError)}</div>`;
+        }
+      }, 0);
+    }
     return;
   }
   try {
@@ -3283,6 +3479,10 @@ async function initAuth() {
     currentUser = null;
     updateAuthUI();
   }
+}
+
+function startMicrosoftSignIn() {
+  window.location.href = `${API_BASE}/api/auth/microsoft`;
 }
 
 function openAuthModal(mode) {
@@ -3299,21 +3499,28 @@ function closeAuthModal(event) {
 }
 
 function renderAuthModal() {
-  const isRegister = authMode === "register";
+  if (microsoftAuthAvailable && authMode === "register") {
+    authMode = "login";
+  }
+  const showRegister = !microsoftAuthAvailable && authMode === "register";
   document.getElementById("authContent").innerHTML = `
     <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
-      <h3>${isRegister ? "Create employee account" : "Log in"}</h3>
-      <p class="hint">${isRegister
+      <h3>${showRegister ? "Create employee account" : "Log in"}</h3>
+      <p class="hint">${showRegister
         ? "Staff sign up here to track training progress. The first account becomes admin. Managers, merch leads, and shift leads can register with a setup key."
-        : "Log in to save your quiz scores and track training progress."}</p>
+        : microsoftAuthAvailable
+          ? "If an admin has approved your work email, sign in with Microsoft to create your account and track training."
+          : "Log in to save your quiz scores and track training progress."}</p>
       <div id="authError"></div>
+      ${!showRegister ? microsoftSignInButton() : ""}
+      ${!showRegister && microsoftAuthAvailable ? `<div class="auth-divider">or email (local accounts)</div>` : ""}
       <label for="authName">Full name</label>
-      <input id="authName" type="text" placeholder="Your name" ${isRegister ? "" : "style='display:none'"}>
+      <input id="authName" type="text" placeholder="Your name" ${showRegister ? "" : "style='display:none'"}>
       <label for="authEmail">Email</label>
       <input id="authEmail" type="email" placeholder="you@example.com">
       <label for="authPassword">Password</label>
       <input id="authPassword" type="password" placeholder="At least 6 characters">
-      ${isRegister ? `
+      ${showRegister ? `
         <label for="authAdminKey">Admin setup key (optional)</label>
         <input id="authAdminKey" type="password" placeholder="Only for manager/admin accounts">
         <label for="authMerchKey">Merch setup key (optional)</label>
@@ -3321,11 +3528,13 @@ function renderAuthModal() {
         <label for="authShiftLeadKey">Shift lead setup key (optional)</label>
         <input id="authShiftLeadKey" type="password" placeholder="Only for shift lead accounts">
       ` : ""}
-      <button class="game-next" style="width:100%;" onclick="submitAuth()">${isRegister ? "Create account" : "Log in"}</button>
+      <button class="game-next" style="width:100%;" onclick="submitAuth()">${showRegister ? "Create account" : "Log in with email"}</button>
       <p class="hint" style="margin-top:14px;text-align:center;">
-        ${isRegister
+        ${showRegister
           ? `Already have an account? <a href="#" onclick="openAuthModal('login'); return false;">Log in</a>`
-          : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
+          : microsoftAuthAvailable
+            ? "Need access? Ask a manager to approve your email on the Team page."
+            : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
       </p>
     </div>
   `;
@@ -3375,6 +3584,7 @@ function logout() {
   currentUser = null;
   myProgressData = null;
   teamData = null;
+  approvedEmailsData = null;
   teamDetailId = null;
   briefingView = "list";
   briefingActiveItem = null;
@@ -4396,13 +4606,19 @@ async function renderTeamDashboard(content) {
       return;
     }
 
-    if (!teamDetailId) teamData = await apiFetch("/api/admin/employees");
+    const [employeesPayload, approvedPayload] = await Promise.all([
+      apiFetch("/api/admin/employees"),
+      apiFetch("/api/admin/approved-emails")
+    ]);
+    teamData = employeesPayload;
+    approvedEmailsData = approvedPayload;
 
     content.innerHTML = `
       <div class="coffee-intro">
         <h2>Team Dashboard</h2>
-        <p>Monitor employee training progress and suggested next steps for each team member.</p>
+        <p>Approve staff emails, then they sign in with Microsoft. Monitor training progress below.</p>
       </div>
+      ${renderApprovedEmailsPanel(approvedEmailsData.emails)}
       ${teamData.employees.some(emp => emp.role === "employee") ? renderTeamChartsHtml() : ""}
       <table class="progress-table">
         <tr><th>Employee</th><th>Sessions</th><th>Accuracy</th><th>Last active</th><th>Suggested next step</th></tr>
@@ -4431,6 +4647,92 @@ async function renderTeamDashboard(content) {
   } catch (err) {
     content.innerHTML = `<div class="status"><strong>Could not load team dashboard.</strong>${escapeHTML(err.message)}</div>`;
     destroyCharts();
+  }
+}
+
+function renderApprovedEmailsPanel(emails) {
+  const rows = emails.length ? emails.map((row) => `
+    <tr>
+      <td>
+        <strong>${escapeHTML(row.email)}</strong>
+        ${row.user_name ? `<br><span style="color:#888;font-size:12px;">${escapeHTML(row.user_name)}</span>` : ""}
+      </td>
+      <td>${escapeHTML(roleLabel(row.role))}</td>
+      <td>
+        <span class="approve-status ${row.signed_in ? "joined" : ""}">
+          ${row.signed_in ? "Signed in" : "Invited"}
+        </span>
+      </td>
+      <td>
+        <button class="approve-remove" onclick="removeApprovedEmail(${JSON.stringify(row.email)})">Remove</button>
+      </td>
+    </tr>
+  `).join("") : `
+    <tr>
+      <td colspan="4" style="color:#888;">No approved emails yet. Add a staff member’s Microsoft work email above.</td>
+    </tr>
+  `;
+
+  return `
+    <div class="approve-panel">
+      <div class="approve-card">
+        <h3>Approved emails</h3>
+        <p>Only these Microsoft work emails can sign in. Their account is created automatically on first login.</p>
+        <div id="approveError"></div>
+        <form class="approve-form" onsubmit="addApprovedEmail(event)">
+          <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
+          <select id="approveRoleInput">
+            <option value="employee">Employee</option>
+            <option value="admin">Admin</option>
+            <option value="merch">Merch</option>
+            <option value="shift_lead">Shift lead</option>
+          </select>
+          <button type="submit">Approve email</button>
+        </form>
+        <table class="progress-table" style="width:100%;max-width:none;margin:0;">
+          <tr><th>Email</th><th>Role</th><th>Status</th><th></th></tr>
+          ${rows}
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+async function addApprovedEmail(event) {
+  event.preventDefault();
+  const errorEl = document.getElementById("approveError");
+  const email = document.getElementById("approveEmailInput").value.trim();
+  const role = document.getElementById("approveRoleInput").value;
+  if (errorEl) errorEl.innerHTML = "";
+
+  try {
+    await apiFetch("/api/admin/approved-emails", {
+      method: "POST",
+      body: JSON.stringify({ email, role })
+    });
+    approvedEmailsData = null;
+    teamData = null;
+    render();
+  } catch (err) {
+    if (errorEl) {
+      errorEl.innerHTML = `<p class="approve-error">${escapeHTML(err.message)}</p>`;
+    }
+  }
+}
+
+async function removeApprovedEmail(email) {
+  if (!confirm(`Remove access for ${email}? They will not be able to sign in with Microsoft until re-approved.`)) {
+    return;
+  }
+  try {
+    await apiFetch(`/api/admin/approved-emails/${encodeURIComponent(email)}`, {
+      method: "DELETE"
+    });
+    approvedEmailsData = null;
+    teamData = null;
+    render();
+  } catch (err) {
+    alert(err.message);
   }
 }
 

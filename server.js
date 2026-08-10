@@ -691,6 +691,7 @@ const ACTIVITY_LABELS = {
   style: "Style Match",
   reverse: "Pick the Profile",
   speed: "Speed Round",
+  rocket: "Launch Pad",
   flash: "Beer Flashcards",
   coffee_quiz: "Coffee Quiz",
   coffee_flash: "Coffee Flashcards"
@@ -713,6 +714,8 @@ const TRAINING_PATH = [
     suggest: "Reverse quiz strengthens detailed product knowledge." },
   { type: "speed", category: "beer", label: "Speed Round", goal: 75, critical: false,
     suggest: "Ready for a mixed review — try Speed Round under pressure." },
+  { type: "rocket", category: "beer", label: "Launch Pad", goal: 75, critical: false,
+    suggest: "Arcade-style review — lock the correct tap answer in Launch Pad." },
   { type: "coffee_flash", category: "coffee", label: "Coffee Flashcards", goal: 70, critical: false,
     suggest: "Review coffee manual key points with flashcards." },
   { type: "coffee_quiz", category: "coffee", label: "Coffee Quiz", goal: 75, critical: true,
@@ -1112,7 +1115,8 @@ app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =>
       created_at: row.created_at,
       added_by_name: row.added_by_name || null,
       signed_in: Boolean(row.user_id),
-      user_name: row.user_name || null
+      user_name: row.user_name || null,
+      locked: AZURE_ADMIN_EMAILS.has(row.email)
     }))
   });
 });
@@ -1163,33 +1167,90 @@ app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =
       created_at: row.created_at,
       added_by_name: row.added_by_name || null,
       signed_in: Boolean(row.user_id),
-      user_name: row.user_name || null
+      user_name: row.user_name || null,
+      locked: AZURE_ADMIN_EMAILS.has(row.email)
     }
   });
 });
 
-app.delete("/api/admin/approved-emails/:email", authRequired, adminRequired, (req, res) => {
-  const email = normalizeEmail(decodeURIComponent(req.params.email));
-  if (!email) {
-    return res.status(400).json({ error: "Email is required." });
+app.patch("/api/admin/approved-emails/:id", authRequired, adminRequired, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid approved email id." });
   }
 
-  if (AZURE_ADMIN_EMAILS.has(email)) {
+  const existing = db.prepare("SELECT * FROM approved_emails WHERE id = ?").get(id);
+  if (!existing) {
+    return res.status(404).json({ error: "Approved email not found." });
+  }
+
+  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? req.body.role : null;
+  if (!role) {
+    return res.status(400).json({ error: "A valid role is required." });
+  }
+
+  if (AZURE_ADMIN_EMAILS.has(existing.email) && role !== "admin") {
+    return res.status(400).json({
+      error: "This email is locked as admin in server config."
+    });
+  }
+
+  db.prepare(`
+    UPDATE approved_emails
+    SET role = ?, added_by = ?
+    WHERE id = ?
+  `).run(role, req.user.id, id);
+
+  db.prepare(`UPDATE users SET role = ? WHERE email = ?`).run(role, existing.email);
+
+  const row = db.prepare(`
+    SELECT a.id, a.email, a.role, a.created_at, a.added_by,
+           u.name AS added_by_name,
+           eu.id AS user_id,
+           eu.name AS user_name
+    FROM approved_emails a
+    LEFT JOIN users u ON u.id = a.added_by
+    LEFT JOIN users eu ON eu.email = a.email
+    WHERE a.id = ?
+  `).get(id);
+
+  res.json({
+    email: {
+      id: row.id,
+      email: row.email,
+      role: row.role,
+      created_at: row.created_at,
+      added_by_name: row.added_by_name || null,
+      signed_in: Boolean(row.user_id),
+      user_name: row.user_name || null,
+      locked: AZURE_ADMIN_EMAILS.has(row.email)
+    }
+  });
+});
+
+app.delete("/api/admin/approved-emails/:id", authRequired, adminRequired, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid approved email id." });
+  }
+
+  const existing = db.prepare("SELECT * FROM approved_emails WHERE id = ?").get(id);
+  if (!existing) {
+    return res.status(404).json({ error: "Approved email not found." });
+  }
+
+  if (AZURE_ADMIN_EMAILS.has(existing.email)) {
     return res.status(400).json({
       error: "This email is locked as an admin in server config and cannot be removed."
     });
   }
 
-  if (email === normalizeEmail(req.user.email)) {
+  if (existing.email === normalizeEmail(req.user.email)) {
     return res.status(400).json({ error: "You cannot remove your own approved email." });
   }
 
-  const result = db.prepare("DELETE FROM approved_emails WHERE email = ?").run(email);
-  if (!result.changes) {
-    return res.status(404).json({ error: "Approved email not found." });
-  }
-
-  res.json({ ok: true });
+  db.prepare("DELETE FROM approved_emails WHERE id = ?").run(id);
+  res.json({ ok: true, email: existing.email });
 });
 
 app.get("/api/announcements/state", authRequired, (req, res) => {

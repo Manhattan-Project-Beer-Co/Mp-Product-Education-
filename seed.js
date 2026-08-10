@@ -1,10 +1,10 @@
 require("dotenv").config();
 
-const path = require("path");
 const bcrypt = require("bcryptjs");
 const Database = require("better-sqlite3");
+const { DB_PATH } = require("./db-path");
 
-const db = new Database(path.join(__dirname, "training.db"));
+const db = new Database(DB_PATH);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS merch_items (

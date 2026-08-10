@@ -6,6 +6,7 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Database = require("better-sqlite3");
+const { DB_PATH } = require("./db-path");
 const { buildContext, localAnswer, getBeers } = require("./chat-knowledge");
 const {
   buildLocalSummary,
@@ -53,7 +54,7 @@ const chatRateLimit = new Map();
 const CHAT_LIMIT = 30;
 const CHAT_WINDOW_MS = 60 * 1000;
 
-const db = new Database(path.join(__dirname, "training.db"));
+const db = new Database(DB_PATH);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (

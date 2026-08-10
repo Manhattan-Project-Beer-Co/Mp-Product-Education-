@@ -979,10 +979,11 @@
 
   .rocket-enemy {
     position: absolute;
-    width: 78px;
+    width: 84px;
     transform: translate(-50%, -50%);
     text-align: center;
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: crosshair;
     user-select: none;
     z-index: 2;
     transition: filter 0.15s;
@@ -991,6 +992,38 @@
   .rocket-enemy.diving {
     z-index: 3;
     filter: drop-shadow(0 0 10px rgba(201,162,39,0.55));
+  }
+
+  .rocket-junk {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    pointer-events: auto;
+    cursor: crosshair;
+    user-select: none;
+  }
+
+  .rocket-junk svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 5px rgba(201,162,39,0.35));
+  }
+
+  .rocket-junk.kind-hop { width: 30px; height: 30px; }
+  .rocket-junk.kind-scrap { width: 28px; height: 28px; }
+  .rocket-junk.kind-ore { width: 26px; height: 26px; }
+  .rocket-junk.kind-spark { width: 22px; height: 22px; }
+
+  .rocket-junk.destroyed {
+    animation: rocketBoom 0.28s ease forwards;
+    pointer-events: none;
+  }
+
+  .rocket-shell.is-locked .rocket-junk {
+    pointer-events: none;
   }
 
   .galaga-sprite {
@@ -1007,19 +1040,26 @@
     filter: drop-shadow(0 0 6px rgba(201,162,39,0.35));
   }
 
-  .galaga-sprite .orbit-spin {
+  .galaga-sprite-spin {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
     transform-origin: 50% 50%;
     animation: atomSpin 6s linear infinite;
+    will-change: transform;
   }
 
-  .rocket-enemy.kind-1 .orbit-spin { animation-duration: 4.5s; animation-direction: reverse; }
-  .rocket-enemy.kind-2 .orbit-spin { animation-duration: 7s; }
-  .rocket-enemy.kind-3 .orbit-spin { animation-duration: 5s; animation-direction: reverse; }
-  .rocket-enemy.diving .orbit-spin { animation-duration: 1.2s; }
+  .rocket-enemy.kind-1 .galaga-sprite-spin { animation-duration: 4.5s; animation-direction: reverse; }
+  .rocket-enemy.kind-2 .galaga-sprite-spin { animation-duration: 7s; }
+  .rocket-enemy.kind-3 .galaga-sprite-spin { animation-duration: 5s; animation-direction: reverse; }
+  .rocket-enemy.diving .galaga-sprite-spin { animation-duration: 1.2s; }
 
   @keyframes atomSpin {
+    from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
+
 
   .rocket-enemy-label {
     display: block;
@@ -1040,6 +1080,11 @@
 
   .rocket-enemy.destroyed {
     animation: rocketBoom 0.4s ease forwards;
+    pointer-events: none;
+  }
+
+  .rocket-shell.is-locked .rocket-enemy {
+    pointer-events: none;
   }
 
   @keyframes rocketBoom {
@@ -1051,65 +1096,46 @@
   .rocket-ship {
     position: absolute;
     left: 50%;
-    bottom: 10px;
-    width: 44px;
-    height: 52px;
+    bottom: 8px;
+    width: 48px;
+    height: 56px;
     transform: translateX(-50%);
     z-index: 4;
-  }
-
-  .rocket-ship-body {
-    width: 44px;
-    height: 52px;
-    margin: 0 auto;
-    position: relative;
-    background: none;
+    pointer-events: none;
     filter: drop-shadow(0 0 10px rgba(201,162,39,0.55));
   }
 
-  .rocket-ship-body::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 18px 7px at 50% 52%, transparent 55%, rgba(201,162,39,0.85) 56%, transparent 58%),
-      linear-gradient(#e0b93a 0 0) 19px 4px / 6px 10px no-repeat,
-      linear-gradient(#c9a227 0 0) 16px 14px / 12px 22px no-repeat,
-      linear-gradient(#8b6b3c 0 0) 12px 36px / 8px 8px no-repeat,
-      linear-gradient(#8b6b3c 0 0) 24px 36px / 8px 8px no-repeat,
-      linear-gradient(#e8c547 0 0) 18px 34px / 8px 12px no-repeat;
+  .rocket-ship-body {
+    width: 48px;
+    height: 56px;
+    margin: 0 auto;
+    position: relative;
+    background: none;
   }
 
-  .rocket-ship-body::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 36px;
-    height: 14px;
-    margin: -7px 0 0 -18px;
-    border: 1.5px solid rgba(201,162,39,0.7);
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(201,162,39,0.15);
-    transform: rotate(60deg);
+  .rocket-ship-body svg {
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
   .rocket-ship-flame {
     position: absolute;
     left: 50%;
-    bottom: -2px;
-    width: 8px;
-    height: 14px;
-    margin-left: -4px;
+    bottom: 0;
+    width: 10px;
+    height: 16px;
+    margin-left: -5px;
     background: linear-gradient(180deg, #fff6c8, #e0b93a 40%, transparent);
     border-radius: 40%;
     animation: rocketFlame 0.25s ease-in-out infinite alternate;
-    opacity: 0.9;
+    opacity: 0.95;
+    z-index: -1;
   }
 
   @keyframes rocketFlame {
     from { transform: scaleY(0.75); opacity: 0.65; }
-    to { transform: scaleY(1.15); opacity: 1; }
+    to { transform: scaleY(1.2); opacity: 1; }
   }
 
   .rocket-bullet {
@@ -7183,7 +7209,20 @@ function advanceRound(correct) {
     gameSession.complete = true;
     if (markSessionRecorded(gameSession)) {
       const category = gameSession.id.startsWith("coffee") ? "coffee" : "beer";
-      recordProgress(gameSession.id, category, gameSession.right, gameSession.queue.length);
+      const attempted = Math.max(gameSession.index, gameSession.right, 1);
+      const rocketPoints = gameSession.id === "rocket"
+        ? Math.max(
+            gameSession.right * (GAME_POINT_VALUES.rocket || 12),
+            Math.round((gameSession.score || 0) / 100)
+          )
+        : undefined;
+      recordProgress(
+        gameSession.id,
+        category,
+        gameSession.right,
+        gameSession.id === "rocket" ? attempted : gameSession.queue.length,
+        rocketPoints
+      );
     }
     return;
   }
@@ -7510,7 +7549,12 @@ function buildGalagaQuestion(pool) {
 
 function prepareRocketQuestion() {
   if (!gameSession || gameSession.complete) return;
-  stopRocketLoop();
+  if (rocketRaf) {
+    cancelAnimationFrame(rocketRaf);
+    rocketRaf = null;
+  }
+  rocketKeys.left = false;
+  rocketKeys.right = false;
 
   const pool = gameSession.pool;
   const built = buildGalagaQuestion(pool);
@@ -7544,10 +7588,15 @@ function prepareRocketQuestion() {
     nextDiveAt: 1.8 + Math.random() * 2.4
   }));
 
+  const junk = Array.from({ length: 7 }, (_, i) => makeRocketJunk(i));
+
   rocketItem = {
     prompt: built.prompt,
     options: built.options,
     enemies,
+    junk,
+    junkId: junk.length,
+    nextJunkAt: 2.2,
     bullets: [],
     shipX: 50,
     formationT: 0,
@@ -7564,16 +7613,68 @@ function prepareRocketQuestion() {
   };
 }
 
+function makeRocketJunk(seed = 0) {
+  const kinds = ["hop", "scrap", "ore", "spark"];
+  const kind = kinds[seed % kinds.length];
+  return {
+    id: seed,
+    kind,
+    x: 8 + Math.random() * 84,
+    y: -6 - Math.random() * 30,
+    vx: (Math.random() - 0.5) * 0.55,
+    vy: 0.35 + Math.random() * 0.45,
+    spin: Math.random() * Math.PI * 2,
+    alive: true,
+    hitClass: ""
+  };
+}
+
+function launchPadJunkSvg(kind) {
+  if (kind === "hop") {
+    return `<svg viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M20 6c6 8 10 14 10 20a10 10 0 0 1-20 0c0-6 4-12 10-20z" fill="none" stroke="#c9a227" stroke-width="2.2"/>
+      <path d="M20 14v16M14 22h12" stroke="#8b6b3c" stroke-width="1.6"/>
+    </svg>`;
+  }
+  if (kind === "scrap") {
+    return `<svg viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M8 14 L18 8 L32 12 L28 28 L12 30 Z" fill="none" stroke="#c9a227" stroke-width="2"/>
+      <circle cx="20" cy="18" r="2.5" fill="#e0b93a"/>
+    </svg>`;
+  }
+  if (kind === "ore") {
+    return `<svg viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M20 6 L32 16 L28 32 L12 32 L8 16 Z" fill="none" stroke="#8b6b3c" stroke-width="2"/>
+      <path d="M20 12 L26 18 L20 28 L14 18 Z" fill="#c9a227" opacity="0.85"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 40 40" aria-hidden="true">
+    <path d="M20 4 L22 16 L34 18 L22 22 L20 34 L18 22 L6 18 L18 16 Z" fill="#e0b93a"/>
+  </svg>`;
+}
+
 function launchPadAtomSvg(kind = 0) {
   const rot = [0, 35, 70, 110][kind % 4];
-  return `<svg viewBox="0 0 64 64" aria-hidden="true">
-    <g class="orbit-spin" transform="rotate(${rot} 32 32)">
-      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2"/>
-      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2" transform="rotate(60 32 32)"/>
-      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#8b6b3c" stroke-width="1.5" transform="rotate(120 32 32)"/>
-    </g>
-    <circle cx="32" cy="32" r="5.5" fill="#e0b93a"/>
-    <circle cx="30.5" cy="30.5" r="1.6" fill="#fff6c8" opacity="0.8"/>
+  return `<div class="galaga-sprite-spin">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2" transform="rotate(${rot} 32 32)"/>
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2" transform="rotate(${rot + 60} 32 32)"/>
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#8b6b3c" stroke-width="1.5" transform="rotate(${rot + 120} 32 32)"/>
+      <circle cx="32" cy="32" r="5.5" fill="#e0b93a"/>
+      <circle cx="30.5" cy="30.5" r="1.6" fill="#fff6c8" opacity="0.8"/>
+    </svg>
+  </div>`;
+}
+
+function launchPadShipSvg() {
+  return `<svg viewBox="0 0 48 56" aria-hidden="true">
+    <ellipse cx="24" cy="28" rx="18" ry="7" fill="none" stroke="#c9a227" stroke-width="1.6" transform="rotate(55 24 28)"/>
+    <ellipse cx="24" cy="28" rx="18" ry="7" fill="none" stroke="#8b6b3c" stroke-width="1.2" transform="rotate(-55 24 28)"/>
+    <path d="M24 4 L28 14 L28 36 L24 44 L20 36 L20 14 Z" fill="#c9a227"/>
+    <path d="M24 4 L26.5 14 L21.5 14 Z" fill="#e0b93a"/>
+    <path d="M20 34 L14 44 L20 40 Z" fill="#8b6b3c"/>
+    <path d="M28 34 L34 44 L28 40 Z" fill="#8b6b3c"/>
+    <circle cx="24" cy="22" r="2.2" fill="#0a0a0a"/>
   </svg>`;
 }
 
@@ -7621,9 +7722,20 @@ function renderRocketRound(content) {
     if (enemy.hitClass) cls += ` ${enemy.hitClass}`;
     const hidden = !enemy.alive && !enemy.hitClass ? "display:none;" : "";
     return `
-      <div class="${cls}" id="rocket-enemy-${enemy.index}" style="left:${enemy.x}%;top:${enemy.y}%;${hidden}">
+      <div class="${cls}" id="rocket-enemy-${enemy.index}" style="left:${enemy.x}%;top:${enemy.y}%;${hidden}" onclick="galagaAimAndFire(${enemy.index})">
         <div class="galaga-sprite">${launchPadAtomSvg(enemy.kind)}</div>
         <span class="rocket-enemy-label">${escapeHTML(enemy.option.label)}</span>
+      </div>
+    `;
+  }).join("");
+
+  const junkHtml = (rocketItem.junk || []).map((piece) => {
+    let cls = `rocket-junk kind-${piece.kind}`;
+    if (piece.hitClass) cls += ` ${piece.hitClass}`;
+    const hidden = !piece.alive && !piece.hitClass ? "display:none;" : "";
+    return `
+      <div class="${cls}" id="rocket-junk-${piece.id}" style="left:${piece.x}%;top:${piece.y}%;${hidden}" onclick="galagaShootJunk(${piece.id})">
+        ${launchPadJunkSvg(piece.kind)}
       </div>
     `;
   }).join("");
@@ -7647,13 +7759,14 @@ function renderRocketRound(content) {
         </div>
         <div class="rocket-arena" id="rocketArena">
           ${stars}
+          <div id="rocketJunkLayer">${junkHtml}</div>
           <div id="rocketEnemyLayer">${enemies}</div>
           <div id="rocketBulletLayer"></div>
           <div class="rocket-burst ${rocketItem.showBurst ? "show" : ""}" id="rocketBurst" style="left:${rocketItem.burstX}%;top:${rocketItem.burstY}%;"></div>
           ${rocketItem.resultText ? `<div class="galaga-result ${missClass}">${escapeHTML(rocketItem.resultText)}</div>` : ""}
           ${debrief}
           <div class="rocket-ship" id="rocketShip" style="left:${rocketItem.shipX}%;">
-            <div class="rocket-ship-body"></div>
+            <div class="rocket-ship-body">${launchPadShipSvg()}</div>
             <div class="rocket-ship-flame"></div>
           </div>
         </div>
@@ -7663,7 +7776,7 @@ function renderRocketRound(content) {
         <button type="button" class="rocket-fire-btn" onclick="galagaFire()">FIRE</button>
         <button type="button" onpointerdown="setRocketKey('right', true)" onpointerup="setRocketKey('right', false)" onpointerleave="setRocketKey('right', false)" ontouchstart="event.preventDefault(); setRocketKey('right', true)" ontouchend="setRocketKey('right', false)">RIGHT</button>
       </div>
-      <p class="rocket-hint">Drag to aim · Arrows / A D to move · Space to fire · Lock the correct atom</p>
+      <p class="rocket-hint">Clear hops & scrap · Tap or shoot the correct atom to lock</p>
     </div>
   `);
 
@@ -7681,18 +7794,41 @@ function setRocketKey(dir, pressed) {
 function galagaFire() {
   if (!rocketItem || rocketItem.answered || rocketItem.locked || activeGame !== "rocket") return;
   const now = performance.now();
-  if (now - rocketItem.lastShotAt < 220) return;
-  if (rocketItem.bullets.length >= 3) return;
+  if (now - rocketItem.lastShotAt < 180) return;
+  if (rocketItem.bullets.length >= 4) return;
   rocketItem.lastShotAt = now;
   rocketItem.bullets.push({
     id: ++rocketBulletId,
     x: rocketItem.shipX,
-    y: 86
+    y: 88
   });
 }
 
+function galagaAimAndFire(enemyIndex) {
+  if (!rocketItem || rocketItem.answered || rocketItem.locked || activeGame !== "rocket") return;
+  const enemy = rocketItem.enemies.find((entry) => entry.index === enemyIndex && entry.alive);
+  if (!enemy) return;
+  rocketItem.shipX = Math.max(8, Math.min(92, enemy.x));
+  const ship = document.getElementById("rocketShip");
+  if (ship) ship.style.left = `${rocketItem.shipX}%`;
+  resolveGalagaHit(enemy);
+}
+
+function galagaShootJunk(junkId) {
+  if (!rocketItem || rocketItem.answered || rocketItem.locked || activeGame !== "rocket") return;
+  const piece = (rocketItem.junk || []).find((entry) => entry.id === junkId && entry.alive);
+  if (!piece) return;
+  rocketItem.shipX = Math.max(8, Math.min(92, piece.x));
+  const ship = document.getElementById("rocketShip");
+  if (ship) ship.style.left = `${rocketItem.shipX}%`;
+  destroyRocketJunk(piece);
+}
+
 function startRocketLoop() {
-  if (rocketRaf) return;
+  if (rocketRaf) {
+    cancelAnimationFrame(rocketRaf);
+    rocketRaf = null;
+  }
   const tick = () => {
     if (activeGame !== "rocket" || !rocketItem || !gameSession || gameSession.complete) {
       rocketRaf = null;
@@ -7721,7 +7857,7 @@ function bindRocketPointer() {
   };
 
   arena.onpointerdown = (event) => {
-    if (event.target.closest("button")) return;
+    if (event.target.closest("button") || event.target.closest(".rocket-enemy") || event.target.closest(".rocket-junk")) return;
     rocketItem.pointerAim = true;
     try { arena.setPointerCapture(event.pointerId); } catch (_) {}
     aimFromEvent(event);
@@ -7738,63 +7874,166 @@ function bindRocketPointer() {
   };
 }
 
+function destroyRocketJunk(piece) {
+  if (!piece || !piece.alive || !rocketItem) return;
+  piece.alive = false;
+  piece.hitClass = "destroyed";
+  gameSession.score = (gameSession.score || 0) + 75;
+  rocketItem.burstX = piece.x;
+  rocketItem.burstY = piece.y;
+  rocketItem.showBurst = true;
+  const burst = document.getElementById("rocketBurst");
+  if (burst) {
+    burst.style.left = `${piece.x}%`;
+    burst.style.top = `${piece.y}%`;
+    burst.classList.remove("show");
+    void burst.offsetWidth;
+    burst.classList.add("show");
+  }
+  const scoreEl = document.getElementById("galagaScore");
+  if (scoreEl) scoreEl.textContent = String(gameSession.score || 0);
+  const el = document.getElementById(`rocket-junk-${piece.id}`);
+  if (el) el.classList.add("destroyed");
+  rocketTimers.push(setTimeout(() => {
+    if (!rocketItem || !piece) return;
+    piece.hitClass = "";
+    const node = document.getElementById(`rocket-junk-${piece.id}`);
+    if (node) node.style.display = "none";
+  }, 280));
+}
+
 function updateGalagaFrame() {
-  rocketItem.formationT += 0.035;
+  rocketItem.formationT += 0.022;
   const t = rocketItem.formationT;
+  if (!rocketItem.junk) rocketItem.junk = [];
 
   if (!rocketItem.pointerAim) {
-    if (rocketKeys.left) rocketItem.shipX -= 1.45;
-    if (rocketKeys.right) rocketItem.shipX += 1.45;
+    if (rocketKeys.left) rocketItem.shipX -= 1.7;
+    if (rocketKeys.right) rocketItem.shipX += 1.7;
   }
   rocketItem.shipX = Math.max(8, Math.min(92, rocketItem.shipX));
+
+  // Spawn fresh debris over the wave
+  if (t > (rocketItem.nextJunkAt || 0)) {
+    const living = rocketItem.junk.filter((p) => p.alive).length;
+    if (living < 8) {
+      const piece = makeRocketJunk(++rocketItem.junkId);
+      rocketItem.junk.push(piece);
+      const layer = document.getElementById("rocketJunkLayer");
+      if (layer) {
+        const node = document.createElement("div");
+        node.className = `rocket-junk kind-${piece.kind}`;
+        node.id = `rocket-junk-${piece.id}`;
+        node.style.left = `${piece.x}%`;
+        node.style.top = `${piece.y}%`;
+        node.onclick = () => galagaShootJunk(piece.id);
+        node.innerHTML = launchPadJunkSvg(piece.kind);
+        layer.appendChild(node);
+      }
+    }
+    rocketItem.nextJunkAt = t + 1.1 + Math.random() * 1.4;
+  }
 
   rocketItem.enemies.forEach((enemy, i) => {
     if (!enemy.alive) return;
     const isCorrect = enemy.option.isCorrect;
-    const drift = isCorrect ? 16 : 11;
-    const bob = isCorrect ? 3.2 : 2.2;
+    const drift = isCorrect ? 10 : 8;
+    const bob = 2;
 
-    if (!enemy.diving && t > enemy.nextDiveAt && (isCorrect || Math.random() < 0.12)) {
-      // Prefer diving the correct target; wrong ones dive less often
-      if (isCorrect || Math.random() < 0.35) {
-        enemy.diving = true;
-        enemy.diveT = 0;
-      } else {
-        enemy.nextDiveAt = t + 1.5 + Math.random() * 2;
-      }
+    if (!enemy.diving && isCorrect && t > enemy.nextDiveAt) {
+      enemy.diving = true;
+      enemy.diveT = 0;
     }
 
     if (enemy.diving) {
-      enemy.diveT += 0.045;
+      enemy.diveT += 0.03;
       const dive = Math.sin(enemy.diveT);
-      enemy.x = enemy.baseX + Math.sin(t * 0.55 + enemy.phase) * (drift * 0.55) + Math.sin(enemy.diveT * 1.8) * 10;
-      enemy.y = enemy.baseY + dive * (isCorrect ? 34 : 22) + Math.sin(t + i) * 1.5;
+      enemy.x = enemy.baseX + Math.sin(t * 0.4 + enemy.phase) * drift;
+      enemy.y = enemy.baseY + dive * 12;
       if (enemy.diveT >= Math.PI) {
         enemy.diving = false;
-        enemy.nextDiveAt = t + 2.2 + Math.random() * 2.8;
+        enemy.nextDiveAt = t + 5 + Math.random() * 4;
         enemy.y = enemy.baseY;
       }
     } else {
-      enemy.x = enemy.baseX + Math.sin(t * 0.55 + enemy.phase) * drift;
-      enemy.y = enemy.baseY + Math.sin(t * 0.9 + i + enemy.phase) * bob;
+      enemy.x = enemy.baseX + Math.sin(t * 0.4 + enemy.phase) * drift;
+      enemy.y = enemy.baseY + Math.sin(t * 0.7 + i + enemy.phase) * bob;
+    }
+  });
+
+  rocketItem.junk.forEach((piece) => {
+    if (!piece.alive) return;
+    piece.spin += 0.08;
+    piece.x += piece.vx + Math.sin(piece.spin) * 0.15;
+    piece.y += piece.vy;
+    if (piece.x < 3 || piece.x > 97) piece.vx *= -1;
+    // Reached the ship line — scrap gets through, small score sting
+    if (piece.y >= 90) {
+      piece.alive = false;
+      piece.hitClass = "";
+      gameSession.score = Math.max(0, (gameSession.score || 0) - 40);
+      const scoreEl = document.getElementById("galagaScore");
+      if (scoreEl) scoreEl.textContent = String(gameSession.score || 0);
+      const node = document.getElementById(`rocket-junk-${piece.id}`);
+      if (node) node.style.display = "none";
     }
   });
 
   rocketItem.bullets = rocketItem.bullets
-    .map((bullet) => ({ ...bullet, y: bullet.y - 2.85 }))
+    .map((bullet) => {
+      // Prefer clearing nearby junk in the shot lane, else drift toward answer atoms
+      let target = null;
+      let best = 14;
+      rocketItem.junk.forEach((piece) => {
+        if (!piece.alive) return;
+        const dx = Math.abs(piece.x - bullet.x);
+        if (dx < best && piece.y < bullet.y && piece.y > 20) {
+          best = dx;
+          target = piece;
+        }
+      });
+      if (!target) {
+        best = 16;
+        rocketItem.enemies.forEach((enemy) => {
+          if (!enemy.alive) return;
+          const dx = Math.abs(enemy.x - bullet.x);
+          if (dx < best && enemy.y < bullet.y) {
+            best = dx;
+            target = enemy;
+          }
+        });
+      }
+      let x = bullet.x;
+      if (target) {
+        const pull = Math.sign(target.x - bullet.x) * Math.min(0.85, Math.abs(target.x - bullet.x) * 0.14);
+        x = bullet.x + pull;
+      }
+      return { ...bullet, x, y: bullet.y - 3.4 };
+    })
     .filter((bullet) => bullet.y > -4);
 
-  for (const bullet of [...rocketItem.bullets]) {
+  outer: for (const bullet of [...rocketItem.bullets]) {
+    // Debris first — clear the lane before answer lock
+    for (const piece of rocketItem.junk) {
+      if (!piece.alive) continue;
+      const hit =
+        Math.abs(bullet.x - piece.x) < 9 &&
+        Math.abs(bullet.y - piece.y) < 9;
+      if (!hit) continue;
+      rocketItem.bullets = rocketItem.bullets.filter((b) => b.id !== bullet.id);
+      destroyRocketJunk(piece);
+      break outer;
+    }
     for (const enemy of rocketItem.enemies) {
       if (!enemy.alive) continue;
       const hit =
-        Math.abs(bullet.x - enemy.x) < 12 &&
-        Math.abs(bullet.y - enemy.y) < 10;
+        Math.abs(bullet.x - enemy.x) < 16 &&
+        Math.abs(bullet.y - enemy.y) < 14;
       if (!hit) continue;
 
       rocketItem.bullets = rocketItem.bullets.filter((b) => b.id !== bullet.id);
       resolveGalagaHit(enemy);
-      break;
+      break outer;
     }
   }
 
@@ -7813,6 +8052,13 @@ function syncGalagaDom() {
     el.classList.toggle("diving", Boolean(enemy.diving && enemy.alive));
   });
 
+  (rocketItem.junk || []).forEach((piece) => {
+    const el = document.getElementById(`rocket-junk-${piece.id}`);
+    if (!el) return;
+    el.style.left = `${piece.x}%`;
+    el.style.top = `${piece.y}%`;
+  });
+
   const layer = document.getElementById("rocketBulletLayer");
   if (layer) {
     layer.innerHTML = rocketItem.bullets.map((bullet) =>
@@ -7825,6 +8071,8 @@ function resolveGalagaHit(enemy) {
   if (!rocketItem || rocketItem.locked || rocketItem.answered) return;
 
   rocketItem.locked = true;
+  const shell = document.querySelector(".rocket-shell");
+  if (shell) shell.classList.add("is-locked");
   rocketItem.selected = enemy.index;
   rocketItem.burstX = enemy.x;
   rocketItem.burstY = enemy.y;

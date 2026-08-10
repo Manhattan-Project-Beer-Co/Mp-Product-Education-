@@ -6470,7 +6470,7 @@ function renderSopAdminForm() {
         </div>
         <div style="grid-column:1/-1;">
           <label for="sopBody">Procedure content</label>
-          <textarea id="sopBody" placeholder="Steps, checklists, and notes. HTML is supported for headings and lists.">${(editing?.body || "").replace(/<\//textarea/gi, "&lt;/textarea")}</textarea>
+          <textarea id="sopBody" placeholder="Steps, checklists, and notes. HTML is supported for headings and lists.">${(editing?.body || "").replace(/<\/textarea/gi, "&lt;/textarea")}</textarea>
         </div>
         <div>
           <label for="sopFileUpload">Import text file (.txt, .md, .html)</label>

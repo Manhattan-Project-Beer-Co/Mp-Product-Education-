@@ -718,6 +718,118 @@
     z-index: 1;
   }
 
+  .game-leaderboard {
+    max-width: 1080px;
+    margin: 0 auto 8px;
+    padding: 0 24px;
+  }
+
+  .game-leaderboard-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .game-leaderboard-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .game-leaderboard-head h3 {
+    margin: 0;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .game-leaderboard-tabs {
+    display: flex;
+    gap: 6px;
+  }
+
+  .game-leaderboard-tabs button {
+    border: 1px solid var(--line);
+    background: #fafafa;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .game-leaderboard-tabs button.active {
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
+  }
+
+  .game-leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .game-leaderboard-table th,
+  .game-leaderboard-table td {
+    padding: 8px 6px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .game-leaderboard-table th {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .game-leaderboard-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .game-leaderboard-table tr.me-row td {
+    background: rgba(166, 124, 82, 0.08);
+    font-weight: 600;
+  }
+
+  .game-points-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .game-streak {
+    color: #15803d;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .game-hub-section {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 8px 24px 0;
+  }
+
+  .game-hub-section h3 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
   .speed-header {
     margin: 20px 24px 0;
     max-width: 1032px;
@@ -1498,6 +1610,42 @@
     margin: 0 0 8px;
   }
 
+  .merch-shop-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--black);
+    text-decoration: none;
+    margin-bottom: 10px;
+  }
+
+  .merch-shop-link:hover { text-decoration: underline; }
+
+  .merch-online-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #15803d;
+  }
+
+  .merch-online-tag.sold-out {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+
+  .merch-pending-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 8px 0 0;
+  }
+
   .merch-size-table {
     width: 100%;
     border-collapse: collapse;
@@ -2272,7 +2420,7 @@
       <div class="tab" data-type="merch">Merch</div>
       <div class="tab" data-type="inventory">Inventory</div>
       <div class="tab" data-type="reviews">Reviews</div>
-      <div class="tab" data-type="games">Games</div>
+      <div class="tab" data-type="games">War Games</div>
       <div class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</div>
       <div class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</div>
       <div class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</div>
@@ -2339,7 +2487,7 @@
 <div class="chat-panel" id="chatPanel" role="dialog" aria-label="Training assistant">
   <div class="chat-header">
     <h3>Training Assistant</h3>
-    <p>Ask about beers on tap, coffee standards, or training games — site content only.</p>
+    <p>Ask about beers on tap, coffee standards, or War Games — site content only.</p>
     <span class="chat-mode-badge" id="chatModeBadge">Loading…</span>
   </div>
   <div class="chat-messages" id="chatMessages"></div>
@@ -2347,7 +2495,7 @@
     <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What's on tap?</button>
     <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Gluten-reduced beers</button>
     <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Espresso dial-in standard</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Which training game first?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Which War Game first?</button>
   </div>
   <form class="chat-input-row" onsubmit="sendChatMessage(event)">
     <input type="text" id="chatInput" placeholder="Ask about beer, coffee, or training…" autocomplete="off" maxlength="800">
@@ -2403,6 +2551,12 @@ let abvItem = null;
 let styleItem = null;
 let reverseItem = null;
 let speedItem = null;
+let blindItem = null;
+let descItem = null;
+let gfItem = null;
+let battleItem = null;
+let leaderboardData = null;
+let leaderboardPeriod = "week";
 let newTapIndex = 0;
 let newTapTimer = null;
 let coffeeSection = "menu";
@@ -2931,19 +3085,47 @@ const GAME_ROUNDS = {
   style: 10,
   reverse: 10,
   speed: 12,
+  hard: 12,
   flash: 15,
+  blind: 10,
+  desc: 10,
+  gf: 10,
+  battle: 10,
   coffeeQuiz: 10,
   coffeeFlash: 15
 };
 
+const GAME_POINT_VALUES = {
+  quiz: 10,
+  practice: 15,
+  tap: 12,
+  abv: 10,
+  style: 10,
+  reverse: 12,
+  speed: 8,
+  hard: 12,
+  flash: 3,
+  blind: 15,
+  desc: 12,
+  gf: 10,
+  battle: 10,
+  coffee_quiz: 10,
+  coffee_flash: 3
+};
+
 const GAMES = [
-  { id: "speed", icon: "⚡", title: "Speed Round", desc: "12 mixed questions from current taps" },
+  { id: "speed", icon: "⚡", title: "Speed Round", desc: "12 mixed questions — earn streak bonuses" },
+  { id: "hard", icon: "🔥", title: "Hard Mode", desc: "Tough decoys + 1.5× points — 12 questions" },
   { id: "tap", icon: "🍺", title: "Tap Match", desc: "10 questions — match tap numbers to beers" },
-  { id: "quiz", icon: "📝", title: "Flavor Quiz", desc: "10 questions — match on-tap flavor profiles" },
-  { id: "practice", icon: "💬", title: "Guest Match", desc: "10 questions — on-tap guest guidance scenarios" },
+  { id: "quiz", icon: "📝", title: "Flavor Quiz", desc: "10 questions — flavor clues without beer names" },
+  { id: "practice", icon: "💬", title: "Guest Match", desc: "10 scenarios — style, ABV & flavor cues only" },
+  { id: "blind", icon: "🎯", title: "Blind Pick", desc: "10 questions — style + ABV only, pick the beer" },
+  { id: "desc", icon: "📖", title: "Description Match", desc: "10 questions — read the description, pick the beer" },
+  { id: "reverse", icon: "🔄", title: "Pick the Profile", desc: "10 questions — match flavor profiles to a beer name" },
   { id: "abv", icon: "📊", title: "ABV Challenge", desc: "10 questions — pick ABV from current taps" },
   { id: "style", icon: "🏷️", title: "Style Match", desc: "10 questions — pick the style of on-tap beers" },
-  { id: "reverse", icon: "🔄", title: "Pick the Profile", desc: "10 questions — match on-tap flavor profiles" },
+  { id: "battle", icon: "⚔️", title: "ABV Battle", desc: "10 rounds — which of two beers is stronger?" },
+  { id: "gf", icon: "🌾", title: "GF Spotter", desc: "10 questions — spot the gluten-reduced tap" },
   { id: "flash", icon: "🃏", title: "Flashcards", desc: "15 cards — current tap list only" }
 ];
 
@@ -3099,6 +3281,100 @@ function onTapGameBeer(extra = () => true) {
   return b => col(b, "Name") && isOnTap(b) && extra(b);
 }
 
+function beerNameTokens(name) {
+  if (!name) return [];
+  return name.split(/[\s\-\/]+/).filter(t => t.length > 2);
+}
+
+function stripBeerNamesFromText(text, beers) {
+  if (!text) return text;
+  let result = text;
+  const names = new Set();
+  (beers || []).forEach(b => {
+    const full = col(b, "Name");
+    if (full) names.add(full);
+    beerNameTokens(full).forEach(t => names.add(t));
+  });
+  [...names].sort((a, b) => b.length - a.length).forEach(name => {
+    if (name.length < 3) return;
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    result = result.replace(new RegExp(escaped, "gi"), "___");
+  });
+  return result.replace(/\s+/g, " ").trim();
+}
+
+function buildFlavorClue(beer, pool) {
+  const profile = getFlavorProfile(beer);
+  if (!profile) return "";
+  return stripBeerNamesFromText(profile, [beer, ...(pool || []).slice(0, 24)]);
+}
+
+function buildGuestScenario(beer, pool) {
+  const style = getStyle(beer);
+  const abv = getABVText(beer);
+  const flavor = buildFlavorClue(beer, pool);
+  const cues = [];
+  if (style) cues.push(`something in the ${style} family`);
+  if (abv) cues.push(`around ${abv} ABV`);
+  if (flavor) cues.push(`with notes like: ${flavor.toLowerCase()}`);
+  return `A guest asks for ${cues.join(", ") || "a recommendation from the tap list"}. Which beer fits best?`;
+}
+
+function buildDescriptionClue(beer, pool) {
+  const text = getDescription(beer) || getFlavorProfile(beer);
+  return stripBeerNamesFromText(text, [beer, ...(pool || []).slice(0, 24)]);
+}
+
+function isGlutenReduced(item) {
+  return isYes(item["Gluten-Reduced"]);
+}
+
+function pickSimilarWrongBeers(pool, correct, count, hardMode) {
+  if (!hardMode) return pickWrongBeers(pool, correct, count);
+  const correctStyle = getStyle(correct);
+  const sameStyle = pool.filter(b => b.Name !== correct.Name && getStyle(b) === correctStyle && correctStyle);
+  const others = pool.filter(b => b.Name !== correct.Name && getStyle(b) !== correctStyle);
+  const picked = shuffle(sameStyle).slice(0, Math.min(count, sameStyle.length));
+  if (picked.length < count) {
+    picked.push(...shuffle(others).slice(0, count - picked.length));
+  }
+  return picked.slice(0, count);
+}
+
+function gameUsesHardDecoys(gameId) {
+  return gameId === "hard" || gameSession?.hardMode;
+}
+
+function questionPointValue() {
+  if (!gameSession) return GAME_POINT_VALUES.quiz;
+  const base = GAME_POINT_VALUES[gameSession.id] || 10;
+  return gameUsesHardDecoys(gameSession.id) ? Math.round(base * 1.5) : base;
+}
+
+function scoreQuestion(correct) {
+  if (!gameSession) return;
+  if (correct) {
+    gameSession.streak = (gameSession.streak || 0) + 1;
+    let pts = questionPointValue();
+    if (gameSession.streak >= 3) {
+      pts += Math.floor(gameSession.streak / 3) * 5;
+    }
+    gameSession.points = (gameSession.points || 0) + pts;
+  } else {
+    gameSession.streak = 0;
+  }
+}
+
+function finalizeSessionPoints() {
+  if (!gameSession) return 0;
+  let points = gameSession.points || 0;
+  const total = gameSession.queue.length;
+  if (total >= 8 && gameSession.right === total) {
+    points += Math.round(questionPointValue() * total * 0.25);
+  }
+  return points;
+}
+
 function getTapNumber(item) {
   const match = (item["On Tap"] || "").match(/\d+/);
   return match ? match[0] : "";
@@ -3198,7 +3474,12 @@ const ACTIVITY_LABELS = {
   style: "Style Match",
   reverse: "Pick the Profile",
   speed: "Speed Round",
+  hard: "Hard Mode",
   flash: "Beer Flashcards",
+  blind: "Blind Pick",
+  desc: "Description Match",
+  gf: "GF Spotter",
+  battle: "ABV Battle",
   coffee_quiz: "Coffee Quiz",
   coffee_flash: "Coffee Flashcards"
 };
@@ -3631,18 +3912,99 @@ function buildAnnouncementTrainingHtml(item) {
   return `<p class="detail-text">No training details available for this item.</p>`;
 }
 
-async function recordProgress(activityType, category, score, total) {
+async function recordProgress(activityType, category, score, total, points) {
   if (!currentUser) return;
   try {
     await apiFetch("/api/progress", {
       method: "POST",
-      body: JSON.stringify({ activity_type: activityType, category, score, total })
+      body: JSON.stringify({
+        activity_type: activityType,
+        category,
+        score,
+        total,
+        points: points ?? score * (GAME_POINT_VALUES[activityType] || 10)
+      })
     });
     myProgressData = null;
     teamData = null;
+    leaderboardData = null;
   } catch (err) {
     console.warn("Could not save progress:", err.message);
   }
+}
+
+async function loadLeaderboard(period) {
+  if (!currentUser) return null;
+  const safePeriod = period || leaderboardPeriod;
+  try {
+    leaderboardData = await apiFetch(`/api/games/leaderboard?period=${encodeURIComponent(safePeriod)}`);
+    leaderboardPeriod = safePeriod;
+  } catch (err) {
+    console.warn("Could not load leaderboard:", err.message);
+    leaderboardData = null;
+  }
+  return leaderboardData;
+}
+
+function setLeaderboardPeriod(period) {
+  leaderboardPeriod = period;
+  loadLeaderboard(period).then(() => {
+    if (activeType === "games" && !activeGame) render();
+  });
+}
+
+function renderLeaderboardSection() {
+  if (!currentUser) {
+    return `<div class="game-leaderboard"><div class="game-leaderboard-card"><p style="margin:0;color:var(--muted);font-size:13px;">Log in to earn points and appear on the leaderboard.</p></div></div>`;
+  }
+
+  const lb = leaderboardData;
+  if (!lb) {
+    return `<div class="game-leaderboard"><div class="game-leaderboard-card"><p style="margin:0;color:var(--muted);font-size:13px;">Loading leaderboard…</p></div></div>`;
+  }
+
+  const tabs = [
+    { id: "week", label: "This Week" },
+    { id: "month", label: "This Month" },
+    { id: "all", label: "All Time" }
+  ];
+
+  const rows = lb.leaderboard.length
+    ? lb.leaderboard.map(row => `
+        <tr class="${row.id === currentUser.id ? "me-row" : ""}">
+          <td>#${row.rank}</td>
+          <td>${escapeHTML(row.name)}</td>
+          <td><span class="game-points-badge">${row.points} pts</span></td>
+          <td>${row.accuracy}%</td>
+          <td>${row.sessions}</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="5" style="color:var(--muted);">No scores yet — play a game to get on the board.</td></tr>`;
+
+  const me = lb.me || {};
+  const meLine = me.points
+    ? `<p style="margin:12px 0 0;font-size:13px;color:#555;">Your rank: <strong>#${me.rank || "—"}</strong> · <span class="game-points-badge">${me.points} pts</span> · ${me.accuracy || 0}% accuracy</p>`
+    : `<p style="margin:12px 0 0;font-size:13px;color:#555;">You have no points this period yet. Finish a scored game to join the board.</p>`;
+
+  return `
+    <div class="game-leaderboard">
+      <div class="game-leaderboard-card">
+        <div class="game-leaderboard-head">
+          <h3>Leaderboard</h3>
+          <div class="game-leaderboard-tabs">
+            ${tabs.map(tab => `
+              <button class="${leaderboardPeriod === tab.id ? "active" : ""}" onclick="setLeaderboardPeriod('${tab.id}')">${tab.label}</button>
+            `).join("")}
+          </div>
+        </div>
+        <table class="game-leaderboard-table">
+          <thead><tr><th>Rank</th><th>Name</th><th>Points</th><th>Accuracy</th><th>Games</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        ${meLine}
+      </div>
+    </div>
+  `;
 }
 
 function formatActivityLabel(type, category) {
@@ -4306,6 +4668,11 @@ async function renderMyProgress(content) {
           <p class="metric-label">Accuracy</p>
           <p class="metric-value">${s.accuracy}%</p>
           <p class="metric-sub">${s.total_correct} / ${s.total_questions} correct</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Total points</p>
+          <p class="metric-value">${s.total_points || 0}</p>
+          <p class="metric-sub">From games & quizzes</p>
         </div>
         <div class="metric-card wide">
           <p class="metric-label">Last activity</p>
@@ -5064,7 +5431,7 @@ function merchStockLevelClass(qty) {
 
 async function loadMerchData(force) {
   if (merchLoading) return;
-  if (!force && merchItems.length && merchIdeas.length) return;
+  if (!force && merchItems.length) return;
 
   merchLoading = true;
   try {
@@ -5223,26 +5590,12 @@ async function archiveMerchIdea(ideaId) {
 
 function renderMerchAdminStockForm() {
   if (!isMerchManager()) return "";
-  const defaultSizes = "S,M,L,XL,2XL";
   return `
-    <div class="merch-admin-panel" id="merchItemForm">
-      <h3>Add merch item</h3>
-      <label for="merchItemName">Item name</label>
-      <input id="merchItemName" type="text" placeholder="MP Logo Tee — Black">
-      <label for="merchItemDesc">Description</label>
-      <textarea id="merchItemDesc" placeholder="What staff should know when selling this item."></textarea>
-      <label for="merchItemPrice">Price (USD)</label>
-      <input id="merchItemPrice" type="number" min="0" step="0.01" placeholder="28.00">
-      <label for="merchItemSizeLabels">Sizes (comma-separated)</label>
-      <input id="merchItemSizeLabels" type="text" value="${defaultSizes}" oninput="renderMerchSizeInputs('merchItem')">
-      <div class="merch-size-inputs" id="merchItemSizeInputs">${defaultSizes.split(",").map(label => `
-        <label>${label.trim()} qty<input id="merchItemSize_${label.trim()}" type="number" min="0" value="0"></label>
-      `).join("")}</div>
-      <label for="merchItemImage">Photo (optional)</label>
-      <input id="merchItemImage" type="file" accept="image/*">
-      <img id="merchItemPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
-      <p id="merchItemError" class="auth-error" style="margin-top:10px;"></p>
-      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchItem()">Save item</button>
+    <div class="merch-admin-panel">
+      <h3>Taproom inventory</h3>
+      <p class="desc" style="margin:0;line-height:1.55;">
+        Enter how many of each size we have on the floor. Leave blank until counts are confirmed.
+      </p>
     </div>
   `;
 }
@@ -5284,35 +5637,37 @@ function renderMerchStockCards(query) {
   });
 
   if (!filtered.length) {
-    return `<div class="status"><strong>No merch in stock yet.</strong>${isMerchManager() ? " Add items using the form above." : ""}</div>`;
+    return `<div class="status"><strong>No merch in stock yet.</strong>${isMerchManager() ? " Run node seed.js to load the catalog." : " Check back soon."}</div>`;
   }
 
   return `<div class="merch-grid">${filtered.map(item => `
     <div class="merch-card">
       ${item.image_url
-        ? `<img class="merch-card-image" src="${item.image_url}" alt="${escapeHTML(item.name)}">`
+        ? `<img class="merch-card-image" src="${escapeHTML(item.image_url)}" alt="${escapeHTML(item.name)}" loading="lazy">`
         : `<div class="merch-card-image placeholder">No photo</div>`}
       <div class="merch-card-body">
         <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(item.name)}</p>
         <p class="merch-price">${escapeHTML(formatMerchPrice(item))}</p>
-        <p class="desc">${escapeHTML(item.description)}</p>
+        ${item.description ? `<p class="desc">${escapeHTML(item.description)}</p>` : ""}
         <table class="merch-size-table">
-          <thead><tr><th>Size</th><th>Left</th></tr></thead>
+          <thead><tr><th>Size</th><th>In stock</th></tr></thead>
           <tbody>
             ${item.sizes.map(size => `
               <tr>
                 <td>${escapeHTML(size.size_label)}</td>
-                <td class="merch-qty ${merchStockLevelClass(size.quantity)}">
+                <td class="merch-qty ${size.quantity != null && size.quantity <= 2 ? merchStockLevelClass(size.quantity || 0) : ""}">
                   ${isMerchManager()
-                    ? `<input id="merchQty_${item.id}_${escapeForAttribute(size.size_label)}" type="number" min="0" value="${size.quantity}" style="width:64px;padding:4px 6px;">`
-                    : (size.quantity <= 0 ? "Out" : size.quantity)}
+                    ? `<input id="merchQty_${item.id}_${escapeForAttribute(size.size_label)}" type="number" min="0" value="${size.quantity != null && size.quantity > 0 ? size.quantity : ""}" placeholder="—" style="width:64px;padding:4px 6px;">`
+                    : (size.quantity != null && size.quantity > 0 ? size.quantity : "—")}
                 </td>
               </tr>
             `).join("")}
           </tbody>
         </table>
-        <p class="desc" style="margin-top:10px;font-size:12px;color:var(--muted);">${item.total_quantity} total in stock</p>
-        ${isMerchManager() ? `<button class="game-next" style="width:100%;margin-top:10px;" type="button" onclick="updateMerchInventory(${item.id})">Update counts</button>` : ""}
+        <p class="merch-pending-note">${item.total_quantity != null
+          ? `${item.total_quantity} total on the floor`
+          : "Inventory counts not entered yet."}</p>
+        ${isMerchManager() ? `<button class="game-next" style="width:100%;margin-top:10px;" type="button" onclick="updateMerchInventory(${item.id})">Save counts</button>` : ""}
       </div>
     </div>
   `).join("")}</div>`;
@@ -5381,12 +5736,11 @@ async function renderMerch(content) {
       </div>
       <div class="coffee-intro">
         <h2>Merch in Stock</h2>
-        <p>What we have on the floor — sizes and counts update when managers save new inventory.</p>
+        <p>What we carry in the taproom — photos, prices, and sizes. Inventory counts can be added when ready.</p>
       </div>
       ${renderMerchAdminStockForm()}
       ${renderMerchStockCards(query)}
     `;
-    renderMerchSizeInputs("merchItem");
     return;
   }
 
@@ -5426,7 +5780,7 @@ function updateSearchPlaceholder() {
     reviews: "Search reviews or platforms",
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",
-    games: "Search beer, style, or flavor"
+    games: "Search war games"
   };
   search.placeholder = placeholders[activeType] || "Search";
 }
@@ -5836,6 +6190,7 @@ function startGame(id) {
   activeGame = id;
   gameSession = null;
   quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = null;
+  blindItem = descItem = gfItem = battleItem = null;
   flashFlipped = false;
 
   if (id === "flash") {
@@ -5852,29 +6207,60 @@ function startGame(id) {
       queue: shuffle(pool).slice(0, total),
       index: 0,
       right: 0,
+      points: 0,
+      streak: 0,
       complete: false,
       recorded: false
     };
-  } else if (id === "speed") {
-    if (!beginRound("speed", onTapGameBeer(b =>
+  } else if (id === "speed" || id === "hard") {
+    if (!beginRound(id, onTapGameBeer(b =>
       getFlavorProfile(b) ||
       getGuestGuidance(b) ||
       getTapNumber(b) ||
       getABVNumber(b) > 0 ||
-      getStyle(b)
+      getStyle(b) ||
+      getDescription(b)
     ))) {
       render();
       return;
     }
+    gameSession.hardMode = id === "hard";
     prepareSpeedQuestion();
+  } else if (id === "gf") {
+    const gfPool = beers.filter(onTapGameBeer());
+    const gfBeers = gfPool.filter(isGlutenReduced);
+    const nonGfBeers = gfPool.filter(b => !isGlutenReduced(b));
+    if (gfBeers.length < 1 || nonGfBeers.length < 3) {
+      render();
+      return;
+    }
+    if (!beginRound("gf", onTapGameBeer(isGlutenReduced))) {
+      render();
+      return;
+    }
+    gameSession.gfNonPool = nonGfBeers;
+    prepareRoundQuestion("gf");
+  } else if (id === "battle") {
+    const pool = beers.filter(onTapGameBeer(b => getABVNumber(b) > 0));
+    if (pool.length < 4) {
+      render();
+      return;
+    }
+    if (!beginRound("battle", onTapGameBeer(b => getABVNumber(b) > 0))) {
+      render();
+      return;
+    }
+    prepareRoundQuestion("battle");
   } else {
     const starters = {
       quiz: () => beginRound("quiz", onTapGameBeer(b => getFlavorProfile(b))),
-      practice: () => beginRound("practice", onTapGameBeer(b => getGuestGuidance(b))),
+      practice: () => beginRound("practice", onTapGameBeer(b => getFlavorProfile(b) || getStyle(b))),
       tap: () => beginRound("tap", onTapGameBeer(b => getTapNumber(b))),
       abv: () => beginRound("abv", onTapGameBeer(b => getABVNumber(b) > 0)),
       style: () => beginRound("style", onTapGameBeer(b => getStyle(b))),
-      reverse: () => beginRound("reverse", onTapGameBeer(b => getFlavorProfile(b)))
+      reverse: () => beginRound("reverse", onTapGameBeer(b => getFlavorProfile(b))),
+      blind: () => beginRound("blind", onTapGameBeer(b => getStyle(b) && getABVNumber(b) > 0)),
+      desc: () => beginRound("desc", onTapGameBeer(b => getDescription(b) || getFlavorProfile(b)))
     };
     if (!starters[id] || !starters[id]()) {
       render();
@@ -5897,6 +6283,8 @@ function beginRound(id, filterFn) {
     queue: shuffle(pool).slice(0, total),
     index: 0,
     right: 0,
+    points: 0,
+    streak: 0,
     complete: false,
     recorded: false
   };
@@ -5905,6 +6293,7 @@ function beginRound(id, filterFn) {
 
 function advanceRound(correct) {
   if (!gameSession || gameSession.complete) return;
+  scoreQuestion(correct);
   gameSession.right += correct ? 1 : 0;
   gameSession.index++;
 
@@ -5912,30 +6301,41 @@ function advanceRound(correct) {
     gameSession.complete = true;
     if (markSessionRecorded(gameSession)) {
       const category = gameSession.id.startsWith("coffee") ? "coffee" : "beer";
-      recordProgress(gameSession.id, category, gameSession.right, gameSession.queue.length);
+      recordProgress(
+        gameSession.id,
+        category,
+        gameSession.right,
+        gameSession.queue.length,
+        finalizeSessionPoints()
+      );
     }
     return;
   }
 
   prepareRoundQuestion(gameSession.id);
-  if (gameSession.id === "speed") prepareSpeedQuestion();
+  if (gameSession.id === "speed" || gameSession.id === "hard") prepareSpeedQuestion();
 }
 
 function sessionProgressLabel() {
   if (!gameSession) return "";
+  const streak = gameSession.streak ? ` · Streak ${gameSession.streak}` : "";
+  const pts = gameSession.points ? ` · ${gameSession.points} pts` : "";
   if (gameSession.complete) {
-    return `Round complete · ${gameSession.right} / ${gameSession.queue.length} correct`;
+    return `Round complete · ${gameSession.right} / ${gameSession.queue.length} correct${pts}`;
   }
-  return `Question ${gameSession.index + 1} of ${gameSession.queue.length} · Score: ${gameSession.right} / ${gameSession.index}`;
+  return `Question ${gameSession.index + 1} of ${gameSession.queue.length} · Score: ${gameSession.right} / ${gameSession.index}${pts}${streak ? `<span class="game-streak">${streak}</span>` : ""}`;
 }
 
 function renderRoundComplete(title) {
   const total = gameSession.queue.length;
   const pct = Math.round((gameSession.right / total) * 100);
+  const points = finalizeSessionPoints();
+  gameSession.points = points;
   return `
     <div class="game-card">
       <p class="game-question" style="font-size:20px;font-weight:750;">${title}</p>
       <p style="font-size:15px;color:#555;margin:0;">You got <strong>${gameSession.right}</strong> out of <strong>${total}</strong> correct (${pct}%)</p>
+      <p style="font-size:14px;color:#555;margin:10px 0 0;"><span class="game-points-badge">${points} points earned</span></p>
       <button class="game-next" onclick="startGame('${activeGame}')">Play Again</button>
     </div>
     <div class="game-score">${sessionProgressLabel()}</div>
@@ -5961,23 +6361,65 @@ function uniqueSheetValues(pool, getter, exclude) {
 function prepareRoundQuestion(id) {
   const correct = gameSession.queue[gameSession.index];
   const pool = gameSession.pool;
+  const hard = gameUsesHardDecoys(id);
+  const wrongPicker = (sourcePool, count) =>
+    pickSimilarWrongBeers(sourcePool, correct, count, hard);
 
   if (id === "quiz") {
     quizItem = {
       correct,
-      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
+      question: buildFlavorClue(correct, pool),
+      options: shuffle([correct, ...wrongPicker(pool.filter(b => getFlavorProfile(b)), 3)]),
       answered: false
     };
   } else if (id === "practice") {
     practiceItem = {
       correct,
-      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
+      question: buildGuestScenario(correct, pool),
+      options: shuffle([correct, ...wrongPicker(pool, 3)]),
       answered: false
     };
   } else if (id === "tap") {
     tapItem = {
       correct,
-      options: shuffle([correct, ...pickWrongBeers(pool, correct, 3)]),
+      options: shuffle([correct, ...wrongPicker(pool.filter(b => getTapNumber(b)), 3)]),
+      answered: false
+    };
+  } else if (id === "blind") {
+    blindItem = {
+      correct,
+      question: `${getStyle(correct)} · ${getABVText(correct)}`,
+      options: shuffle([correct, ...wrongPicker(pool, 3)]),
+      answered: false
+    };
+  } else if (id === "desc") {
+    descItem = {
+      correct,
+      question: buildDescriptionClue(correct, pool),
+      options: shuffle([correct, ...wrongPicker(pool, 3)]),
+      answered: false
+    };
+  } else if (id === "gf") {
+    const nonGf = gameSession.gfNonPool || pool.filter(b => !isGlutenReduced(b));
+    gfItem = {
+      correct,
+      options: shuffle([correct, ...pickWrongBeers(nonGf, correct, 3)]),
+      answered: false
+    };
+  } else if (id === "battle") {
+    const anchor = correct;
+    const candidates = pool.filter(b =>
+      b.Name !== anchor.Name &&
+      getABVNumber(b) > 0 &&
+      getABVNumber(b) !== getABVNumber(anchor)
+    );
+    const opponent = pickRandom(candidates.length ? candidates : pool.filter(b => b.Name !== anchor.Name));
+    const higher = getABVNumber(anchor) >= getABVNumber(opponent) ? anchor : opponent;
+    battleItem = {
+      correct: higher,
+      beerA: anchor,
+      beerB: opponent,
+      options: shuffle([anchor, opponent]),
       answered: false
     };
   } else if (id === "abv") {
@@ -6045,8 +6487,8 @@ function prepareRoundQuestion(id) {
     reverseItem = {
       correct,
       options: shuffle([
-        { text: getFlavorProfile(correct), isCorrect: true },
-        ...wrongProfiles.map(t => ({ text: t, isCorrect: false }))
+        { text: stripBeerNamesFromText(getFlavorProfile(correct), pool), isCorrect: true },
+        ...wrongProfiles.map(t => ({ text: stripBeerNamesFromText(t, pool), isCorrect: false }))
       ]),
       answered: false
     };
@@ -6058,13 +6500,16 @@ function prepareSpeedQuestion() {
 
   const correct = gameSession.queue[gameSession.index];
   const pool = gameSession.pool;
+  const hard = gameUsesHardDecoys(gameSession.id);
   const types = [];
 
   if (getFlavorProfile(correct)) types.push("quiz");
-  if (getGuestGuidance(correct)) types.push("practice");
+  if (getStyle(correct) || getFlavorProfile(correct)) types.push("practice");
   if (getTapNumber(correct)) types.push("tap");
   if (getABVNumber(correct) > 0) types.push("abv");
   if (getStyle(correct)) types.push("style");
+  if (getDescription(correct) || getFlavorProfile(correct)) types.push("desc");
+  if (getStyle(correct) && getABVNumber(correct) > 0) types.push("blind");
 
   if (types.length === 0) {
     gameSession.index++;
@@ -6077,21 +6522,39 @@ function prepareSpeedQuestion() {
   }
 
   const type = pickRandom(types);
+  const wrongPicker = (sourcePool, count) =>
+    pickSimilarWrongBeers(sourcePool, correct, count, hard);
 
   if (type === "quiz") {
     speedItem = {
       type: "quiz",
       correct,
-      question: getFlavorProfile(correct),
-      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getFlavorProfile(b)), correct, 3)]),
+      question: buildFlavorClue(correct, pool),
+      options: shuffle([correct, ...wrongPicker(pool.filter(b => getFlavorProfile(b)), 3)]),
       answered: false
     };
   } else if (type === "practice") {
     speedItem = {
       type: "practice",
       correct,
-      question: getGuestGuidance(correct),
-      options: shuffle([correct, ...pickWrongBeers(pool.filter(b => getGuestGuidance(b)), correct, 3)]),
+      question: buildGuestScenario(correct, pool),
+      options: shuffle([correct, ...wrongPicker(pool, 3)]),
+      answered: false
+    };
+  } else if (type === "desc") {
+    speedItem = {
+      type: "desc",
+      correct,
+      question: buildDescriptionClue(correct, pool),
+      options: shuffle([correct, ...wrongPicker(pool, 3)]),
+      answered: false
+    };
+  } else if (type === "blind") {
+    speedItem = {
+      type: "blind",
+      correct,
+      question: `${getStyle(correct)} · ${getABVText(correct)}`,
+      options: shuffle([correct, ...wrongPicker(pool, 3)]),
       answered: false
     };
   } else if (type === "tap") {
@@ -6139,7 +6602,7 @@ function prepareSpeedQuestion() {
 
 function wrapGame(html) {
   return `
-    <button class="game-back" onclick="activeGame=null; gameSession=null; render();">← All Games</button>
+    <button class="game-back" onclick="activeGame=null; gameSession=null; render();">← War Games</button>
     ${html}
   `;
 }
@@ -6147,9 +6610,11 @@ function wrapGame(html) {
 function renderGameHub(content) {
   content.innerHTML = `
     <div class="coffee-intro">
-      <h2>Training Games</h2>
-      <p>Practice current tap list knowledge with quizzes, flashcards, and timed challenges. Scores are saved when you're logged in.</p>
+      <h2>War Games</h2>
+      <p>Practice tap list knowledge, earn points, and climb the leaderboard. Streaks and perfect rounds give bonus points.</p>
     </div>
+    ${renderLeaderboardSection()}
+    <div class="game-hub-section"><h3>Choose a war game</h3></div>
     <div class="game-hub">
       ${GAMES.map(g => `
         <div class="game-tile" onclick="startGame('${g.id}')">
@@ -6160,6 +6625,12 @@ function renderGameHub(content) {
       `).join("")}
     </div>
   `;
+
+  if (currentUser && !leaderboardData) {
+    loadLeaderboard(leaderboardPeriod).then(() => {
+      if (activeType === "games" && !activeGame) render();
+    });
+  }
 }
 
 function renderGames(content) {
@@ -6176,7 +6647,12 @@ function renderGames(content) {
     case "abv": renderABVChallenge(content); break;
     case "style": renderStyleMatch(content); break;
     case "reverse": renderReverseQuiz(content); break;
-    case "speed": renderSpeedRound(content); break;
+    case "speed":
+    case "hard": renderSpeedRound(content); break;
+    case "blind": renderBlindPick(content); break;
+    case "desc": renderDescMatch(content); break;
+    case "gf": renderGFSpotter(content); break;
+    case "battle": renderABVBattle(content); break;
     default: renderGameHub(content);
   }
 }
@@ -6484,7 +6960,7 @@ function renderFlash(content) {
 
     <div class="flash-nav">
       <button onclick="flashFlipped = false; if (gameSession.index > 0) { gameSession.index--; } render();">Previous</button>
-      <button onclick="flashFlipped = false; gameSession.index++; if (gameSession.index >= gameSession.queue.length) { gameSession.complete = true; if (markSessionRecorded(gameSession)) recordProgress('flash', 'beer', gameSession.queue.length, gameSession.queue.length); } render();">${gameSession.index + 1 >= gameSession.queue.length ? "Finish" : "Next"}</button>
+      <button onclick="flashFlipped = false; gameSession.index++; if (gameSession.index >= gameSession.queue.length) { gameSession.complete = true; gameSession.points = gameSession.queue.length * ${GAME_POINT_VALUES.flash}; if (markSessionRecorded(gameSession)) recordProgress('flash', 'beer', gameSession.queue.length, gameSession.queue.length, gameSession.queue.length * ${GAME_POINT_VALUES.flash}); } render();">${gameSession.index + 1 >= gameSession.queue.length ? "Finish" : "Next"}</button>
     </div>
 
     <div class="flash-count">Card ${gameSession.index + 1} of ${gameSession.queue.length}</div>
@@ -6505,7 +6981,7 @@ function renderQuiz(content) {
   renderChoiceGame(
     content,
     quizItem,
-    `Which beer matches this flavor profile?<br><br>“${escapeHTML(getFlavorProfile(quizItem.correct))}”`,
+    `Which beer matches this flavor profile?<br><br>“${escapeHTML(quizItem.question)}”`,
     o => escapeHTML(col(o, "Name")),
     "answerQuiz"
   );
@@ -6522,7 +6998,7 @@ function answerQuiz(name) {
 
 function renderPractice(content) {
   if (!gameSession || gameSession.id !== "practice") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Guest Guidance needed.</strong>Mark at least four on-tap beers with Guest Guidance in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Mark at least four on-tap beers with flavor or style info in the spreadsheet.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -6534,7 +7010,7 @@ function renderPractice(content) {
   renderChoiceGame(
     content,
     practiceItem,
-    `A guest says: “${escapeHTML(getGuestGuidance(practiceItem.correct))}”<br><br>Which beer do you recommend?`,
+    escapeHTML(practiceItem.question),
     o => escapeHTML(col(o, "Name")),
     "answerPractice"
   );
@@ -6545,6 +7021,140 @@ function answerPractice(name) {
   practiceItem.answered = true;
   practiceItem.selected = name;
   const correct = name === practiceItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderBlindPick(content) {
+  if (!gameSession || gameSession.id !== "blind") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Need style + ABV data.</strong>Mark at least four on-tap beers with style and ABV in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Blind Pick complete!"));
+    return;
+  }
+  if (!blindItem) prepareRoundQuestion("blind");
+
+  renderChoiceGame(
+    content,
+    blindItem,
+    `Which beer is <strong>${escapeHTML(blindItem.question)}</strong>?<br><span style="color:#888;font-size:13px;">No beer name shown — use style and ABV only.</span>`,
+    o => escapeHTML(col(o, "Name")),
+    "answerBlind"
+  );
+}
+
+function answerBlind(name) {
+  if (!blindItem || blindItem.answered) return;
+  blindItem.answered = true;
+  blindItem.selected = name;
+  const correct = name === blindItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderDescMatch(content) {
+  if (!gameSession || gameSession.id !== "desc") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Need descriptions.</strong>Mark at least four on-tap beers with Description or Flavor Profile in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("Description Match complete!"));
+    return;
+  }
+  if (!descItem) prepareRoundQuestion("desc");
+
+  renderChoiceGame(
+    content,
+    descItem,
+    `Which beer matches this description?<br><br>“${escapeHTML(descItem.question)}”`,
+    o => escapeHTML(col(o, "Name")),
+    "answerDesc"
+  );
+}
+
+function answerDesc(name) {
+  if (!descItem || descItem.answered) return;
+  descItem.answered = true;
+  descItem.selected = name;
+  const correct = name === descItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderGFSpotter(content) {
+  if (!gameSession || gameSession.id !== "gf") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Need GF data.</strong>Mark at least one gluten-reduced on-tap beer and three regular taps in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("GF Spotter complete!"));
+    return;
+  }
+  if (!gfItem) prepareRoundQuestion("gf");
+
+  renderChoiceGame(
+    content,
+    gfItem,
+    `Which of these on-tap beers is <strong>gluten-reduced</strong>?`,
+    o => escapeHTML(col(o, "Name")),
+    "answerGF"
+  );
+}
+
+function answerGF(name) {
+  if (!gfItem || gfItem.answered) return;
+  gfItem.answered = true;
+  gfItem.selected = name;
+  const correct = name === gfItem.correct.Name;
+  setTimeout(() => { advanceRound(correct); render(); }, 450);
+  render();
+}
+
+function renderABVBattle(content) {
+  if (!gameSession || gameSession.id !== "battle") {
+    content.innerHTML = wrapGame('<div class="status"><strong>Need ABV data.</strong>Mark at least four on-tap beers with different ABVs in the spreadsheet.</div>');
+    return;
+  }
+  if (gameSession.complete) {
+    content.innerHTML = wrapGame(renderRoundComplete("ABV Battle complete!"));
+    return;
+  }
+  if (!battleItem) prepareRoundQuestion("battle");
+
+  const a = battleItem.beerA;
+  const b = battleItem.beerB;
+
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p class="game-question">Which beer has the <strong>higher ABV</strong>?</p>
+      <div class="game-options">
+        ${battleItem.options.map(o => {
+          let cls = "game-option";
+          if (battleItem.answered) {
+            cls += " disabled";
+            if (o.Name === battleItem.correct.Name) cls += " correct";
+            else if (o.Name === battleItem.selected) cls += " wrong";
+          }
+          const style = getStyle(o);
+          return `<div class="${cls}" onclick="answerBattle('${escapeForAttribute(o.Name)}')">
+            <strong>${escapeHTML(col(o, "Name"))}</strong>
+            ${style ? `<br><span style="color:#888;font-size:12px;">${escapeHTML(style)}</span>` : ""}
+          </div>`;
+        }).join("")}
+      </div>
+      ${battleItem.answered ? `<p style="font-size:13px;color:#666;margin:12px 0 0;">${escapeHTML(col(a, "Name"))} · ${escapeHTML(getABVText(a))} vs ${escapeHTML(col(b, "Name"))} · ${escapeHTML(getABVText(b))}</p>` : ""}
+    </div>
+    <div class="game-score">${sessionProgressLabel()}</div>
+  `);
+}
+
+function answerBattle(name) {
+  if (!battleItem || battleItem.answered) return;
+  battleItem.answered = true;
+  battleItem.selected = name;
+  const correct = name === battleItem.correct.Name;
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
@@ -6705,12 +7315,13 @@ function answerReverse(index) {
 }
 
 function renderSpeedRound(content) {
-  if (!gameSession || gameSession.id !== "speed") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong>Add flavor, guidance, tap, ABV, or style info for at least four on-tap beers.</div>');
+  if (!gameSession || (gameSession.id !== "speed" && gameSession.id !== "hard")) {
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong>Add flavor, style, tap, ABV, or description info for at least four on-tap beers.</div>');
     return;
   }
   if (gameSession.complete) {
-    content.innerHTML = wrapGame(renderRoundComplete("Speed Round complete!"));
+    const title = gameSession.id === "hard" ? "Hard Mode complete!" : "Speed Round complete!";
+    content.innerHTML = wrapGame(renderRoundComplete(title));
     return;
   }
   if (!speedItem) prepareSpeedQuestion();
@@ -6719,7 +7330,11 @@ function renderSpeedRound(content) {
   if (speedItem.type === "quiz") {
     questionHTML = `Which beer has this flavor profile?<br><br>“${escapeHTML(speedItem.question)}”`;
   } else if (speedItem.type === "practice") {
-    questionHTML = `Guest says: “${escapeHTML(speedItem.question)}” — which beer?`;
+    questionHTML = escapeHTML(speedItem.question);
+  } else if (speedItem.type === "desc") {
+    questionHTML = `Which beer matches this description?<br><br>“${escapeHTML(speedItem.question)}”`;
+  } else if (speedItem.type === "blind") {
+    questionHTML = `Which beer is <strong>${escapeHTML(speedItem.question)}</strong>?`;
   } else if (speedItem.type === "tap") {
     questionHTML = `What beer is on <strong>${escapeHTML(speedItem.question)}</strong>?`;
   } else if (speedItem.type === "abv") {
@@ -6887,7 +7502,7 @@ function localChatAnswer(message) {
   const q = message.toLowerCase();
 
   if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi! I can help with beers on the tap list, coffee bar training, and training games on this site. What would you like to know?";
+    return "Hi! I can help with beers on the tap list, coffee bar training, and War Games on this site. What would you like to know?";
   }
 
   if (/tap|on tap|what'?s pouring|what is pouring/.test(q) && beers.length) {
@@ -6936,12 +7551,12 @@ function localChatAnswer(message) {
   }
 
   if (/game|quiz|flashcard|training/.test(q)) {
-    return "Training games on this site:\n\n" +
+    return "War Games on this site:\n\n" +
       GAMES.map(g => `• ${g.title} — ${g.desc}`).join("\n") +
       "\n\nFor coffee: open the Coffee tab → Training Quiz or Flashcards.";
   }
 
-  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', or 'training games'. I only answer from content on this site.";
+  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', or 'War Games'. I only answer from content on this site.";
 }
 
 let chatOpen = false;
@@ -6962,7 +7577,7 @@ function toggleChatPanel(force) {
     if (!chatHistory.length) {
       appendChatMessage(
         "assistant",
-        "Hi! I can answer questions about beers on the tap list, coffee bar training, and training games on this site. What do you need?"
+        "Hi! I can answer questions about beers on the tap list, coffee bar training, and War Games on this site. What do you need?"
       );
     }
     document.getElementById("chatInput").focus();

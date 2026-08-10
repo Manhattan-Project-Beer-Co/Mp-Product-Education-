@@ -115,6 +115,8 @@ const EMPLOYEE_PROGRESS = {
   ],
   "sam@mp.test": [
     { activity_type: "speed", category: "beer", score: 11, total: 12, daysAgo: 0 },
+    { activity_type: "hard", category: "beer", score: 9, total: 12, daysAgo: 0 },
+    { activity_type: "blind", category: "beer", score: 8, total: 10, daysAgo: 1 },
     { activity_type: "practice", category: "beer", score: 10, total: 10, daysAgo: 1 },
     { activity_type: "tap", category: "beer", score: 10, total: 10, daysAgo: 1 },
     { activity_type: "quiz", category: "beer", score: 10, total: 10, daysAgo: 2 },
@@ -129,6 +131,21 @@ const EMPLOYEE_PROGRESS = {
     { activity_type: "coffee_flash", category: "coffee", score: 10, total: 15, daysAgo: 3 }
   ]
 };
+
+const GAME_POINT_VALUES = {
+  quiz: 10, practice: 15, tap: 12, abv: 10, style: 10, reverse: 12, speed: 8,
+  hard: 12, flash: 3, blind: 15, desc: 12, gf: 10, battle: 10,
+  coffee_quiz: 10, coffee_flash: 3
+};
+
+function computeSessionPoints(activityType, score, total) {
+  const base = GAME_POINT_VALUES[activityType] || 10;
+  let points = score * base;
+  if (total >= 8 && score === total) {
+    points += Math.round(base * total * 0.25);
+  }
+  return points;
+}
 
 function daysAgoDate(days) {
   const d = new Date();
@@ -147,9 +164,17 @@ const upsertUser = db.prepare(`
 `);
 
 const deleteProgress = db.prepare("DELETE FROM progress_sessions WHERE user_id = ?");
+
+(function ensureProgressPointsColumn() {
+  const cols = db.prepare("PRAGMA table_info(progress_sessions)").all();
+  if (!cols.some(c => c.name === "points")) {
+    db.exec("ALTER TABLE progress_sessions ADD COLUMN points INTEGER NOT NULL DEFAULT 0");
+  }
+})();
+
 const insertProgress = db.prepare(`
-  INSERT INTO progress_sessions (user_id, activity_type, category, score, total, completed_at)
-  VALUES (?, ?, ?, ?, ?, ?)
+  INSERT INTO progress_sessions (user_id, activity_type, category, score, total, points, completed_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?)
 `);
 
 const getUserId = db.prepare("SELECT id FROM users WHERE email = ?");
@@ -177,6 +202,7 @@ const seed = db.transaction(() => {
         session.category,
         session.score,
         session.total,
+        computeSessionPoints(session.activity_type, session.score, session.total),
         daysAgoDate(session.daysAgo)
       );
     }
@@ -201,36 +227,7 @@ const insertVote = db.prepare(`
   INSERT INTO merch_votes (idea_id, user_id) VALUES (?, ?)
 `);
 
-const MERCH_SAMPLES = [
-  {
-    name: "MP Logo Tee — Black",
-    description: "Soft cotton tee with Manhattan Project chest logo.",
-    price_cents: 2800,
-    sort_order: 1,
-    sizes: [["S", 4], ["M", 2], ["L", 0], ["XL", 3], ["2XL", 1]]
-  },
-  {
-    name: "MP Logo Tee — Cream",
-    description: "Same fit as the black tee — cream colorway.",
-    price_cents: 2800,
-    sort_order: 2,
-    sizes: [["S", 0], ["M", 5], ["L", 4], ["XL", 2], ["2XL", 0]]
-  },
-  {
-    name: "Trinity Hoodie",
-    description: "Midweight hoodie with Trinity series artwork on back.",
-    price_cents: 5500,
-    sort_order: 3,
-    sizes: [["S", 1], ["M", 3], ["L", 2], ["XL", 1], ["2XL", 0]]
-  },
-  {
-    name: "MP Trucker Hat",
-    description: "Structured trucker with patch logo — one size.",
-    price_cents: 2400,
-    sort_order: 4,
-    sizes: [["OS", 8]]
-  }
-];
+const { MERCH_CATALOG } = require("./merch-catalog");
 
 const IDEA_SAMPLES = [
   {
@@ -256,19 +253,17 @@ const seedMerch = db.transaction((userIds) => {
   db.prepare("DELETE FROM merch_sizes").run();
   clearMerch.run();
 
-  const merchIds = [];
-  for (const item of MERCH_SAMPLES) {
+  for (const item of MERCH_CATALOG) {
     const result = insertMerch.run(
       item.name,
       item.description,
       item.price_cents,
-      "",
+      item.image_url,
       item.sort_order
     );
     const itemId = result.lastInsertRowid;
-    merchIds.push(itemId);
-    for (const [label, qty] of item.sizes) {
-      insertMerchSize.run(itemId, label, qty);
+    for (const label of item.sizes) {
+      insertMerchSize.run(itemId, label, 0);
     }
   }
 
@@ -287,6 +282,7 @@ const userIds = seed();
 
 try {
   seedMerch(userIds);
+  console.log(`Loaded ${MERCH_CATALOG.length} merch items into taproom catalog.`);
 } catch (err) {
   console.warn("Merch seed skipped:", err.message);
 }

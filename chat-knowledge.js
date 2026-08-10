@@ -8,7 +8,7 @@ Manhattan Project staff training portal covers:
 - Merch tab: In Stock and Up & Coming ideas with voting. Merch managers (merch role or admin) manage inventory and post ideas.
 - Coffee tab: Menu (caffeine bar — purists, pour over, flavored, matcha, tea), Training Manual, Seasonal Lattes. Employees get a daily "what's new" briefing on first login when new taps, food specials, or seasonal lattes are flagged.
 - Wine + Cocktails tab: wine by the glass/bottle, rotating Shirley Temples, and NA beverages (lemonade, Italian cream soda, ginger beer, etc.).
-- Games tab: beer training games (Flavor Quiz, Guest Match, Tap Match, ABV Challenge, Style Match, Pick the Profile, Speed Round, Beer Flashcards) — all use on-tap beers from the spreadsheet only.
+- War Games tab: beer training games (Flavor Quiz, Guest Match, Tap Match, ABV Challenge, Style Match, Pick the Profile, Speed Round, Beer Flashcards) — all use on-tap beers from the spreadsheet only.
 - My Progress / Team: training scores when logged in (not guest-facing product info).
 `.trim();
 
@@ -256,7 +256,7 @@ function localAnswer(query, beers) {
   const q = query.toLowerCase();
 
   if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi! I can help with beers on the tap list, coffee bar training, and training games on this site. What would you like to know?";
+    return "Hi! I can help with beers on the tap list, coffee bar training, and War Games on this site. What would you like to know?";
   }
 
   const beerHits = beers
@@ -292,9 +292,9 @@ function localAnswer(query, beers) {
 
   if (/game|quiz|flashcard|training/.test(q)) {
     return (
-      "Training games on this site:\n\n" +
+      "War Games on this site:\n\n" +
       TRAINING_GAMES.map(g => `• **${g.name}** — ${g.desc}`).join("\n") +
-      "\n\nOpen the **Games** tab (beer) or **Coffee** tab (coffee quiz/flashcards)."
+      "\n\nOpen the **War Games** tab (beer) or **Coffee** tab (coffee quiz/flashcards)."
     );
   }
 

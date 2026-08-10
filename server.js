@@ -13,6 +13,7 @@ const {
   fetchYelpReviews,
   getLiveSyncStatus
 } = require("./reviews");
+const { MERCH_CATALOG } = require("./merch-catalog");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -27,7 +28,7 @@ const CHAT_SYSTEM_PROMPT = `You are the Manhattan Project Beer Co. staff trainin
 
 Rules:
 - Answer ONLY using facts from the provided CONTEXT about beers, coffee training, and training games.
-- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Coffee, Games).
+- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Coffee, War Games).
 - Never invent beer names, tap numbers, ABVs, styles, or coffee standards.
 - Never answer questions unrelated to this training site (weather, politics, general trivia, other businesses, homework, etc.). Politely redirect to site topics.
 - Keep answers concise, practical, and floor-friendly. Use bullet points when listing beers or steps.
@@ -199,6 +200,52 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_review_entries_date ON review_entries(review_date);
 `);
 
+(function ensureProgressPointsColumn() {
+  const cols = db.prepare("PRAGMA table_info(progress_sessions)").all();
+  if (!cols.some(c => c.name === "points")) {
+    db.exec("ALTER TABLE progress_sessions ADD COLUMN points INTEGER NOT NULL DEFAULT 0");
+  }
+  db.prepare(`
+    UPDATE progress_sessions
+    SET points = score * 10
+    WHERE points = 0 AND score > 0
+  `).run();
+})();
+
+const GAME_POINT_VALUES = {
+  quiz: 10,
+  practice: 15,
+  tap: 12,
+  abv: 10,
+  style: 10,
+  reverse: 12,
+  speed: 8,
+  hard: 12,
+  flash: 3,
+  blind: 15,
+  desc: 12,
+  gf: 10,
+  battle: 10,
+  coffee_quiz: 10,
+  coffee_flash: 3
+};
+
+function computeSessionPoints(activityType, score, total) {
+  const base = GAME_POINT_VALUES[activityType] || 10;
+  let points = score * base;
+  if (total >= 8 && score === total) {
+    points += Math.round(base * total * 0.25);
+  }
+  return points;
+}
+
+function clampPoints(activityType, score, total, requested) {
+  const expected = computeSessionPoints(activityType, score, total);
+  if (!Number.isFinite(requested)) return expected;
+  const maxAllowed = computeSessionPoints(activityType, total, total) + total * 15;
+  return Math.max(expected, Math.min(Math.round(requested), maxAllowed));
+}
+
 function todayDate() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -211,6 +258,40 @@ function maybeAutoSeedOnFirstBoot() {
     require("child_process").execSync("node seed.js", { stdio: "inherit", cwd: __dirname });
   } catch (err) {
     console.warn("First-boot seed skipped:", err.message);
+  }
+}
+
+function ensureMerchCatalog() {
+  try {
+    const { count } = db.prepare("SELECT COUNT(*) AS count FROM merch_items WHERE active = 1").get();
+    if (count > 0) return;
+
+    const insertItem = db.prepare(`
+      INSERT INTO merch_items (name, description, price_cents, image_url, sort_order)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+    const insertSize = db.prepare(`
+      INSERT INTO merch_sizes (item_id, size_label, quantity) VALUES (?, ?, ?)
+    `);
+
+    const load = db.transaction(() => {
+      for (const item of MERCH_CATALOG) {
+        const result = insertItem.run(
+          item.name,
+          item.description,
+          item.price_cents,
+          item.image_url,
+          item.sort_order
+        );
+        for (const label of item.sizes) {
+          insertSize.run(result.lastInsertRowid, label, 0);
+        }
+      }
+    });
+    load();
+    console.log(`Loaded ${MERCH_CATALOG.length} merch items into taproom catalog.`);
+  } catch (err) {
+    console.warn("Merch catalog load skipped:", err.message);
   }
 }
 
@@ -466,6 +547,11 @@ function optionalAuth(req, res, next) {
 }
 
 function formatMerchItem(row, sizes) {
+  const counted = sizes.filter(s => s.quantity > 0);
+  const totalQuantity = counted.length
+    ? counted.reduce((sum, s) => sum + s.quantity, 0)
+    : null;
+
   return {
     id: row.id,
     name: row.name,
@@ -478,9 +564,9 @@ function formatMerchItem(row, sizes) {
     sizes: sizes.map(s => ({
       id: s.id,
       size_label: s.size_label,
-      quantity: s.quantity
+      quantity: s.quantity > 0 ? s.quantity : null
     })),
-    total_quantity: sizes.reduce((sum, s) => sum + s.quantity, 0)
+    total_quantity: totalQuantity
   };
 }
 
@@ -535,6 +621,7 @@ function getUserStats(userId) {
       COUNT(*) AS sessions_completed,
       COALESCE(SUM(score), 0) AS total_correct,
       COALESCE(SUM(total), 0) AS total_questions,
+      COALESCE(SUM(points), 0) AS total_points,
       MAX(completed_at) AS last_activity
     FROM progress_sessions
     WHERE user_id = ?
@@ -568,6 +655,7 @@ function getUserStats(userId) {
       sessions_completed: totals.sessions_completed,
       total_correct: totals.total_correct,
       total_questions: totals.total_questions,
+      total_points: totals.total_points,
       accuracy,
       last_activity: totals.last_activity
     },
@@ -587,7 +675,12 @@ const ACTIVITY_LABELS = {
   style: "Style Match",
   reverse: "Pick the Profile",
   speed: "Speed Round",
+  hard: "Hard Mode",
   flash: "Beer Flashcards",
+  blind: "Blind Pick",
+  desc: "Description Match",
+  gf: "GF Spotter",
+  battle: "ABV Battle",
   coffee_quiz: "Coffee Quiz",
   coffee_flash: "Coffee Flashcards"
 };
@@ -609,6 +702,12 @@ const TRAINING_PATH = [
     suggest: "Reverse quiz strengthens detailed product knowledge." },
   { type: "speed", category: "beer", label: "Speed Round", goal: 75, critical: false,
     suggest: "Ready for a mixed review — try Speed Round under pressure." },
+  { type: "blind", category: "beer", label: "Blind Pick", goal: 70, critical: false,
+    suggest: "Match style and ABV clues without seeing the beer name." },
+  { type: "gf", category: "beer", label: "GF Spotter", goal: 80, critical: true,
+    suggest: "Know which taps are gluten-reduced for guest questions." },
+  { type: "hard", category: "beer", label: "Hard Mode", goal: 70, critical: false,
+    suggest: "Tough decoys and bonus points — for staff who know the list cold." },
   { type: "coffee_flash", category: "coffee", label: "Coffee Flashcards", goal: 70, critical: false,
     suggest: "Review coffee manual key points with flashcards." },
   { type: "coffee_quiz", category: "coffee", label: "Coffee Quiz", goal: 75, critical: true,
@@ -857,21 +956,98 @@ app.post("/api/progress", authRequired, (req, res) => {
   const category = (req.body.category || "beer").trim();
   const score = Number(req.body.score);
   const total = Number(req.body.total);
+  const points = clampPoints(activity_type, score, total, Number(req.body.points));
 
   if (!activity_type || !Number.isFinite(score) || !Number.isFinite(total) || total <= 0) {
     return res.status(400).json({ error: "Invalid progress payload." });
   }
 
   db.prepare(`
-    INSERT INTO progress_sessions (user_id, activity_type, category, score, total)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(req.user.id, activity_type, category, score, total);
+    INSERT INTO progress_sessions (user_id, activity_type, category, score, total, points)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(req.user.id, activity_type, category, score, total, points);
 
-  res.json({ ok: true });
+  res.json({ ok: true, points });
 });
 
 app.get("/api/progress/me", authRequired, (req, res) => {
   res.json(getUserStats(req.user.id));
+});
+
+app.get("/api/games/leaderboard", authRequired, (req, res) => {
+  const period = String(req.query.period || "week").trim();
+  const allowed = ["week", "month", "all"];
+  const safePeriod = allowed.includes(period) ? period : "week";
+
+  let dateClause = "";
+  if (safePeriod === "week") dateClause = "AND p.completed_at >= datetime('now', '-7 days')";
+  if (safePeriod === "month") dateClause = "AND p.completed_at >= datetime('now', '-30 days')";
+
+  const leaderboard = db.prepare(`
+    SELECT u.id, u.name, u.role,
+           COALESCE(SUM(p.points), 0) AS points,
+           COALESCE(SUM(p.score), 0) AS correct,
+           COALESCE(SUM(p.total), 0) AS questions,
+           COUNT(p.id) AS sessions
+    FROM users u
+    INNER JOIN progress_sessions p ON p.user_id = u.id
+    WHERE u.role IN ('employee', 'shift_lead')
+      ${dateClause}
+    GROUP BY u.id
+    HAVING points > 0
+    ORDER BY points DESC, correct DESC, u.name ASC
+    LIMIT 25
+  `).all().map((row, index) => ({
+    rank: index + 1,
+    id: row.id,
+    name: row.name,
+    role: row.role,
+    points: row.points,
+    correct: row.correct,
+    questions: row.questions,
+    sessions: row.sessions,
+    accuracy: row.questions ? Math.round((row.correct / row.questions) * 100) : 0
+  }));
+
+  const myRow = db.prepare(`
+    SELECT COALESCE(SUM(p.points), 0) AS points,
+           COALESCE(SUM(p.score), 0) AS correct,
+           COALESCE(SUM(p.total), 0) AS questions,
+           COUNT(p.id) AS sessions
+    FROM progress_sessions p
+    WHERE p.user_id = ?
+      ${dateClause}
+  `).get(req.user.id);
+
+  const myPoints = myRow?.points || 0;
+  let myRank = null;
+  if (myPoints > 0) {
+    myRank = db.prepare(`
+      SELECT COUNT(*) + 1 AS rank
+      FROM (
+        SELECT u.id, COALESCE(SUM(p.points), 0) AS points
+        FROM users u
+        INNER JOIN progress_sessions p ON p.user_id = u.id
+        WHERE u.role IN ('employee', 'shift_lead')
+          ${dateClause}
+        GROUP BY u.id
+        HAVING points > ?
+      )
+    `).get(myPoints)?.rank || 1;
+  }
+
+  res.json({
+    period: safePeriod,
+    leaderboard,
+    me: {
+      rank: myRank,
+      points: myPoints,
+      correct: myRow?.correct || 0,
+      questions: myRow?.questions || 0,
+      sessions: myRow?.sessions || 0,
+      accuracy: myRow?.questions ? Math.round((myRow.correct / myRow.questions) * 100) : 0
+    }
+  });
 });
 
 app.get("/api/announcements/state", authRequired, (req, res) => {
@@ -970,14 +1146,14 @@ app.patch("/api/merch/:id", authRequired, merchManagerRequired, (req, res) => {
   `).run(name, description, price_cents, image_url, active, item.id);
 
   if (Array.isArray(req.body.sizes)) {
-    db.prepare("DELETE FROM merch_sizes WHERE item_id = ?").run(item.id);
-    const insertSize = db.prepare(`
+    const upsertSize = db.prepare(`
       INSERT INTO merch_sizes (item_id, size_label, quantity) VALUES (?, ?, ?)
+      ON CONFLICT(item_id, size_label) DO UPDATE SET quantity = excluded.quantity
     `);
     req.body.sizes.forEach(size => {
       const label = (size.size_label || size.label || "").trim();
       const quantity = Math.max(0, Number(size.quantity) || 0);
-      if (label) insertSize.run(item.id, label, quantity);
+      if (label) upsertSize.run(item.id, label, quantity);
     });
   }
 
@@ -1380,5 +1556,6 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
+  ensureMerchCatalog();
   console.log(`MP Training server running on port ${PORT}`);
 });

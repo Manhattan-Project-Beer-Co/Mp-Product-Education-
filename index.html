@@ -3206,9 +3206,7 @@
     <div class="sidebar-user" id="sidebarUser">
       <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
       <div class="sidebar-user-role" id="sidebarUserRole">Sign in to track training</div>
-      <div class="auth-bar" id="authBar">
-        <button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>
-      </div>
+      <div class="auth-bar" id="authBar"></div>
     </div>
   </aside>
 
@@ -3347,6 +3345,16 @@ function microsoftSignInButton(label = "Sign in with Microsoft") {
       ${MS_LOGO_SVG}
       ${label}
     </button>
+  `;
+}
+
+function guestAuthHtml() {
+  if (microsoftAuthAvailable) {
+    return `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`;
+  }
+  return `
+    <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
+    <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
   `;
 }
 
@@ -4273,12 +4281,7 @@ function updateAuthUI() {
   if (!currentUser) {
     if (userName) userName.textContent = "Guest";
     if (userRole) userRole.textContent = "Sign in to track training";
-    const guestHtml = microsoftAuthAvailable
-      ? `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`
-      : `
-        <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
-        <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
-      `;
+    const guestHtml = guestAuthHtml();
     if (authBar) authBar.innerHTML = guestHtml;
     if (authBarMobile) authBarMobile.innerHTML = guestHtml;
     return;
@@ -4298,12 +4301,16 @@ function updateAuthUI() {
 }
 
 async function initAuth() {
+  updateAuthUI();
+
   try {
     const providers = await fetch(`${API_BASE}/api/auth/providers`).then((r) => r.json());
     microsoftAuthAvailable = Boolean(providers.microsoft);
   } catch {
     microsoftAuthAvailable = false;
   }
+
+  updateAuthUI();
 
   const callback = consumeAuthCallbackParams();
   if (callback?.token) {
@@ -4337,6 +4344,10 @@ async function initAuth() {
 }
 
 function startMicrosoftSignIn() {
+  if (!microsoftAuthAvailable) {
+    openAuthModal("login");
+    return;
+  }
   window.location.href = `${API_BASE}/api/auth/microsoft`;
 }
 

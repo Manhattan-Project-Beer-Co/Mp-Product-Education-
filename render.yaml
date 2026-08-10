@@ -22,8 +22,8 @@ services:
       - key: AZURE_CLIENT_SECRET
         sync: false
       - key: AZURE_TENANT_ID
-        sync: false
+        value: organizations
       - key: APP_BASE_URL
-        sync: false
+        value: https://mp-product-education.onrender.com
       - key: AZURE_ADMIN_EMAILS
         sync: false

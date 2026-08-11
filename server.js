@@ -267,7 +267,7 @@ if (!userColumns.has("microsoft_oid")) {
 
 // Password authentication was removed in favour of Microsoft sign-in, so no
 // code path reads password_hash any more. Clear it so the seeded demo
-// credentials — which were published in this repo — cannot be resurrected by
+// credentials â€” which were published in this repo â€” cannot be resurrected by
 // rolling back to an older build.
 db.prepare("UPDATE users SET password_hash = '' WHERE password_hash != ''").run();
 

@@ -1,11 +1,13 @@
 require("dotenv").config();
 
 const crypto = require("crypto");
+const fs = require("fs");
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const Database = require("better-sqlite3");
 const { DB_PATH } = require("./db-path");
+const { startBackupSchedule } = require("./backup");
 const { buildContext, localAnswer, getBeers } = require("./chat-knowledge");
 const {
   buildLocalSummary,
@@ -2047,5 +2049,8 @@ app.listen(PORT, () => {
   ensureMerchCatalog();
   ensureSampleSops();
   console.log(`MP Training server running on port ${PORT}`);
+  console.log(`Database: ${DB_PATH} (${Math.max(1, Math.round(fs.statSync(DB_PATH).size / 1024))} KB)`);
   console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
+  // Backs up immediately, then hourly checks that today's snapshot exists.
+  startBackupSchedule(db);
 });

@@ -1,6 +1,5 @@
 require("dotenv").config();
 
-const bcrypt = require("bcryptjs");
 const Database = require("better-sqlite3");
 const { DB_PATH } = require("./db-path");
 
@@ -98,8 +97,10 @@ db.exec(`
   );
 `);
 
-const TEST_PASSWORD = "test1234";
-
+// Demo staff exist so the progress dashboards and leaderboards have something
+// to show locally. They carry no password: sign-in is Microsoft-only, so these
+// accounts cannot be logged into. Never give them one — an earlier version
+// shared a hardcoded password across all seven, in a public repo.
 const TEST_USERS = [
   { name: "Meredith Manager", email: "manager@mp.test", role: "admin" },
   { name: "Taylor Shift Lead", email: "shiftlead@mp.test", role: "shift_lead" },
@@ -194,13 +195,11 @@ const insertProgress = db.prepare(`
 
 const getUserId = db.prepare("SELECT id FROM users WHERE email = ?");
 
-const passwordHash = bcrypt.hashSync(TEST_PASSWORD, 10);
-
 const seed = db.transaction(() => {
   const userIds = {};
 
   for (const user of TEST_USERS) {
-    upsertUser.run(user.name, user.email, passwordHash, user.role);
+    upsertUser.run(user.name, user.email, "", user.role);
     const row = getUserId.get(user.email);
     userIds[user.email] = row.id;
     deleteProgress.run(row.id);
@@ -646,20 +645,14 @@ try {
 }
 
 console.log("\nTest data seeded successfully.\n");
-console.log("Admin login (Team dashboard):");
-console.log("  Email:    manager@mp.test");
-console.log("  Password: test1234");
-console.log("\nShift lead login (Shift Reports):");
-console.log("  Email:    shiftlead@mp.test");
-console.log("  Password: test1234");
-console.log("\nMerch manager login:");
-console.log("  Email:    merch@mp.test");
-console.log("  Password: test1234");
-console.log("\nEmployee logins (sample progress):");
-console.log("  alex@mp.test   — strong beer + coffee scores");
-console.log("  jordan@mp.test — mid-level, still learning");
-console.log("  sam@mp.test    — top performer");
-console.log("  riley@mp.test  — new hire, minimal activity");
-console.log("  Password for all employees: test1234");
+console.log("Demo staff (sample progress data — no passwords, cannot be signed into):");
+console.log("  manager@mp.test   — admin, Team dashboard");
+console.log("  shiftlead@mp.test — shift lead, Shift Reports");
+console.log("  merch@mp.test     — merch manager");
+console.log("  alex@mp.test      — strong beer + coffee scores");
+console.log("  jordan@mp.test    — mid-level, still learning");
+console.log("  sam@mp.test       — top performer");
+console.log("  riley@mp.test     — new hire, minimal activity");
+console.log("\nSign in with Microsoft to get a real account; set AZURE_ADMIN_EMAILS to bootstrap an admin.");
 console.log("\nOpen http://localhost:8080 → Inventory tab for product stock\n");
 console.log("Managers/shift leads can update counts; log in as manager@mp.test or shiftlead@mp.test\n");

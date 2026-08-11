@@ -3424,8 +3424,9 @@
 <script>
 const API_BASE = "";
 let currentUser = null;
-let authToken = localStorage.getItem("mp_auth_token") || "";
-let authMode = "login";
+// The session lives in an HttpOnly cookie the browser sends automatically on
+// same-origin requests — deliberately unreadable from JavaScript, so there is
+// no token to hold here.
 let microsoftAuthAvailable = false;
 let teamDetailId = null;
 let myProgressData = null;
@@ -3446,17 +3447,15 @@ function microsoftSignInButton(label = "Sign in with Microsoft") {
 
 function consumeAuthCallbackParams() {
   const params = new URLSearchParams(window.location.search);
-  const token = params.get("auth_token");
   const authError = params.get("auth_error");
-  if (!token && !authError) return null;
+  if (!authError) return null;
 
-  params.delete("auth_token");
   params.delete("auth_error");
   const clean = params.toString();
   const nextUrl = clean ? `${window.location.pathname}?${clean}` : window.location.pathname;
   window.history.replaceState({}, "", nextUrl);
 
-  return { token, authError };
+  return { authError };
 }
 const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
@@ -4325,7 +4324,6 @@ const ACTIVITY_LABELS = {
 
 async function apiFetch(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-  if (authToken) headers.Authorization = `Bearer ${authToken}`;
 
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await response.json().catch(() => ({}));
@@ -4384,10 +4382,7 @@ function updateAuthUI() {
     if (userRole) userRole.textContent = "Sign in to track training";
     const guestHtml = microsoftAuthAvailable
       ? `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`
-      : `
-        <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
-        <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
-      `;
+      : `<button class="auth-btn" onclick="openAuthModal('login')">Sign in</button>`;
     if (authBar) authBar.innerHTML = guestHtml;
     if (authBarMobile) authBarMobile.innerHTML = guestHtml;
     return;
@@ -4415,33 +4410,25 @@ async function initAuth() {
   }
 
   const callback = consumeAuthCallbackParams();
-  if (callback?.token) {
-    authToken = callback.token;
-    localStorage.setItem("mp_auth_token", authToken);
-  }
 
-  if (!authToken) {
-    updateAuthUI();
-    if (callback?.authError) {
-      openAuthModal("login");
-      setTimeout(() => {
-        const errorEl = document.getElementById("authError");
-        if (errorEl) {
-          errorEl.innerHTML = `<div class="auth-error">${escapeHTML(callback.authError)}</div>`;
-        }
-      }, 0);
-    }
-    return;
-  }
+  // The session cookie is invisible to JavaScript, so the only way to know
+  // whether we are signed in is to ask the server.
   try {
     const data = await apiFetch("/api/auth/me");
     currentUser = data.user;
-    updateAuthUI();
   } catch {
-    authToken = "";
-    localStorage.removeItem("mp_auth_token");
     currentUser = null;
-    updateAuthUI();
+  }
+  updateAuthUI();
+
+  if (!currentUser && callback?.authError) {
+    openAuthModal("login");
+    setTimeout(() => {
+      const errorEl = document.getElementById("authError");
+      if (errorEl) {
+        errorEl.innerHTML = `<div class="auth-error">${escapeHTML(callback.authError)}</div>`;
+      }
+    }, 0);
   }
 }
 
@@ -4449,8 +4436,7 @@ function startMicrosoftSignIn() {
   window.location.href = `${API_BASE}/api/auth/microsoft`;
 }
 
-function openAuthModal(mode) {
-  authMode = mode;
+function openAuthModal() {
   renderAuthModal();
   document.getElementById("authBackdrop").classList.add("show");
   document.body.style.overflow = "hidden";
@@ -4463,88 +4449,24 @@ function closeAuthModal(event) {
 }
 
 function renderAuthModal() {
-  if (microsoftAuthAvailable && authMode === "register") {
-    authMode = "login";
-  }
-  const showRegister = !microsoftAuthAvailable && authMode === "register";
   document.getElementById("authContent").innerHTML = `
     <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
-      <h3>${showRegister ? "Create employee account" : "Log in"}</h3>
-      <p class="hint">${showRegister
-        ? "Staff sign up here to track training progress. The first account becomes admin. Managers, merch leads, and shift leads can register with a setup key."
-        : microsoftAuthAvailable
-          ? "If an admin has approved your work email, sign in with Microsoft to create your account and track training."
-          : "Log in to save your quiz scores and track training progress."}</p>
+      <h3>Sign in</h3>
+      <p class="hint">${microsoftAuthAvailable
+        ? "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time."
+        : "Microsoft sign-in is not configured on this server yet."}</p>
       <div id="authError"></div>
-      ${!showRegister ? microsoftSignInButton() : ""}
-      ${!showRegister && microsoftAuthAvailable ? `<div class="auth-divider">or email (local accounts)</div>` : ""}
-      <label for="authName">Full name</label>
-      <input id="authName" type="text" placeholder="Your name" ${showRegister ? "" : "style='display:none'"}>
-      <label for="authEmail">Email</label>
-      <input id="authEmail" type="email" placeholder="you@example.com">
-      <label for="authPassword">Password</label>
-      <input id="authPassword" type="password" placeholder="At least 6 characters">
-      ${showRegister ? `
-        <label for="authAdminKey">Admin setup key (optional)</label>
-        <input id="authAdminKey" type="password" placeholder="Only for manager/admin accounts">
-        <label for="authMerchKey">Merch setup key (optional)</label>
-        <input id="authMerchKey" type="password" placeholder="Only for merch manager accounts">
-        <label for="authShiftLeadKey">Shift lead setup key (optional)</label>
-        <input id="authShiftLeadKey" type="password" placeholder="Only for shift lead accounts">
-      ` : ""}
-      <button class="game-next" style="width:100%;" onclick="submitAuth()">${showRegister ? "Create account" : "Log in with email"}</button>
-      <p class="hint" style="margin-top:14px;text-align:center;">
-        ${showRegister
-          ? `Already have an account? <a href="#" onclick="openAuthModal('login'); return false;">Log in</a>`
-          : microsoftAuthAvailable
-            ? "Need access? Ask a manager to approve your email on the Team page."
-            : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
-      </p>
+      ${microsoftAuthAvailable ? microsoftSignInButton() : ""}
     </div>
   `;
 }
 
-async function submitAuth() {
-  const errorEl = document.getElementById("authError");
-  errorEl.innerHTML = "";
-
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-
+async function logout() {
   try {
-    let data;
-    if (authMode === "register") {
-      const name = document.getElementById("authName").value.trim();
-      const adminKey = document.getElementById("authAdminKey")?.value || "";
-      const merchKey = document.getElementById("authMerchKey")?.value || "";
-      const shiftLeadKey = document.getElementById("authShiftLeadKey")?.value || "";
-      data = await apiFetch("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({ name, email, password, adminKey, merchKey, shiftLeadKey })
-      });
-    } else {
-      data = await apiFetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password })
-      });
-    }
-
-    authToken = data.token;
-    localStorage.setItem("mp_auth_token", authToken);
-    currentUser = data.user;
-    updateAuthUI();
-    closeAuthModal();
-    if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") render();
-    await maybeShowDailyBriefing();
-    await maybePromptShiftSurvey();
-    await maybeShowShiftDigest();
-  } catch (err) {
-    errorEl.innerHTML = `<div class="auth-error">${escapeHTML(err.message)}</div>`;
+    await apiFetch("/api/auth/logout", { method: "POST" });
+  } catch {
+    // Clearing local state matters more than the round trip succeeding.
   }
-}
-
-function logout() {
-  authToken = "";
   currentUser = null;
   myProgressData = null;
   teamData = null;
@@ -4553,7 +4475,6 @@ function logout() {
   briefingView = "list";
   briefingActiveItem = null;
   currentBriefingItems = [];
-  localStorage.removeItem("mp_auth_token");
   updateAuthUI();
   if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") {
     activeType = "ontap";
@@ -5220,7 +5141,7 @@ function initTeamCharts(employees) {
 }
 
 async function fetchTeamActivityBreakdown(staff) {
-  if (!staff.length || !authToken) return [];
+  if (!staff.length || !currentUser) return [];
   try {
     const details = await Promise.all(
       staff.map(emp => apiFetch(`/api/admin/employees/${emp.id}`))
@@ -5729,15 +5650,15 @@ function renderApprovedEmailsPanel(emails) {
     </tr>
   `).join("") : `
     <tr>
-      <td colspan="4" style="color:#888;">No approved emails yet. Add a staff member’s Microsoft work email above.</td>
+      <td colspan="4" style="color:#888;">No role assignments yet. Everyone signs in as an Employee by default; add a work email above to give someone a different role.</td>
     </tr>
   `;
 
   return `
     <div class="approve-panel">
       <div class="approve-card">
-        <h3>Approved emails</h3>
-        <p>Only these Microsoft work emails can sign in. Their account is created automatically on first login. Change access type with Save role.</p>
+        <h3>Role assignments</h3>
+        <p>Anyone with a Manhattan Project work account can sign in — an account is created automatically on first login, as an Employee. Add an email here to give someone a different role, before or after their first sign-in.</p>
         <div id="approveError"></div>
         <form class="approve-form" onsubmit="addApprovedEmail(event)">
           <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
@@ -6812,9 +6733,7 @@ async function loadMerchData(force) {
   try {
     const [stockRes, ideasRes] = await Promise.all([
       fetch(`${API_BASE}/api/merch`),
-      fetch(`${API_BASE}/api/merch/ideas`, {
-        headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
-      })
+      fetch(`${API_BASE}/api/merch/ideas`)
     ]);
     const stockData = await stockRes.json();
     const ideasData = await ideasRes.json();

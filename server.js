@@ -3,7 +3,6 @@ require("dotenv").config();
 const crypto = require("crypto");
 const express = require("express");
 const path = require("path");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Database = require("better-sqlite3");
 const { DB_PATH } = require("./db-path");
@@ -20,10 +19,12 @@ const { registerMpInventory } = require("./mp-inventory-api");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const JWT_SECRET = process.env.JWT_SECRET || "mp-training-dev-secret-change-in-production";
-const ADMIN_SETUP_KEY = process.env.ADMIN_SETUP_KEY || "mp-admin-setup";
-const MERCH_SETUP_KEY = process.env.MERCH_SETUP_KEY || "mp-merch-setup";
-const SHIFT_LEAD_SETUP_KEY = process.env.SHIFT_LEAD_SETUP_KEY || "mp-shift-lead-setup";
+const DEFAULT_JWT_SECRET = "mp-training-dev-secret-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
+// Railway sets RAILWAY_ENVIRONMENT on every deploy; NODE_ENV covers other hosts.
+const IS_PRODUCTION = process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
+const SESSION_COOKIE = "mp_session";
+const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const APP_BASE_URL = (process.env.APP_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
@@ -39,6 +40,17 @@ const AZURE_ADMIN_EMAILS = new Set(
 );
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
 const ALLOWED_APPROVED_ROLES = new Set(["employee", "admin", "merch", "shift_lead"]);
+
+// JWT_SECRET signs the session cookie, which is the whole of authentication.
+// Booting in production on the built-in default would accept forged sessions
+// from anyone who has read this file.
+if (IS_PRODUCTION && JWT_SECRET === DEFAULT_JWT_SECRET) {
+  console.error(
+    "Refusing to start: JWT_SECRET is still the built-in default in production. " +
+      'Set a real one (node -e "console.log(require(\'crypto\').randomBytes(48).toString(\'base64url\'))").'
+  );
+  process.exit(1);
+}
 
 const CHAT_SYSTEM_PROMPT = `You are the Manhattan Project Beer Co. staff training assistant embedded in the internal training portal.
 
@@ -253,6 +265,12 @@ if (!userColumns.has("microsoft_oid")) {
   db.exec(`ALTER TABLE users ADD COLUMN microsoft_oid TEXT`);
 }
 
+// Password authentication was removed in favour of Microsoft sign-in, so no
+// code path reads password_hash any more. Clear it so the seeded demo
+// credentials — which were published in this repo — cannot be resurrected by
+// rolling back to an older build.
+db.prepare("UPDATE users SET password_hash = '' WHERE password_hash != ''").run();
+
 const seedApproved = db.prepare(`
   INSERT OR IGNORE INTO approved_emails (email, role)
   VALUES (?, ?)
@@ -411,25 +429,61 @@ app.use((req, res, next) => {
 
 app.use(express.static(__dirname));
 
-function signToken(user) {
-  return jwt.sign(
-    { id: user.id, email: user.email, role: user.role, name: user.name },
-    JWT_SECRET,
-    { expiresIn: "30d" }
-  );
+// The session cookie carries identity only â€” never the role. Roles are read
+// from the database on every request (see loadSessionUser), so a role change or
+// a deactivated account takes effect on the next click rather than whenever the
+// token happens to expire.
+function startSession(res, user) {
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "30d" });
+  res.cookie(SESSION_COOKIE, token, {
+    httpOnly: true,
+    secure: IS_PRODUCTION,
+    sameSite: "lax",
+    maxAge: SESSION_MAX_AGE_MS,
+    path: "/"
+  });
+}
+
+function endSession(res) {
+  res.clearCookie(SESSION_COOKIE, { httpOnly: true, secure: IS_PRODUCTION, sameSite: "lax", path: "/" });
+}
+
+function readSessionToken(req) {
+  const header = req.headers.cookie || "";
+  for (const part of header.split(";")) {
+    const eq = part.indexOf("=");
+    if (eq === -1) continue;
+    if (part.slice(0, eq).trim() === SESSION_COOKIE) {
+      return decodeURIComponent(part.slice(eq + 1).trim());
+    }
+  }
+  return null;
+}
+
+function loadSessionUser(req) {
+  const token = readSessionToken(req);
+  if (!token) return null;
+
+  let payload;
+  try {
+    payload = jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+
+  return db
+    .prepare("SELECT id, name, email, role, auth_provider, microsoft_oid, created_at FROM users WHERE id = ?")
+    .get(payload.id) || null;
 }
 
 function authRequired(req, res, next) {
-  const header = req.headers.authorization || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
-  if (!token) return res.status(401).json({ error: "Login required." });
-
-  try {
-    req.user = jwt.verify(token, JWT_SECRET);
-    next();
-  } catch {
-    return res.status(401).json({ error: "Session expired. Please log in again." });
+  const user = loadSessionUser(req);
+  if (!user) {
+    endSession(res);
+    return res.status(401).json({ error: "Login required." });
   }
+  req.user = user;
+  next();
 }
 
 function adminRequired(req, res, next) {
@@ -468,13 +522,10 @@ function getApprovedEmail(email) {
   return db.prepare("SELECT * FROM approved_emails WHERE email = ?").get(normalizeEmail(email));
 }
 
-function isMicrosoftSignInAllowed(email) {
-  const normalized = normalizeEmail(email);
-  if (!normalized) return false;
-  if (AZURE_ADMIN_EMAILS.has(normalized)) return true;
-  return Boolean(getApprovedEmail(normalized));
-}
-
+// Access is bounded by the Entra tenant, not by an in-app list: the app
+// registration is single-tenant, so anyone Microsoft authenticates is MPBC
+// staff and gets an account on first sign-in. approved_emails survives only as
+// a way to pre-assign a role before someone's first login.
 function resolveApprovedRole(email, existingRole) {
   const normalized = normalizeEmail(email);
   if (AZURE_ADMIN_EMAILS.has(normalized)) return "admin";
@@ -699,19 +750,8 @@ function shouldAutoRefreshReviews() {
 }
 
 function optionalAuth(req, res, next) {
-  const header = req.headers.authorization || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
-  if (!token) {
-    req.user = null;
-    return next();
-  }
-  try {
-    req.user = jwt.verify(token, JWT_SECRET);
-    next();
-  } catch {
-    req.user = null;
-    next();
-  }
+  req.user = loadSessionUser(req);
+  next();
 }
 
 function formatMerchItem(row, sizes) {
@@ -1044,94 +1084,13 @@ async function askOpenAI(message, history, context) {
   return reply;
 }
 
-app.post("/api/auth/register", (req, res) => {
-  if (microsoftAuthEnabled) {
-    return res.status(403).json({
-      error: "Self sign-up is disabled. Ask an admin to approve your email, then sign in with Microsoft."
-    });
-  }
-
-  const name = (req.body.name || "").trim();
-  const email = normalizeEmail(req.body.email);
-  const password = req.body.password || "";
-  const adminKey = (req.body.adminKey || "").trim();
-  const merchKey = (req.body.merchKey || "").trim();
-  const shiftLeadKey = (req.body.shiftLeadKey || "").trim();
-  const setupKeys = [adminKey, merchKey, shiftLeadKey].filter(Boolean);
-
-  if (!name || !email || !password) {
-    return res.status(400).json({ error: "Name, email, and password are required." });
-  }
-  if (password.length < 6) {
-    return res.status(400).json({ error: "Password must be at least 6 characters." });
-  }
-  if (setupKeys.length > 1) {
-    return res.status(400).json({ error: "Use only one setup key when registering." });
-  }
-
-  const existingCount = db.prepare("SELECT COUNT(*) AS count FROM users").get().count;
-  let role = "employee";
-
-  if (adminKey) {
-    if (adminKey !== ADMIN_SETUP_KEY) {
-      return res.status(403).json({ error: "Invalid admin setup key." });
-    }
-    role = "admin";
-  } else if (merchKey) {
-    if (merchKey !== MERCH_SETUP_KEY) {
-      return res.status(403).json({ error: "Invalid merch setup key." });
-    }
-    role = "merch";
-  } else if (shiftLeadKey) {
-    if (shiftLeadKey !== SHIFT_LEAD_SETUP_KEY) {
-      return res.status(403).json({ error: "Invalid shift lead setup key." });
-    }
-    role = "shift_lead";
-  } else if (existingCount === 0) {
-    role = "admin";
-  }
-
-  try {
-    const password_hash = bcrypt.hashSync(password, 10);
-    const result = db.prepare(`
-      INSERT INTO users (name, email, password_hash, role)
-      VALUES (?, ?, ?, ?)
-    `).run(name, email, password_hash, role);
-
-    const user = db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
-    const token = signToken(user);
-    res.json({ token, user: publicUser(user) });
-  } catch (err) {
-    if (String(err.message).includes("UNIQUE")) {
-      return res.status(409).json({ error: "An account with this email already exists." });
-    }
-    throw err;
-  }
-});
-
-app.post("/api/auth/login", (req, res) => {
-  const email = normalizeEmail(req.body.email);
-  const password = req.body.password || "";
-
-  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  if (!user) {
-    return res.status(401).json({ error: "Invalid email or password." });
-  }
-  if (!user.password_hash || user.auth_provider === "microsoft") {
-    return res.status(401).json({
-      error: "This account uses Microsoft sign-in. Use Sign in with Microsoft."
-    });
-  }
-  if (!bcrypt.compareSync(password, user.password_hash)) {
-    return res.status(401).json({ error: "Invalid email or password." });
-  }
-
-  const token = signToken(user);
-  res.json({ token, user: publicUser(user) });
+app.post("/api/auth/logout", (req, res) => {
+  endSession(res);
+  res.json({ ok: true });
 });
 
 app.get("/api/auth/providers", (req, res) => {
-  res.json({ microsoft: microsoftAuthEnabled, allowlistRequired: microsoftAuthEnabled });
+  res.json({ microsoft: microsoftAuthEnabled });
 });
 
 app.get("/api/auth/microsoft", (req, res) => {
@@ -1214,16 +1173,9 @@ app.get("/api/auth/microsoft/callback", async (req, res) => {
       return fail("Your Microsoft account did not return an email address.");
     }
 
-    if (!isMicrosoftSignInAllowed(email)) {
-      return fail(
-        "Your email is not approved for this training portal. Ask an admin to add you, then try again."
-      );
-    }
-
     const user = upsertMicrosoftUser({ oid, email, name });
-    const token = signToken(user);
-    const params = new URLSearchParams({ auth_token: token });
-    return res.redirect(`/?${params}`);
+    startSession(res, user);
+    return res.redirect("/");
   } catch (err) {
     console.error("Microsoft auth callback error:", err.message);
     return fail("Microsoft sign-in failed. Please try again.");

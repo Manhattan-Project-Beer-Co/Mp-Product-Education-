@@ -421,15 +421,28 @@ function ensureSampleSops() {
 
 app.use(express.json({ limit: "6mb" }));
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
-  if (req.method === "OPTIONS") return res.sendStatus(204);
+// The only endpoints reachable without a session: what the sign-in handshake
+// itself needs. Everything else under /api requires one.
+const PUBLIC_API_ROUTES = new Set([
+  "/auth/providers",
+  "/auth/microsoft",
+  "/auth/microsoft/callback",
+  "/auth/logout"
+]);
+
+// A single gate rather than a guard on each route, so the default for anything
+// added later is "protected". Previously each route opted in, and the ones that
+// did not — SOPs, inventory, the AI chat endpoint — were readable by anyone on
+// the internet.
+app.use("/api", (req, res, next) => {
+  if (PUBLIC_API_ROUTES.has(req.path)) return next();
+
+  const user = loadSessionUser(req);
+  if (!user) return res.status(401).json({ error: "Login required." });
+
+  req.user = user;
   next();
 });
-
-app.use(express.static(__dirname));
 
 // The session cookie carries identity only — never the role. Roles are read
 // from the database on every request (see loadSessionUser), so a role change or
@@ -479,7 +492,9 @@ function loadSessionUser(req) {
 }
 
 function authRequired(req, res, next) {
-  const user = loadSessionUser(req);
+  // The /api gate has normally resolved this already; re-use it rather than
+  // hitting the database twice per request.
+  const user = req.user || loadSessionUser(req);
   if (!user) {
     endSession(res);
     return res.status(401).json({ error: "Login required." });

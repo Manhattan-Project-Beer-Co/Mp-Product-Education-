@@ -139,9 +139,65 @@ async function checkBootsAndServes() {
       }
     }
 
+    await checkApiRequiresSession();
     await checkBackupWasTaken(dbPath);
   } finally {
     child.kill("SIGKILL");
+  }
+}
+
+// Every /api route must refuse an anonymous caller, except the handful the
+// sign-in handshake needs. These were all open at one point — SOPs, inventory
+// and the AI chat endpoint were readable by anyone who knew the URL — so they
+// are worth pinning down rather than trusting to review.
+async function checkApiRequiresSession() {
+  const mustBeGated = [
+    ["GET", "/api/sops"],
+    ["GET", "/api/inventory"],
+    ["GET", "/api/ops-inventory"],
+    ["GET", "/api/merch"],
+    ["GET", "/api/merch/ideas"],
+    ["GET", "/api/reviews"],
+    ["GET", "/api/chat/status"],
+    ["POST", "/api/chat"],
+    ["GET", "/api/games/leaderboard"],
+    ["GET", "/api/admin/employees"]
+  ];
+
+  for (const [method, route] of mustBeGated) {
+    const res = await fetch(`${BASE}${route}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      ...(method === "POST" ? { body: "{}" } : {})
+    });
+    if (res.status === 401) {
+      pass(`${method} ${route} requires a session`);
+    } else {
+      fail(`${method} ${route} returned ${res.status} to an anonymous caller, expected 401`);
+    }
+  }
+
+  // The sign-in handshake itself must stay reachable, or nobody can ever log in.
+  const providers = await fetch(`${BASE}/api/auth/providers`);
+  if (providers.ok) pass("/api/auth/providers stays public");
+  else fail(`/api/auth/providers returned ${providers.status}; sign-in would be impossible`);
+
+  // The page itself must still be served so the login screen can render.
+  const page = await fetch(`${BASE}/`);
+  const html = await page.text();
+  if (page.ok && html.includes('id="loginGate"')) {
+    pass("the app shell is served and carries the sign-in gate");
+  } else {
+    fail(`GET / returned ${page.status} and ${html.includes("loginGate") ? "has" : "lacks"} the sign-in gate`);
+  }
+
+  // Source files must not be served to the world.
+  const source = await fetch(`${BASE}/server.js`);
+  const sourceBody = await source.text();
+  if (!sourceBody.includes("JWT_SECRET")) {
+    pass("server source is not served as a static file");
+  } else {
+    fail("GET /server.js returned the server source");
   }
 }
 

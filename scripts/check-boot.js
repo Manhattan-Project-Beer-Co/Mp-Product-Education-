@@ -125,17 +125,21 @@ async function checkBootsAndServes() {
       fail(`/api/auth/me returned ${me.status}, expected 401`);
     }
 
-    // Password authentication is gone; these must not answer.
+    // Password authentication is gone; these must never authenticate anyone.
+    // Either answer is correct: 404 because no handler exists, or 401 because
+    // the /api gate refuses the anonymous caller before reaching the 404. The
+    // property worth pinning is that it never succeeds — not which of the two
+    // refusals happens to come first.
     for (const route of ["/api/auth/login", "/api/auth/register"]) {
       const res = await fetch(`${BASE}${route}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: "{}"
       });
-      if (res.status === 404) {
-        pass(`${route} is gone`);
+      if (res.status === 404 || res.status === 401) {
+        pass(`${route} is gone (${res.status})`);
       } else {
-        fail(`${route} returned ${res.status}, expected 404 — password auth was removed`);
+        fail(`${route} returned ${res.status}; password auth was removed and must never succeed`);
       }
     }
 

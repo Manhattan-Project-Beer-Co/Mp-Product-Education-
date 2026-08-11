@@ -3262,9 +3262,39 @@
 
 
 
+  /* Sign-in gate. The app shell stays hidden until /api/auth/me has answered,
+     so nothing is ever briefly visible to someone who is not signed in. */
+  .login-gate { display: none; position: fixed; inset: 0; z-index: 200; align-items: center; justify-content: center; background: #0d0d0d; padding: 24px; }
+  body.auth-pending .login-gate, body.signed-out .login-gate { display: flex; }
+  body.auth-pending .app-shell, body.signed-out .app-shell { display: none; }
+  .login-card { width: 100%; max-width: 400px; text-align: center; }
+  .login-card h1 { font-size: 20px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9a227; margin: 22px 0 6px; }
+  .login-card .login-sub { color: #8a8a8a; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 26px; }
+  .login-card .login-message { color: #cfcfcf; font-size: 14px; line-height: 1.6; margin: 0 0 22px; }
+  .login-card .auth-error { margin-bottom: 18px; }
+  .login-actions button { width: 100%; }
+  .login-foot { color: #5c5c5c; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 30px; }
 </style>
 </head>
-<body>
+<body class="auth-pending">
+<div id="loginGate" class="login-gate">
+  <div class="login-card">
+    <svg width="54" height="54" viewBox="0 0 100 100" aria-hidden="true">
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
+      <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
+      <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
+      <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
+    </svg>
+    <h1>Manhattan Project</h1>
+    <p class="login-sub">Staff Training</p>
+    <div id="loginError"></div>
+    <p class="login-message" id="loginMessage">Checking your sign-in…</p>
+    <div class="login-actions" id="loginActions"></div>
+    <p class="login-foot">Internal use only</p>
+  </div>
+</div>
 <div class="app-shell">
   <aside class="app-sidebar" id="appSidebar">
     <div class="sidebar-brand">
@@ -4419,16 +4449,38 @@ async function initAuth() {
   } catch {
     currentUser = null;
   }
-  updateAuthUI();
 
-  if (!currentUser && callback?.authError) {
-    openAuthModal("login");
-    setTimeout(() => {
-      const errorEl = document.getElementById("authError");
-      if (errorEl) {
-        errorEl.innerHTML = `<div class="auth-error">${escapeHTML(callback.authError)}</div>`;
-      }
-    }, 0);
+  if (currentUser) {
+    document.body.classList.remove("auth-pending", "signed-out");
+    updateAuthUI();
+    return;
+  }
+
+  showLoginGate(callback?.authError);
+}
+
+// Signed out: the app shell stays hidden and this is the whole page. Nothing
+// behind it is reachable anyway — every /api route except the sign-in
+// handshake requires a session — but there is no reason to render a shell
+// someone cannot use.
+function showLoginGate(authError) {
+  document.body.classList.remove("auth-pending");
+  document.body.classList.add("signed-out");
+
+  const message = document.getElementById("loginMessage");
+  const actions = document.getElementById("loginActions");
+  const error = document.getElementById("loginError");
+
+  error.innerHTML = authError ? `<div class="auth-error">${escapeHTML(authError)}</div>` : "";
+
+  if (microsoftAuthAvailable) {
+    message.textContent =
+      "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time.";
+    actions.innerHTML = `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`;
+  } else {
+    message.textContent =
+      "Microsoft sign-in is not configured on this server yet, so there is no way to sign in. Ask an admin to set AZURE_CLIENT_ID and AZURE_CLIENT_SECRET.";
+    actions.innerHTML = "";
   }
 }
 
@@ -9636,8 +9688,12 @@ async function sendChatMessage(event, presetText) {
 }
 
 async function bootstrap() {
-  await loadData();
+  // Auth first. Everything below either calls a gated endpoint or renders the
+  // app, and neither is any use to someone who is not signed in.
   await initAuth();
+  if (!currentUser) return;
+
+  await loadData();
   loadSopsData(true).catch(() => {});
   await maybeShowDailyBriefing();
   await maybePromptShiftSurvey();

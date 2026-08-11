@@ -3397,14 +3397,6 @@
   </div>
 </div>
 
-<div id="authBackdrop" class="modal-backdrop" onclick="closeAuthModal(event)">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">×</button>
-    <div id="authContent"></div>
-  </div>
-</div>
-
 <div id="briefingBackdrop" class="modal-backdrop briefing-backdrop" onclick="closeBriefingModal(event)">
   <div class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
     <div class="modal-handle"></div>
@@ -4357,8 +4349,33 @@ async function apiFetch(path, options = {}) {
 
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await response.json().catch(() => ({}));
+
+  // A 401 while we believed we were signed in means the session ended: the
+  // cookie expired, or the account was removed or its role changed such that
+  // the server no longer recognises it. Send the user back to sign in rather
+  // than leaving them in a shell where every request quietly fails.
+  if (response.status === 401 && currentUser) handleSessionEnded();
+
   if (!response.ok) throw new Error(data.error || "Request failed.");
   return data;
+}
+
+// Everything derived from who is signed in. Cleared together so no stale team
+// or progress data can survive into the next session.
+function clearSessionState() {
+  currentUser = null;
+  myProgressData = null;
+  teamData = null;
+  approvedEmailsData = null;
+  teamDetailId = null;
+  briefingView = "list";
+  briefingActiveItem = null;
+  currentBriefingItems = [];
+}
+
+function handleSessionEnded() {
+  clearSessionState();
+  showLoginGate("Your session has ended. Please sign in again.");
 }
 
 function roleLabel(role) {
@@ -4412,7 +4429,7 @@ function updateAuthUI() {
     if (userRole) userRole.textContent = "Sign in to track training";
     const guestHtml = microsoftAuthAvailable
       ? `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`
-      : `<button class="auth-btn" onclick="openAuthModal('login')">Sign in</button>`;
+      : `<button class="auth-btn" onclick="showLoginGate()">Sign in</button>`;
     if (authBar) authBar.innerHTML = guestHtml;
     if (authBarMobile) authBarMobile.innerHTML = guestHtml;
     return;
@@ -4476,7 +4493,9 @@ function showLoginGate(authError) {
   if (microsoftAuthAvailable) {
     message.textContent =
       "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time.";
-    actions.innerHTML = `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`;
+    // Shares the branded button with the Microsoft logo used elsewhere, rather
+    // than a second look-alike that would drift out of step with it.
+    actions.innerHTML = microsoftSignInButton();
   } else {
     message.textContent =
       "Microsoft sign-in is not configured on this server yet, so there is no way to sign in. Ask an admin to set AZURE_CLIENT_ID and AZURE_CLIENT_SECRET.";
@@ -4488,51 +4507,18 @@ function startMicrosoftSignIn() {
   window.location.href = `${API_BASE}/api/auth/microsoft`;
 }
 
-function openAuthModal() {
-  renderAuthModal();
-  document.getElementById("authBackdrop").classList.add("show");
-  document.body.style.overflow = "hidden";
-}
-
-function closeAuthModal(event) {
-  if (event && event.target !== document.getElementById("authBackdrop")) return;
-  document.getElementById("authBackdrop").classList.remove("show");
-  document.body.style.overflow = "";
-}
-
-function renderAuthModal() {
-  document.getElementById("authContent").innerHTML = `
-    <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
-      <h3>Sign in</h3>
-      <p class="hint">${microsoftAuthAvailable
-        ? "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time."
-        : "Microsoft sign-in is not configured on this server yet."}</p>
-      <div id="authError"></div>
-      ${microsoftAuthAvailable ? microsoftSignInButton() : ""}
-    </div>
-  `;
-}
-
 async function logout() {
   try {
     await apiFetch("/api/auth/logout", { method: "POST" });
   } catch {
     // Clearing local state matters more than the round trip succeeding.
   }
-  currentUser = null;
-  myProgressData = null;
-  teamData = null;
-  approvedEmailsData = null;
-  teamDetailId = null;
-  briefingView = "list";
-  briefingActiveItem = null;
-  currentBriefingItems = [];
-  updateAuthUI();
-  if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") {
-    activeType = "ontap";
-    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
-  }
-  render();
+  clearSessionState();
+  // Back to the sign-in screen. Returning to a browsable shell would be
+  // misleading now that every endpoint behind it requires a session.
+  activeType = "ontap";
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
+  showLoginGate();
 }
 
 function collectNewAnnouncements() {
@@ -5257,7 +5243,7 @@ function selectShiftSurveyRating(rating) {
 
 async function renderShiftSurvey(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to submit your shift survey</h3><p class="hint">Anonymous end-of-shift feedback goes to the shift lead at the end of the day.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to submit your shift survey</h3><p class="hint">Anonymous end-of-shift feedback goes to the shift lead at the end of the day.</p><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
     return;
   }
 
@@ -5351,7 +5337,7 @@ async function submitShiftSurvey() {
 
 async function renderShiftReports(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to view shift reports</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to view shift reports</h3><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
     return;
   }
 
@@ -5510,7 +5496,7 @@ function closeShiftDigestModal(event) {
 
 async function renderMyProgress(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
     return;
   }
 
@@ -6910,7 +6896,7 @@ async function submitMerchIdea() {
 
 async function toggleMerchVote(ideaId) {
   if (!currentUser) {
-    openAuthModal("login");
+    showLoginGate();
     return;
   }
   try {
@@ -9435,8 +9421,6 @@ document.addEventListener("keydown", event => {
       closeBriefingModal();
     } else if (document.getElementById("shiftDigestBackdrop").classList.contains("show")) {
       closeShiftDigestModal();
-    } else if (document.getElementById("authBackdrop").classList.contains("show")) {
-      closeAuthModal();
     } else if (chatOpen) {
       toggleChatPanel(false);
     } else {

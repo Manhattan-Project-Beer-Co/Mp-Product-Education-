@@ -94,10 +94,11 @@ async function checkRefusesDefaultSecretInProduction() {
 }
 
 async function checkBootsAndServes() {
+  const dbPath = process.env.DB_PATH || freshDbPath("boot");
   const { child, getOutput } = startServer(
     baseEnv({
       JWT_SECRET: process.env.JWT_SECRET || "ci-smoke-test-secret",
-      DB_PATH: process.env.DB_PATH || freshDbPath("boot")
+      DB_PATH: dbPath
     })
   );
 
@@ -137,8 +138,51 @@ async function checkBootsAndServes() {
         fail(`${route} returned ${res.status}, expected 404 — password auth was removed`);
       }
     }
+
+    await checkBackupWasTaken(dbPath);
   } finally {
     child.kill("SIGKILL");
+  }
+}
+
+// A backup that is never verified is a backup you do not have. This asserts the
+// boot snapshot actually lands on disk, is non-empty, and is a real SQLite file
+// rather than a truncated copy.
+async function checkBackupWasTaken(dbPath) {
+  const backupDir = path.join(path.dirname(dbPath), "backups");
+  const deadline = Date.now() + 20_000;
+
+  let files = [];
+  while (Date.now() < deadline) {
+    files = fs.existsSync(backupDir)
+      ? fs.readdirSync(backupDir).filter((f) => /^training-\d{4}-\d{2}-\d{2}\.db$/.test(f))
+      : [];
+    if (files.length) break;
+    await sleep(500);
+  }
+
+  if (!files.length) {
+    fail(`no backup appeared in ${backupDir} within 20s of boot`);
+    return;
+  }
+  pass(`backup written at boot (${files[0]})`);
+
+  const backup = path.join(backupDir, files[0]);
+  const size = fs.statSync(backup).size;
+  const header = fs.readFileSync(backup).subarray(0, 16).toString("latin1");
+
+  if (size > 0 && header.startsWith("SQLite format 3")) {
+    pass(`backup is a valid SQLite file (${Math.round(size / 1024)} KB)`);
+  } else {
+    fail(`backup at ${backup} is ${size} bytes and does not carry a SQLite header`);
+  }
+
+  // Half-written snapshots must never be left behind under a usable name.
+  const partials = fs.readdirSync(backupDir).filter((f) => f.endsWith(".partial"));
+  if (partials.length === 0) {
+    pass("no .partial files left behind");
+  } else {
+    fail(`leftover partial backup(s): ${partials.join(", ")}`);
   }
 }
 

@@ -1,4 +1,5 @@
 node_modules/
 training.db
+backups/
 .env
 .DS_Store

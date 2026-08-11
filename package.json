@@ -10,7 +10,8 @@
     "dev": "node server.js",
     "seed": "node seed.js",
     "check": "node scripts/check-encoding.js && node scripts/check-syntax.js",
-    "check:boot": "node scripts/check-boot.js"
+    "check:boot": "node scripts/check-boot.js",
+    "backup": "node scripts/backup-now.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",

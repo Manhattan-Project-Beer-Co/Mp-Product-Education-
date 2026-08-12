@@ -118,29 +118,62 @@ const getTaps = () => cached("taps", TAPS_TTL_MS, () => request("/api/taps"));
 const BREWERY_PREFIX = "MP";
 
 /**
+ * Our brewery's id, resolved from its prefix.
+ *
+ * Looked up rather than hardcoded. The id happens to be identical in every
+ * environment because it is seeded, but a UUID written into this app would be a
+ * silent dependency on that staying true — and the prefix is the thing we
+ * actually mean.
+ */
+const getBreweryId = () =>
+  cached("brewery-id", CATALOG_TTL_MS, async () => {
+    const breweries = await request("/api/breweries");
+    const ours = breweries.find((brewery) => brewery.prefix === BREWERY_PREFIX);
+    if (!ours) {
+      // Loudly, not quietly: falling back to the unfiltered catalog here would
+      // put Four Corners beer on a Manhattan Project menu, which is exactly the
+      // thing this lookup exists to prevent.
+      throw new NucleusError(`No brewery with prefix ${BREWERY_PREFIX} in Nucleus.`);
+    }
+    return ours.id;
+  });
+
+/**
  * The MPBC catalog, inactive beers included.
  *
  * Inactive matters: a favourite beer is very often a discontinued one, and the
  * pickers must be able to offer it. The tap list is unaffected either way.
  *
- * **Filtering happens here on purpose.** Every list in the app — the beer list,
- * both pickers, the quiz's decoys — is built from this one call, so a Four
- * Corners beer cannot reach any of them by someone forgetting a filter at the
- * call site. `brewery` is nullable in Nucleus, and a product whose brewery is
- * unknown is not known to be ours, so it is excluded too — but noisily, because
- * silently hiding an MPBC beer would be its own kind of wrong.
+ * **Nucleus does the filtering**, via `brewery_id` — it is a shared catalog and
+ * also holds Four Corners' products, which have no place in a Manhattan Project
+ * app. Asking for what we want beats fetching everything and discarding some of
+ * it, and it settles the nullable-`brewery` case server-side.
+ *
+ * **The call site is the chokepoint on purpose.** Every list in the app — the
+ * beer list, both pickers, the quiz's decoys, the chat assistant — is built from
+ * this one function, so another brewery's beer cannot reach a list by someone
+ * forgetting to filter, and a list added later inherits the rule for free.
  */
 async function getProducts() {
   return cached("products", CATALOG_TTL_MS, async () => {
-    const all = await request("/api/products?include_inactive=true");
-    const unattributed = all.filter((product) => !product.brewery);
-    if (unattributed.length) {
+    const breweryId = await getBreweryId();
+    const products = await request(
+      `/api/products?include_inactive=true&brewery_id=${encodeURIComponent(breweryId)}`
+    );
+
+    // Defence in depth, and cheap. If the server-side filter ever stops doing
+    // what this depends on, the failure should be a log line rather than another
+    // brewery's beer quietly appearing on the menu.
+    const ours = products.filter(
+      (product) => product.brewery && product.brewery.prefix === BREWERY_PREFIX
+    );
+    if (ours.length !== products.length) {
       console.warn(
-        `Nucleus: ${unattributed.length} product(s) have no brewery and were hidden — ` +
-          unattributed.map((p) => `${p.mp_number} ${p.name}`).join(", ")
+        `Nucleus: brewery_id returned ${products.length - ours.length} product(s) that are not ` +
+          `${BREWERY_PREFIX} — dropped locally.`
       );
     }
-    return all.filter((product) => product.brewery && product.brewery.prefix === BREWERY_PREFIX);
+    return ours;
   });
 }
 

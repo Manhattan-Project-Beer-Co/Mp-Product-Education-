@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "dev:local": "node -e \"process.env.DEV_LOGIN='1'; require('./server.js')\"",
     "seed": "node seed.js",
     "check": "node scripts/check-encoding.js && node scripts/check-syntax.js",
     "check:boot": "node scripts/check-boot.js",

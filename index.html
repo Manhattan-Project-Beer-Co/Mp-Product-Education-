@@ -4145,7 +4145,7 @@ let currentUser = null;
 // same-origin requests — deliberately unreadable from JavaScript, so there is
 // no token to hold here.
 let microsoftAuthAvailable = false;
-let demoAuthAvailable = false;
+let devAuthAvailable = false;
 let teamDetailId = null;
 let myProgressData = null;
 let beerCheckins = {};
@@ -5496,10 +5496,13 @@ async function initAuth() {
   try {
     const providers = await fetch(`${API_BASE}/api/auth/providers`).then((r) => r.json());
     microsoftAuthAvailable = Boolean(providers.microsoft);
-    demoAuthAvailable = Boolean(providers.demo);
+    devAuthAvailable = Boolean(providers.dev);
   } catch {
+    // Fail closed. If we cannot tell what the server offers, offer nothing —
+    // guessing "dev sign-in is probably on" would put a sign-in form in front
+    // of a production outage.
     microsoftAuthAvailable = false;
-    demoAuthAvailable = true; // allow demo form attempt if providers call fails
+    devAuthAvailable = false;
   }
 
   const callback = consumeAuthCallbackParams();
@@ -5542,24 +5545,15 @@ function showLoginGate(authError) {
       message.textContent =
         "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time.";
     }
+    // Shares the branded button with the Microsoft logo used elsewhere, rather
+    // than a second look-alike that would drift out of step with it.
     if (actions) actions.innerHTML = microsoftSignInButton();
-  } else if (demoAuthAvailable) {
+  } else if (devAuthAvailable) {
     if (message) {
       message.textContent =
-        "Demo review login is enabled on this host. Use the manager test account below.";
+        "Local development server. Pick a seeded account to sign in as — this is not available on any deployed host.";
     }
-    if (actions) {
-      actions.innerHTML = `
-      <form class="auth-panel" style="margin:0;text-align:left;" onsubmit="submitDemoLogin(event)">
-        <label for="demoEmail">Email</label>
-        <input id="demoEmail" type="email" value="manager@mp.test" autocomplete="username" required>
-        <label for="demoPassword" style="margin-top:8px;">Password</label>
-        <input id="demoPassword" type="password" value="test1234" autocomplete="current-password" required>
-        <button class="game-next" type="submit" style="margin-top:12px;width:100%;">Log in</button>
-        <p class="hint" style="margin-top:10px;">manager@mp.test / test1234 · admin@mp.test / test1234</p>
-      </form>
-    `;
-    }
+    if (actions) actions.innerHTML = `<div id="devUserPicker" class="hint">Loading local accounts…</div>`;
   } else {
     if (message) {
       message.textContent =
@@ -5567,18 +5561,50 @@ function showLoginGate(authError) {
     }
     if (actions) actions.innerHTML = "";
   }
+
+  // Both branches above are synchronous so the gate paints immediately; the
+  // account list arrives after.
+  if (devAuthAvailable && !microsoftAuthAvailable) renderDevUserPicker();
 }
 
-async function submitDemoLogin(event) {
-  event.preventDefault();
-  const error = document.getElementById("loginError");
+async function renderDevUserPicker() {
+  const mount = document.getElementById("devUserPicker");
+  if (!mount) return;
+
+  let users = [];
   try {
-    await apiFetch("/api/auth/login", {
+    const data = await fetch(`${API_BASE}/api/auth/dev-users`).then((r) => r.json());
+    users = Array.isArray(data.users) ? data.users : [];
+  } catch {
+    mount.textContent = "Could not load local accounts. Is the server still running?";
+    return;
+  }
+
+  if (!users.length) {
+    mount.innerHTML = `No accounts in the local database yet. Run <code>npm run seed</code> and reload.`;
+    return;
+  }
+
+  mount.innerHTML = `
+    <div class="auth-panel" style="margin:0;text-align:left;">
+      <label for="devUserSelect">Sign in as</label>
+      <select id="devUserSelect">
+        ${users.map((u) => `<option value="${u.id}">${escapeHTML(u.name)} — ${escapeHTML(roleLabel(u.role))}</option>`).join("")}
+      </select>
+      <button class="game-next" type="button" style="margin-top:12px;width:100%;" onclick="submitDevLogin()">Sign in</button>
+      <p class="hint" style="margin-top:10px;">Development only — no password, localhost only, refuses to boot in production.</p>
+    </div>
+  `;
+}
+
+async function submitDevLogin() {
+  const error = document.getElementById("loginError");
+  const select = document.getElementById("devUserSelect");
+  if (!select) return;
+  try {
+    await apiFetch("/api/auth/dev-login", {
       method: "POST",
-      body: JSON.stringify({
-        email: document.getElementById("demoEmail")?.value,
-        password: document.getElementById("demoPassword")?.value
-      })
+      body: JSON.stringify({ userId: Number(select.value) })
     });
     window.location.reload();
   } catch (err) {

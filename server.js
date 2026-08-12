@@ -9,6 +9,8 @@ const Database = require("better-sqlite3");
 const { DB_PATH } = require("./db-path");
 const { startBackupSchedule } = require("./backup");
 const { buildContext, localAnswer, getBeers, universalSearch } = require("./chat-knowledge");
+const nucleus = require("./nucleus");
+const { NucleusError } = nucleus;
 const { registerFloorOpsApi } = require("./floor-ops-api");
 const { registerPortalPolishApi } = require("./portal-polish-api");
 const { TROUBLESHOOTING, GUEST_SCENARIOS, COMPLAINT_SCENARIOS } = require("./ops-content");
@@ -378,6 +380,31 @@ if (!userColumns.has("extra_roles")) {
 if (!userColumns.has("favorite_beer")) {
   db.exec(`ALTER TABLE users ADD COLUMN favorite_beer TEXT NOT NULL DEFAULT ''`);
 }
+// The Nucleus product id is what a beer actually *is*; the name beside it is a
+// display label kept for rows that predate the picker and for anything the
+// catalog cannot account for. Nullable-by-empty-string, matching favorite_beer:
+// `favorite_beer` was free text, so some values ("Still deciding") are not beers
+// at all and will never resolve. Blanking those to satisfy the schema would
+// throw away the person's actual answer.
+if (!userColumns.has("favorite_beer_product_id")) {
+  db.exec(`ALTER TABLE users ADD COLUMN favorite_beer_product_id TEXT NOT NULL DEFAULT ''`);
+}
+
+const checkinColumns = new Set(
+  db.prepare("PRAGMA table_info(beer_checkins)").all().map((c) => c.name)
+);
+if (!checkinColumns.has("nucleus_product_id")) {
+  db.exec(`ALTER TABLE beer_checkins ADD COLUMN nucleus_product_id TEXT`);
+}
+// Deliberately NOT unique, and UNIQUE(user_id, beer_name) is left in place.
+// Two spellings can resolve to one product — "Scotch ale" and "Scotch Ale", or
+// "MP0142" and the name Nucleus now gives it, "Easy Run" — so a unique index on
+// the id would make the backfill either fail or silently merge two of someone's
+// tasting notes into one. Deduplicating is a decision to take later, in front of
+// real rows, not something a migration should do quietly.
+db.exec(
+  `CREATE INDEX IF NOT EXISTS idx_beer_checkins_product ON beer_checkins(nucleus_product_id)`
+);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS shift_lead_duty (
@@ -651,7 +678,7 @@ function authRequired(req, res, next) {
 
 function getUserRow(userId) {
   return db.prepare(`
-    SELECT id, name, email, role, extra_roles, favorite_beer, created_at
+    SELECT id, name, email, role, extra_roles, favorite_beer, favorite_beer_product_id, created_at
     FROM users WHERE id = ?
   `).get(userId);
 }
@@ -675,6 +702,7 @@ function publicUser(row, options = {}) {
     role: normalizeRole(row.role),
     extra_roles: parseExtraRoles(row.extra_roles),
     favorite_beer: String(row.favorite_beer || "").trim(),
+    favorite_beer_product_id: String(row.favorite_beer_product_id || "").trim(),
     created_at: row.created_at,
     on_shift_lead_duty: onShiftLeadDuty || Boolean(shiftContext?.isShiftLeadNow),
     shift: shiftContext
@@ -1579,9 +1607,39 @@ app.get("/api/auth/me", authRequired, (req, res) => {
   res.json({ user: publicUser(row) });
 });
 
-app.patch("/api/me/favorite-beer", authRequired, (req, res) => {
-  const favoriteBeer = String(req.body.favoriteBeer || req.body.favorite_beer || "").trim().slice(0, 80);
-  db.prepare("UPDATE users SET favorite_beer = ? WHERE id = ?").run(favoriteBeer, req.user.id);
+app.patch("/api/me/favorite-beer", authRequired, async (req, res) => {
+  const productId = String(req.body.productId || req.body.product_id || "").trim();
+
+  // Clearing is still allowed — an empty pick means "no favourite", which is a
+  // real answer and not the same as never having been asked.
+  if (!productId) {
+    db.prepare(
+      "UPDATE users SET favorite_beer = '', favorite_beer_product_id = '' WHERE id = ?"
+    ).run(req.user.id);
+    const cleared = getUserRow(req.user.id);
+    return cleared
+      ? res.json({ ok: true, user: publicUser(cleared) })
+      : res.status(404).json({ error: "User not found." });
+  }
+
+  // The name is resolved from the catalog rather than taken from the request:
+  // this field used to be a free-text box, which is how "Still deciding" ended
+  // up stored as a beer. The id decides, and the name is only a display label
+  // written from the same source that supplied the id.
+  let product;
+  try {
+    product = (await nucleus.getProducts()).find((p) => p.id === productId);
+  } catch (error) {
+    return nucleusFailed(res, error, "the beer catalog");
+  }
+  if (!product) {
+    return res.status(400).json({ error: "That beer is not in the catalog." });
+  }
+
+  db.prepare(
+    "UPDATE users SET favorite_beer = ?, favorite_beer_product_id = ? WHERE id = ?"
+  ).run(String(product.name).slice(0, 80), product.id, req.user.id);
+
   const row = getUserRow(req.user.id);
   if (!row) return res.status(404).json({ error: "User not found." });
   res.json({ ok: true, user: publicUser(row) });
@@ -1617,11 +1675,17 @@ function getUnlockedFavoriteIds(guesserId) {
   );
 }
 
-app.get("/api/games/favorite-beer-quiz", authRequired, (req, res) => {
+app.get("/api/games/favorite-beer-quiz", authRequired, async (req, res) => {
+  // Only favourites that resolve to a real beer. This used to be any non-empty
+  // string, which meant the quiz could ask what someone's favourite beer is and
+  // expect the answer "Still deciding" — a leftover of the free-text box the
+  // picker replaced. A legacy value gains an id the moment its owner re-picks,
+  // or when scripts/backfill-beer-uuids.js matches it.
   const staff = db.prepare(`
     SELECT id, name, favorite_beer
     FROM users
     WHERE TRIM(COALESCE(favorite_beer, '')) != ''
+      AND TRIM(COALESCE(favorite_beer_product_id, '')) != ''
       AND id != ?
     ORDER BY name ASC
   `).all(req.user.id);
@@ -1636,8 +1700,18 @@ app.get("/api/games/favorite-beer-quiz", authRequired, (req, res) => {
   }
 
   const unlocked = getUnlockedFavoriteIds(req.user.id);
-  const allFavorites = [...new Set(staff.map(row => String(row.favorite_beer).trim()).filter(Boolean))];
-  const decoyPool = [...new Set([...allFavorites, ...FAV_BEER_DECOYS])];
+
+  // Decoys come from the catalog, so every wrong answer is a real beer. They
+  // used to be drawn from whatever colleagues had typed into the old free-text
+  // box, which meant "Still deciding" could be offered as a plausible guess.
+  // The hardcoded list survives only as a fallback for Nucleus being down.
+  let decoyPool = FAV_BEER_DECOYS;
+  try {
+    const products = await nucleus.getProducts();
+    if (products.length) decoyPool = products.map((p) => String(p.name).trim());
+  } catch (error) {
+    console.warn("Favourite-beer quiz: falling back to built-in decoys —", error.message);
+  }
 
   const ordered = [
     ...shuffleArray(staff.filter(row => !unlocked.has(row.id))),
@@ -1854,6 +1928,10 @@ app.get("/api/beer-checkins/me", authRequired, async (req, res) => {
 
 app.post("/api/beer-checkins", authRequired, (req, res) => {
   const beerName = String(req.body.beerName || "").trim();
+  // Sent by the beer card the check-in was opened from, so it is the id of the
+  // beer actually on screen. Optional rather than required: a check-in saved
+  // before this shipped has none, and refusing it would lose the note.
+  const productId = String(req.body.productId || "").trim();
   const ratingRaw = req.body.rating;
   const notes = String(req.body.notes || "").trim().slice(0, 2000);
   const tastedAt = String(req.body.tastedAt || "").trim();
@@ -1873,14 +1951,16 @@ app.post("/api/beer-checkins", authRequired, (req, res) => {
   const tastedAtValue = /^\d{4}-\d{2}-\d{2}/.test(tastedAt) ? tastedAt : null;
 
   db.prepare(`
-    INSERT INTO beer_checkins (user_id, beer_name, rating, notes, tasted_at, updated_at)
-    VALUES (?, ?, ?, ?, COALESCE(?, datetime('now')), datetime('now'))
+    INSERT INTO beer_checkins
+      (user_id, beer_name, nucleus_product_id, rating, notes, tasted_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, COALESCE(?, datetime('now')), datetime('now'))
     ON CONFLICT(user_id, beer_name) DO UPDATE SET
+      nucleus_product_id = COALESCE(excluded.nucleus_product_id, beer_checkins.nucleus_product_id),
       rating = excluded.rating,
       notes = excluded.notes,
       tasted_at = COALESCE(excluded.tasted_at, beer_checkins.tasted_at),
       updated_at = datetime('now')
-  `).run(req.user.id, beerName, rating, notes, tastedAtValue);
+  `).run(req.user.id, beerName, productId || null, rating, notes, tastedAtValue);
 
   res.json({ ok: true, beerName });
 });
@@ -3113,6 +3193,87 @@ app.get("/api/scenarios", (req, res) => {
     complaint: COMPLAINT_SCENARIOS,
     troubleshooting: TROUBLESHOOTING
   });
+});
+
+// ── Nucleus ────────────────────────────────────────────────────────────────
+// The browser never talks to Nucleus directly. The bearer key would be a leaked
+// credential in page JavaScript, and Nucleus's CORS admits only its own frontend
+// origin, so a direct call is refused anyway. These routes are the seam.
+
+function nucleusFailed(res, error, what) {
+  if (error instanceof NucleusError) {
+    console.error(`Nucleus: ${error.message}`);
+    // 502, not 500: this app is fine, its upstream is not — and the distinction
+    // is what tells whoever is paged where to look.
+    return res.status(502).json({ error: `Could not load ${what} from Nucleus.` });
+  }
+  console.error(`Nucleus ${what} failed:`, error);
+  return res.status(500).json({ error: `Could not load ${what}.` });
+}
+
+app.get("/api/beers", authRequired, async (req, res) => {
+  if (!nucleus.configured()) {
+    return res.status(503).json({
+      error: "Beer data is not configured. Set NUCLEUS_BASE_URL and NUCLEUS_API_KEY."
+    });
+  }
+  try {
+    res.json({ beers: await nucleus.getBeerRows() });
+  } catch (error) {
+    return nucleusFailed(res, error, "the beer list");
+  }
+});
+
+// Backs every beer picker. The whole catalog, inactive included — a favourite
+// beer is very often a discontinued one.
+app.get("/api/beers/options", authRequired, async (req, res) => {
+  if (!nucleus.configured()) return res.json({ options: [] });
+  try {
+    res.json({ options: await nucleus.getPickerOptions() });
+  } catch (error) {
+    return nucleusFailed(res, error, "the beer catalog");
+  }
+});
+
+app.get("/api/taps", authRequired, async (req, res) => {
+  if (!nucleus.configured()) return res.json({ taps: [] });
+  try {
+    res.json({ taps: await nucleus.getTaps(), canWrite: nucleus.canWrite() });
+  } catch (error) {
+    return nucleusFailed(res, error, "the tap list");
+  }
+});
+
+app.put("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async (req, res) => {
+  const productId = String(req.body.productId || req.body.product_id || "").trim();
+  if (!productId) return res.status(400).json({ error: "A beer is required." });
+  if (!nucleus.canWrite()) {
+    // Said plainly rather than as a 502 later: a read-only key here is a
+    // configuration choice, and locally it is the *correct* one — the alternative
+    // is a production write key on a laptop, where every click edits the real
+    // taproom wall.
+    return res.status(503).json({
+      error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_WRITE to change taps."
+    });
+  }
+  try {
+    res.json({ tap: await nucleus.setTapProduct(req.params.tapId, productId) });
+  } catch (error) {
+    return nucleusFailed(res, error, "the tap");
+  }
+});
+
+app.delete("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async (req, res) => {
+  if (!nucleus.canWrite()) {
+    return res.status(503).json({
+      error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_WRITE to change taps."
+    });
+  }
+  try {
+    res.json({ tap: await nucleus.clearTap(req.params.tapId) });
+  } catch (error) {
+    return nucleusFailed(res, error, "the tap");
+  }
 });
 
 // The page loads four browser scripts from disk, so something has to serve

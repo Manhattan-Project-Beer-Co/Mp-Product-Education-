@@ -896,7 +896,8 @@
     align-items: center;
   }
 
-  .favorite-beer-row input {
+  .favorite-beer-row input,
+  .favorite-beer-row select {
     flex: 1;
     min-width: 180px;
     padding: 10px 12px;
@@ -906,6 +907,52 @@
     color: inherit;
     font: inherit;
   }
+
+  /* The dropdown's own list is drawn by the OS, so it ignores the dark palette
+     above — set both explicitly or the options render as dark-on-dark. */
+  .favorite-beer-row select option {
+    background: #1c1f26;
+    color: #f2f4f8;
+  }
+
+  .favorite-beer-legacy {
+    margin: 10px 0 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+
+  .tap-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .tap-number {
+    flex: 0 0 42px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    opacity: 0.8;
+  }
+
+  .tap-beer { flex: 1; min-width: 0; }
+
+  .tap-beer select {
+    width: 100%;
+    max-width: 420px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.25);
+    color: inherit;
+    font: inherit;
+  }
+
+  .tap-beer select option { background: #1c1f26; color: #f2f4f8; }
+
+  .tap-meta { font-size: 0.82rem; opacity: 0.7; margin-top: 4px; }
 
   .favorite-beer-row .game-next {
     margin: 0;
@@ -4014,6 +4061,7 @@
       <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
       <button type="button" class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</button>
       <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
+      <button type="button" class="tab tab-taps-only" data-type="taps" style="display:none;">Taps</button>
       <button type="button" class="tab tab-team-only" data-type="team" style="display:none;">Team</button>
     </nav>
     <div class="sidebar-user" id="sidebarUser">
@@ -4152,6 +4200,7 @@ let beerCheckins = {};
 let myTastingData = null;
 let beerCheckinsLoaded = false;
 let beerModalBeer = "";
+let beerModalProductId = "";
 let beerModalRating = 0;
 let teamData = null;
 let approvedEmailsData = null;
@@ -4180,21 +4229,12 @@ function consumeAuthCallbackParams() {
 
   return { authError };
 }
-const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
+// Beers come from Nucleus via /api/beers. The tap-override table that used to
+// live here — taps 4, 16 and 17 hardcoded, "keep in sync with chat-knowledge.js
+// until the tap spreadsheet is updated" — is gone with it. Keeping the same
+// three tap numbers correct in two files was the cost of having no real source
+// of truth; tap state now has exactly one home.
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
-
-/** Keep in sync with chat-knowledge.js until the tap spreadsheet is updated. */
-const BEER_TAP_OVERRIDES = [
-  { name: "Oktoberfest", onTap: 4 },
-  { name: "Diffusion", onTap: 16 },
-  { name: "Black Rain", onTap: 17 },
-  {
-    name: "Cold Brew",
-    description:
-      "Velvety, bold, and refined—diesel fuel in the best way. Smooth going down, with a serious caffeine punch."
-  }
-];
-const BEER_TAP_RELEASES = [4, 16, 17];
 
 const BEER_RATING_LABELS = {
   1: "Not for me",
@@ -5082,18 +5122,22 @@ async function loadData() {
   const content = document.getElementById("content");
 
   try {
-    const beerResponse = await fetch(BEER_CSV_URL, { cache: "no-store" });
+    // Beers come from Nucleus, through this app's server — the API key must not
+    // reach the browser, and Nucleus's CORS would refuse a direct call anyway.
+    // The rows arrive in the shape this page already reads, so everything below
+    // — filters, search, games, cards — is untouched by the move off the sheet.
+    const beerResponse = await fetch("/api/beers", { cache: "no-store" });
 
     if (!beerResponse.ok) {
-      throw new Error("Beer spreadsheet returned " + beerResponse.status);
+      const body = await beerResponse.json().catch(() => ({}));
+      throw new Error(body.error || "Beer list returned " + beerResponse.status);
     }
 
-    const beerText = await beerResponse.text();
-    beers = applyBeerTapOverrides(parseCSV(beerText).filter(b =>
+    beers = (await beerResponse.json()).beers.filter(b =>
       b.Name &&
       b.Name.trim() !== "" &&
       b.Name.trim() !== "?"
-    ));
+    );
 
     if (FOOD_CSV_URL !== "PASTE_YOUR_FOOD_CSV_LINK_HERE") {
       try {
@@ -5121,7 +5165,7 @@ async function loadData() {
     content.innerHTML = `
       <div class="status">
         <strong>The beer list could not be loaded.</strong>
-        Make sure the Google Sheet is still published to the web, then refresh the page.
+        ${escapeHTML(error.message || "Nucleus could not be reached.")}
       </div>
     `;
   }
@@ -5133,33 +5177,6 @@ function col(item, field) {
 
 function beerNameMatches(beer, targetName) {
   return col(beer, "Name").toLowerCase() === targetName.trim().toLowerCase();
-}
-
-function applyBeerTapOverrides(rows) {
-  const patched = rows.map(b => ({ ...b }));
-  const assignedNames = new Set(
-    BEER_TAP_OVERRIDES.filter(o => o.onTap).map(o => o.name.trim().toLowerCase())
-  );
-
-  for (const beer of patched) {
-    const tapNum = Number(getTapNumber(beer));
-    if (
-      tapNum &&
-      BEER_TAP_RELEASES.includes(tapNum) &&
-      !assignedNames.has(col(beer, "Name").toLowerCase())
-    ) {
-      beer["On Tap"] = "";
-    }
-  }
-
-  for (const override of BEER_TAP_OVERRIDES) {
-    const beer = patched.find(b => beerNameMatches(b, override.name));
-    if (!beer) continue;
-    if (override.onTap) beer["On Tap"] = `Yes- Tap ${override.onTap}`;
-    if (override.description) beer["Description / ingredients"] = override.description;
-  }
-
-  return patched;
 }
 
 function getFlavorProfile(item) {
@@ -5258,6 +5275,16 @@ function shuffle(arr) {
 }
 
 function render() {
+  // Beer pickers are rendered as markup by whichever panel needs one, then
+  // filled here once the nodes exist. Keeping it in render() means any panel
+  // that adds a `<select data-selected>` gets populated without wiring its own
+  // callback, and the catalog is still only fetched once per page load.
+  queueMicrotask(() => {
+    document
+      .querySelectorAll("select[data-selected]:not([data-populated])")
+      .forEach((select) => populateBeerSelect(select));
+  });
+
   const content = document.getElementById("content");
   const filterWrap = document.getElementById("filterWrap");
   const searchWrap = document.getElementById("searchWrap");
@@ -5302,6 +5329,9 @@ function render() {
   } else if (activeType === "games") {
     destroyCharts();
     renderGames(content);
+  } else if (activeType === "taps") {
+    destroyCharts();
+    renderTaps(content);
   } else if (activeType === "features") {
     destroyCharts();
     renderFeaturesTab(content);
@@ -5458,6 +5488,11 @@ function updateAuthUI() {
   });
   document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
     el.style.display = currentUser && currentUser.permissions?.viewShiftReports ? "" : "none";
+  });
+  // Changing a tap writes to Nucleus, which every other MPBC app reads, so this
+  // is manager-gated here as well as server-side.
+  document.querySelectorAll(".tab-taps-only").forEach(el => {
+    el.style.display = currentUser && currentUser.permissions?.manageTeam ? "" : "none";
   });
   document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
     el.style.display = canSubmitShiftSurvey() ? "" : "none";
@@ -5980,7 +6015,7 @@ function renderTastingCoverage(summary) {
   `;
 }
 
-function renderBeerCheckinPanel(beerName) {
+function renderBeerCheckinPanel(beerName, productId) {
   if (!currentUser) {
     return `
       <div class="checkin-panel">
@@ -5993,6 +6028,9 @@ function renderBeerCheckinPanel(beerName) {
 
   const checkin = getBeerCheckin(beerName);
   beerModalBeer = beerName;
+  // The check-in is opened from a specific beer's card, so the identity is
+  // already known — no need to ask, and no chance of a typo standing in for it.
+  beerModalProductId = productId || "";
   beerModalRating = checkin?.rating ? Math.round(Number(checkin.rating)) : 0;
 
   return `
@@ -6083,7 +6121,11 @@ function renderFavoriteBeerPrompt() {
   const dismissed = sessionStorage.getItem("favorite-beer-dismissed") === "1";
   if (!hasFavorite && dismissed) return "";
 
-  const value = escapeForAttribute(currentUser.favorite_beer || "");
+  const value = currentUser.favorite_beer || "";
+  // A favourite saved before the picker existed, whose text the catalog cannot
+  // account for. It is shown rather than silently dropped — it is the person's
+  // own answer — with a nudge to re-pick so it gains an id.
+  const unresolvedFavorite = Boolean(value) && !currentUser.favorite_beer_product_id;
   const title = hasFavorite ? "Your favorite beer" : "What's your favorite beer?";
   const blurb = hasFavorite
     ? "Teammates unlock yours by guessing it in Staff Favorites. You can update anytime."
@@ -6094,10 +6136,17 @@ function renderFavoriteBeerPrompt() {
       <h3>${title}</h3>
       <p>${blurb}</p>
       <div class="favorite-beer-row">
-        <input id="favoriteBeerInput" type="text" maxlength="80" placeholder="e.g. Black Matter Nitro" value="${value}" autocomplete="off">
+        <select id="favoriteBeerInput" data-selected="${escapeForAttribute(currentUser.favorite_beer_product_id || "")}">
+          <option value="">Choose a beer…</option>
+        </select>
         <button type="button" class="game-next" onclick="saveFavoriteBeer()">${hasFavorite ? "Update" : "Save"}</button>
         ${!hasFavorite ? `<button type="button" class="briefing-back" style="margin:0;" onclick="dismissFavoriteBeerPrompt()">Later</button>` : ""}
       </div>
+      ${unresolvedFavorite ? `
+        <p class="favorite-beer-legacy">
+          Saved as <strong>${escapeHTML(value)}</strong>, which isn't in the catalog —
+          pick it from the list to link it up.
+        </p>` : ""}
       <div class="favorite-beer-error" id="favoriteBeerError" hidden></div>
     </div>
   `;
@@ -6106,6 +6155,135 @@ function renderFavoriteBeerPrompt() {
 function dismissFavoriteBeerPrompt() {
   sessionStorage.setItem("favorite-beer-dismissed", "1");
   if (activeType === "game" && !activeGame) render();
+}
+
+// ── Taps ───────────────────────────────────────────────────────────────────
+// The tap wall, editable. This is the only place the app writes to Nucleus, and
+// what it writes is read by every other MPBC app — so a change here is a change
+// to the real menu, not a local note.
+
+let tapsState = { taps: [], canWrite: false, loaded: false, error: "" };
+
+async function renderTaps(content) {
+  if (!tapsState.loaded) {
+    content.innerHTML = `<div class="status">Loading taps…</div>`;
+    try {
+      const data = await apiFetch("/api/taps");
+      tapsState = { taps: data.taps || [], canWrite: Boolean(data.canWrite), loaded: true, error: "" };
+    } catch (error) {
+      tapsState = { taps: [], canWrite: false, loaded: true, error: error.message || "Could not load taps." };
+    }
+  }
+
+  if (tapsState.error) {
+    content.innerHTML = `<div class="status"><strong>Taps could not be loaded.</strong> ${escapeHTML(tapsState.error)}</div>`;
+    return;
+  }
+
+  const readOnlyNote = tapsState.canWrite
+    ? ""
+    : `<div class="status" style="margin-bottom:14px;">
+         <strong>Read-only.</strong> This app has a read key for Nucleus, so taps can be
+         viewed but not changed. Set <code>NUCLEUS_API_KEY_WRITE</code> to enable editing.
+       </div>`;
+
+  const rows = [...tapsState.taps]
+    .sort((a, b) => (a.sort_order - b.sort_order) || (a.tap_number - b.tap_number))
+    .map(tap => {
+      const pouring = tap.current_product;
+      return `
+        <div class="tap-row">
+          <div class="tap-number">${tap.tap_number}</div>
+          <div class="tap-beer">
+            <select data-selected="${escapeForAttribute(tap.current_product_id || "")}"
+                    id="tapSelect-${escapeForAttribute(tap.id)}"
+                    ${tapsState.canWrite ? "" : "disabled"}>
+              <option value="">— empty —</option>
+            </select>
+            <div class="tap-meta">${pouring
+              ? `${escapeHTML(pouring.name)}${pouring.style ? ` · ${escapeHTML(pouring.style)}` : ""}` +
+                `${pouring.abv ? ` · ${escapeHTML(String(pouring.abv))}%` : ""}`
+              : "Nothing pouring"}</div>
+          </div>
+          ${tapsState.canWrite ? `
+            <button type="button" class="game-next" onclick="saveTap('${escapeForAttribute(tap.id)}')">Save</button>` : ""}
+        </div>
+      `;
+    })
+    .join("");
+
+  content.innerHTML = `
+    <div class="tap-admin">
+      <h2>Tap wall</h2>
+      <p class="detail-label">
+        Straight from Nucleus. Changing a tap here updates it for every app that reads the catalog.
+      </p>
+      ${readOnlyNote}
+      <div id="tapSaveError" class="auth-error" style="display:none;"></div>
+      ${rows || `<div class="status">No taps are configured in Nucleus yet.</div>`}
+    </div>
+  `;
+}
+
+async function saveTap(tapId) {
+  const select = document.getElementById(`tapSelect-${tapId}`);
+  const errorEl = document.getElementById("tapSaveError");
+  if (!select) return;
+  if (errorEl) errorEl.style.display = "none";
+
+  const productId = String(select.value || "").trim();
+  try {
+    // No product selected means the keg kicked — clearing is a DELETE, not a
+    // write of nothing, because Nucleus keeps the fixture and empties the pour.
+    await apiFetch(`/api/taps/${tapId}/product`, {
+      method: productId ? "PUT" : "DELETE",
+      ...(productId ? { body: JSON.stringify({ productId }) } : {})
+    });
+    tapsState.loaded = false;
+    render();
+  } catch (error) {
+    if (errorEl) {
+      errorEl.style.display = "";
+      errorEl.textContent = error.message || "Could not change the tap.";
+    }
+  }
+}
+
+// The catalog, for any control that asks someone to name a beer. Fetched once
+// per page load: it is the full product list, inactive included, because a
+// favourite beer is very often one we no longer brew.
+let beerOptionsCache = null;
+
+async function loadBeerOptions() {
+  if (beerOptionsCache) return beerOptionsCache;
+  try {
+    const data = await apiFetch("/api/beers/options");
+    beerOptionsCache = data.options || [];
+  } catch (error) {
+    console.warn("Beer catalog could not be loaded:", error);
+    beerOptionsCache = [];
+  }
+  return beerOptionsCache;
+}
+
+/** Fill a <select> with the catalog, preselecting its data-selected id. */
+async function populateBeerSelect(select) {
+  if (!select || select.dataset.populated === "1") return;
+  const options = await loadBeerOptions();
+  if (!options.length) return;
+
+  const selected = select.dataset.selected || "";
+  select.insertAdjacentHTML(
+    "beforeend",
+    options
+      .map(
+        (beer) =>
+          `<option value="${escapeForAttribute(beer.id)}"${beer.id === selected ? " selected" : ""}>` +
+          `${escapeHTML(beer.name)}${beer.style ? ` — ${escapeHTML(beer.style)}` : ""}</option>`
+      )
+      .join("")
+  );
+  select.dataset.populated = "1";
 }
 
 async function saveFavoriteBeer() {
@@ -6117,11 +6295,11 @@ async function saveFavoriteBeer() {
   }
   if (!currentUser) return;
 
-  const favoriteBeer = String(input?.value || "").trim();
-  if (!favoriteBeer) {
+  const productId = String(input?.value || "").trim();
+  if (!productId) {
     if (errorEl) {
       errorEl.hidden = false;
-      errorEl.textContent = "Enter a beer name (house tap or otherwise).";
+      errorEl.textContent = "Pick a beer from the list.";
     }
     return;
   }
@@ -6129,7 +6307,7 @@ async function saveFavoriteBeer() {
   try {
     const data = await apiFetch("/api/me/favorite-beer", {
       method: "PATCH",
-      body: JSON.stringify({ favoriteBeer })
+      body: JSON.stringify({ productId })
     });
     currentUser = data.user;
     sessionStorage.removeItem("favorite-beer-dismissed");
@@ -11530,7 +11708,7 @@ function openBeerByName(name) {
       </div>
     ` : ""}
 
-    ${beers.some(b => b.Name === name) ? renderBeerCheckinPanel(col(item, "Name")) : ""}
+    ${beers.some(b => b.Name === name) ? renderBeerCheckinPanel(col(item, "Name"), item.nucleus_product_id) : ""}
   `;
 
   document.getElementById("modalBackdrop").classList.add("show");

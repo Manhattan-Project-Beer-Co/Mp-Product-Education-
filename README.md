@@ -13,12 +13,12 @@ change roles on the Team page.
 
 ## Where the product information comes from
 
-Four separate sources, which is the first thing worth knowing before changing
+Seven separate sources, which is the first thing worth knowing before changing
 anything.
 
 | Content | Source today | Editable by |
 |---|---|---|
-| **Beers / tap list** | Published Google Sheet (CSV) — **moving to Nucleus** | Whoever holds the sheet |
+| **Beers / tap list** | Nucleus (`nucleus.js` → `/api/beers`) | Managers, on the Taps tab |
 | Food, coffee, wine & cocktails | Hardcoded arrays in `index.html` | Developers only |
 | Merch, ops inventory | SQLite (`training.db`) | Staff, in the app |
 | SOPs | `sops-catalog.js`, synced into SQLite on server start | Developers seed, admins edit |
@@ -26,49 +26,136 @@ anything.
 | Guest reviews | Google Places + Yelp APIs (optional) | External |
 | Staff schedule awareness | 7shifts API (`seven-shifts.js`) | External |
 
-### 1. Beers — a published Google Sheet
+### 1. Beers — Nucleus
 
-Still the live beer feed today, and the one moving to Nucleus. The URL is
-hardcoded in two places that must be kept in step — `index.html`
-(`BEER_CSV_URL`) and `chat-knowledge.js`:
+Nucleus is MPBC's catalog service and the source of truth for beer. Everything
+about a beer — name, style, ABV, tasting notes, guest guidance, gluten-reduced,
+and which tap it is pouring from — comes from there.
 
+`nucleus.js` is the only thing that talks to it, and it runs **server-side
+only**, for two independent reasons: the bearer key would be a leaked credential
+in page JavaScript, and Nucleus's CORS admits only its own frontend origin, so a
+browser-direct call is refused anyway. The browser reaches it through
+`/api/beers`, `/api/beers/options` and `/api/taps`.
+
+**The rows are shaped like the old spreadsheet** — `"Name"`, `"On Tap"`,
+`"Guest Guidance"` and the rest — because index.html's filters, search, games,
+cards and chat all read those keys through `col()`. Keeping the shape meant the
+cutover changed the data source and almost nothing else.
+
+Two endpoints are joined on product id, not one: `GET /api/taps` embeds only
+`ProductMenuRef`, a narrow menu projection that leaves out `guest_guidance` and
+`key_ingredients` — the two fields staff lean on hardest — so the catalog is
+fetched alongside it.
+
+| Row key | Nucleus |
+|---|---|
+| `Name`, `Number` | `name`, `mp_number` |
+| `Style` | `style` |
+| `abv` | `abv` — already resolved, see below |
+| `Description / ingredients` | `key_ingredients` |
+| `Flavor Profile` | `tasting_notes` |
+| `Guest Guidance` | `guest_guidance` |
+| `Staff Notes` | `sensory_profile` |
+| `Gluten-Reduced` | `is_gluten_reduced` |
+| `On Tap`, `Tap` | `Tap.tap_number` |
+| `New Tap` | derived from `Tap.tapped_at` |
+| `nucleus_product_id` | `id` — the stable identifier |
+
+**Do not build an ABV ladder here.** `abv` arrives resolved by Nucleus's
+`services/abv.py` in one priority order — TABC-approved label value, else
+calculated from og/fg, else the estimate — and `abv_source` says which rung
+answered. The arithmetic is deliberately matched to Gadget's so the two apps
+cannot print different numbers for one beer. Nucleus serialises it as a
+fixed-scale decimal (`6.2000`), which `formatAbv` trims for display.
+
+Caching lives in `nucleus.js`: 60s for taps, which change when a keg kicks, and
+10 minutes for the catalog, which is edited by hand. A tap write clears both.
+
+#### Manhattan Project beer only
+
+Nucleus is a shared catalog — it holds Four Corners' products (prefix `FC`)
+alongside MPBC's (`MP`). This is a Manhattan Project app, so it shows MPBC beer
+and nothing else: 141 products, not 155.
+
+**The filter lives in `getProducts()`, deliberately.** Every list in the app —
+the beer list, both pickers, the favourite-beer quiz's decoys, the chat
+assistant — is built from that one call, so a Four Corners beer cannot reach any
+of them by someone forgetting a filter at a call site. Add a new list and it
+inherits the rule for free.
+
+`brewery` is nullable in Nucleus, and a product whose brewery is unknown is not
+known to be ours, so it is excluded too — but logged, because silently hiding an
+MPBC beer would be its own kind of wrong. Today every product has a brewery.
+
+One deliberate exception: the **Taps** tab shows whatever is actually pouring,
+including a beer the picker would not offer. A tap wall that lied about its own
+contents would be worse than one showing an unexpected name, and the row spells
+the beer out in full for exactly that case.
+
+#### What this fixed
+
+The sheet and the code had drifted apart, and three features had been quietly
+dead for as long as anyone could remember:
+
+- **Tap numbers now appear.** The sheet had no `Tap` column, so the beer card
+  and the chat assistant never told staff which tap a beer was on. Nucleus has
+  `tap_number`.
+- **"New Taps" works again.** It keyed on a `New Tap` column that did not exist
+  in the sheet (it was called `Recently Tapped`, and was empty on every row), so
+  the filter, the rotation banner, the daily-briefing flag and one War Games
+  round were all permanently empty. It is now derived from `tapped_at`.
+- **The hardcoded tap overrides are gone.** `BEER_TAP_OVERRIDES` pinned taps 4,
+  16 and 17 in *two* files, commented "local tap/menu patches until the
+  spreadsheet is updated". The spreadsheet was never updated, so for those taps
+  the truth lived in application code. Tap state now has one home.
+
+#### Changing what is pouring
+
+The **Taps** tab — manager-gated, and the only place this app writes to Nucleus.
+A change there is a change to the real menu that every MPBC app reads, so it
+needs `NUCLEUS_API_KEY_WRITE`; with only a read key the screen loads read-only
+and says so. Clearing a tap is a `DELETE`, because Nucleus keeps the fixture and
+empties the pour — a tap pouring nothing is `current_product_id IS NULL`, never
+a deleted row.
+
+#### Beers are referenced by id, never by name
+
+Two tables point at a beer: `beer_checkins` (a staff tasting note) and
+`users.favorite_beer`. Both now carry a Nucleus product id alongside the text.
+
+The id is what a beer *is*; the name beside it is a display label. Names get
+corrected — the taproom list called `MP0142` by its number long enough to reach
+the database that way, while Nucleus knows it as **Easy Run** — and `(mp_number,
+variant)` is no better, since a variant can be renumbered.
+
+Both id columns are **nullable, deliberately**. `favorite_beer` used to be a
+free-text box, so some stored values are not beers at all ("Still deciding" is a
+real one) and will never resolve. Unresolved rows keep their text and are shown
+as they are: a tasting note is the person's own, and deleting it to satisfy a
+schema is the wrong trade.
+
+`UNIQUE(user_id, beer_name)` is left in place and the id index is **not**
+unique. Two spellings can resolve to one product — "Scotch ale" and "Scotch
+Ale", or "MP0142" and "Easy Run" — so a unique index would make a backfill
+either fail or silently merge two of someone's notes.
+
+Both inputs are now pickers backed by the catalog, so no new unresolved rows are
+created. The favourite-beer dropdown offers **inactive beers too**, because a
+favourite is very often one we no longer brew.
+
+To resolve what is already stored:
+
+```bash
+node scripts/backfill-beer-uuids.js            # report only
+node scripts/backfill-beer-uuids.js --apply    # write the ids
 ```
-https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv
-```
 
-The browser fetches it on load (`loadData()`); the server fetches the same CSV
-for the training-assistant chat, cached 5 minutes (`chat-knowledge.js`,
-`getBeers()`). It is published-to-web, so it is read anonymously with no API key
-— anyone with the link can read it. That `/pub?…` link is a publish snapshot and
-its `2PACX-…` id is a publish token, **not** the document id, so the editable
-sheet cannot be reached from it; find the source sheet in Drive.
+It reports by default. Run it dry against a copy of the production database
+first — the output is the list of values the catalog cannot account for, which
+is exactly what a human needs to look at before anything is written. Names a
+person can identify go in the script's `ALIASES` map; the rest stay unresolved.
 
-Columns: `Number`, `Name`, `Style`, `abv`, `Description / ingredients`,
-`Food Pairings`, `Gluten-Reduced`, `Flavor Profile`, `Guest Guidance`, `On Tap`,
-`Recently Tapped`. Roughly 127 beer rows, of which ~21 carry `On Tap` (format
-`"Yes- Tap 1"`); the rest are the off-tap archive behind "All Beers".
-
-`parseCSV` trims header names, so the trailing spaces several headers carry in
-the sheet do not matter.
-
-**Known column mismatches** between the sheet and the code — all currently live:
-
-- **`New Tap` does not exist in the sheet.** The sheet calls it
-  `Recently Tapped`, *and* that column is empty on every row. So
-  `isYes(item["New Tap"])` is permanently false, silently disabling four
-  features: the "New Taps" filter button, the new-tap rotation banner, the
-  daily-briefing new-tap flag, and the War Games round whose pool is new taps.
-  Fixing it needs both a rename and someone actually flagging rows.
-- **`Tap` / `Tap Number` do not exist**, so the beer-card and chat formatter
-  (`index.html`, `chat-knowledge.js`) show no tap number — even though the tap
-  is right there in `On Tap`, and `getTapNumber()` parses it correctly
-  elsewhere. This is the one that costs floor staff the most.
-- **`Staff Notes` / `Training Notes` do not exist**, so that accessor always
-  returns empty.
-- **`Food Pairings` is maintained in the sheet but read nowhere** in the app.
-
-Nucleus (below) resolves the first three by construction, so it may not be worth
-patching the sheet path.
 
 ### 2. Food, coffee, wine and cocktails — hardcoded
 
@@ -106,116 +193,54 @@ partners, so the token is the supported path.
 
 ---
 
-## Product data is moving to Nucleus
 
-**Going forward, beer and product information lives in Nucleus, not the Google
-Sheet.** Nucleus is MPBC's brewery system of record; its catalog was seeded from
-the same legacy product list the sheet came from, and it carries every field the
-sheet provides plus a good deal more. New product information should be entered
-there, and this app should migrate to reading it.
+## Talking to Nucleus
 
-**Status as of 2026-08-12 (Nucleus `main` @ 4a265c1, PR #103):** the catalog
-columns, the seeded data, and the read API are all in place. What remains is the
-on-tap feature in Nucleus and the write path from this app — see
-[What's left](#whats-left) below.
+**API reference: <https://nucleus.manhattanproject.beer/docs>** (Swagger UI; raw
+spec at `/openapi.json`). Open it in a browser and it signs you in through Azure
+AD — any MPBC account works, no key needed. Called programmatically it answers
+`401` instead, which is expected rather than a broken link: send
+`Authorization: Bearer <NUCLEUS_API_KEY>`. Treat it as authoritative over
+anything written down here.
 
-### Field mapping
+### Configuration
 
-| Sheet column | Nucleus |
+| Variable | |
 |---|---|
-| `Number` | `Product.mp_number` |
-| `Name` | `Product.name` |
-| `Style` | `Product.style` |
-| `abv` | `Product.abv_estimated` — but see the ABV note below |
-| `Description / ingredients` | `Product.key_ingredients` |
-| `Gluten-Reduced` | `Product.is_gluten_reduced` |
-| `Flavor Profile` | `Product.tasting_notes` |
-| `Guest Guidance` | `Product.guest_guidance` |
-| `On Tap` (`"Yes- Tap 1"`) | `Tap.tap_number` + `Tap.current_product_id` |
-| `Recently Tapped` | `Tap.tapped_at` — a real timestamp, so "new tap" is derived rather than hand-flagged |
-| `Food Pairings` | *no equivalent yet* (and unused by this app today) |
+| `NUCLEUS_BASE_URL` | where Nucleus is |
+| `NUCLEUS_API_KEY` | read key → `staff`. Enough for the beer list and pickers. |
+| `NUCLEUS_API_KEY_WRITE` | write key → `manager`. Only needed to change taps. |
 
-**And more than the sheet had:** `sensory_profile` (structured
-appearance/aroma/taste/mouthfeel/finish), `marketing_description` (patron-facing
-copy), `history_note` (origin story), `variant`, `color_hex` / `text_color`,
-`release_type`, `shelf_life_days`, `is_mixed_pack`, brewery and yeast-strain
-relationships, plus `product_targets` (OG/FG/IBU and label ABV) and product
-forecasts.
+The base URL has three correct values, and picking the wrong one is the easiest
+mistake to make here:
 
-**The ABV nuance matters.** `Product.abv_estimated` is what we *believe* the beer
-is, with no regulatory standing. It is deliberately **not** `product_targets`'
-`abv`, which means the government-approved label value — most MPBC products have
-none. A consumer printing a number for a guest should prefer the target and fall
-back to `abv_estimated`, and must never write `abv_estimated` back into the
-target.
+- **Deployed on Railway** — `http://mpbc-nucleus.railway.internal`. Nucleus's own
+  CLAUDE.md is explicit that internal service calls must not use the public URL.
+- **Locally, reading real data** — `https://nucleus.manhattanproject.beer` with a
+  read key. Fine, and enough for everything except the Taps screen.
+- **Locally, testing writes** — a local Nucleus (`http://localhost:<devN port>`)
+  with that environment's own keys.
 
-### API surface
+**Never put a production write key in a local `.env`.** It would work, and every
+tap you changed while clicking around would rewrite the real taproom wall that
+every MPBC app reads. This is the same shape as the QuickBooks trap in the root
+CLAUDE.md, except nothing here would stop it. A local Nucleus already has the
+same taps seeded, so there is no reason to reach for prod.
 
-**Full API reference: <https://nucleus.manhattanproject.beer/docs>** (Swagger UI;
-the raw spec is at `/openapi.json`). Both are authenticated — they return `401`
-in a plain browser, which is expected rather than a broken link. Send a
-`NUCLEUS_API_KEY` bearer token, or open them while signed into Nucleus. Treat
-that reference as authoritative; the table below is the subset this app needs,
-and it will drift.
+### Endpoints this app uses
 
 | Endpoint | Role | |
 |---|---|---|
-| `GET /api/products` | staff | list; supports `q`, `brewery_id`, `include_inactive`, `format=csv` |
-| `GET /api/products/{id}` | staff | single product |
-| `GET /api/taps` | staff | tap fixtures, each with its `current_product` |
-| `PUT /api/taps/{id}/product` | **manager** | put a product on a tap |
+| `GET /api/products?include_inactive=true` | staff | the catalog, behind the pickers |
+| `GET /api/taps` | staff | tap fixtures with `current_product` embedded |
+| `PUT /api/taps/{id}/product` | **manager** | put a beer on a tap |
 | `DELETE /api/taps/{id}/product` | **manager** | clear a tap (keg kicked) |
-| `POST /api/taps` · `PATCH /api/taps/{id}` | **manager** | create / edit a fixture |
 
-### Authentication — already solved
+Failures surface as `502` from this app's own routes rather than `500` — the app
+is fine, its upstream is not, and the distinction tells whoever is looking where
+to go. `401`/`403` from Nucleus are named explicitly in the message, because a
+rejected key otherwise looks identical to "no data".
 
-Base URL is `https://nucleus.manhattanproject.beer`; locally, each `devN` Nucleus
-worktree runs on its own port from that worktree's `.env`. Nucleus accepts a
-**bearer API key** as well as an Azure AD browser session, so this app does not
-need to impersonate a user:
-
-- `NUCLEUS_API_KEY` → role `staff` — enough for every read above.
-- `NUCLEUS_API_KEY_WRITE` → role `manager` — which is exactly what the tap
-  endpoints require.
-
-Both must be used **server-side only**, from `server.js`. Two independent
-reasons: a bearer key in browser JavaScript is a leaked credential, and Nucleus's
-CORS allows only its own `FRONTEND_URL` origin, so a browser-direct call would be
-rejected anyway. A small proxy route here handles both.
-
-### What's left
-
-Two pieces of work, in this order:
-
-**1. The on-tap feature in Nucleus.** The backend is complete and well-formed —
-`Tap` model, schemas, service, routes and tests, migration `0086`. The model is
-an explicit and documented exception to Nucleus's "master data only" charter,
-taken precisely *because* several apps need to read and write the current pour
-and there is no taproom service to own it. This app is one of those apps.
-
-But it is not yet usable in practice:
-
-- **No tap rows exist.** There is no taps seed among the catalog seed files, so
-  the ~21 taproom fixtures still have to be created.
-- **No UI in Nucleus.** There is no tap page in the Nucleus frontend at all, so
-  nothing today can set what is pouring except a direct API call.
-
-Two shape notes for whoever builds it: pouring nothing is
-`current_product_id IS NULL`, never a deleted row — deleting the row loses the
-tap's identity and its place on the wall. And there is no assignment history,
-by design; a history table can be added later without changing this shape.
-
-**2. Writing tap state from this app.** Once taps exist, this app should stop
-reading `On Tap` out of the spreadsheet and instead read `GET /api/taps` and
-write through `PUT /api/taps/{id}/product` — so the person changing a keg
-updates the record once and both apps agree. The credential path already exists
-(`NUCLEUS_API_KEY_WRITE`, manager); what has to be built here is the server-side
-proxy route in `server.js` that holds it.
-
-Until both land, the sheet remains the live source and both copies of
-`BEER_CSV_URL` must stay in step.
-
----
 
 ## Local development
 

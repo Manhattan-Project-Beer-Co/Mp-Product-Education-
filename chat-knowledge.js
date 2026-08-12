@@ -1,5 +1,4 @@
-const BEER_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
+const nucleus = require("./nucleus");
 
 const { SITE_FEATURES, buildSiteOverviewText } = require("./site-features");
 
@@ -108,59 +107,6 @@ const COFFEE_SECTIONS = [
   }
 ];
 
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let field = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const next = text[i + 1];
-
-    if (inQuotes) {
-      if (ch === '"' && next === '"') {
-        field += '"';
-        i++;
-      } else if (ch === '"') {
-        inQuotes = false;
-      } else {
-        field += ch;
-      }
-      continue;
-    }
-
-    if (ch === '"') {
-      inQuotes = true;
-    } else if (ch === ",") {
-      row.push(field);
-      field = "";
-    } else if (ch === "\n" || (ch === "\r" && next === "\n")) {
-      row.push(field);
-      if (row.some(cell => cell.trim())) rows.push(row);
-      row = [];
-      field = "";
-      if (ch === "\r") i++;
-    } else {
-      field += ch;
-    }
-  }
-
-  if (field.length || row.length) {
-    row.push(field);
-    if (row.some(cell => cell.trim())) rows.push(row);
-  }
-
-  if (!rows.length) return [];
-  const headers = rows[0].map(h => h.trim());
-  return rows.slice(1).map(cells => {
-    const obj = {};
-    headers.forEach((header, idx) => {
-      obj[header] = (cells[idx] || "").trim();
-    });
-    return obj;
-  });
-}
 
 function col(item, field) {
   if (!item) return "";
@@ -453,74 +399,22 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
   return results.slice(0, 20);
 }
 
-/** Local tap/menu patches until the spreadsheet is updated. */
-const BEER_TAP_OVERRIDES = [
-  { name: "Oktoberfest", onTap: 4 },
-  { name: "Diffusion", onTap: 16 },
-  { name: "Black Rain", onTap: 17 },
-  {
-    name: "Cold Brew",
-    description:
-      "Velvety, bold, and refined—diesel fuel in the best way. Smooth going down, with a serious caffeine punch."
-  }
-];
-
-const BEER_TAP_RELEASES = [4, 16, 17];
-
-function beerNameMatches(beer, targetName) {
-  return col(beer, "Name").trim().toLowerCase() === targetName.trim().toLowerCase();
-}
-
-function getOnTapNumber(beer) {
-  const match = String(col(beer, "On Tap") || "").match(/\d+/);
-  return match ? Number(match[0]) : null;
-}
-
-function applyBeerTapOverrides(rows) {
-  const patched = rows.map(b => ({ ...b }));
-  const assignedNames = new Set(
-    BEER_TAP_OVERRIDES.filter(o => o.onTap).map(o => o.name.trim().toLowerCase())
-  );
-
-  for (const beer of patched) {
-    const tapNum = getOnTapNumber(beer);
-    if (
-      tapNum &&
-      BEER_TAP_RELEASES.includes(tapNum) &&
-      !assignedNames.has(col(beer, "Name").trim().toLowerCase())
-    ) {
-      beer["On Tap"] = "";
-    }
-  }
-
-  for (const override of BEER_TAP_OVERRIDES) {
-    const beer = patched.find(b => beerNameMatches(b, override.name));
-    if (!beer) continue;
-    if (override.onTap) beer["On Tap"] = `Yes- Tap ${override.onTap}`;
-    if (override.description) beer["Description / ingredients"] = override.description;
-  }
-
-  return patched;
-}
-
-let beerCache = { rows: [], fetchedAt: 0 };
-
-async function getBeers() {
-  const now = Date.now();
-  if (beerCache.rows.length && now - beerCache.fetchedAt < 5 * 60 * 1000) {
-    return beerCache.rows;
-  }
-
-  const response = await fetch(BEER_CSV_URL, { cache: "no-store" });
-  if (!response.ok) throw new Error("Could not load beer menu data.");
-  const text = await response.text();
-  const rows = applyBeerTapOverrides(parseCSV(text).filter(b => col(b, "Name")));
-  beerCache = { rows, fetchedAt: now };
-  return rows;
-}
+/**
+ * The beer list, from Nucleus.
+ *
+ * This used to fetch a published Google Sheet and then patch it: a
+ * `BEER_TAP_OVERRIDES` table hardcoded taps 4, 16 and 17 and one description,
+ * commented "local tap/menu patches until the spreadsheet is updated". The
+ * spreadsheet was never updated, so for those taps the truth lived in this file
+ * and nowhere else — which is the split-brain the move to Nucleus removes. Tap
+ * state now has one home, and correcting it is an edit in Nucleus (or on the
+ * Taps screen here), not a deploy.
+ *
+ * Caching lives in nucleus.js, so there is none here.
+ */
+const getBeers = () => nucleus.getBeerRows();
 
 module.exports = {
-  BEER_CSV_URL,
   SITE_OVERVIEW,
   TRAINING_GAMES,
   COFFEE_SECTIONS,

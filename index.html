@@ -5499,7 +5499,7 @@ async function initAuth() {
     demoAuthAvailable = Boolean(providers.demo);
   } catch {
     microsoftAuthAvailable = false;
-    demoAuthAvailable = false;
+    demoAuthAvailable = true; // allow demo form attempt if providers call fails
   }
 
   const callback = consumeAuthCallbackParams();
@@ -5535,16 +5535,21 @@ function showLoginGate(authError) {
   const actions = document.getElementById("loginActions");
   const error = document.getElementById("loginError");
 
-  error.innerHTML = authError ? `<div class="auth-error">${escapeHTML(authError)}</div>` : "";
+  if (error) error.innerHTML = authError ? `<div class="auth-error">${escapeHTML(authError)}</div>` : "";
 
   if (microsoftAuthAvailable) {
-    message.textContent =
-      "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time.";
-    actions.innerHTML = microsoftSignInButton();
+    if (message) {
+      message.textContent =
+        "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time.";
+    }
+    if (actions) actions.innerHTML = microsoftSignInButton();
   } else if (demoAuthAvailable) {
-    message.textContent =
-      "Demo review login is enabled on this host. Use the manager test account below.";
-    actions.innerHTML = `
+    if (message) {
+      message.textContent =
+        "Demo review login is enabled on this host. Use the manager test account below.";
+    }
+    if (actions) {
+      actions.innerHTML = `
       <form class="auth-panel" style="margin:0;text-align:left;" onsubmit="submitDemoLogin(event)">
         <label for="demoEmail">Email</label>
         <input id="demoEmail" type="email" value="manager@mp.test" autocomplete="username" required>
@@ -5554,10 +5559,13 @@ function showLoginGate(authError) {
         <p class="hint" style="margin-top:10px;">manager@mp.test / test1234 · admin@mp.test / test1234</p>
       </form>
     `;
+    }
   } else {
-    message.textContent =
-      "Microsoft sign-in is not configured on this server yet, so there is no way to sign in. Ask an admin to set AZURE_CLIENT_ID and AZURE_CLIENT_SECRET.";
-    actions.innerHTML = "";
+    if (message) {
+      message.textContent =
+        "Microsoft sign-in is not configured on this server yet, so there is no way to sign in. Ask an admin to set AZURE_CLIENT_ID and AZURE_CLIENT_SECRET.";
+    }
+    if (actions) actions.innerHTML = "";
   }
 }
 

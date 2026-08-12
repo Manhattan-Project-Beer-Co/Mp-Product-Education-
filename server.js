@@ -3110,6 +3110,9 @@ app.get("/api/scenarios", (req, res) => {
   });
 });
 
+// Serve portal assets (roles.js, floor-tools.js, CSS, etc.) before the HTML fallback.
+app.use(express.static(__dirname, { index: false }));
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });

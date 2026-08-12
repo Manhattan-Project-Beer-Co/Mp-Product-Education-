@@ -5275,15 +5275,7 @@ function shuffle(arr) {
 }
 
 function render() {
-  // Beer pickers are rendered as markup by whichever panel needs one, then
-  // filled here once the nodes exist. Keeping it in render() means any panel
-  // that adds a `<select data-selected>` gets populated without wiring its own
-  // callback, and the catalog is still only fetched once per page load.
-  queueMicrotask(() => {
-    document
-      .querySelectorAll("select[data-selected]:not([data-populated])")
-      .forEach((select) => populateBeerSelect(select));
-  });
+  queueMicrotask(populateBeerSelects);
 
   const content = document.getElementById("content");
   const filterWrap = document.getElementById("filterWrap");
@@ -6223,6 +6215,9 @@ async function renderTaps(content) {
       ${rows || `<div class="status">No taps are configured in Nucleus yet.</div>`}
     </div>
   `;
+
+  // The markup only exists now, after the await — render()'s pass ran before it.
+  populateBeerSelects();
 }
 
 async function saveTap(tapId) {
@@ -6264,6 +6259,21 @@ async function loadBeerOptions() {
     beerOptionsCache = [];
   }
   return beerOptionsCache;
+}
+
+/**
+ * Fill every beer picker currently on the page.
+ *
+ * Called from render() *and* from any panel that writes its markup
+ * asynchronously. render()'s pass alone is not enough: an async panel sets its
+ * innerHTML after the await, by which time render() has long since looked for
+ * selects and found none — which is exactly how the Taps dropdowns shipped
+ * empty.
+ */
+function populateBeerSelects() {
+  document
+    .querySelectorAll("select[data-selected]:not([data-populated])")
+    .forEach((select) => populateBeerSelect(select));
 }
 
 /** Fill a <select> with the catalog, preselecting its data-selected id. */
@@ -11493,11 +11503,12 @@ function renderChoiceGame(content, item, questionHTML, getOptionHTML, onAnswer) 
   `);
 }
 
+function newTapBeers() {
+  return beers.filter(b => isYes(b["New Tap"]) && isYes(b["On Tap"]));
+}
+
 function renderNewTapBanner() {
-  const newBeers = beers.filter(b =>
-    isYes(b["New Tap"]) &&
-    isYes(b["On Tap"])
-  );
+  const newBeers = newTapBeers();
 
   if (newBeers.length === 0) return "";
 
@@ -11508,7 +11519,7 @@ function renderNewTapBanner() {
   const flavor = getFlavorProfile(b);
 
   return `
-    <div class="new-banner" onclick="openBeerByName('${escapeForAttribute(b.Name)}')" style="cursor:pointer;">
+    <div class="new-banner" id="newTapBanner" onclick="openBeerByName('${escapeForAttribute(b.Name)}')" style="cursor:pointer;">
       <p class="new-banner-label">NEWLY TAPPED</p>
       <p class="new-banner-name">${escapeHTML(b.Name)}</p>
       <p class="new-banner-desc">
@@ -11527,18 +11538,20 @@ function startNewTapRotation() {
   if (newTapTimer) clearInterval(newTapTimer);
 
   newTapTimer = setInterval(() => {
-    const newBeers = beers.filter(b =>
-      isYes(b["New Tap"]) &&
-      isYes(b["On Tap"])
-    );
+    const newBeers = newTapBeers();
 
-    if (newBeers.length === 0) return;
+    if (newBeers.length < 2) return;
 
     newTapIndex = (newTapIndex + 1) % newBeers.length;
 
-    if (activeType === "beer" || activeType === "ontap") {
-      render();
-    }
+    // Swap the banner only. This used to call render(), redrawing the entire
+    // beer list every 4.5 seconds — every card, every filter — which read as the
+    // page flickering. It went unnoticed for as long as it existed because the
+    // `New Tap` column it depends on was never populated, so the rotation never
+    // actually ran; making that column work is what surfaced it.
+    if (activeType !== "beer" && activeType !== "ontap") return;
+    const banner = document.getElementById("newTapBanner");
+    if (banner) banner.outerHTML = renderNewTapBanner();
   }, 4500);
 }
 

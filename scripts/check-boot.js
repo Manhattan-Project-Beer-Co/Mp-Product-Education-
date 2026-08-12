@@ -20,6 +20,8 @@ const path = require("path");
 const PORT = process.env.CHECK_BOOT_PORT || "8099";
 const BASE = `http://127.0.0.1:${PORT}`;
 const STARTUP_TIMEOUT_MS = 60_000;
+const APP_DIR = path.join(__dirname, "..");
+const SERVER_JS = path.join(APP_DIR, "server.js");
 
 let failures = 0;
 const fail = (msg) => {
@@ -33,8 +35,25 @@ function freshDbPath(label) {
   return path.join(dir, "training.db");
 }
 
+// Started from an empty scratch directory, not the repo, so the child cannot
+// read the developer's .env.
+//
+// Scrubbing process.env is not enough on its own. server.js calls
+// dotenv.config(), which resolves .env against process.cwd() and would put back
+// exactly the variables baseEnv() removed — so on any machine with a .env the
+// production guard checks below saw a real JWT_SECRET, the server started
+// normally, and a check that exists to prove the guard fires reported failure
+// instead. CI has no .env, so it passed there and the guard went unexercised
+// where it mattered. dotenv does not search parent directories, so an empty cwd
+// is enough to isolate it.
+//
+// Safe because nothing in the app resolves paths against cwd: server.js,
+// db-path.js and backup.js all use __dirname, and the one place server.js
+// spawns a child passes cwd: __dirname explicitly.
 function startServer(env) {
-  const child = spawn(process.execPath, ["server.js"], {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "mp-check-cwd-"));
+  const child = spawn(process.execPath, [SERVER_JS], {
+    cwd,
     env: { ...env, PORT },
     stdio: ["ignore", "pipe", "pipe"]
   });

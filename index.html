@@ -6201,7 +6201,8 @@ async function renderTaps(content) {
               <option value="">— empty —</option>
             </select>
             <div class="tap-meta">${pouring
-              ? `${escapeHTML(pouring.style || "")}${pouring.abv ? ` · ${escapeHTML(String(pouring.abv))}%` : ""}`
+              ? `${escapeHTML(pouring.name)}${pouring.style ? ` · ${escapeHTML(pouring.style)}` : ""}` +
+                `${pouring.abv ? ` · ${escapeHTML(String(pouring.abv))}%` : ""}`
               : "Nothing pouring"}</div>
           </div>
           ${tapsState.canWrite ? `

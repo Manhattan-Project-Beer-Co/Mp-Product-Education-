@@ -72,6 +72,27 @@ fixed-scale decimal (`6.2000`), which `formatAbv` trims for display.
 Caching lives in `nucleus.js`: 60s for taps, which change when a keg kicks, and
 10 minutes for the catalog, which is edited by hand. A tap write clears both.
 
+#### Manhattan Project beer only
+
+Nucleus is a shared catalog — it holds Four Corners' products (prefix `FC`)
+alongside MPBC's (`MP`). This is a Manhattan Project app, so it shows MPBC beer
+and nothing else: 141 products, not 155.
+
+**The filter lives in `getProducts()`, deliberately.** Every list in the app —
+the beer list, both pickers, the favourite-beer quiz's decoys, the chat
+assistant — is built from that one call, so a Four Corners beer cannot reach any
+of them by someone forgetting a filter at a call site. Add a new list and it
+inherits the rule for free.
+
+`brewery` is nullable in Nucleus, and a product whose brewery is unknown is not
+known to be ours, so it is excluded too — but logged, because silently hiding an
+MPBC beer would be its own kind of wrong. Today every product has a brewery.
+
+One deliberate exception: the **Taps** tab shows whatever is actually pouring,
+including a beer the picker would not offer. A tap wall that lied about its own
+contents would be worse than one showing an unexpected name, and the row spells
+the beer out in full for exactly that case.
+
 #### What this fixed
 
 The sheet and the code had drifted apart, and three features had been quietly

@@ -112,14 +112,37 @@ function invalidate() {
 
 const getTaps = () => cached("taps", TAPS_TTL_MS, () => request("/api/taps"));
 
+//: Nucleus is a shared catalog: it holds Four Corners' products alongside
+//: MPBC's, keyed by the brewery's prefix. This is a Manhattan Project app, so
+//: it shows Manhattan Project beer and nothing else.
+const BREWERY_PREFIX = "MP";
+
 /**
- * The whole catalog, inactive beers included.
+ * The MPBC catalog, inactive beers included.
  *
  * Inactive matters: a favourite beer is very often a discontinued one, and the
  * pickers must be able to offer it. The tap list is unaffected either way.
+ *
+ * **Filtering happens here on purpose.** Every list in the app — the beer list,
+ * both pickers, the quiz's decoys — is built from this one call, so a Four
+ * Corners beer cannot reach any of them by someone forgetting a filter at the
+ * call site. `brewery` is nullable in Nucleus, and a product whose brewery is
+ * unknown is not known to be ours, so it is excluded too — but noisily, because
+ * silently hiding an MPBC beer would be its own kind of wrong.
  */
-const getProducts = () =>
-  cached("products", CATALOG_TTL_MS, () => request("/api/products?include_inactive=true"));
+async function getProducts() {
+  return cached("products", CATALOG_TTL_MS, async () => {
+    const all = await request("/api/products?include_inactive=true");
+    const unattributed = all.filter((product) => !product.brewery);
+    if (unattributed.length) {
+      console.warn(
+        `Nucleus: ${unattributed.length} product(s) have no brewery and were hidden — ` +
+          unattributed.map((p) => `${p.mp_number} ${p.name}`).join(", ")
+      );
+    }
+    return all.filter((product) => product.brewery && product.brewery.prefix === BREWERY_PREFIX);
+  });
+}
 
 /** Put a product on a tap. Needs the write key (Nucleus requires `manager`). */
 async function setTapProduct(tapId, productId) {

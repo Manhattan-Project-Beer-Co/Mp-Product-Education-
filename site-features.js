@@ -4,7 +4,7 @@
 
 const SITE_FEATURES = {
   tabLabel: "Features",
-  updatedAt: "2026-08-11",
+  updatedAt: "2026-08-12",
   recentUpdates: [
     { date: "2026-08-11", text: "Photo standards gallery, checklist before/after photos, shout-outs, team challenges, secret streaks" },
     { date: "2026-08-11", text: "Tap Change + New Menu Package generators; weekly training pack + deeper Team analytics" },

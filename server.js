@@ -75,6 +75,9 @@ const AZURE_ADMIN_EMAILS = new Set(
     .filter(Boolean)
 );
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
+// Demo email/password login for review hosts that do not have Entra configured yet.
+const demoLoginEnabled = !microsoftAuthEnabled || process.env.ALLOW_DEMO_LOGIN === "1";
+const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "test1234";
 const ALLOWED_APPROVED_ROLES = new Set(ALL_ROLES);
 
 // JWT_SECRET signs the session cookie, which is the whole of authentication.
@@ -378,11 +381,53 @@ db.exec(`
 db.prepare(`UPDATE users SET role = 'bartender' WHERE role = 'employee'`).run();
 db.prepare(`UPDATE approved_emails SET role = 'bartender' WHERE role = 'employee'`).run();
 
-// Password authentication was removed in favour of Microsoft sign-in, so no
-// code path reads password_hash any more. Clear it so the seeded demo
-// credentials — which were published in this repo — cannot be resurrected by
-// rolling back to an older build.
-db.prepare("UPDATE users SET password_hash = '' WHERE password_hash != ''").run();
+// Password auth was removed for Entra-only production. On hosts without
+// Microsoft configured (or with ALLOW_DEMO_LOGIN=1), keep demo hashes so
+// managers can still review the portal.
+if (!demoLoginEnabled) {
+  db.prepare("UPDATE users SET password_hash = '' WHERE password_hash != ''").run();
+}
+
+function hashDemoPassword(password) {
+  const salt = crypto.randomBytes(16);
+  const hash = crypto.scryptSync(String(password), salt, 64);
+  return `scrypt$${salt.toString("hex")}$${hash.toString("hex")}`;
+}
+
+function verifyDemoPassword(password, stored) {
+  if (!stored || !String(stored).startsWith("scrypt$")) return false;
+  const parts = String(stored).split("$");
+  if (parts.length !== 3) return false;
+  const salt = Buffer.from(parts[1], "hex");
+  const expected = Buffer.from(parts[2], "hex");
+  const actual = crypto.scryptSync(String(password), salt, expected.length);
+  return crypto.timingSafeEqual(expected, actual);
+}
+
+function ensureDemoLoginAccounts() {
+  if (!demoLoginEnabled) return;
+  const demos = [
+    { name: "Meredith Manager", email: "manager@mp.test", role: "manager" },
+    { name: "Admin", email: "admin@mp.test", role: "admin" },
+    { name: "Alex Bartender", email: "alex@mp.test", role: "bartender" }
+  ];
+  const passwordHash = hashDemoPassword(DEMO_PASSWORD);
+  const upsert = db.prepare(`
+    INSERT INTO users (name, email, password_hash, role, auth_provider)
+    VALUES (?, ?, ?, ?, 'local')
+    ON CONFLICT(email) DO UPDATE SET
+      password_hash = excluded.password_hash,
+      role = CASE
+        WHEN users.role IN ('admin', 'manager') THEN users.role
+        ELSE excluded.role
+      END,
+      auth_provider = 'local'
+  `);
+  for (const user of demos) {
+    upsert.run(user.name, user.email, passwordHash, user.role);
+  }
+  console.log(`Demo login enabled (password: ${DEMO_PASSWORD}) — manager@mp.test / admin@mp.test`);
+}
 
 const seedApproved = db.prepare(`
   INSERT OR IGNORE INTO approved_emails (email, role)
@@ -545,7 +590,8 @@ const PUBLIC_API_ROUTES = new Set([
   "/auth/providers",
   "/auth/microsoft",
   "/auth/microsoft/callback",
-  "/auth/logout"
+  "/auth/logout",
+  "/auth/login"
 ]);
 
 // A single gate rather than a guard on each route, so the default for anything
@@ -1406,8 +1452,31 @@ app.post("/api/auth/logout", (req, res) => {
   res.json({ ok: true });
 });
 
+app.post("/api/auth/login", (req, res) => {
+  if (!demoLoginEnabled) {
+    return res.status(403).json({
+      error: "Password login is disabled. Sign in with Microsoft."
+    });
+  }
+  const email = String(req.body.email || "").trim().toLowerCase();
+  const password = String(req.body.password || "");
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required." });
+  }
+  const user = db.prepare(`
+    SELECT id, name, email, role, auth_provider, microsoft_oid, created_at, password_hash
+    FROM users WHERE lower(email) = ?
+  `).get(email);
+  if (!user || !verifyDemoPassword(password, user.password_hash)) {
+    return res.status(401).json({ error: "Invalid email or password." });
+  }
+  startSession(res, user);
+  const { password_hash, ...safe } = user;
+  res.json({ ok: true, user: publicUser(safe) });
+});
+
 app.get("/api/auth/providers", (req, res) => {
-  res.json({ microsoft: microsoftAuthEnabled });
+  res.json({ microsoft: microsoftAuthEnabled, demo: demoLoginEnabled });
 });
 
 app.get("/api/auth/microsoft", (req, res) => {
@@ -3047,12 +3116,14 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
+  ensureDemoLoginAccounts();
   ensureMerchCatalog();
   ensureSampleSops();
   ensureSevenShiftsTables(db);
   console.log(`MP Training server running on port ${PORT}`);
   console.log(`Database: ${DB_PATH} (${Math.max(1, Math.round(fs.statSync(DB_PATH).size / 1024))} KB)`);
   console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
+  console.log(`Demo password login: ${demoLoginEnabled ? "enabled" : "disabled"}`);
   console.log(`7shifts sync: ${sevenShifts.isConfigured() ? "enabled" : "disabled (set SEVEN_SHIFTS_ACCESS_TOKEN + SEVEN_SHIFTS_COMPANY_ID)"}`);
 
   if (sevenShifts.isConfigured()) {

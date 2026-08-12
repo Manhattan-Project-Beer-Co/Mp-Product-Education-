@@ -151,6 +151,13 @@ target.
 
 ### API surface
 
+**Full API reference: <https://nucleus.manhattanproject.beer/docs>** (Swagger UI;
+the raw spec is at `/openapi.json`). Both are authenticated — they return `401`
+in a plain browser, which is expected rather than a broken link. Send a
+`NUCLEUS_API_KEY` bearer token, or open them while signed into Nucleus. Treat
+that reference as authoritative; the table below is the subset this app needs,
+and it will drift.
+
 | Endpoint | Role | |
 |---|---|---|
 | `GET /api/products` | staff | list; supports `q`, `brewery_id`, `include_inactive`, `format=csv` |
@@ -162,8 +169,10 @@ target.
 
 ### Authentication — already solved
 
-Nucleus accepts a **bearer API key** as well as an Azure AD browser session, so
-this app does not need to impersonate a user:
+Base URL is `https://nucleus.manhattanproject.beer`; locally, each `devN` Nucleus
+worktree runs on its own port from that worktree's `.env`. Nucleus accepts a
+**bearer API key** as well as an Azure AD browser session, so this app does not
+need to impersonate a user:
 
 - `NUCLEUS_API_KEY` → role `staff` — enough for every read above.
 - `NUCLEUS_API_KEY_WRITE` → role `manager` — which is exactly what the tap

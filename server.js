@@ -75,9 +75,13 @@ const AZURE_ADMIN_EMAILS = new Set(
     .filter(Boolean)
 );
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
-// Demo email/password login for review hosts that do not have Entra configured yet.
-const demoLoginEnabled = !microsoftAuthEnabled || process.env.ALLOW_DEMO_LOGIN === "1";
-const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "test1234";
+// Local development sign-in, so the portal can be run without registering an
+// Entra app. Deliberately NOT inferred from "Microsoft is unconfigured" — that
+// is exactly how a review host ends up publicly reachable with a known
+// password. It has to be asked for by name, and it cannot reach production:
+// the boot guard below refuses to start rather than letting it slip through a
+// deploy, and every request is re-checked against the loopback interface.
+const devLoginEnabled = process.env.DEV_LOGIN === "1";
 const ALLOWED_APPROVED_ROLES = new Set(ALL_ROLES);
 
 // JWT_SECRET signs the session cookie, which is the whole of authentication.
@@ -87,6 +91,17 @@ if (IS_PRODUCTION && JWT_SECRET === DEFAULT_JWT_SECRET) {
   console.error(
     "Refusing to start: JWT_SECRET is still the built-in default in production. " +
       'Set a real one (node -e "console.log(require(\'crypto\').randomBytes(48).toString(\'base64url\'))").'
+  );
+  process.exit(1);
+}
+
+// Same posture as the JWT_SECRET guard: fail the deploy loudly rather than
+// serve with a way in that bypasses Entra. A misconfigured environment variable
+// should cost a failed deploy, not an open door nobody notices.
+if (IS_PRODUCTION && devLoginEnabled) {
+  console.error(
+    "Refusing to start: DEV_LOGIN=1 is set in production. Local dev sign-in bypasses " +
+      "Microsoft authentication and must never be enabled on a deployed host. Unset it."
   );
   process.exit(1);
 }
@@ -381,53 +396,13 @@ db.exec(`
 db.prepare(`UPDATE users SET role = 'bartender' WHERE role = 'employee'`).run();
 db.prepare(`UPDATE approved_emails SET role = 'bartender' WHERE role = 'employee'`).run();
 
-// Password auth was removed for Entra-only production. On hosts without
-// Microsoft configured (or with ALLOW_DEMO_LOGIN=1), keep demo hashes so
-// managers can still review the portal.
-if (!demoLoginEnabled) {
-  db.prepare("UPDATE users SET password_hash = '' WHERE password_hash != ''").run();
-}
-
-function hashDemoPassword(password) {
-  const salt = crypto.randomBytes(16);
-  const hash = crypto.scryptSync(String(password), salt, 64);
-  return `scrypt$${salt.toString("hex")}$${hash.toString("hex")}`;
-}
-
-function verifyDemoPassword(password, stored) {
-  if (!stored || !String(stored).startsWith("scrypt$")) return false;
-  const parts = String(stored).split("$");
-  if (parts.length !== 3) return false;
-  const salt = Buffer.from(parts[1], "hex");
-  const expected = Buffer.from(parts[2], "hex");
-  const actual = crypto.scryptSync(String(password), salt, expected.length);
-  return crypto.timingSafeEqual(expected, actual);
-}
-
-function ensureDemoLoginAccounts() {
-  if (!demoLoginEnabled) return;
-  const demos = [
-    { name: "Meredith Manager", email: "manager@mp.test", role: "manager" },
-    { name: "Admin", email: "admin@mp.test", role: "admin" },
-    { name: "Alex Bartender", email: "alex@mp.test", role: "bartender" }
-  ];
-  const passwordHash = hashDemoPassword(DEMO_PASSWORD);
-  const upsert = db.prepare(`
-    INSERT INTO users (name, email, password_hash, role, auth_provider)
-    VALUES (?, ?, ?, ?, 'local')
-    ON CONFLICT(email) DO UPDATE SET
-      password_hash = excluded.password_hash,
-      role = CASE
-        WHEN users.role IN ('admin', 'manager') THEN users.role
-        ELSE excluded.role
-      END,
-      auth_provider = 'local'
-  `);
-  for (const user of demos) {
-    upsert.run(user.name, user.email, passwordHash, user.role);
-  }
-  console.log(`Demo login enabled (password: ${DEMO_PASSWORD}) — manager@mp.test / admin@mp.test`);
-}
+// Password authentication was removed in favour of Microsoft sign-in, so no
+// code path reads password_hash any more. Clear it so the seeded demo
+// credentials — which were published in this repo — cannot be resurrected by
+// rolling back to an older build. This runs unconditionally: a host that lacks
+// Entra credentials has no way in, which is the intended outcome, not a gap to
+// paper over with a password.
+db.prepare("UPDATE users SET password_hash = '' WHERE password_hash != ''").run();
 
 const seedApproved = db.prepare(`
   INSERT OR IGNORE INTO approved_emails (email, role)
@@ -590,9 +565,16 @@ const PUBLIC_API_ROUTES = new Set([
   "/auth/providers",
   "/auth/microsoft",
   "/auth/microsoft/callback",
-  "/auth/logout",
-  "/auth/login"
+  "/auth/logout"
 ]);
+
+// Added to the public set only when dev sign-in is on, so on every other host
+// these are refused by the gate before their handlers are reached — two
+// independent refusals rather than one.
+if (devLoginEnabled) {
+  PUBLIC_API_ROUTES.add("/auth/dev-users");
+  PUBLIC_API_ROUTES.add("/auth/dev-login");
+}
 
 // A single gate rather than a guard on each route, so the default for anything
 // added later is "protected". Previously each route opted in, and the ones that
@@ -1452,31 +1434,54 @@ app.post("/api/auth/logout", (req, res) => {
   res.json({ ok: true });
 });
 
-app.post("/api/auth/login", (req, res) => {
-  if (!demoLoginEnabled) {
-    return res.status(403).json({
-      error: "Password login is disabled. Sign in with Microsoft."
-    });
-  }
-  const email = String(req.body.email || "").trim().toLowerCase();
-  const password = String(req.body.password || "");
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required." });
-  }
-  const user = db.prepare(`
-    SELECT id, name, email, role, auth_provider, microsoft_oid, created_at, password_hash
-    FROM users WHERE lower(email) = ?
-  `).get(email);
-  if (!user || !verifyDemoPassword(password, user.password_hash)) {
-    return res.status(401).json({ error: "Invalid email or password." });
-  }
-  startSession(res, user);
-  const { password_hash, ...safe } = user;
-  res.json({ ok: true, user: publicUser(safe) });
+app.get("/api/auth/providers", (req, res) => {
+  res.json({ microsoft: microsoftAuthEnabled, dev: devLoginEnabled });
 });
 
-app.get("/api/auth/providers", (req, res) => {
-  res.json({ microsoft: microsoftAuthEnabled, demo: demoLoginEnabled });
+// Dev sign-in picks an existing seeded account by id — there is no password to
+// check, because a password here would buy nothing (the whole feature is gated
+// on DEV_LOGIN=1 on a loopback connection) while re-introducing exactly what
+// was removed: a credential in the repo that keeps working if this code is ever
+// reachable. Nothing is created, so the accounts available are whatever seed.js
+// already put in this developer's local database.
+function devLoginRefusal(req) {
+  if (!devLoginEnabled) {
+    return { status: 404, error: "Not found." };
+  }
+  // Re-checked per request rather than trusted from boot: if DEV_LOGIN is ever
+  // set somewhere it shouldn't be, a remote caller still cannot use it.
+  // Read off the socket, not req.ip — req.ip honours X-Forwarded-For, which the
+  // caller controls.
+  const remote = req.socket.remoteAddress || "";
+  if (!["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(remote)) {
+    return { status: 403, error: "Dev sign-in is only available from localhost." };
+  }
+  return null;
+}
+
+app.get("/api/auth/dev-users", (req, res) => {
+  const refusal = devLoginRefusal(req);
+  if (refusal) return res.status(refusal.status).json({ error: refusal.error });
+
+  const users = db.prepare(`
+    SELECT id, name, email, role FROM users ORDER BY role, name
+  `).all();
+  res.json({ users: users.map((u) => ({ ...u, role: normalizeRole(u.role) })) });
+});
+
+app.post("/api/auth/dev-login", (req, res) => {
+  const refusal = devLoginRefusal(req);
+  if (refusal) return res.status(refusal.status).json({ error: refusal.error });
+
+  const user = db.prepare(`
+    SELECT id, name, email, role, auth_provider, microsoft_oid, created_at
+    FROM users WHERE id = ?
+  `).get(Number(req.body.userId));
+  if (!user) return res.status(404).json({ error: "No such user in the local database." });
+
+  console.log(`Dev sign-in as ${user.email} (${user.role}).`);
+  startSession(res, user);
+  res.json({ ok: true, user: publicUser(user) });
 });
 
 app.get("/api/auth/microsoft", (req, res) => {
@@ -3110,8 +3115,27 @@ app.get("/api/scenarios", (req, res) => {
   });
 });
 
-// Serve portal assets (roles.js, floor-tools.js, CSS, etc.) before the HTML fallback.
-app.use(express.static(__dirname, { index: false }));
+// The page loads four browser scripts from disk, so something has to serve
+// them. express.static(__dirname) would do it by serving the whole application
+// directory — which also hands out server.js, seed.js, and (when DB_PATH is
+// unset, as it is on Railway and Render) training.db and backups/ to anyone who
+// asks. An explicit allowlist serves exactly what the browser needs, so a file
+// added to the repo later is not published by accident.
+//
+// These are fetched before sign-in because the page cannot render its login
+// gate without them. Keep that in mind before adding anything to the list:
+// whatever is here is world-readable.
+const CLIENT_SCRIPTS = new Set([
+  "roles.js",
+  "site-features.js",
+  "ops-content.js",
+  "floor-tools.js"
+]);
+
+app.get("/:file", (req, res, next) => {
+  if (!CLIENT_SCRIPTS.has(req.params.file)) return next();
+  res.sendFile(path.join(__dirname, req.params.file));
+});
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -3119,14 +3143,15 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
-  ensureDemoLoginAccounts();
   ensureMerchCatalog();
   ensureSampleSops();
   ensureSevenShiftsTables(db);
   console.log(`MP Training server running on port ${PORT}`);
   console.log(`Database: ${DB_PATH} (${Math.max(1, Math.round(fs.statSync(DB_PATH).size / 1024))} KB)`);
   console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
-  console.log(`Demo password login: ${demoLoginEnabled ? "enabled" : "disabled"}`);
+  if (devLoginEnabled) {
+    console.log("Dev sign-in: ENABLED — any seeded account, no password, localhost only. Never set DEV_LOGIN=1 on a deployed host.");
+  }
   console.log(`7shifts sync: ${sevenShifts.isConfigured() ? "enabled" : "disabled (set SEVEN_SHIFTS_ACCESS_TOKEN + SEVEN_SHIFTS_COMPANY_ID)"}`);
 
   if (sevenShifts.isConfigured()) {

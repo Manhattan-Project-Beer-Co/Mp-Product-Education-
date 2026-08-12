@@ -93,6 +93,39 @@ async function checkRefusesDefaultSecretInProduction() {
   }
 }
 
+// Dev sign-in bypasses Entra entirely, so the only thing making it safe to have
+// in the tree is that it cannot reach a deployed host. That is a boot guard, and
+// an unexercised guard is a guess.
+async function checkRefusesDevLoginInProduction() {
+  const { child, getOutput } = startServer(
+    baseEnv({
+      NODE_ENV: "production",
+      JWT_SECRET: "ci-smoke-test-secret",
+      DEV_LOGIN: "1",
+      DB_PATH: freshDbPath("devguard")
+    })
+  );
+
+  const exitCode = await new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      resolve(null);
+    }, 20_000);
+    child.on("exit", (code) => {
+      clearTimeout(timer);
+      resolve(code);
+    });
+  });
+
+  if (exitCode === 1 && /DEV_LOGIN=1 is set in production/.test(getOutput())) {
+    pass("refuses to start in production with DEV_LOGIN=1");
+  } else {
+    fail(
+      `expected exit 1 with a DEV_LOGIN refusal, got exit ${exitCode}.\n${getOutput().slice(0, 800)}`
+    );
+  }
+}
+
 async function checkBootsAndServes() {
   const dbPath = process.env.DB_PATH || freshDbPath("boot");
   const { child, getOutput } = startServer(
@@ -130,7 +163,10 @@ async function checkBootsAndServes() {
     // the /api gate refuses the anonymous caller before reaching the 404. The
     // property worth pinning is that it never succeeds — not which of the two
     // refusals happens to come first.
-    for (const route of ["/api/auth/login", "/api/auth/register"]) {
+    // Dev sign-in is in the list because this server was booted without
+    // DEV_LOGIN, which is the state every deployed host is in. It must be as
+    // unreachable here as password auth is.
+    for (const route of ["/api/auth/login", "/api/auth/register", "/api/auth/dev-login"]) {
       const res = await fetch(`${BASE}${route}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -141,6 +177,13 @@ async function checkBootsAndServes() {
       } else {
         fail(`${route} returned ${res.status}; password auth was removed and must never succeed`);
       }
+    }
+
+    const devUsers = await fetch(`${BASE}/api/auth/dev-users`);
+    if (devUsers.status === 404 || devUsers.status === 401) {
+      pass(`/api/auth/dev-users is gone (${devUsers.status})`);
+    } else {
+      fail(`/api/auth/dev-users returned ${devUsers.status}; it must not exist without DEV_LOGIN=1`);
     }
 
     await checkApiRequiresSession();
@@ -203,6 +246,34 @@ async function checkApiRequiresSession() {
   } else {
     fail("GET /server.js returned the server source");
   }
+
+  // The page needs four scripts from disk, and the tempting way to serve them
+  // is express.static(__dirname) — which also publishes server.js, seed.js and,
+  // because DB_PATH is unset on Railway and Render, training.db and backups/.
+  // That happened once already. These two checks pin both halves: the scripts
+  // the login gate needs must be served, and nothing else may be.
+  for (const file of ["roles.js", "site-features.js", "ops-content.js", "floor-tools.js"]) {
+    const res = await fetch(`${BASE}/${file}`);
+    const body = await res.text();
+    // The catch-all answers unknown paths with index.html, so a 200 alone
+    // proves nothing — the page would come back with the wrong content type
+    // and the gate would hang, which is the bug the static revert was chasing.
+    if (res.ok && !body.includes('id="loginGate"')) {
+      pass(`${file} is served to the browser`);
+    } else {
+      fail(`GET /${file} returned ${res.status} and ${body.includes("loginGate") ? "the app shell instead of the script" : "no script body"}`);
+    }
+  }
+
+  for (const file of ["package.json", "seed.js", "backup.js", "db-path.js", "training.db"]) {
+    const res = await fetch(`${BASE}/${file}`);
+    const body = await res.text();
+    if (body.includes('id="loginGate"')) {
+      pass(`/${file} is not served (falls through to the app shell)`);
+    } else {
+      fail(`GET /${file} returned ${res.status} and served the file rather than the app shell`);
+    }
+  }
 }
 
 // A backup that is never verified is a backup you do not have. This asserts the
@@ -248,6 +319,7 @@ async function checkBackupWasTaken(dbPath) {
 
 (async () => {
   await checkRefusesDefaultSecretInProduction();
+  await checkRefusesDevLoginInProduction();
   await checkBootsAndServes();
 
   if (failures) {

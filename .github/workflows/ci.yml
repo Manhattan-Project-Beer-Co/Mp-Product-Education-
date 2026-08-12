@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    name: Encoding, syntax, dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Cheap checks first, so an obvious break fails in seconds rather than
+      # after a dependency install.
+      - name: Check file encodings
+        run: node scripts/check-encoding.js
+
+      - name: Check JavaScript syntax, including inline page scripts
+        run: node scripts/check-syntax.js
+
+      # Also confirms package-lock.json is in sync with package.json — npm ci
+      # fails outright when they disagree, which is what the deploy would hit.
+      - name: Install dependencies
+        run: npm ci
+
+      # Boots the real server against a throwaway database. Catches what a
+      # syntax check cannot: load-time errors, bad queries, schema statements
+      # that only fail on a fresh database.
+      - name: Boot the server and check it serves
+        run: node scripts/check-boot.js

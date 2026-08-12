@@ -8,10 +8,12 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "check": "node scripts/check-encoding.js && node scripts/check-syntax.js",
+    "check:boot": "node scripts/check-boot.js",
+    "backup": "node scripts/backup-now.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

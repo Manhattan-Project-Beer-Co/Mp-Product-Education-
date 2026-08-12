@@ -3947,9 +3947,39 @@
 
 
 
+  /* Sign-in gate. The app shell stays hidden until /api/auth/me has answered,
+     so nothing is ever briefly visible to someone who is not signed in. */
+  .login-gate { display: none; position: fixed; inset: 0; z-index: 200; align-items: center; justify-content: center; background: #0d0d0d; padding: 24px; }
+  body.auth-pending .login-gate, body.signed-out .login-gate { display: flex; }
+  body.auth-pending .app-shell, body.signed-out .app-shell { display: none; }
+  .login-card { width: 100%; max-width: 400px; text-align: center; }
+  .login-card h1 { font-size: 20px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9a227; margin: 22px 0 6px; }
+  .login-card .login-sub { color: #8a8a8a; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 26px; }
+  .login-card .login-message { color: #cfcfcf; font-size: 14px; line-height: 1.6; margin: 0 0 22px; }
+  .login-card .auth-error { margin-bottom: 18px; }
+  .login-actions button { width: 100%; }
+  .login-foot { color: #5c5c5c; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 30px; }
 </style>
 </head>
-<body>
+<body class="auth-pending">
+<div id="loginGate" class="login-gate">
+  <div class="login-card">
+    <svg width="54" height="54" viewBox="0 0 100 100" aria-hidden="true">
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
+      <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
+      <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
+      <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
+    </svg>
+    <h1>Manhattan Project</h1>
+    <p class="login-sub">Staff Training</p>
+    <div id="loginError"></div>
+    <p class="login-message" id="loginMessage">Checking your sign-in…</p>
+    <div class="login-actions" id="loginActions"></div>
+    <p class="login-foot">Internal use only</p>
+  </div>
+</div>
 <div class="app-shell">
   <aside class="app-sidebar" id="appSidebar">
     <div class="sidebar-brand">
@@ -4058,14 +4088,6 @@
   </div>
 </div>
 
-<div id="authBackdrop" class="modal-backdrop" onclick="closeAuthModal(event)">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">×</button>
-    <div id="authContent"></div>
-  </div>
-</div>
-
 <div id="briefingBackdrop" class="modal-backdrop briefing-backdrop" onclick="closeBriefingModal(event)">
   <div class="modal briefing-modal" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
     <div class="modal-handle"></div>
@@ -4119,8 +4141,9 @@
 <script>
 const API_BASE = "";
 let currentUser = null;
-let authToken = localStorage.getItem("mp_auth_token") || "";
-let authMode = "login";
+// The session lives in an HttpOnly cookie the browser sends automatically on
+// same-origin requests — deliberately unreadable from JavaScript, so there is
+// no token to hold here.
 let microsoftAuthAvailable = false;
 let teamDetailId = null;
 let myProgressData = null;
@@ -4146,17 +4169,15 @@ function microsoftSignInButton(label = "Sign in with Microsoft") {
 
 function consumeAuthCallbackParams() {
   const params = new URLSearchParams(window.location.search);
-  const token = params.get("auth_token");
   const authError = params.get("auth_error");
-  if (!token && !authError) return null;
+  if (!authError) return null;
 
-  params.delete("auth_token");
   params.delete("auth_error");
   const clean = params.toString();
   const nextUrl = clean ? `${window.location.pathname}?${clean}` : window.location.pathname;
   window.history.replaceState({}, "", nextUrl);
 
-  return { token, authError };
+  return { authError };
 }
 const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
@@ -5322,12 +5343,39 @@ const ACTIVITY_LABELS = {
 
 async function apiFetch(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-  if (authToken) headers.Authorization = `Bearer ${authToken}`;
 
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await response.json().catch(() => ({}));
+
+  // A 401 while we believed we were signed in means the session ended: the
+  // cookie expired, or the account was removed or its role changed such that
+  // the server no longer recognises it. Send the user back to sign in rather
+  // than leaving them in a shell where every request quietly fails.
+  if (response.status === 401 && currentUser) handleSessionEnded();
+
   if (!response.ok) throw new Error(data.error || "Request failed.");
   return data;
+}
+
+// Everything derived from who is signed in. Cleared together so no stale team
+// or progress data can survive into the next session.
+function clearSessionState() {
+  currentUser = null;
+  myProgressData = null;
+  beerCheckins = {};
+  myTastingData = null;
+  beerCheckinsLoaded = false;
+  teamData = null;
+  approvedEmailsData = null;
+  teamDetailId = null;
+  briefingView = "list";
+  briefingActiveItem = null;
+  currentBriefingItems = [];
+}
+
+function handleSessionEnded() {
+  clearSessionState();
+  showLoginGate("Your session has ended. Please sign in again.");
 }
 
 function roleLabel(role) {
@@ -5420,10 +5468,7 @@ function updateAuthUI() {
     if (userRole) userRole.textContent = "Sign in to track training";
     const guestHtml = microsoftAuthAvailable
       ? `<button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>`
-      : `
-        <button class="auth-btn" onclick="openAuthModal('login')">Log in</button>
-        <button class="auth-btn primary" onclick="openAuthModal('register')">Sign up</button>
-      `;
+      : `<button class="auth-btn" onclick="showLoginGate()">Sign in</button>`;
     if (authBar) authBar.innerHTML = guestHtml;
     if (authBarMobile) authBarMobile.innerHTML = guestHtml;
     return;
@@ -5455,34 +5500,50 @@ async function initAuth() {
   }
 
   const callback = consumeAuthCallbackParams();
-  if (callback?.token) {
-    authToken = callback.token;
-    localStorage.setItem("mp_auth_token", authToken);
-  }
 
-  if (!authToken) {
-    updateAuthUI();
-    if (callback?.authError) {
-      openAuthModal("login");
-      setTimeout(() => {
-        const errorEl = document.getElementById("authError");
-        if (errorEl) {
-          errorEl.innerHTML = `<div class="auth-error">${escapeHTML(callback.authError)}</div>`;
-        }
-      }, 0);
-    }
-    return;
-  }
+  // The session cookie is invisible to JavaScript, so the only way to know
+  // whether we are signed in is to ask the server.
   try {
     const data = await apiFetch("/api/auth/me");
     currentUser = data.user;
+  } catch {
+    currentUser = null;
+  }
+
+  if (currentUser) {
+    document.body.classList.remove("auth-pending", "signed-out");
     updateAuthUI();
     await loadBeerCheckins();
-  } catch {
-    authToken = "";
-    localStorage.removeItem("mp_auth_token");
-    currentUser = null;
-    updateAuthUI();
+    return;
+  }
+
+  showLoginGate(callback?.authError);
+}
+
+// Signed out: the app shell stays hidden and this is the whole page. Nothing
+// behind it is reachable anyway — every /api route except the sign-in
+// handshake requires a session — but there is no reason to render a shell
+// someone cannot use.
+function showLoginGate(authError) {
+  document.body.classList.remove("auth-pending");
+  document.body.classList.add("signed-out");
+
+  const message = document.getElementById("loginMessage");
+  const actions = document.getElementById("loginActions");
+  const error = document.getElementById("loginError");
+
+  error.innerHTML = authError ? `<div class="auth-error">${escapeHTML(authError)}</div>` : "";
+
+  if (microsoftAuthAvailable) {
+    message.textContent =
+      "Sign in with your Manhattan Project work account. Your training profile is created automatically the first time.";
+    // Shares the branded button with the Microsoft logo used elsewhere, rather
+    // than a second look-alike that would drift out of step with it.
+    actions.innerHTML = microsoftSignInButton();
+  } else {
+    message.textContent =
+      "Microsoft sign-in is not configured on this server yet, so there is no way to sign in. Ask an admin to set AZURE_CLIENT_ID and AZURE_CLIENT_SECRET.";
+    actions.innerHTML = "";
   }
 }
 
@@ -5490,131 +5551,18 @@ function startMicrosoftSignIn() {
   window.location.href = `${API_BASE}/api/auth/microsoft`;
 }
 
-function openAuthModal(mode) {
-  authMode = mode;
-  renderAuthModal();
-  document.getElementById("authBackdrop").classList.add("show");
-  document.body.style.overflow = "hidden";
-}
-
-function closeAuthModal(event) {
-  if (event && event.target !== document.getElementById("authBackdrop")) return;
-  document.getElementById("authBackdrop").classList.remove("show");
-  document.body.style.overflow = "";
-}
-
-function renderAuthModal() {
-  if (microsoftAuthAvailable && authMode === "register") {
-    authMode = "login";
-  }
-  const showRegister = !microsoftAuthAvailable && authMode === "register";
-  document.getElementById("authContent").innerHTML = `
-    <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
-      <h3>${showRegister ? "Create staff account" : "Log in"}</h3>
-      <p class="hint">${showRegister
-        ? "Staff sign up here to track training progress. The first account becomes admin. Use one setup key for manager, merch, inventory admin, shift lead, or event lead roles."
-        : microsoftAuthAvailable
-          ? "If an admin has approved your work email, sign in with Microsoft to create your account and track training."
-          : "Log in to save your quiz scores and track training progress."}</p>
-      <div id="authError"></div>
-      ${!showRegister ? microsoftSignInButton() : ""}
-      ${!showRegister && microsoftAuthAvailable ? `<div class="auth-divider">or email (local accounts)</div>` : ""}
-      <label for="authName">Full name</label>
-      <input id="authName" type="text" placeholder="Your name" ${showRegister ? "" : "style='display:none'"}>
-      <label for="authEmail">Email</label>
-      <input id="authEmail" type="email" placeholder="you@example.com">
-      <label for="authPassword">Password</label>
-      <input id="authPassword" type="password" placeholder="At least 6 characters">
-      ${showRegister ? `
-        <label for="authAdminKey">Admin setup key (optional)</label>
-        <input id="authAdminKey" type="password" placeholder="Full admin access">
-        <label for="authManagerKey">Manager setup key (optional)</label>
-        <input id="authManagerKey" type="password" placeholder="View everything; Team tab">
-        <label for="authMerchKey">Merch setup key (optional)</label>
-        <input id="authMerchKey" type="password" placeholder="Merch inventory and ideas">
-        <label for="authInventoryKey">Inventory admin setup key (optional)</label>
-        <input id="authInventoryKey" type="password" placeholder="Ops inventory counts only">
-        <label for="authShiftLeadKey">Shift lead setup key (optional)</label>
-        <input id="authShiftLeadKey" type="password" placeholder="Shift lead role (schedule on Team tab)">
-        <label for="authEventLeadKey">Event lead setup key (optional)</label>
-        <input id="authEventLeadKey" type="password" placeholder="Private events — full reference access">
-      ` : ""}
-      <button class="game-next" style="width:100%;" onclick="submitAuth()">${showRegister ? "Create account" : "Log in with email"}</button>
-      <p class="hint" style="margin-top:14px;text-align:center;">
-        ${showRegister
-          ? `Already have an account? <a href="#" onclick="openAuthModal('login'); return false;">Log in</a>`
-          : microsoftAuthAvailable
-            ? "Need access? Ask a manager to approve your email on the Team page."
-            : `Need an account? <a href="#" onclick="openAuthModal('register'); return false;">Sign up</a>`}
-      </p>
-    </div>
-  `;
-}
-
-async function submitAuth() {
-  const errorEl = document.getElementById("authError");
-  errorEl.innerHTML = "";
-
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-
+async function logout() {
   try {
-    let data;
-    if (authMode === "register") {
-      const name = document.getElementById("authName").value.trim();
-      const adminKey = document.getElementById("authAdminKey")?.value || "";
-      const managerKey = document.getElementById("authManagerKey")?.value || "";
-      const merchKey = document.getElementById("authMerchKey")?.value || "";
-      const inventoryKey = document.getElementById("authInventoryKey")?.value || "";
-      const shiftLeadKey = document.getElementById("authShiftLeadKey")?.value || "";
-      const eventLeadKey = document.getElementById("authEventLeadKey")?.value || "";
-      data = await apiFetch("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({ name, email, password, adminKey, managerKey, merchKey, inventoryKey, shiftLeadKey, eventLeadKey })
-      });
-    } else {
-      data = await apiFetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password })
-      });
-    }
-
-    authToken = data.token;
-    localStorage.setItem("mp_auth_token", authToken);
-    currentUser = data.user;
-    updateAuthUI();
-    closeAuthModal();
-    await loadBeerCheckins();
-    if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports" || activeType === "feedback") render();
-    await maybeShowDailyBriefing();
-    await maybePromptClosingChecklist();
-    await maybePromptShiftSurvey();
-    await maybeShowShiftDigest();
-  } catch (err) {
-    errorEl.innerHTML = `<div class="auth-error">${escapeHTML(err.message)}</div>`;
+    await apiFetch("/api/auth/logout", { method: "POST" });
+  } catch {
+    // Clearing local state matters more than the round trip succeeding.
   }
-}
-
-function logout() {
-  authToken = "";
-  currentUser = null;
-  myProgressData = null;
-  beerCheckins = {};
-  myTastingData = null;
-  beerCheckinsLoaded = false;
-  teamData = null;
-  approvedEmailsData = null;
-  teamDetailId = null;
-  briefingView = "list";
-  briefingActiveItem = null;
-  currentBriefingItems = [];
-  localStorage.removeItem("mp_auth_token");
-  updateAuthUI();
-  if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports" || activeType === "feedback") {
-    activeType = "ontap";
-    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
-  }
-  render();
+  clearSessionState();
+  // Back to the sign-in screen. Returning to a browsable shell would be
+  // misleading now that every endpoint behind it requires a session.
+  activeType = "ontap";
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
+  showLoginGate();
 }
 
 function collectNewAnnouncements() {
@@ -5973,7 +5921,7 @@ function renderBeerCheckinPanel(beerName) {
       <div class="checkin-panel">
         <p class="detail-label">Staff tasting journal</p>
         <p class="checkin-status">Log in to rate beers you've tasted during training — like Untappd check-ins, but for the floor team.</p>
-        <button class="game-next" type="button" onclick="closeModal(); openAuthModal('login');">Log in to check in</button>
+        <button class="game-next" type="button" onclick="closeModal(); showLoginGate();">Log in to check in</button>
       </div>
     `;
   }
@@ -6513,7 +6461,7 @@ function initTeamCharts(employees) {
 }
 
 async function fetchTeamActivityBreakdown(staff) {
-  if (!staff.length || !authToken) return [];
+  if (!staff.length || !currentUser) return [];
   try {
     const details = await Promise.all(
       staff.map(emp => apiFetch(`/api/admin/employees/${emp.id}`))
@@ -6577,7 +6525,7 @@ function selectShiftSurveyRating(rating) {
 
 async function renderShiftSurvey(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to submit your shift survey</h3><p class="hint">Anonymous end-of-shift feedback goes to the shift lead at the end of the day.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to submit your shift survey</h3><p class="hint">Anonymous end-of-shift feedback goes to the shift lead at the end of the day.</p><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
     return;
   }
 
@@ -6671,7 +6619,7 @@ async function submitShiftSurvey() {
 
 async function renderShiftReports(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to view shift reports</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to view shift reports</h3><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
     return;
   }
 
@@ -7007,7 +6955,7 @@ async function renderSiteFeedback(content) {
       <div class="auth-panel">
         <h3>Log in to submit feedback</h3>
         <p class="hint">Shift leads and staff can report bugs, wrong menu info, or ideas while we pilot the site.</p>
-        <button class="game-next" onclick="openAuthModal('login')">Log in</button>
+        <button class="game-next" onclick="showLoginGate()">Log in</button>
       </div>
     `;
     return;
@@ -7172,7 +7120,7 @@ async function updateSiteFeedbackStatus(id) {
 
 async function renderMyProgress(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
     return;
   }
 
@@ -7564,15 +7512,15 @@ function renderApprovedEmailsPanel(emails) {
     </tr>
   `).join("") : `
     <tr>
-      <td colspan="4" style="color:#888;">No approved emails yet. Add a staff member’s Microsoft work email above.</td>
+      <td colspan="4" style="color:#888;">No role assignments yet. Everyone signs in as an Employee by default; add a work email above to give someone a different role.</td>
     </tr>
   `;
 
   return `
     <div class="approve-panel">
       <div class="approve-card">
-        <h3>Approved emails</h3>
-        <p>Only these Microsoft work emails can sign in. Their account is created automatically on first login. Change access type with Save role.</p>
+        <h3>Role assignments</h3>
+        <p>Anyone with a Manhattan Project work account can sign in — an account is created automatically on first login, as an Employee. Add an email here to give someone a different role, before or after their first sign-in.</p>
         <div id="approveError"></div>
         <form class="approve-form" onsubmit="addApprovedEmail(event)">
           <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
@@ -8481,13 +8429,7 @@ async function renderChecklists(content) {
 
   try {
     if (checklistId) {
-      const data = authToken
-        ? await apiFetch(`/api/checklists/${encodeURIComponent(checklistId)}?date=${encodeURIComponent(checklistDate)}`)
-        : await fetch(`${API_BASE}/api/checklists/${encodeURIComponent(checklistId)}?date=${encodeURIComponent(checklistDate)}`).then(async r => {
-            const payload = await r.json();
-            if (!r.ok) throw new Error(payload.error || "Could not load checklist.");
-            return payload;
-          });
+      const data = await apiFetch(`/api/checklists/${encodeURIComponent(checklistId)}?date=${encodeURIComponent(checklistDate)}`);
       checklistDetail = data;
       const completed = new Set(data.completedTaskIds || []);
       const list = data.checklist;
@@ -8563,7 +8505,7 @@ async function renderChecklists(content) {
               <input type="checkbox" ${checklistShowCompleted ? "checked" : ""} onchange="checklistShowCompleted=this.checked; render();">
               Show completed
             </label>
-            ${currentUser ? `<button class="auth-btn" type="button" onclick="resetChecklistProgress('${escapeForAttribute(list.id)}')">Reset today</button>` : `<button class="auth-btn" type="button" onclick="openAuthModal('login')">Log in to check off</button>`}
+            ${currentUser ? `<button class="auth-btn" type="button" onclick="resetChecklistProgress('${escapeForAttribute(list.id)}')">Reset today</button>` : `<button class="auth-btn" type="button" onclick="showLoginGate()">Log in to check off</button>`}
           </div>
           ${taskHtml.length ? taskHtml.join("") : `<div class="status"><strong>No tasks match.</strong>${checklistShowCompleted ? "" : " Turn on Show completed, or clear search."}</div>`}
           <div class="guide-callout">Need the written procedure? Open the matching doc on the SOPs tab (Opening, Closing, Events, Cleaning Materials, etc.).</div>
@@ -8572,13 +8514,7 @@ async function renderChecklists(content) {
       return;
     }
 
-    const data = authToken
-      ? await apiFetch(`/api/checklists?date=${encodeURIComponent(checklistDate)}`)
-      : await fetch(`${API_BASE}/api/checklists?date=${encodeURIComponent(checklistDate)}`).then(async r => {
-          const payload = await r.json();
-          if (!r.ok) throw new Error(payload.error || "Could not load checklists.");
-          return payload;
-        });
+    const data = await apiFetch(`/api/checklists?date=${encodeURIComponent(checklistDate)}`);
     checklistCache = data;
 
     const groups = {};
@@ -8626,7 +8562,7 @@ async function renderChecklists(content) {
 
 async function toggleChecklistTask(id, taskId) {
   if (!currentUser) {
-    openAuthModal("login");
+    showLoginGate();
     return;
   }
   try {
@@ -8900,9 +8836,7 @@ async function loadMerchData(force) {
   try {
     const [stockRes, ideasRes] = await Promise.all([
       fetch(`${API_BASE}/api/merch`),
-      fetch(`${API_BASE}/api/merch/ideas`, {
-        headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
-      })
+      fetch(`${API_BASE}/api/merch/ideas`)
     ]);
     const stockData = await stockRes.json();
     const ideasData = await ideasRes.json();
@@ -9070,7 +9004,7 @@ async function submitMerchIdea() {
 
 async function toggleMerchVote(ideaId) {
   if (!currentUser) {
-    openAuthModal("login");
+    showLoginGate();
     return;
   }
   try {
@@ -9871,7 +9805,7 @@ function startGame(id) {
   if (id === "favbeer") {
     if (!currentUser) {
       activeGame = null;
-      openAuthModal("login");
+      showLoginGate();
       return;
     }
     gameSession = {
@@ -11215,7 +11149,7 @@ function renderFavoriteBeerGame(content) {
       <div class="auth-panel">
         <h3>Log in to play Staff Favorites</h3>
         <p class="hint">Guess teammates’ favorite beers for bonus points and unlock them on the leaderboard.</p>
-        <button class="game-next" onclick="openAuthModal('login')">Log in</button>
+        <button class="game-next" onclick="showLoginGate()">Log in</button>
       </div>
     `);
     return;
@@ -12021,8 +11955,6 @@ document.addEventListener("keydown", event => {
       closeBriefingModal();
     } else if (document.getElementById("shiftDigestBackdrop").classList.contains("show")) {
       closeShiftDigestModal();
-    } else if (document.getElementById("authBackdrop").classList.contains("show")) {
-      closeAuthModal();
     } else if (chatOpen) {
       toggleChatPanel(false);
     } else {
@@ -12286,10 +12218,13 @@ async function sendChatMessage(event, presetText) {
 }
 
 async function bootstrap() {
-  await loadData();
+  // Auth first. Everything below either calls a gated endpoint or renders the
+  // app, and neither is any use to someone who is not signed in.
   await initAuth();
-  if (currentUser) await loadBeerCheckins();
-  render();
+  if (!currentUser) return;
+
+  await loadData();
+  await loadBeerCheckins();
   loadSopsData(true).catch(() => {});
   await maybeShowDailyBriefing();
   await maybePromptClosingChecklist();

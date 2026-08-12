@@ -16,13 +16,47 @@ const {
 } = require("./reviews");
 const { MERCH_CATALOG } = require("./merch-catalog");
 const { registerMpInventory } = require("./mp-inventory-api");
+const { SOPS_CATALOG, SOPS_RETIRED_TITLES } = require("./sops-catalog");
+const { CHECKLISTS, getChecklistById, listChecklists } = require("./checklists-data");
+const sevenShifts = require("./seven-shifts");
+const {
+  ensureTables: ensureSevenShiftsTables,
+  syncSevenShifts,
+  getUserShiftContext,
+  getWorkingStaff,
+  localDateKey
+} = require("./seven-shifts-sync");
+const {
+  ROLES,
+  ALL_ROLES,
+  normalizeRole,
+  parseExtraRoles,
+  serializeExtraRoles,
+  roleLabel,
+  hasRole,
+  canManageTeam,
+  canManageApprovedEmails,
+  canManageMerch,
+  canManageOpsInventory,
+  canViewShiftReports,
+  canSubmitShiftSurvey,
+  receivesDailyBriefing,
+  isFloorStaffForTraining,
+  canManageSops,
+  canManageSiteFeedback,
+  canRefreshReviews,
+  buildPermissions
+} = require("./roles");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 const JWT_SECRET = process.env.JWT_SECRET || "mp-training-dev-secret-change-in-production";
 const ADMIN_SETUP_KEY = process.env.ADMIN_SETUP_KEY || "mp-admin-setup";
+const MANAGER_SETUP_KEY = process.env.MANAGER_SETUP_KEY || "mp-manager-setup";
 const MERCH_SETUP_KEY = process.env.MERCH_SETUP_KEY || "mp-merch-setup";
 const SHIFT_LEAD_SETUP_KEY = process.env.SHIFT_LEAD_SETUP_KEY || "mp-shift-lead-setup";
+const INVENTORY_ADMIN_SETUP_KEY = process.env.INVENTORY_ADMIN_SETUP_KEY || "mp-inventory-setup";
+const EVENT_LEAD_SETUP_KEY = process.env.EVENT_LEAD_SETUP_KEY || "mp-event-lead-setup";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const APP_BASE_URL = (process.env.APP_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
@@ -37,7 +71,7 @@ const AZURE_ADMIN_EMAILS = new Set(
     .filter(Boolean)
 );
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
-const ALLOWED_APPROVED_ROLES = new Set(["employee", "admin", "merch", "shift_lead"]);
+const ALLOWED_APPROVED_ROLES = new Set(ALL_ROLES);
 
 const CHAT_SYSTEM_PROMPT = `You are the Manhattan Project Beer Co. staff training assistant embedded in the internal training portal.
 
@@ -61,7 +95,7 @@ db.exec(`
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL DEFAULT '',
-    role TEXT NOT NULL DEFAULT 'employee',
+    role TEXT NOT NULL DEFAULT 'bartender',
     auth_provider TEXT NOT NULL DEFAULT 'local',
     microsoft_oid TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -162,6 +196,38 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_shift_surveys_date ON shift_surveys(shift_date);
 
+  CREATE TABLE IF NOT EXISTS beer_checkins (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    beer_name TEXT NOT NULL,
+    rating REAL,
+    notes TEXT NOT NULL DEFAULT '',
+    tasted_at TEXT NOT NULL DEFAULT (datetime('now')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    UNIQUE(user_id, beer_name)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_beer_checkins_user ON beer_checkins(user_id);
+
+  CREATE TABLE IF NOT EXISTS site_feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    category TEXT NOT NULL,
+    page_tab TEXT NOT NULL DEFAULT '',
+    subject TEXT NOT NULL,
+    message TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open',
+    admin_notes TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_site_feedback_status ON site_feedback(status);
+  CREATE INDEX IF NOT EXISTS idx_site_feedback_user ON site_feedback(user_id);
+
   CREATE TABLE IF NOT EXISTS inventory_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -219,7 +285,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS approved_emails (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
-    role TEXT NOT NULL DEFAULT 'employee',
+    role TEXT NOT NULL DEFAULT 'bartender',
     added_by INTEGER,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (added_by) REFERENCES users(id)
@@ -242,6 +308,27 @@ db.exec(`
   );
 
   CREATE INDEX IF NOT EXISTS idx_sop_category ON sop_documents(category);
+
+  CREATE TABLE IF NOT EXISTS checklist_completions (
+    user_id INTEGER NOT NULL,
+    checklist_id TEXT NOT NULL,
+    shift_date TEXT NOT NULL,
+    task_id INTEGER NOT NULL,
+    completed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, checklist_id, shift_date, task_id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_checklist_completions_lookup
+    ON checklist_completions(checklist_id, shift_date);
+
+  CREATE TABLE IF NOT EXISTS favorite_beer_unlocks (
+    guesser_id INTEGER NOT NULL,
+    target_user_id INTEGER NOT NULL,
+    unlocked_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (guesser_id, target_user_id),
+    FOREIGN KEY (guesser_id) REFERENCES users(id),
+    FOREIGN KEY (target_user_id) REFERENCES users(id)
+  );
 `);
 
 const userColumns = new Set(db.prepare("PRAGMA table_info(users)").all().map((c) => c.name));
@@ -251,6 +338,29 @@ if (!userColumns.has("auth_provider")) {
 if (!userColumns.has("microsoft_oid")) {
   db.exec(`ALTER TABLE users ADD COLUMN microsoft_oid TEXT`);
 }
+if (!userColumns.has("extra_roles")) {
+  db.exec(`ALTER TABLE users ADD COLUMN extra_roles TEXT NOT NULL DEFAULT '[]'`);
+}
+if (!userColumns.has("favorite_beer")) {
+  db.exec(`ALTER TABLE users ADD COLUMN favorite_beer TEXT NOT NULL DEFAULT ''`);
+}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS shift_lead_duty (
+    user_id INTEGER NOT NULL,
+    shift_date TEXT NOT NULL,
+    assigned_by INTEGER,
+    assigned_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, shift_date),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (assigned_by) REFERENCES users(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_shift_lead_duty_date ON shift_lead_duty(shift_date);
+`);
+
+db.prepare(`UPDATE users SET role = 'bartender' WHERE role = 'employee'`).run();
+db.prepare(`UPDATE approved_emails SET role = 'bartender' WHERE role = 'employee'`).run();
 
 const seedApproved = db.prepare(`
   INSERT OR IGNORE INTO approved_emails (email, role)
@@ -288,7 +398,8 @@ const GAME_POINT_VALUES = {
   battle: 10,
   rocket: 10,
   coffee_quiz: 10,
-  coffee_flash: 3
+  coffee_flash: 3,
+  fav_beer: 25
 };
 
 function computeSessionPoints(activityType, score, total) {
@@ -308,7 +419,7 @@ function clampPoints(activityType, score, total, requested) {
 }
 
 function todayDate() {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey(new Date());
 }
 
 function maybeAutoSeedOnFirstBoot() {
@@ -358,41 +469,44 @@ function ensureMerchCatalog() {
 
 function ensureSampleSops() {
   try {
-    const { count } = db.prepare("SELECT COUNT(*) AS count FROM sop_documents WHERE active = 1").get();
-    if (count > 0) return;
-
-    const samples = [
-      {
-        category: "Opening",
-        title: "Taproom Opening Checklist",
-        summary: "Walk the floor before guests arrive — taps, POS, cleanliness, and safety.",
-        sort_order: 1,
-        body: "<p><strong>Before unlock</strong></p><ul><li>Walk the floor — lights, music, temperature, and restrooms.</li><li>Verify POS is online and drawer is counted.</li><li>Check tap lines are pouring cleanly; note any foam or off flavors for the lead.</li><li>Confirm ice, glassware, and to-go materials are stocked.</li><li>Review today's beer, food, and coffee specials with the opening team.</li></ul>"
-      },
-      {
-        category: "Closing",
-        title: "End-of-Night Close",
-        summary: "Secure the building, reset the bar, and leave notes for the next shift.",
-        sort_order: 1,
-        body: "<p><strong>Last hour</strong></p><ul><li>Announce last call per house policy.</li><li>Break down and sanitize bar top, wells, and coffee station.</li><li>Close out open tabs and reconcile POS with the manager.</li><li>Log low inventory on the Inventory tab.</li><li>Lock doors, set alarm, and note any issues for the opening lead.</li></ul>"
-      },
-      {
-        category: "Bar",
-        title: "Guest Allergy & Dietary Questions",
-        summary: "How to handle gluten-reduced beer, dairy, and ingredient questions.",
-        sort_order: 1,
-        body: "<p>Never guess on allergens. Use the tap list and food descriptions in this portal.</p><ul><li>Gluten-reduced beers are flagged on the beer list — confirm with kitchen for food.</li><li>For coffee drinks, whole milk is default; oat milk is available on request.</li><li>If unsure, offer to check with a manager or the kitchen before confirming.</li></ul>"
-      }
-    ];
-
+    const findByTitle = db.prepare(`
+      SELECT id FROM sop_documents WHERE title = ? AND active = 1 LIMIT 1
+    `);
     const insertSop = db.prepare(`
       INSERT INTO sop_documents (category, title, summary, body, sort_order)
       VALUES (?, ?, ?, ?, ?)
     `);
-    for (const sample of samples) {
-      insertSop.run(sample.category, sample.title, sample.summary, sample.body, sample.sort_order);
+    const updateSop = db.prepare(`
+      UPDATE sop_documents
+      SET category = ?, summary = ?, body = ?, sort_order = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `);
+    const retireSop = db.prepare(`
+      UPDATE sop_documents
+      SET active = 0, updated_at = datetime('now')
+      WHERE title = ? AND active = 1
+    `);
+
+    let inserted = 0;
+    let updated = 0;
+    let retired = 0;
+    for (const sample of SOPS_CATALOG) {
+      const existing = findByTitle.get(sample.title);
+      if (existing) {
+        updateSop.run(sample.category, sample.summary, sample.body, sample.sort_order, existing.id);
+        updated += 1;
+      } else {
+        insertSop.run(sample.category, sample.title, sample.summary, sample.body, sample.sort_order);
+        inserted += 1;
+      }
     }
-    console.log(`Loaded ${samples.length} sample SOPs.`);
+    for (const title of SOPS_RETIRED_TITLES || []) {
+      const result = retireSop.run(title);
+      retired += result.changes || 0;
+    }
+    if (inserted || updated || retired) {
+      console.log(`SOP catalog synced (${inserted} new, ${updated} updated, ${retired} retired).`);
+    }
   } catch (err) {
     console.warn("SOP seed skipped:", err.message);
   }
@@ -431,31 +545,87 @@ function authRequired(req, res, next) {
   }
 }
 
+function getUserRow(userId) {
+  return db.prepare(`
+    SELECT id, name, email, role, extra_roles, favorite_beer, created_at
+    FROM users WHERE id = ?
+  `).get(userId);
+}
+
+function isOnShiftLeadDuty(userId, shiftDate = todayDate()) {
+  if (!userId) return false;
+  return Boolean(db.prepare(`
+    SELECT 1 FROM shift_lead_duty WHERE user_id = ? AND shift_date = ?
+  `).get(userId, shiftDate));
+}
+
+function publicUser(row, options = {}) {
+  const onShiftLeadDuty = options.onShiftLeadDuty ?? isOnShiftLeadDuty(row.id);
+  const shiftContext = options.includeShiftContext === false
+    ? null
+    : getUserShiftContext(db, row.id);
+  const user = {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    role: normalizeRole(row.role),
+    extra_roles: parseExtraRoles(row.extra_roles),
+    favorite_beer: String(row.favorite_beer || "").trim(),
+    created_at: row.created_at,
+    on_shift_lead_duty: onShiftLeadDuty || Boolean(shiftContext?.isShiftLeadNow),
+    shift: shiftContext
+  };
+  user.permissions = buildPermissions(user, user.on_shift_lead_duty);
+  return user;
+}
+
+function loadAuthedUser(req) {
+  const row = getUserRow(req.user.id);
+  return row ? publicUser(row) : null;
+}
+
 function adminRequired(req, res, next) {
-  if (req.user.role !== "admin") {
+  const user = loadAuthedUser(req);
+  if (!user || !hasRole(user, ROLES.ADMIN)) {
     return res.status(403).json({ error: "Admin access required." });
   }
+  req.authUser = user;
+  next();
+}
+
+function managerOrAdminRequired(req, res, next) {
+  const user = loadAuthedUser(req);
+  if (!user || !canManageTeam(user)) {
+    return res.status(403).json({ error: "Manager or admin access required." });
+  }
+  req.authUser = user;
   next();
 }
 
 function merchManagerRequired(req, res, next) {
-  if (req.user.role !== "admin" && req.user.role !== "merch") {
+  const user = loadAuthedUser(req);
+  if (!user || !canManageMerch(user)) {
     return res.status(403).json({ error: "Merch manager access required." });
   }
+  req.authUser = user;
   next();
 }
 
-function shiftLeadRequired(req, res, next) {
-  if (req.user.role !== "admin" && req.user.role !== "shift_lead") {
-    return res.status(403).json({ error: "Shift lead access required." });
+function shiftLeadOrManagerRequired(req, res, next) {
+  const user = loadAuthedUser(req);
+  if (!user || !canViewShiftReports(user, user.on_shift_lead_duty)) {
+    return res.status(403).json({ error: "Shift lead duty or manager access required." });
   }
+  req.authUser = user;
   next();
 }
 
 function inventoryManagerRequired(req, res, next) {
-  if (req.user.role !== "admin" && req.user.role !== "shift_lead") {
-    return res.status(403).json({ error: "Inventory manager access required." });
+  const user = loadAuthedUser(req);
+  if (!user || !canManageOpsInventory(user)) {
+    return res.status(403).json({ error: "Inventory admin access required." });
   }
+  req.authUser = user;
   next();
 }
 
@@ -478,9 +648,9 @@ function resolveApprovedRole(email, existingRole) {
   const normalized = normalizeEmail(email);
   if (AZURE_ADMIN_EMAILS.has(normalized)) return "admin";
   const approved = getApprovedEmail(normalized);
-  if (approved && ALLOWED_APPROVED_ROLES.has(approved.role)) return approved.role;
-  if (existingRole && ALLOWED_APPROVED_ROLES.has(existingRole)) return existingRole;
-  return "employee";
+  if (approved && ALLOWED_APPROVED_ROLES.has(approved.role)) return normalizeRole(approved.role);
+  if (existingRole && ALLOWED_APPROVED_ROLES.has(existingRole)) return normalizeRole(existingRole);
+  return ROLES.BARTENDER;
 }
 
 function microsoftAuthorizeUrl(state) {
@@ -512,15 +682,15 @@ function upsertMicrosoftUser({ oid, email, name }) {
       WHERE id = ?
     `).run(name, normalized, oid || null, role, existing.id);
 
-    return db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(existing.id);
+    return db.prepare("SELECT id, name, email, role, extra_roles, created_at FROM users WHERE id = ?").get(existing.id);
   }
 
   const result = db.prepare(`
-    INSERT INTO users (name, email, password_hash, role, auth_provider, microsoft_oid)
-    VALUES (?, ?, '', ?, 'microsoft', ?)
+    INSERT INTO users (name, email, password_hash, role, auth_provider, microsoft_oid, extra_roles)
+    VALUES (?, ?, '', ?, 'microsoft', ?, '[]')
   `).run(name, normalized, role, oid || null);
 
-  return db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
+  return db.prepare("SELECT id, name, email, role, extra_roles, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
 }
 
 function isValidShiftDate(value) {
@@ -731,7 +901,8 @@ function formatMerchItem(row, sizes) {
     sizes: sizes.map(s => ({
       id: s.id,
       size_label: s.size_label,
-      quantity: s.quantity > 0 ? s.quantity : null
+      quantity: s.quantity > 0 ? s.quantity : null,
+      quantity_raw: s.quantity
     })),
     total_quantity: totalQuantity
   };
@@ -776,10 +947,6 @@ function getMerchIdeas(userId) {
     vote_count: idea.vote_count,
     user_voted: votedIds.has(idea.id)
   }));
-}
-
-function publicUser(row) {
-  return { id: row.id, name: row.name, email: row.email, role: row.role, created_at: row.created_at };
 }
 
 function getUserStats(userId) {
@@ -834,6 +1001,134 @@ function getUserStats(userId) {
   };
 }
 
+function getBeerCheckins(userId) {
+  return db.prepare(`
+    SELECT beer_name, rating, notes, tasted_at, updated_at
+    FROM beer_checkins
+    WHERE user_id = ?
+    ORDER BY tasted_at DESC
+  `).all(userId);
+}
+
+function isBeerOnTap(beer) {
+  const onTap = String(beer["On Tap"] || "").trim().toLowerCase();
+  return onTap.startsWith("yes");
+}
+
+async function getUserBadges(userId) {
+  const stats = getUserStats(userId);
+  const checkins = getBeerCheckins(userId);
+  const act = activityMap(stats);
+  const triedSet = new Set(checkins.map(c => c.beer_name.trim().toLowerCase()));
+
+  let onTapNames = [];
+  try {
+    const beers = await getBeers();
+    onTapNames = beers
+      .filter(isBeerOnTap)
+      .map(b => String(b.Name || "").trim())
+      .filter(Boolean);
+  } catch (_) {
+    onTapNames = [];
+  }
+
+  const onTapTried = onTapNames.filter(name => triedSet.has(name.toLowerCase())).length;
+  const coveragePct = onTapNames.length
+    ? Math.round((onTapTried / onTapNames.length) * 100)
+    : 0;
+
+  const badges = [
+    {
+      key: "first_pour",
+      title: "First Pour",
+      description: "Log your first staff tasting",
+      icon: "🍺",
+      earned: checkins.length >= 1
+    },
+    {
+      key: "palate_builder",
+      title: "Palate Builder",
+      description: "Log 5 beer tastings",
+      icon: "📝",
+      earned: checkins.length >= 5
+    },
+    {
+      key: "menu_explorer",
+      title: "Menu Explorer",
+      description: "Log 10 beer tastings",
+      icon: "🗺️",
+      earned: checkins.length >= 10
+    },
+    {
+      key: "rotation_complete",
+      title: "Rotation Complete",
+      description: "Taste every beer currently on tap",
+      icon: "✅",
+      earned: onTapNames.length > 0 && onTapTried >= onTapNames.length
+    },
+    {
+      key: "first_game",
+      title: "Boot Camp",
+      description: "Complete your first training game",
+      icon: "🎯",
+      earned: stats.summary.sessions_completed >= 1
+    },
+    {
+      key: "tap_match",
+      title: "Tap Match Pro",
+      description: "75%+ accuracy in Tap Match",
+      icon: "🔢",
+      earned: (act.tap?.accuracy || 0) >= 75 && (act.tap?.attempts || 0) >= 1
+    },
+    {
+      key: "guest_match",
+      title: "Guest Guide",
+      description: "75%+ accuracy in Guest Match",
+      icon: "💬",
+      earned: (act.practice?.accuracy || 0) >= 75 && (act.practice?.attempts || 0) >= 1
+    },
+    {
+      key: "floor_ready",
+      title: "Floor Ready",
+      description: "Pass Tap Match and Guest Match thresholds",
+      icon: "🏆",
+      earned: (act.tap?.accuracy || 0) >= 75 && (act.practice?.accuracy || 0) >= 75
+    },
+    {
+      key: "launch_pad",
+      title: "Launch Pad Ace",
+      description: "75%+ accuracy in Launch Pad arcade",
+      icon: "🚀",
+      earned: (act.rocket?.accuracy || 0) >= 75 && (act.rocket?.attempts || 0) >= 1
+    },
+    {
+      key: "coffee_cert",
+      title: "Coffee Certified",
+      description: "75%+ on the Coffee Quiz",
+      icon: "☕",
+      earned: (act.coffee_quiz?.accuracy || 0) >= 75 && (act.coffee_quiz?.attempts || 0) >= 1
+    },
+    {
+      key: "point_hunter",
+      title: "Point Hunter",
+      description: "Earn 500+ training points total",
+      icon: "⭐",
+      earned: (stats.summary.total_points || 0) >= 500
+    }
+  ];
+
+  return {
+    badges,
+    tasting: {
+      total: checkins.length,
+      onTapTotal: onTapNames.length,
+      onTapTried,
+      coveragePct,
+      untriedOnTap: onTapNames.filter(name => !triedSet.has(name.toLowerCase()))
+    }
+  };
+}
+
 const ACTIVITY_LABELS = {
   quiz: "Flavor Quiz",
   practice: "Guest Match",
@@ -850,7 +1145,8 @@ const ACTIVITY_LABELS = {
   gf: "GF Spotter",
   battle: "ABV Battle",
   coffee_quiz: "Coffee Quiz",
-  coffee_flash: "Coffee Flashcards"
+  coffee_flash: "Coffee Flashcards",
+  fav_beer: "Staff Favorites"
 };
 
 const TRAINING_PATH = [
@@ -1054,9 +1350,12 @@ app.post("/api/auth/register", (req, res) => {
   const email = normalizeEmail(req.body.email);
   const password = req.body.password || "";
   const adminKey = (req.body.adminKey || "").trim();
+  const managerKey = (req.body.managerKey || "").trim();
   const merchKey = (req.body.merchKey || "").trim();
   const shiftLeadKey = (req.body.shiftLeadKey || "").trim();
-  const setupKeys = [adminKey, merchKey, shiftLeadKey].filter(Boolean);
+  const inventoryKey = (req.body.inventoryKey || "").trim();
+  const eventLeadKey = (req.body.eventLeadKey || "").trim();
+  const setupKeys = [adminKey, managerKey, merchKey, shiftLeadKey, inventoryKey, eventLeadKey].filter(Boolean);
 
   if (!name || !email || !password) {
     return res.status(400).json({ error: "Name, email, and password are required." });
@@ -1069,25 +1368,40 @@ app.post("/api/auth/register", (req, res) => {
   }
 
   const existingCount = db.prepare("SELECT COUNT(*) AS count FROM users").get().count;
-  let role = "employee";
+  let role = ROLES.BARTENDER;
 
   if (adminKey) {
     if (adminKey !== ADMIN_SETUP_KEY) {
       return res.status(403).json({ error: "Invalid admin setup key." });
     }
-    role = "admin";
+    role = ROLES.ADMIN;
+  } else if (managerKey) {
+    if (managerKey !== MANAGER_SETUP_KEY) {
+      return res.status(403).json({ error: "Invalid manager setup key." });
+    }
+    role = ROLES.MANAGER;
   } else if (merchKey) {
     if (merchKey !== MERCH_SETUP_KEY) {
       return res.status(403).json({ error: "Invalid merch setup key." });
     }
-    role = "merch";
+    role = ROLES.MERCH;
   } else if (shiftLeadKey) {
     if (shiftLeadKey !== SHIFT_LEAD_SETUP_KEY) {
       return res.status(403).json({ error: "Invalid shift lead setup key." });
     }
-    role = "shift_lead";
+    role = ROLES.SHIFT_LEAD;
+  } else if (inventoryKey) {
+    if (inventoryKey !== INVENTORY_ADMIN_SETUP_KEY) {
+      return res.status(403).json({ error: "Invalid inventory admin setup key." });
+    }
+    role = ROLES.INVENTORY_ADMIN;
+  } else if (eventLeadKey) {
+    if (eventLeadKey !== EVENT_LEAD_SETUP_KEY) {
+      return res.status(403).json({ error: "Invalid event lead setup key." });
+    }
+    role = ROLES.EVENT_LEAD;
   } else if (existingCount === 0) {
-    role = "admin";
+    role = ROLES.ADMIN;
   }
 
   try {
@@ -1097,7 +1411,7 @@ app.post("/api/auth/register", (req, res) => {
       VALUES (?, ?, ?, ?)
     `).run(name, email, password_hash, role);
 
-    const user = db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
+    const user = db.prepare("SELECT id, name, email, role, extra_roles, created_at FROM users WHERE id = ?").get(result.lastInsertRowid);
     const token = signToken(user);
     res.json({ token, user: publicUser(user) });
   } catch (err) {
@@ -1230,9 +1544,207 @@ app.get("/api/auth/microsoft/callback", async (req, res) => {
 });
 
 app.get("/api/auth/me", authRequired, (req, res) => {
-  const user = db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(req.user.id);
-  if (!user) return res.status(404).json({ error: "User not found." });
-  res.json({ user: publicUser(user) });
+  const row = getUserRow(req.user.id);
+  if (!row) return res.status(404).json({ error: "User not found." });
+  res.json({ user: publicUser(row) });
+});
+
+app.patch("/api/me/favorite-beer", authRequired, (req, res) => {
+  const favoriteBeer = String(req.body.favoriteBeer || req.body.favorite_beer || "").trim().slice(0, 80);
+  db.prepare("UPDATE users SET favorite_beer = ? WHERE id = ?").run(favoriteBeer, req.user.id);
+  const row = getUserRow(req.user.id);
+  if (!row) return res.status(404).json({ error: "User not found." });
+  res.json({ ok: true, user: publicUser(row) });
+});
+
+const FAV_BEER_DECOYS = [
+  "Black Matter Nitro",
+  "Hoppenheimer",
+  "Atomic Blonde",
+  "Little Boy",
+  "Chain Reaction",
+  "Trinity",
+  "Fat Man Stout",
+  "Manhattan Project IPA",
+  "Still deciding",
+  "Whatever's on special"
+];
+
+function shuffleArray(list) {
+  const arr = [...list];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getUnlockedFavoriteIds(guesserId) {
+  return new Set(
+    db.prepare("SELECT target_user_id FROM favorite_beer_unlocks WHERE guesser_id = ?")
+      .all(guesserId)
+      .map(row => row.target_user_id)
+  );
+}
+
+app.get("/api/games/favorite-beer-quiz", authRequired, (req, res) => {
+  const staff = db.prepare(`
+    SELECT id, name, favorite_beer
+    FROM users
+    WHERE TRIM(COALESCE(favorite_beer, '')) != ''
+      AND id != ?
+    ORDER BY name ASC
+  `).all(req.user.id);
+
+  if (staff.length < 1) {
+    return res.json({
+      questions: [],
+      unlockedCount: 0,
+      totalWithFavorites: 0,
+      message: "Nobody has set a favorite beer yet — ask teammates to add theirs on Launch Pad."
+    });
+  }
+
+  const unlocked = getUnlockedFavoriteIds(req.user.id);
+  const allFavorites = [...new Set(staff.map(row => String(row.favorite_beer).trim()).filter(Boolean))];
+  const decoyPool = [...new Set([...allFavorites, ...FAV_BEER_DECOYS])];
+
+  const ordered = [
+    ...shuffleArray(staff.filter(row => !unlocked.has(row.id))),
+    ...shuffleArray(staff.filter(row => unlocked.has(row.id)))
+  ].slice(0, 8);
+
+  const questions = ordered.map(row => {
+    const correct = String(row.favorite_beer).trim();
+    const decoys = shuffleArray(
+      decoyPool.filter(beer => beer.toLowerCase() !== correct.toLowerCase())
+    ).slice(0, 3);
+    while (decoys.length < 3) {
+      decoys.push(FAV_BEER_DECOYS[decoys.length % FAV_BEER_DECOYS.length]);
+    }
+    return {
+      targetUserId: row.id,
+      name: row.name,
+      unlocked: unlocked.has(row.id),
+      choices: shuffleArray([correct, ...decoys.slice(0, 3)])
+    };
+  });
+
+  res.json({
+    questions,
+    unlockedCount: unlocked.size,
+    totalWithFavorites: staff.length
+  });
+});
+
+app.post("/api/games/favorite-beer-guess", authRequired, (req, res) => {
+  const targetUserId = Number(req.body.targetUserId);
+  const guess = String(req.body.guess || "").trim();
+  if (!Number.isFinite(targetUserId) || !guess) {
+    return res.status(400).json({ error: "Pick a teammate and a beer guess." });
+  }
+  if (targetUserId === req.user.id) {
+    return res.status(400).json({ error: "You already know your own favorite." });
+  }
+
+  const target = db.prepare(`
+    SELECT id, name, favorite_beer FROM users WHERE id = ?
+  `).get(targetUserId);
+  const favoriteBeer = String(target?.favorite_beer || "").trim();
+  if (!target || !favoriteBeer) {
+    return res.status(404).json({ error: "That teammate has not set a favorite beer yet." });
+  }
+
+  const correct = guess.toLowerCase() === favoriteBeer.toLowerCase();
+  const already = db.prepare(`
+    SELECT 1 FROM favorite_beer_unlocks WHERE guesser_id = ? AND target_user_id = ?
+  `).get(req.user.id, targetUserId);
+
+  let pointsAwarded = 0;
+  let unlocked = Boolean(already);
+
+  if (correct && !already) {
+    db.prepare(`
+      INSERT INTO favorite_beer_unlocks (guesser_id, target_user_id)
+      VALUES (?, ?)
+    `).run(req.user.id, targetUserId);
+    pointsAwarded = computeSessionPoints("fav_beer", 1, 1);
+    db.prepare(`
+      INSERT INTO progress_sessions (user_id, activity_type, category, score, total, points)
+      VALUES (?, 'fav_beer', 'beer', 1, 1, ?)
+    `).run(req.user.id, pointsAwarded);
+    unlocked = true;
+  }
+
+  res.json({
+    correct,
+    favoriteBeer: correct ? favoriteBeer : null,
+    alreadyUnlocked: Boolean(already),
+    unlocked,
+    pointsAwarded,
+    targetName: target.name
+  });
+});
+
+app.get("/api/shifts/me", authRequired, (req, res) => {
+  res.json({ shift: getUserShiftContext(db, req.user.id) });
+});
+
+app.get("/api/shifts/working", authRequired, managerOrAdminRequired, (req, res) => {
+  const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
+  const staff = getWorkingStaff(db, shiftDate).map(row => ({
+    sevenShiftId: row.seven_shift_id,
+    sevenUserId: row.seven_user_id,
+    userId: row.user_id,
+    name: row.portal_name || null,
+    email: row.portal_email || null,
+    roleName: row.role_name,
+    stationName: row.station_name,
+    startAt: row.start_at,
+    endAt: row.end_at,
+    isShiftLead: Boolean(row.is_shift_lead),
+    mapped: Boolean(row.user_id)
+  }));
+  res.json({
+    shiftDate,
+    source: sevenShifts.isConfigured() ? "7shifts" : "none",
+    count: staff.length,
+    staff
+  });
+});
+
+app.post("/api/shifts/sync", authRequired, managerOrAdminRequired, async (req, res) => {
+  try {
+    const result = await syncSevenShifts(db);
+    if (result.skipped) {
+      return res.status(503).json({
+        error: "7shifts is not configured. Add SEVEN_SHIFTS_ACCESS_TOKEN and SEVEN_SHIFTS_COMPANY_ID.",
+        result
+      });
+    }
+    res.json(result);
+  } catch (err) {
+    console.error("7shifts sync error:", err.message);
+    res.status(502).json({ error: err.message || "Could not sync 7shifts." });
+  }
+});
+
+app.get("/api/shifts/status", authRequired, managerOrAdminRequired, (req, res) => {
+  ensureSevenShiftsTables(db);
+  const latest = db.prepare(`SELECT MAX(synced_at) AS synced_at FROM scheduled_shifts`).get();
+  const todayCount = db.prepare(`SELECT COUNT(*) AS count FROM scheduled_shifts WHERE shift_date = ?`).get(todayDate());
+  const unmapped = db.prepare(`
+    SELECT COUNT(*) AS count FROM scheduled_shifts
+    WHERE shift_date = ? AND user_id IS NULL
+  `).get(todayDate());
+  res.json({
+    configured: sevenShifts.isConfigured(),
+    locationId: sevenShifts.config().locationId,
+    departmentId: sevenShifts.config().departmentId,
+    lastSyncedAt: latest?.synced_at || null,
+    todayShiftCount: todayCount?.count || 0,
+    unmappedToday: unmapped?.count || 0
+  });
 });
 
 app.post("/api/progress", authRequired, (req, res) => {
@@ -1256,6 +1768,163 @@ app.post("/api/progress", authRequired, (req, res) => {
 
 app.get("/api/progress/me", authRequired, (req, res) => {
   res.json(getUserStats(req.user.id));
+});
+
+app.get("/api/beer-checkins/me", authRequired, async (req, res) => {
+  try {
+    const checkins = getBeerCheckins(req.user.id);
+    const { badges, tasting } = await getUserBadges(req.user.id);
+    res.json({ checkins, summary: tasting, badges });
+  } catch (err) {
+    console.error("Beer checkins error:", err.message);
+    res.status(500).json({ error: "Could not load tasting journal." });
+  }
+});
+
+app.post("/api/beer-checkins", authRequired, (req, res) => {
+  const beerName = String(req.body.beerName || "").trim();
+  const ratingRaw = req.body.rating;
+  const notes = String(req.body.notes || "").trim().slice(0, 2000);
+  const tastedAt = String(req.body.tastedAt || "").trim();
+
+  if (!beerName) {
+    return res.status(400).json({ error: "Beer name is required." });
+  }
+
+  let rating = null;
+  if (ratingRaw !== null && ratingRaw !== undefined && ratingRaw !== "") {
+    rating = Number(ratingRaw);
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: "Rating must be between 1 and 5 stars." });
+    }
+  }
+
+  const tastedAtValue = /^\d{4}-\d{2}-\d{2}/.test(tastedAt) ? tastedAt : null;
+
+  db.prepare(`
+    INSERT INTO beer_checkins (user_id, beer_name, rating, notes, tasted_at, updated_at)
+    VALUES (?, ?, ?, ?, COALESCE(?, datetime('now')), datetime('now'))
+    ON CONFLICT(user_id, beer_name) DO UPDATE SET
+      rating = excluded.rating,
+      notes = excluded.notes,
+      tasted_at = COALESCE(excluded.tasted_at, beer_checkins.tasted_at),
+      updated_at = datetime('now')
+  `).run(req.user.id, beerName, rating, notes, tastedAtValue);
+
+  res.json({ ok: true, beerName });
+});
+
+const FEEDBACK_CATEGORIES = new Set(["bug", "wrong_info", "idea", "other"]);
+const FEEDBACK_STATUSES = new Set(["open", "reviewed", "resolved"]);
+
+function formatFeedbackRow(row) {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    userName: row.user_name || row.name || "Staff",
+    userEmail: row.user_email || row.email || "",
+    userRole: row.user_role || row.role || "",
+    category: row.category,
+    pageTab: row.page_tab,
+    subject: row.subject,
+    message: row.message,
+    status: row.status,
+    adminNotes: row.admin_notes,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+app.post("/api/site-feedback", authRequired, (req, res) => {
+  const category = String(req.body.category || "").trim();
+  const pageTab = String(req.body.pageTab || req.body.page_tab || "").trim().slice(0, 80);
+  const subject = String(req.body.subject || "").trim().slice(0, 160);
+  const message = String(req.body.message || "").trim().slice(0, 4000);
+
+  if (!FEEDBACK_CATEGORIES.has(category)) {
+    return res.status(400).json({ error: "Please choose a feedback category." });
+  }
+  if (!subject) {
+    return res.status(400).json({ error: "Please add a short subject line." });
+  }
+  if (!message) {
+    return res.status(400).json({ error: "Please describe the issue or idea." });
+  }
+
+  const result = db.prepare(`
+    INSERT INTO site_feedback (user_id, category, page_tab, subject, message)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(req.user.id, category, pageTab, subject, message);
+
+  res.json({ ok: true, id: result.lastInsertRowid });
+});
+
+app.get("/api/site-feedback/me", authRequired, (req, res) => {
+  const rows = db.prepare(`
+    SELECT id, category, page_tab, subject, message, status, admin_notes, created_at, updated_at
+    FROM site_feedback
+    WHERE user_id = ?
+    ORDER BY created_at DESC
+    LIMIT 50
+  `).all(req.user.id);
+
+  res.json({
+    submissions: rows.map(row => formatFeedbackRow(row))
+  });
+});
+
+app.get("/api/site-feedback", authRequired, managerOrAdminRequired, (req, res) => {
+  const status = String(req.query.status || "").trim();
+  const rows = db.prepare(`
+    SELECT f.id, f.user_id, f.category, f.page_tab, f.subject, f.message, f.status, f.admin_notes,
+           f.created_at, f.updated_at, u.name AS user_name, u.email AS user_email, u.role AS user_role
+    FROM site_feedback f
+    JOIN users u ON u.id = f.user_id
+    ${status && FEEDBACK_STATUSES.has(status) ? "WHERE f.status = ?" : ""}
+    ORDER BY f.created_at DESC
+    LIMIT 200
+  `).all(...(status && FEEDBACK_STATUSES.has(status) ? [status] : []));
+
+  res.json({
+    feedback: rows.map(row => formatFeedbackRow(row))
+  });
+});
+
+app.patch("/api/site-feedback/:id", authRequired, managerOrAdminRequired, (req, res) => {
+  const id = Number(req.params.id);
+  const status = String(req.body.status || "").trim();
+  const adminNotes = String(req.body.adminNotes || req.body.admin_notes || "").trim().slice(0, 2000);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid feedback id." });
+  }
+
+  const existing = db.prepare("SELECT id FROM site_feedback WHERE id = ?").get(id);
+  if (!existing) {
+    return res.status(404).json({ error: "Feedback not found." });
+  }
+
+  if (status && !FEEDBACK_STATUSES.has(status)) {
+    return res.status(400).json({ error: "Invalid status." });
+  }
+
+  db.prepare(`
+    UPDATE site_feedback
+    SET status = COALESCE(?, status),
+        admin_notes = CASE WHEN ? != '' THEN ? ELSE admin_notes END,
+        updated_at = datetime('now')
+    WHERE id = ?
+  `).run(status || null, adminNotes, adminNotes, id);
+
+  const row = db.prepare(`
+    SELECT f.id, f.user_id, f.category, f.page_tab, f.subject, f.message, f.status, f.admin_notes,
+           f.created_at, f.updated_at, u.name AS user_name, u.email AS user_email, u.role AS user_role
+    FROM site_feedback f
+    JOIN users u ON u.id = f.user_id
+    WHERE f.id = ?
+  `).get(id);
+
+  res.json({ ok: true, feedback: formatFeedbackRow(row) });
 });
 
 app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) => {
@@ -1286,7 +1955,7 @@ app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =>
 
 app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) => {
   const email = normalizeEmail(req.body.email);
-  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? req.body.role : "employee";
+  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? normalizeRole(req.body.role) : ROLES.BARTENDER;
 
   if (!email || !email.includes("@")) {
     return res.status(400).json({ error: "A valid email address is required." });
@@ -1347,7 +2016,7 @@ app.patch("/api/admin/approved-emails/:id", authRequired, adminRequired, (req, r
     return res.status(404).json({ error: "Approved email not found." });
   }
 
-  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? req.body.role : null;
+  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? normalizeRole(req.body.role) : null;
   if (!role) {
     return res.status(400).json({ error: "A valid role is required." });
   }
@@ -1416,7 +2085,7 @@ app.delete("/api/admin/approved-emails/:id", authRequired, adminRequired, (req, 
   res.json({ ok: true, email: existing.email });
 });
 
-app.get("/api/games/leaderboard", authRequired, (req, res) => {
+app.get("/api/games/leaderboard", optionalAuth, (req, res) => {
   const period = String(req.query.period || "week").trim();
   const allowed = ["week", "month", "all"];
   const safePeriod = allowed.includes(period) ? period : "week";
@@ -1426,69 +2095,87 @@ app.get("/api/games/leaderboard", authRequired, (req, res) => {
   if (safePeriod === "month") dateClause = "AND p.completed_at >= datetime('now', '-30 days')";
 
   const leaderboard = db.prepare(`
-    SELECT u.id, u.name, u.role,
+    SELECT u.id, u.name, u.role, u.favorite_beer,
            COALESCE(SUM(p.points), 0) AS points,
            COALESCE(SUM(p.score), 0) AS correct,
            COALESCE(SUM(p.total), 0) AS questions,
            COUNT(p.id) AS sessions
     FROM users u
     INNER JOIN progress_sessions p ON p.user_id = u.id
-    WHERE u.role IN ('employee', 'shift_lead')
+    WHERE u.role IN ('bartender', 'trainee', 'event_lead', 'shift_lead', 'admin', 'merch', 'manager', 'inventory_admin')
       ${dateClause}
     GROUP BY u.id
     HAVING points > 0
     ORDER BY points DESC, correct DESC, u.name ASC
     LIMIT 25
-  `).all().map((row, index) => ({
-    rank: index + 1,
-    id: row.id,
-    name: row.name,
-    role: row.role,
-    points: row.points,
-    correct: row.correct,
-    questions: row.questions,
-    sessions: row.sessions,
-    accuracy: row.questions ? Math.round((row.correct / row.questions) * 100) : 0
-  }));
+  `).all();
 
-  const myRow = db.prepare(`
-    SELECT COALESCE(SUM(p.points), 0) AS points,
-           COALESCE(SUM(p.score), 0) AS correct,
-           COALESCE(SUM(p.total), 0) AS questions,
-           COUNT(p.id) AS sessions
-    FROM progress_sessions p
-    WHERE p.user_id = ?
-      ${dateClause}
-  `).get(req.user.id);
+  const unlockedIds = req.user ? getUnlockedFavoriteIds(req.user.id) : new Set();
 
-  const myPoints = myRow?.points || 0;
-  let myRank = null;
-  if (myPoints > 0) {
-    myRank = db.prepare(`
-      SELECT COUNT(*) + 1 AS rank
-      FROM (
-        SELECT u.id, COALESCE(SUM(p.points), 0) AS points
-        FROM users u
-        INNER JOIN progress_sessions p ON p.user_id = u.id
-        WHERE u.role IN ('employee', 'shift_lead')
-          ${dateClause}
-        GROUP BY u.id
-        HAVING points > ?
-      )
-    `).get(myPoints)?.rank || 1;
-  }
+  const mapped = leaderboard.map((row, index) => {
+    const favoriteBeer = String(row.favorite_beer || "").trim();
+    const isSelf = req.user && row.id === req.user.id;
+    const reveal = Boolean(favoriteBeer) && (isSelf || unlockedIds.has(row.id));
+    return {
+      rank: index + 1,
+      id: row.id,
+      name: row.name,
+      role: row.role,
+      favoriteBeer: reveal ? favoriteBeer : null,
+      favoriteBeerLocked: Boolean(favoriteBeer) && !reveal,
+      points: row.points,
+      correct: row.correct,
+      questions: row.questions,
+      sessions: row.sessions,
+      accuracy: row.questions ? Math.round((row.correct / row.questions) * 100) : 0
+    };
+  });
 
-  res.json({
-    period: safePeriod,
-    leaderboard,
-    me: {
+  let me = null;
+  if (req.user) {
+    const myRow = db.prepare(`
+      SELECT COALESCE(SUM(p.points), 0) AS points,
+             COALESCE(SUM(p.score), 0) AS correct,
+             COALESCE(SUM(p.total), 0) AS questions,
+             COUNT(p.id) AS sessions
+      FROM progress_sessions p
+      WHERE p.user_id = ?
+        ${dateClause}
+    `).get(req.user.id);
+
+    const myPoints = myRow?.points || 0;
+    let myRank = null;
+    if (myPoints > 0) {
+      myRank = db.prepare(`
+        SELECT COUNT(*) + 1 AS rank
+        FROM (
+          SELECT u.id, COALESCE(SUM(p.points), 0) AS points
+          FROM users u
+          INNER JOIN progress_sessions p ON p.user_id = u.id
+          WHERE u.role IN ('bartender', 'trainee', 'event_lead', 'shift_lead', 'admin', 'merch', 'manager', 'inventory_admin')
+            ${dateClause}
+          GROUP BY u.id
+          HAVING points > ?
+        )
+      `).get(myPoints)?.rank || 1;
+    }
+
+    me = {
+      id: req.user.id,
       rank: myRank,
       points: myPoints,
       correct: myRow?.correct || 0,
       questions: myRow?.questions || 0,
       sessions: myRow?.sessions || 0,
-      accuracy: myRow?.questions ? Math.round((myRow.correct / myRow.questions) * 100) : 0
-    }
+      accuracy: myRow?.questions ? Math.round((myRow.correct / myRow.questions) * 100) : 0,
+      favoritesUnlocked: unlockedIds.size
+    };
+  }
+
+  res.json({
+    period: safePeriod,
+    leaderboard: mapped,
+    me
   });
 });
 
@@ -1592,11 +2279,26 @@ app.patch("/api/merch/:id", authRequired, merchManagerRequired, (req, res) => {
       INSERT INTO merch_sizes (item_id, size_label, quantity) VALUES (?, ?, ?)
       ON CONFLICT(item_id, size_label) DO UPDATE SET quantity = excluded.quantity
     `);
+    const labels = [];
     req.body.sizes.forEach(size => {
       const label = (size.size_label || size.label || "").trim();
       const quantity = Math.max(0, Number(size.quantity) || 0);
-      if (label) upsertSize.run(item.id, label, quantity);
+      if (label) {
+        labels.push(label);
+        upsertSize.run(item.id, label, quantity);
+      }
     });
+
+    if (req.body.replace_sizes !== false) {
+      const deleteSize = db.prepare(`
+        DELETE FROM merch_sizes WHERE item_id = ? AND size_label = ?
+      `);
+      db.prepare("SELECT size_label FROM merch_sizes WHERE item_id = ?").all(item.id).forEach(row => {
+        if (!labels.includes(row.size_label)) {
+          deleteSize.run(item.id, row.size_label);
+        }
+      });
+    }
   }
 
   const updated = db.prepare("SELECT * FROM merch_items WHERE id = ?").get(item.id);
@@ -1854,7 +2556,112 @@ app.delete("/api/sops/:id", authRequired, adminRequired, (req, res) => {
   res.json({ ok: true });
 });
 
-app.get("/api/admin/employees", authRequired, adminRequired, (req, res) => {
+app.get("/api/checklists", optionalAuth, (req, res) => {
+  const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
+  const lists = listChecklists();
+
+  let completedByList = {};
+  if (req.user?.id) {
+    const rows = db.prepare(`
+      SELECT checklist_id, COUNT(*) AS done
+      FROM checklist_completions
+      WHERE user_id = ? AND shift_date = ?
+      GROUP BY checklist_id
+    `).all(req.user.id, shiftDate);
+    completedByList = Object.fromEntries(rows.map(row => [row.checklist_id, row.done]));
+  }
+
+  res.json({
+    shiftDate,
+    checklists: lists.map(list => ({
+      ...list,
+      completedCount: completedByList[list.id] || 0
+    }))
+  });
+});
+
+app.get("/api/checklists/:id", optionalAuth, (req, res) => {
+  const checklist = getChecklistById(req.params.id);
+  if (!checklist) return res.status(404).json({ error: "Checklist not found." });
+
+  const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
+  let completedTaskIds = [];
+  if (req.user?.id) {
+    completedTaskIds = db.prepare(`
+      SELECT task_id FROM checklist_completions
+      WHERE user_id = ? AND checklist_id = ? AND shift_date = ?
+    `).all(req.user.id, checklist.id, shiftDate).map(row => row.task_id);
+  }
+
+  res.json({
+    shiftDate,
+    checklist: {
+      id: checklist.id,
+      name: checklist.name,
+      category: checklist.category,
+      dueLabel: checklist.dueLabel,
+      summary: checklist.summary,
+      tasks: checklist.tasks
+    },
+    completedTaskIds
+  });
+});
+
+app.post("/api/checklists/:id/toggle", authRequired, (req, res) => {
+  const checklist = getChecklistById(req.params.id);
+  if (!checklist) return res.status(404).json({ error: "Checklist not found." });
+
+  const shiftDate = isValidShiftDate(req.body.shiftDate) ? req.body.shiftDate : todayDate();
+  const taskId = Number(req.body.taskId);
+  const task = checklist.tasks.find(entry => entry.id === taskId);
+  if (!task) return res.status(400).json({ error: "Invalid task id." });
+
+  const existing = db.prepare(`
+    SELECT 1 FROM checklist_completions
+    WHERE user_id = ? AND checklist_id = ? AND shift_date = ? AND task_id = ?
+  `).get(req.user.id, checklist.id, shiftDate, taskId);
+
+  if (existing) {
+    db.prepare(`
+      DELETE FROM checklist_completions
+      WHERE user_id = ? AND checklist_id = ? AND shift_date = ? AND task_id = ?
+    `).run(req.user.id, checklist.id, shiftDate, taskId);
+  } else {
+    db.prepare(`
+      INSERT INTO checklist_completions (user_id, checklist_id, shift_date, task_id)
+      VALUES (?, ?, ?, ?)
+    `).run(req.user.id, checklist.id, shiftDate, taskId);
+  }
+
+  const completedTaskIds = db.prepare(`
+    SELECT task_id FROM checklist_completions
+    WHERE user_id = ? AND checklist_id = ? AND shift_date = ?
+  `).all(req.user.id, checklist.id, shiftDate).map(row => row.task_id);
+
+  res.json({
+    ok: true,
+    shiftDate,
+    completed: !existing,
+    completedTaskIds,
+    completedCount: completedTaskIds.length,
+    taskCount: checklist.tasks.length
+  });
+});
+
+app.post("/api/checklists/:id/reset", authRequired, (req, res) => {
+  const checklist = getChecklistById(req.params.id);
+  if (!checklist) return res.status(404).json({ error: "Checklist not found." });
+  const shiftDate = isValidShiftDate(req.body.shiftDate) ? req.body.shiftDate : todayDate();
+
+  db.prepare(`
+    DELETE FROM checklist_completions
+    WHERE user_id = ? AND checklist_id = ? AND shift_date = ?
+  `).run(req.user.id, checklist.id, shiftDate);
+
+  res.json({ ok: true, shiftDate, completedTaskIds: [] });
+});
+
+app.get("/api/admin/employees", authRequired, managerOrAdminRequired, (req, res) => {
   const employees = db.prepare(`
     SELECT u.id, u.name, u.email, u.role, u.created_at,
            COUNT(p.id) AS sessions_completed,
@@ -1870,7 +2677,7 @@ app.get("/api/admin/employees", authRequired, adminRequired, (req, res) => {
   res.json({
     employees: employees.map(row => {
       const base = {
-        ...publicUser(row),
+        ...publicUser(row, { includeShiftContext: false }),
         sessions_completed: row.sessions_completed,
         total_correct: row.total_correct,
         total_questions: row.total_questions,
@@ -1878,7 +2685,7 @@ app.get("/api/admin/employees", authRequired, adminRequired, (req, res) => {
         last_activity: row.last_activity
       };
 
-      if (row.role !== "employee") {
+      if (!isFloorStaffForTraining({ role: normalizeRole(row.role) })) {
         return { ...base, next_step: null, recommendations: [] };
       }
 
@@ -1892,15 +2699,101 @@ app.get("/api/admin/employees", authRequired, adminRequired, (req, res) => {
   });
 });
 
-app.get("/api/admin/employees/:id", authRequired, adminRequired, (req, res) => {
-  const user = db.prepare("SELECT id, name, email, role, created_at FROM users WHERE id = ?").get(req.params.id);
+app.get("/api/admin/employees/:id", authRequired, managerOrAdminRequired, async (req, res) => {
+  const user = getUserRow(req.params.id);
   if (!user) return res.status(404).json({ error: "Employee not found." });
   const stats = getUserStats(user.id);
+  const checkins = getBeerCheckins(user.id);
+  let tastingSummary = { total: checkins.length, onTapTried: 0, onTapTotal: 0, coveragePct: 0 };
+  try {
+    const { tasting } = await getUserBadges(user.id);
+    tastingSummary = tasting;
+  } catch (_) {}
+
   res.json({
     user: publicUser(user),
     stats,
-    recommendations: user.role === "employee" ? getTrainingRecommendations(stats) : []
+    tasting: tastingSummary,
+    recentTastings: checkins.slice(0, 8),
+    recommendations: isFloorStaffForTraining({ role: normalizeRole(user.role) })
+      ? getTrainingRecommendations(stats)
+      : []
   });
+});
+
+app.get("/api/admin/shift-lead-duty", authRequired, managerOrAdminRequired, (req, res) => {
+  const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
+  const assignments = db.prepare(`
+    SELECT d.user_id, d.shift_date, d.assigned_at, u.name, u.email, u.role, u.extra_roles
+    FROM shift_lead_duty d
+    JOIN users u ON u.id = d.user_id
+    WHERE d.shift_date = ?
+    ORDER BY u.name ASC
+  `).all(shiftDate).map(row => ({
+    userId: row.user_id,
+    shiftDate: row.shift_date,
+    assignedAt: row.assigned_at,
+    name: row.name,
+    email: row.email,
+    role: normalizeRole(row.role),
+    extraRoles: parseExtraRoles(row.extra_roles)
+  }));
+
+  res.json({ shiftDate, assignments });
+});
+
+app.post("/api/admin/shift-lead-duty", authRequired, managerOrAdminRequired, (req, res) => {
+  const shiftDate = isValidShiftDate(req.body.shiftDate) ? req.body.shiftDate : todayDate();
+  const userId = Number(req.body.userId);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({ error: "A valid user id is required." });
+  }
+
+  const target = getUserRow(userId);
+  if (!target) return res.status(404).json({ error: "User not found." });
+
+  db.prepare(`
+    INSERT OR IGNORE INTO shift_lead_duty (user_id, shift_date, assigned_by)
+    VALUES (?, ?, ?)
+  `).run(userId, shiftDate, req.user.id);
+
+  res.json({ ok: true, shiftDate, userId });
+});
+
+app.delete("/api/admin/shift-lead-duty", authRequired, managerOrAdminRequired, (req, res) => {
+  const shiftDate = isValidShiftDate(req.body.shiftDate) ? req.body.shiftDate : todayDate();
+  const userId = Number(req.body.userId);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({ error: "A valid user id is required." });
+  }
+
+  db.prepare(`DELETE FROM shift_lead_duty WHERE user_id = ? AND shift_date = ?`).run(userId, shiftDate);
+  res.json({ ok: true, shiftDate, userId });
+});
+
+app.patch("/api/admin/users/:id", authRequired, managerOrAdminRequired, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid user id." });
+  }
+
+  const existing = getUserRow(id);
+  if (!existing) return res.status(404).json({ error: "User not found." });
+
+  const role = req.body.role && ALLOWED_APPROVED_ROLES.has(req.body.role)
+    ? normalizeRole(req.body.role)
+    : normalizeRole(existing.role);
+  const extra_roles = req.body.extra_roles != null
+    ? serializeExtraRoles(req.body.extra_roles)
+    : existing.extra_roles || "[]";
+
+  db.prepare(`UPDATE users SET role = ?, extra_roles = ? WHERE id = ?`).run(role, extra_roles, id);
+  db.prepare(`UPDATE approved_emails SET role = ? WHERE email = ?`).run(role, existing.email);
+
+  const updated = getUserRow(id);
+  res.json({ ok: true, user: publicUser(updated) });
 });
 
 app.get("/api/chat/status", (req, res) => {
@@ -1992,7 +2885,7 @@ app.post("/api/shift-surveys", authRequired, (req, res) => {
   res.json({ ok: true, shiftDate });
 });
 
-app.get("/api/shift-surveys/daily", authRequired, shiftLeadRequired, (req, res) => {
+app.get("/api/shift-surveys/daily", authRequired, shiftLeadOrManagerRequired, (req, res) => {
   const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
   const surveys = db.prepare(`
     SELECT rating, comments, submitted_at
@@ -2027,7 +2920,7 @@ app.get("/api/shift-surveys/daily", authRequired, shiftLeadRequired, (req, res) 
   });
 });
 
-app.post("/api/shift-surveys/digest-viewed", authRequired, shiftLeadRequired, (req, res) => {
+app.post("/api/shift-surveys/digest-viewed", authRequired, shiftLeadOrManagerRequired, (req, res) => {
   const shiftDate = isValidShiftDate(req.body.shiftDate) ? req.body.shiftDate : todayDate();
   db.prepare(`
     INSERT OR IGNORE INTO shift_survey_digest_views (user_id, shift_date)
@@ -2093,6 +2986,22 @@ app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
   ensureMerchCatalog();
   ensureSampleSops();
+  ensureSevenShiftsTables(db);
   console.log(`MP Training server running on port ${PORT}`);
   console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
+  console.log(`7shifts sync: ${sevenShifts.isConfigured() ? "enabled" : "disabled (set SEVEN_SHIFTS_ACCESS_TOKEN + SEVEN_SHIFTS_COMPANY_ID)"}`);
+
+  if (sevenShifts.isConfigured()) {
+    const runSync = () => {
+      syncSevenShifts(db)
+        .then(result => {
+          if (!result.skipped) {
+            console.log(`7shifts synced ${result.kept} shifts (${result.users} users).`);
+          }
+        })
+        .catch(err => console.warn("7shifts sync failed:", err.message));
+    };
+    runSync();
+    setInterval(runSync, Number(process.env.SEVEN_SHIFTS_SYNC_MS) || 5 * 60 * 1000);
+  }
 });

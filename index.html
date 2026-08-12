@@ -852,6 +852,71 @@
     font-weight: 600;
   }
 
+  .lb-name-cell {
+    min-width: 140px;
+  }
+
+  .lb-name {
+    display: block;
+    font-weight: 600;
+  }
+
+  .lb-fav-beer {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .favorite-beer-panel {
+    margin: 0 0 18px;
+    padding: 16px 18px;
+    border: 1px solid rgba(201, 162, 39, 0.28);
+    border-radius: 12px;
+    background: rgba(201, 162, 39, 0.06);
+  }
+
+  .favorite-beer-panel h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+  }
+
+  .favorite-beer-panel p {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .favorite-beer-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .favorite-beer-row input {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.25);
+    color: inherit;
+    font: inherit;
+  }
+
+  .favorite-beer-row .game-next {
+    margin: 0;
+  }
+
+  .favorite-beer-error {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #e07070;
+  }
+
   .game-points-badge {
     display: inline-flex;
     align-items: center;
@@ -1813,6 +1878,435 @@
     color: var(--muted);
   }
 
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 12px;
+    margin: 16px 0 0;
+  }
+
+  .badge-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px 12px;
+    text-align: center;
+  }
+
+  .badge-card.earned {
+    border-color: rgba(201, 162, 39, 0.45);
+    box-shadow: 0 4px 14px rgba(201, 162, 39, 0.12);
+  }
+
+  .badge-card.locked {
+    opacity: 0.48;
+    filter: grayscale(0.35);
+  }
+
+  .badge-icon {
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .badge-title {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .badge-desc {
+    margin: 0;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .tasting-coverage-wrap {
+    margin: 20px 0 0;
+    padding: 18px 20px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+
+  .tasting-coverage-bar {
+    height: 10px;
+    background: #ece7df;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .tasting-coverage-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c9a227, #d4b347);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+  }
+
+  .beer-tried-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(34, 120, 74, 0.12);
+    color: #1a6847;
+    border: 1px solid rgba(34, 120, 74, 0.2);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+
+  .beer-rating-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin: 12px 0 16px;
+  }
+
+  .beer-rating-btn {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: var(--radius-sm);
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .beer-rating-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .beer-rating-btn.selected {
+    border-color: #c9a227;
+    background: rgba(201, 162, 39, 0.12);
+    box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.18);
+  }
+
+  .checkin-panel {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .checkin-panel label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 6px;
+  }
+
+  .checkin-status {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 10px;
+    line-height: 1.5;
+  }
+
+  .checkin-textarea {
+    width: 100%;
+    min-height: 88px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: vertical;
+    background: var(--paper);
+  }
+
+  .checkin-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.15);
+  }
+
+  .checkin-save {
+    margin-top: 12px;
+  }
+
+  .game-badges-strip {
+    margin: 0 0 20px;
+  }
+
+  .game-badges-strip h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+  }
+
+  .game-badges-strip p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .guide-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+  }
+
+  .guide-intro {
+    margin-bottom: 20px;
+  }
+
+  .guide-intro h2 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    letter-spacing: -0.03em;
+  }
+
+  .guide-intro p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .guide-block {
+    margin-top: 22px;
+  }
+
+  .guide-block-title {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .guide-list {
+    border-top: 1px solid var(--line);
+  }
+
+  .guide-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 160px) 1fr;
+    gap: 12px 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+
+  .guide-row strong {
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+
+  .guide-row span {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .guide-updates {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .guide-updates li {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .guide-updates strong {
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  .guide-callout {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: rgba(201, 162, 39, 0.08);
+    border: 1px solid rgba(201, 162, 39, 0.22);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .checklist-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 48px;
+  }
+
+  .checklist-card {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    margin: 0 0 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+
+  .checklist-card:hover {
+    border-color: var(--accent);
+  }
+
+  .checklist-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .checklist-card strong {
+    font-size: 15px;
+  }
+
+  .checklist-card .meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .checklist-card .summary {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .checklist-progress {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+
+  .checklist-task {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    margin: 0 0 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+
+  .checklist-task.done {
+    opacity: 0.72;
+    background: #f7faf7;
+  }
+
+  .checklist-task .mark {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #9aa3ae;
+    flex: 0 0 auto;
+    margin-top: 1px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: transparent;
+  }
+
+  .checklist-task.done .mark {
+    border-color: #2f6f5e;
+    background: #2f6f5e;
+    color: #fff;
+  }
+
+  .checklist-task .body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .checklist-task .section-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+
+  .checklist-task .title {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .checklist-section-head {
+    margin: 18px 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .feedback-panel {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  .feedback-panel label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 16px 0 6px;
+  }
+
+  .feedback-panel select,
+  .feedback-panel input[type="text"],
+  .feedback-panel textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-size: 15px;
+    background: var(--paper);
+  }
+
+  .feedback-panel textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .feedback-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .feedback-status.open { background: #fef3c7; color: #92400e; }
+  .feedback-status.reviewed { background: #dbeafe; color: #1e40af; }
+  .feedback-status.resolved { background: #d1fae5; color: #065f46; }
+
   .survey-success {
     background: #ecfdf5;
     border: 1px solid #a7f3d0;
@@ -2148,6 +2642,39 @@
     padding: 0 24px 24px;
     max-width: 1080px;
     margin: 0 auto;
+  }
+
+  .merch-shop-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    max-width: 1080px;
+    margin: 0 auto 20px;
+    padding: 16px 20px;
+    border: 1px solid rgba(201, 162, 39, 0.28);
+    border-radius: var(--radius-lg);
+    background: rgba(201, 162, 39, 0.08);
+  }
+
+  .merch-shop-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
+    color: #0a0a0a;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 1px solid var(--gold);
+  }
+
+  .merch-shop-link:hover {
+    filter: brightness(1.05);
   }
 
   .merch-card {
@@ -2628,6 +3155,47 @@
   }
 
   .merch-admin-panel textarea { min-height: 72px; resize: vertical; }
+
+  .merch-admin-card {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .merch-admin-card label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 10px 0 6px;
+  }
+
+  .merch-admin-card input[type="text"],
+  .merch-admin-card input[type="number"],
+  .merch-admin-card textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 14px;
+    background: var(--paper);
+  }
+
+  .merch-admin-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .merch-admin-actions .game-next,
+  .merch-admin-actions .auth-btn {
+    flex: 1;
+    min-width: 120px;
+  }
 
   .merch-size-inputs {
     display: flex;
@@ -3290,12 +3858,15 @@
       <button type="button" class="tab" data-type="merch">Merch</button>
       <button type="button" class="tab" data-type="inventory">Inventory</button>
       <button type="button" class="tab" data-type="sops">SOPs</button>
+      <button type="button" class="tab" data-type="checklists">Checklists</button>
       <button type="button" class="tab" data-type="reviews">Reviews</button>
       <button type="button" class="tab" data-type="games">Launch Pad</button>
+      <button type="button" class="tab" data-type="features">Features</button>
+      <button type="button" class="tab tab-auth-only" data-type="feedback" style="display:none;">Feedback</button>
       <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
       <button type="button" class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</button>
       <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
-      <button type="button" class="tab tab-admin-only" data-type="team" style="display:none;">Team</button>
+      <button type="button" class="tab tab-team-only" data-type="team" style="display:none;">Team</button>
     </nav>
     <div class="sidebar-user" id="sidebarUser">
       <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
@@ -3345,6 +3916,8 @@
       <button class="filter-btn" data-filter="highabv">High ABV</button>
       <button class="filter-btn" data-filter="gf">Gluten-Reduced</button>
       <button class="filter-btn" data-filter="new">New Taps</button>
+      <button class="filter-btn" data-filter="untried">Not Tried</button>
+      <button class="filter-btn" data-filter="tried">Tried</button>
     </div>
   </div>
 </div>
@@ -3421,6 +3994,8 @@
 </button>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="roles.js"></script>
+<script src="site-features.js"></script>
 <script>
 const API_BASE = "";
 let currentUser = null;
@@ -3429,6 +4004,11 @@ let authMode = "login";
 let microsoftAuthAvailable = false;
 let teamDetailId = null;
 let myProgressData = null;
+let beerCheckins = {};
+let myTastingData = null;
+let beerCheckinsLoaded = false;
+let beerModalBeer = "";
+let beerModalRating = 0;
 let teamData = null;
 let approvedEmailsData = null;
 
@@ -3461,6 +4041,40 @@ function consumeAuthCallbackParams() {
 const BEER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 const FOOD_CSV_URL = "PASTE_YOUR_FOOD_CSV_LINK_HERE";
 
+/** Keep in sync with chat-knowledge.js until the tap spreadsheet is updated. */
+const BEER_TAP_OVERRIDES = [
+  { name: "Oktoberfest", onTap: 4 },
+  { name: "Diffusion", onTap: 16 },
+  { name: "Black Rain", onTap: 17 },
+  {
+    name: "Cold Brew",
+    description:
+      "Velvety, bold, and refined—diesel fuel in the best way. Smooth going down, with a serious caffeine punch."
+  }
+];
+const BEER_TAP_RELEASES = [4, 16, 17];
+
+const BEER_RATING_LABELS = {
+  1: "Not for me",
+  2: "Okay",
+  3: "Good",
+  4: "Great",
+  5: "Love it"
+};
+
+const FEEDBACK_CATEGORY_LABELS = {
+  bug: "Bug / something broken",
+  wrong_info: "Wrong information",
+  idea: "Idea / suggestion",
+  other: "Other"
+};
+
+const FEEDBACK_TAB_OPTIONS = window.SITE_FEATURES.feedbackTabOptions;
+
+function getFeatureSections() {
+  return window.SITE_FEATURES.sections || [];
+}
+
 let beers = [];
 let foods = [];
 let foodCategory = "all";
@@ -3478,6 +4092,11 @@ let opsInventoryView = "count"; // count | order | dash
 let opsInventoryBusy = false;
 let sopDocuments = [];
 let sopCategory = "all";
+let checklistId = null;
+let checklistDate = null;
+let checklistShowCompleted = true;
+let checklistCache = null;
+let checklistDetail = null;
 let sopEditId = null;
 let sopLoading = false;
 let reviewsData = null;
@@ -3525,30 +4144,155 @@ const COFFEE_CATEGORY_LABELS = {
   reference: "Reference"
 };
 
-/** Regular beans on bar — edit as rotations change. */
+/** Regular beans on bar — edit as rotations change. Roaster: Viewfinder Coffee. */
 const COFFEE_BEANS = [
   {
-    name: "House Espresso Blend",
-    origin: "House blend",
-    roast: "For espresso bar",
-    notes: "Base for espresso, lattes, cappuccinos, and flavored drinks on the caffeine bar.",
-    active: true
+    name: "Dark Room",
+    origin: "Viewfinder Coffee Roasters",
+    roast: "Espresso",
+    notes: "House espresso for espresso, americanos, cortados, cappuccinos, lattes, and flavored milk drinks. Confirm current bag tasting notes with the bar lead — Viewfinder rotates espresso lots.",
+    active: true,
+    use: "espresso"
   },
   {
-    name: "Pour Over Rotation",
-    origin: "Rotating single-origin",
-    roast: "Varies",
-    notes: "Ask your barista for today's offering — $5 pour over.",
-    active: true
+    name: "Worka Sakaro",
+    origin: "Ethiopia · Worka Chelbesa, Gedeb · Viewfinder",
+    roast: "Pour over",
+    notes: "Berry cereal, boozy, hibiscus. Anaerobic natural from ~400 smallholder farms at 2,000–2,200 masl (Kumie, Siga, Wilsho). Full story under Viewfinder Roaster.",
+    active: true,
+    use: "pourover"
   },
   {
     name: "Drip / Batch Brew",
-    origin: "Rotating",
+    origin: "Viewfinder rotation",
     roast: "Varies",
-    notes: "Regular drip $3 · Bottomless drip $5.",
-    active: true
+    notes: "Regular drip $3 · Bottomless drip $5. Ask the lead which Viewfinder lot is on batch today.",
+    active: true,
+    use: "drip"
   }
 ];
+
+/** Viewfinder Coffee Roasters — house coffee partner. Specs from https://www.viewfindercoffee.com/ */
+const VIEWFINDER_ROASTER = {
+  name: "Viewfinder Coffee Roasters",
+  url: "https://www.viewfindercoffee.com/",
+  aboutUrl: "https://www.viewfindercoffee.com/about",
+  summary: "Small-batch Dallas roaster (est. 2021) and Manhattan Project partner. They focus on transparent, sustainably sourced coffee and producer relationships — we brew their beans on the caffeine bar.",
+  current: [
+    {
+      name: "Dark Room",
+      use: "Espresso",
+      status: "On bar now",
+      origin: "Viewfinder espresso lot (check bag)",
+      tastingNotes: "Confirm on the current bag — espresso lots rotate",
+      description: "Our house espresso name on the caffeine bar. Used for all espresso-based drinks: straight espresso, americanos, cortados, cappuccinos, lattes, and flavored builds. Dark Room is not always listed by that name on Viewfinder’s public shop — read the bag for origin, process, and tasting notes, or ask the lead.",
+      process: "See bag / bar lead",
+      elevation: "See bag",
+      varietals: "See bag",
+      brewTemp: "Dial in per house espresso recipe",
+      producer: "Viewfinder Coffee Roasters",
+      guestTalk: "“Our espresso is from Viewfinder Coffee, a Dallas roaster — I can grab the tasting notes from today’s bag if you want specifics.”",
+      url: "https://www.viewfindercoffee.com/"
+    },
+    {
+      name: "Worka Sakaro",
+      use: "Pour over",
+      status: "On bar now",
+      origin: "Ethiopia · Worka Chelbesa, Gedeb",
+      tastingNotes: "Berry cereal, boozy, hibiscus",
+      description: "Located in the Gedio Zone, the Worka Sakaro Washing Station works with over 400 smallholder farmers on steep mountain slopes at 2,000–2,200 masl. Coffee is shade-grown under Birbira, Corsica Africana, and Ensete Ventricosum, picked fully ripe, then dried on raised beds for 18–21 days. This lot uses an anaerobic process: cherries are sealed in bags flushed with CO₂ and nitrogen, monitored 3–7 days to target pH and color, then finished on drying tables — a vivid, fruit-forward cup guests notice.",
+      process: "Anaerobic natural",
+      elevation: "2,000–2,200 masl",
+      varietals: "Kumie, Siga, Wilsho",
+      brewTemp: "207°–210°F",
+      producer: "Smallholder farms · Worka Sakaro Washing Station",
+      guestTalk: "“This is Worka Sakaro from Ethiopia — anaerobic natural with berry cereal, boozy fruit, and hibiscus. Bright and memorable.”",
+      url: "https://www.viewfindercoffee.com/coffee/p/worka-sakaro"
+    }
+  ],
+  catalog: [
+    {
+      name: "Landline",
+      origin: "Guatemala · Huehuetenango",
+      tastingNotes: "Stone fruit, cocoa, brown sugar",
+      description: "Viewfinder’s staple single-origin: “Pick-up, coffee is calling.” Brew it any way, but they highlight the complexity and sweetness it can show as espresso. Washed Bourbon/Caturra from Huehuetenango smallholders via Onyx Coffee Importers.",
+      process: "Washed",
+      elevation: "1,500 masl",
+      varietals: "Bourbon, Caturra",
+      brewTemp: "202°–205°F",
+      producer: "Smallholder farmers",
+      importer: "Onyx Coffee Importers",
+      espressoRecipe: "18g in → 36g out · 30–40s (experimentation encouraged)",
+      guestTalk: "“Landline is a washed Guatemalan — stone fruit, cocoa, and brown sugar. Great everyday cup and solid as espresso.”",
+      url: "https://www.viewfindercoffee.com/coffee/p/landline-guatemala"
+    },
+    {
+      name: "Nostalgia",
+      origin: "Guatemala · Huehuetenango",
+      tastingNotes: "Baker’s chocolate, molasses, cherry",
+      description: "Darker than most of Viewfinder’s lineup, but still sweet and smooth — heavy body with cherry and cocoa. Marketed for guests who want “coffee that tastes like coffee” without jasmine/peach flashiness. Same Huehuetenango washed Bourbon/Caturra base as Landline, roasted darker.",
+      process: "Washed",
+      elevation: "1,500 masl",
+      varietals: "Bourbon, Caturra",
+      brewTemp: "202°–205°F",
+      producer: "Smallholder farmers",
+      importer: "Onyx Coffee Importers",
+      guestTalk: "“Nostalgia is their darker Guatemalan — baker’s chocolate, molasses, and cherry, with a heavy, comforting body.”",
+      url: "https://www.viewfindercoffee.com/coffee/p/nostalgia"
+    },
+    {
+      name: "Static Shock",
+      origin: "Colombia · Cauca",
+      tastingNotes: "Caramel, apple, nougat",
+      description: "Viewfinder’s decaf answer to “decaf shouldn’t taste like static.” Sugar cane process (~97% decaffeinated) from Cauca, Colombia. Offer when guests need decaf but still want sweetness and clarity — caramel, apple, and nougat.",
+      process: "Sugar cane decaf (~97%)",
+      elevation: "1,750 masl",
+      varietals: "Castillo, Caturra",
+      brewTemp: "201°–204°F",
+      producer: "Cauca producers",
+      importer: "Genuine Origin",
+      guestTalk: "“Static Shock is Viewfinder’s Colombian sugar-cane decaf — caramel, apple, nougat. Actually tasty decaf.”",
+      url: "https://www.viewfindercoffee.com/coffee/p/static-shock"
+    },
+    {
+      name: "Dial-Up",
+      origin: "Viewfinder Essentials rotation",
+      tastingNotes: "Chocolatey, smooth, sweet (Essentials profile)",
+      description: "Called out on Viewfinder’s Essentials subscription as their darkest offering — aimed at chocolatey / smooth / sweet cups and home espresso drinkers. Not always a standalone product page; treat as a darker Essentials lot when it appears on bags or wholesale.",
+      process: "See bag",
+      elevation: "See bag",
+      varietals: "See bag",
+      brewTemp: "See bag / dial-in",
+      producer: "Viewfinder Coffee Roasters",
+      guestTalk: "“Dial-Up is Viewfinder’s darkest Essentials roast — chocolatey, smooth, and sweet.”",
+      url: "https://www.viewfindercoffee.com/coffee/p/essentials-monthly-subscription"
+    }
+  ]
+};
+
+function viewfinderBeanDetailHtml(item) {
+  const rows = [
+    item.process && ["Process", item.process],
+    item.elevation && ["Elevation", item.elevation],
+    item.varietals && ["Varietals", item.varietals],
+    item.brewTemp && ["Brew temp", item.brewTemp],
+    item.producer && ["Producer", item.producer],
+    item.importer && ["Importer", item.importer],
+    item.espressoRecipe && ["Espresso recipe", item.espressoRecipe]
+  ].filter(Boolean);
+
+  return `
+    ${item.description ? `<p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>` : ""}
+    ${item.tastingNotes ? `<p class="desc" style="margin-top:8px;"><strong>Tasting notes:</strong> ${escapeHTML(item.tastingNotes)}</p>` : ""}
+    ${rows.length ? `
+      <div class="desc" style="margin-top:10px;font-size:13px;line-height:1.55;">
+        ${rows.map(([label, value]) => `<div><strong>${escapeHTML(label)}:</strong> ${escapeHTML(value)}</div>`).join("")}
+      </div>
+    ` : ""}
+    ${item.guestTalk ? `<p class="desc manual-callout" style="margin-top:12px;"><strong>Guest line:</strong> ${escapeHTML(item.guestTalk)}</p>` : ""}
+    ${item.url ? `<p class="desc" style="margin-top:8px;"><a href="${escapeForAttribute(item.url)}" target="_blank" rel="noopener noreferrer">Viewfinder page →</a></p>` : ""}
+  `;
+}
 
 /** Milk options at the caffeine bar. */
 const COFFEE_MILK_OPTIONS = [
@@ -3564,15 +4308,15 @@ const COFFEE_MENU_DRINKS = [
   { group: "Purists", name: "Cortado", price: "$3.50", description: "Espresso cut with steamed milk (whole or oat).", dairy: true },
   { group: "Purists", name: "Cappuccino", price: "$4", description: "Espresso + textured milk, slightly more foam. Whole or oat milk.", dairy: true },
   { group: "Purists", name: "Latte", price: "$5", description: "Espresso + steamed milk, thin microfoam. Whole or oat milk.", dairy: true },
-  { group: "Purists", name: "Cold Brew Nitro", price: "$4", description: "Nitrogen-infused cold brew on tap.", dairy: false },
+  { group: "Purists", name: "Cold Brew Nitro", price: "$4", description: "Velvety, bold, and refined—diesel fuel in the best way. Smooth going down, with a serious caffeine punch.", dairy: false },
   { group: "Purists", name: "Drip", price: "$3", description: "Batch brewed coffee.", dairy: false },
   { group: "Purists", name: "Bottomless Drip", price: "$5", description: "Batch brewed coffee — refills while dining.", dairy: false },
-  { group: "Pour Over", name: "Rotating Offerings", price: "$5", description: "Single-origin or feature coffee — ask your barista what's on.", dairy: false },
+  { group: "Pour Over", name: "Worka Sakaro", price: "$5", description: "Viewfinder Worka Sakaro (Ethiopia) — berry cereal, boozy, hibiscus. Current pour-over bean.", dairy: false },
   { group: "Flavored", name: "Vietnamese", price: "$5.50", description: "Sweetened condensed milk + espresso over ice.", dairy: true },
   { group: "Flavored", name: "Dutch Apple Pie", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with Dutch apple pie flavor. Whole or oat milk.", dairy: true },
   { group: "Flavored", name: "Tres Leches", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with tres leches flavor. Whole or oat milk.", dairy: true },
   { group: "Flavored", name: "Strawberry Matcha", price: "$5.50", description: "Matcha with strawberry, vanilla, and rose.", dairy: true, tags: ["Matcha"] },
-  { group: "Flavored", name: "Seasonal", price: "$5 / $6", description: "Rotating seasonal flavor — cappuccino ($5) or latte ($6). Whole or oat milk. See Seasonal Lattes tab when active.", dairy: true },
+  { group: "Flavored", name: "Seasonal", price: "$5 / $6", description: "Banana Foster Latte (seasonal) — cappuccino ($5) or latte ($6). Whole or oat milk. Full recipe under Seasonal Lattes.", dairy: true },
   { group: "Tea", name: "Hot Tea", price: "$2.50", description: "Hot brewed tea — ask what's available.", dairy: false },
   { group: "Tea", name: "Iced Tea", price: "$2", description: "Iced brewed tea.", dairy: false },
   { group: "Tea", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade.", dairy: false }
@@ -3598,21 +4342,76 @@ const BAR_MENU_DRINKS = [
   { group: "NA Beverages", section: "other", name: "Ginger Beer", price: "$3", description: "Lady Bird ginger beer.", dairy: false }
 ];
 
-/** Seasonal latte lineup — set isNew: true when launching. */
+/** Seasonal latte lineup — set isNew: true when launching. Full recipes live here (Coffee tab), not in SOPs. */
 const SEASONAL_LATTES = [
   {
-    name: "Seasonal Latte",
-    season: "Rotating",
+    name: "Banana Foster Latte",
+    season: "Seasonal",
     available: true,
-    isNew: false,
-    description: "Check the caffeine bar board for the current seasonal cappuccino or latte flavor.",
-    build: "Seasonal syrup/flavor · espresso · steamed milk.",
-    training: "Ask the bar lead what's running this week and how to describe it to guests."
+    isNew: true,
+    description: "Brown-sugar banana syrup latte with oat cold foam and vanilla wafer crumble. Cappuccino ($5) or latte ($6).",
+    build: "40 g syrup · espresso · steamed milk · cold foam · ½ scoop vanilla wafer crumble (hot: no foam, wafer sprinkle with banana syrup).",
+    training: "Flag cinnamon allergy. Cold foam is oat-based; alt milk possible. Keep a backup foam batch in the walk-in.",
+    recipe: {
+      syrup: ["Vanilla bean paste, caramel, salt, cinnamon, banana emulsion (brown sugar base)"],
+      coldFoam: [
+        "10 oz oat milk + 10 pumps vanilla syrup",
+        "Keep a backup batch in the walk-in",
+        "When iSi whipper is empty: wash, refill foam mix, recharge with nitro"
+      ],
+      buildSteps: [
+        "12 oz glass",
+        "40 g syrup",
+        "Leave space from top of logo to rim for cold foam",
+        "Cold foam is oat-milk based (alt milk possible)",
+        "Top with ½ scoop vanilla wafer crumble",
+        "Allergy: contains cinnamon"
+      ],
+      hotPresentation: [
+        "No cold foam",
+        "Sprinkle vanilla wafers with banana syrup"
+      ]
+    }
   }
 ];
 
+function seasonalLatteRecipeHtml(item) {
+  const recipe = item.recipe;
+  if (!recipe) {
+    return `
+      <div class="detail-section">
+        <p class="detail-label">Build</p>
+        <p class="detail-text">${escapeHTML(item.build)}</p>
+      </div>
+      ${item.training ? `<div class="detail-section manual-callout"><p class="detail-label">Staff talking points</p><p class="detail-text">${escapeHTML(item.training)}</p></div>` : ""}
+    `;
+  }
+
+  const list = items => `<ul>${items.map(line => `<li>${escapeHTML(line)}</li>`).join("")}</ul>`;
+  return `
+    <div class="detail-section">
+      <p class="detail-label">Syrup (brown sugar base)</p>
+      <div class="detail-text">${list(recipe.syrup || [])}</div>
+    </div>
+    <div class="detail-section">
+      <p class="detail-label">Cold foam</p>
+      <div class="detail-text">${list(recipe.coldFoam || [])}</div>
+    </div>
+    <div class="detail-section">
+      <p class="detail-label">Build</p>
+      <div class="detail-text">${list(recipe.buildSteps || [])}</div>
+    </div>
+    <div class="detail-section">
+      <p class="detail-label">Hot presentation</p>
+      <div class="detail-text">${list(recipe.hotPresentation || [])}</div>
+    </div>
+    ${item.training ? `<div class="detail-section manual-callout"><p class="detail-label">Staff talking points</p><p class="detail-text">${escapeHTML(item.training)}</p></div>` : ""}
+  `;
+}
+
 const FOOD_CATEGORY_LABELS = {
   breakfast: "Breakfast",
+  brunch: "Brunch",
   lunch: "Lunch",
   dinner: "Dinner",
   weekly: "Weekly Specials"
@@ -3634,6 +4433,22 @@ const FOOD_MENU = [
   { id: "breakfast-plate", name: "Breakfast Plate", category: "breakfast", section: "Breakfast", price: "$12", description: "Two eggs, bacon, and breakfast potatoes.", glutenFree: true, dairy: false, nuts: false, notes: "Potatoes fried in beef tallow." },
   { id: "two-pancakes", name: "Two Pancakes", category: "breakfast", section: "Breakfast", price: "$6", description: "Two GF pancakes — optional breakfast sides available.", glutenFree: true, dairy: null, nuts: false },
   { id: "yogurt-fruit-bowl", name: "Yogurt + Fruit Bowl", category: "breakfast", section: "Breakfast", price: "$7", description: "House-composed bowl with non-fat Greek yogurt, seasonal fruit, and house-made granola.", glutenFree: true, dairy: true, nuts: null, notes: "Confirm granola allergens with kitchen if guest asks." },
+
+  // ── Brunch (Sunday 10 am–3 pm) ──
+  { id: "brunch-shrimp-grits", name: "Shrimp + Grits", category: "brunch", section: "Brunch", price: "$15", description: "Blackened shrimp over cheese grits with lemon butter sauce.", glutenFree: true, dairy: true, nuts: false },
+  { id: "brunch-steak-eggs", name: "Steak + Eggs", category: "brunch", section: "Brunch", price: "$17", description: "Skirt steak, hollandaise sauce, fried egg, with breakfast potatoes.", glutenFree: true, dairy: true, nuts: false, notes: "Potatoes fried in beef tallow." },
+  { id: "brunch-chilaquiles", name: "Chilaquiles", category: "brunch", section: "Brunch", price: "$12", description: "Served with two eggs and avocado.", glutenFree: true, dairy: null, nuts: false },
+  { id: "brunch-house-omelette", name: "House Omelette", category: "brunch", section: "Brunch", price: "$12", description: "Bacon, spinach, mushrooms, white cheddar — choice of fresh fruit or side salad.", glutenFree: true, dairy: true, nuts: false },
+  { id: "brunch-pancakes", name: "Pancakes", category: "brunch", section: "Brunch", price: "$13", description: "Blueberry compote, pistachio cream, bacon.", glutenFree: null, dairy: true, nuts: true, notes: "Contains pistachio — ask about nut allergies." },
+  { id: "brunch-american-breakfast", name: "American Breakfast", category: "brunch", section: "Brunch", price: "$14", description: "2 pancakes, 2 eggs, bacon with breakfast potatoes.", glutenFree: null, dairy: null, nuts: false, notes: "Potatoes fried in beef tallow." },
+  { id: "brunch-breakfast-tacos", name: "3 Breakfast Tacos", category: "brunch", section: "Brunch", price: "$11", description: "Chorizo, eggs, white cheddar with breakfast potatoes.", glutenFree: false, dairy: true, nuts: false, notes: "Flour tortillas — not GF. Potatoes fried in beef tallow." },
+  { id: "brunch-french-fries", name: "French Fries", category: "brunch", section: "Brunch", price: "$8", description: "With aioli. Cooked in beef tallow.", glutenFree: true, dairy: true, nuts: false, notes: "Aioli contains dairy/egg." },
+  { id: "brunch-breakfast-burger", name: "Breakfast Burger", category: "brunch", section: "Sandwiches", price: "$16", description: "Bacon, egg, hollandaise sauce with breakfast potatoes.", glutenFree: false, dairy: true, nuts: false, notes: "Bun is not gluten-free. Potatoes fried in beef tallow." },
+  { id: "brunch-chicken-sandwich", name: "Chicken Sandwich", category: "brunch", section: "Sandwiches", price: "$13", description: "Regular or buffalo with breakfast potatoes.", glutenFree: false, dairy: null, nuts: false, notes: "Bun is not gluten-free. Potatoes fried in beef tallow." },
+  { id: "brunch-steak-salad", name: "Steak Salad", category: "brunch", section: "Salads", price: "$17", description: "Tomato confit, herb yogurt dressing.", glutenFree: true, dairy: true, nuts: false },
+  { id: "brunch-salmon-salad", name: "Salmon Salad", category: "brunch", section: "Salads", price: "$17", description: "Feta, olives, lemon oregano vinaigrette.", glutenFree: true, dairy: true, nuts: false },
+  { id: "brunch-avocado-toast", name: "Avocado Toast", category: "brunch", section: "Lighter", price: "$13", description: "Arugula salad, poached egg with fresh fruit.", glutenFree: false, dairy: false, nuts: false, notes: "Toast is not gluten-free unless kitchen confirms a GF option." },
+  { id: "brunch-yogurt-bowl", name: "Yogurt Bowl", category: "brunch", section: "Lighter", price: "$6.50", description: "Housemade yogurt and granola, fresh fruit compote.", glutenFree: null, dairy: true, nuts: null, notes: "Confirm granola allergens with kitchen if guest asks." },
 
   // ── Lunch (regular menu) ──
   { id: "fried-chicken-lunch", name: "Fried Chicken Lunch", category: "lunch", section: "Lunch Menu", price: "$15", description: "Two pieces of fried chicken with Nam Jim, two sides, and an 8 oz beer.", glutenFree: true, dairy: false, nuts: false, notes: "Suggest Nam Jim for best flavor. Side choice: fries, rice, or salad. Beer served separately." },
@@ -4047,10 +4862,12 @@ const GAME_POINT_VALUES = {
   rocket: 12,
   flash: 3,
   coffee_quiz: 10,
-  coffee_flash: 3
+  coffee_flash: 3,
+  fav_beer: 25
 };
 
 const GAMES = [
+  { id: "favbeer", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M38 58c0-12 8-22 12-28 4 6 12 16 12 28a12 12 0 0 1-24 0z" fill="none" stroke="#c9a227" stroke-width="3"/><circle cx="50" cy="58" r="3" fill="#c9a227"/></svg>`, title: "Staff Favorites", desc: "Guess teammates’ favorite beers — unlock them on the board for bonus points" },
   { id: "rocket", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(55 50 54)"/><rect x="44" y="28" width="12" height="36" rx="2" fill="#c9a227"/><rect x="47" y="18" width="6" height="12" fill="#c9a227"/><path d="M38 68 L44 58 L56 58 L62 68 Z" fill="#8b6b3c"/></svg>`, title: "Launch Pad", desc: "Gold rocket trainer — blast the correct tap answer" },
   { id: "speed", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M56 22 L38 52h14l-8 26 28-36H56z" fill="#c9a227"/></svg>`, title: "Speed Round", desc: "12 mixed questions from current taps" },
   { id: "tap", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M50 28c8 10 14 18 14 28a14 14 0 0 1-28 0c0-10 6-18 14-28z" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M50 40v28M42 52h16" stroke="#c9a227" stroke-width="2"/></svg>`, title: "Tap Match", desc: "Match tap numbers to beers" },
@@ -4125,11 +4942,11 @@ async function loadData() {
     }
 
     const beerText = await beerResponse.text();
-    beers = parseCSV(beerText).filter(b =>
+    beers = applyBeerTapOverrides(parseCSV(beerText).filter(b =>
       b.Name &&
       b.Name.trim() !== "" &&
       b.Name.trim() !== "?"
-    );
+    ));
 
     if (FOOD_CSV_URL !== "PASTE_YOUR_FOOD_CSV_LINK_HERE") {
       try {
@@ -4165,6 +4982,37 @@ async function loadData() {
 
 function col(item, field) {
   return (item[field] || "").trim();
+}
+
+function beerNameMatches(beer, targetName) {
+  return col(beer, "Name").toLowerCase() === targetName.trim().toLowerCase();
+}
+
+function applyBeerTapOverrides(rows) {
+  const patched = rows.map(b => ({ ...b }));
+  const assignedNames = new Set(
+    BEER_TAP_OVERRIDES.filter(o => o.onTap).map(o => o.name.trim().toLowerCase())
+  );
+
+  for (const beer of patched) {
+    const tapNum = Number(getTapNumber(beer));
+    if (
+      tapNum &&
+      BEER_TAP_RELEASES.includes(tapNum) &&
+      !assignedNames.has(col(beer, "Name").toLowerCase())
+    ) {
+      beer["On Tap"] = "";
+    }
+  }
+
+  for (const override of BEER_TAP_OVERRIDES) {
+    const beer = patched.find(b => beerNameMatches(b, override.name));
+    if (!beer) continue;
+    if (override.onTap) beer["On Tap"] = `Yes- Tap ${override.onTap}`;
+    if (override.description) beer["Description / ingredients"] = override.description;
+  }
+
+  return patched;
 }
 
 function getFlavorProfile(item) {
@@ -4240,6 +5088,14 @@ function matchesFilter(item) {
   if (activeFilter === "highabv") return getABVNumber(item) >= 8;
   if (activeFilter === "gf") return isYes(item["Gluten-Reduced"]);
   if (activeFilter === "new") return isYes(item["New Tap"]);
+  if (activeFilter === "untried") {
+    if (!currentUser || !beerCheckinsLoaded) return true;
+    return !getBeerCheckin(col(item, "Name"));
+  }
+  if (activeFilter === "tried") {
+    if (!currentUser || !beerCheckinsLoaded) return false;
+    return Boolean(getBeerCheckin(col(item, "Name")));
+  }
   return true;
 }
 
@@ -4260,7 +5116,7 @@ function render() {
   const searchWrap = document.getElementById("searchWrap");
 
   const showFilters = activeType === "beer" || activeType === "ontap";
-  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "sops" || activeType === "reviews";
+  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "sops" || activeType === "checklists" || activeType === "reviews";
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
@@ -4287,12 +5143,21 @@ function render() {
   } else if (activeType === "sops") {
     destroyCharts();
     renderSops(content);
+  } else if (activeType === "checklists") {
+    destroyCharts();
+    renderChecklists(content);
   } else if (activeType === "reviews") {
     destroyCharts();
     renderReviews(content);
   } else if (activeType === "games") {
     destroyCharts();
     renderGames(content);
+  } else if (activeType === "features") {
+    destroyCharts();
+    renderFeaturesTab(content);
+  } else if (activeType === "feedback") {
+    destroyCharts();
+    renderSiteFeedback(content);
   } else if (activeType === "progress") {
     renderMyProgress(content);
   } else if (activeType === "shift-survey") {
@@ -4320,7 +5185,8 @@ const ACTIVITY_LABELS = {
   rocket: "Launch Pad",
   flash: "Beer Flashcards",
   coffee_quiz: "Coffee Quiz",
-  coffee_flash: "Coffee Flashcards"
+  coffee_flash: "Coffee Flashcards",
+  fav_beer: "Staff Favorites"
 };
 
 async function apiFetch(path, options = {}) {
@@ -4334,31 +5200,70 @@ async function apiFetch(path, options = {}) {
 }
 
 function roleLabel(role) {
-  if (role === "admin") return "Admin";
-  if (role === "merch") return "Merch";
-  if (role === "shift_lead") return "Shift Lead";
-  return "Employee";
-}
-
-function isShiftLeadManager() {
-  return currentUser && (currentUser.role === "admin" || currentUser.role === "shift_lead");
-}
-
-function canSubmitShiftSurvey() {
-  return currentUser && (currentUser.role === "employee" || currentUser.role === "shift_lead");
-}
-
-function isInventoryManager() {
-  return currentUser && (currentUser.role === "admin" || currentUser.role === "shift_lead");
+  return window.StaffRoles ? StaffRoles.roleLabel(role) : role;
 }
 
 function isAdmin() {
-  return currentUser && currentUser.role === "admin";
+  return currentUser && (currentUser.permissions?.manageApprovedEmails || StaffRoles?.hasRole(currentUser, "admin"));
+}
+
+function isManager() {
+  return currentUser && (currentUser.permissions?.manageTeam || StaffRoles?.canManageTeam(currentUser));
+}
+
+function isShiftLeadManager() {
+  return currentUser && (currentUser.permissions?.viewShiftReports || StaffRoles?.canViewShiftReports(currentUser, currentUser.on_shift_lead_duty));
+}
+
+function canSubmitShiftSurvey() {
+  return currentUser && (currentUser.permissions?.submitShiftSurvey || StaffRoles?.canSubmitShiftSurvey(currentUser));
+}
+
+function isInventoryManager() {
+  return currentUser && (currentUser.permissions?.manageOpsInventory || StaffRoles?.canManageOpsInventory(currentUser));
 }
 
 function isMerchManager() {
-  return currentUser && (currentUser.role === "admin" || currentUser.role === "merch");
+  return currentUser && (currentUser.permissions?.manageMerch || StaffRoles?.canManageMerch(currentUser));
 }
+
+function receivesDailyBriefing() {
+  return currentUser && (StaffRoles?.receivesDailyBriefing(currentUser));
+}
+
+function isFloorStaff() {
+  return currentUser && StaffRoles?.isFloorStaffForTraining(currentUser);
+}
+
+function canManageSiteFeedback() {
+  return currentUser && (currentUser.permissions?.manageSiteFeedback || StaffRoles?.canManageSiteFeedback(currentUser));
+}
+
+function canRefreshReviews() {
+  return currentUser && (currentUser.permissions?.refreshReviews || StaffRoles?.canRefreshReviews(currentUser));
+}
+
+function isTrainingStaff(userOrRole) {
+  if (!userOrRole) return false;
+  if (typeof userOrRole === "object") {
+    return StaffRoles?.isFloorStaffForTraining(userOrRole) || userOrRole.role === "employee";
+  }
+  return StaffRoles?.isFloorStaffForTraining({ role: userOrRole }) || userOrRole === "employee";
+}
+
+function hasShiftLeadCapability(user) {
+  return user && (user.permissions?.shiftLeadCapability || StaffRoles?.hasShiftLeadCapability(user));
+}
+
+function buildRoleOptionsHtml(selected) {
+  const roles = window.StaffRoles?.ALL_ROLES || ["bartender", "trainee", "event_lead", "shift_lead", "merch", "inventory_admin", "manager", "admin"];
+  const normalized = StaffRoles?.normalizeRole(selected) || selected;
+  return roles.map(role => `
+    <option value="${role}" ${normalized === role ? "selected" : ""}>${escapeHTML(roleLabel(role))}</option>
+  `).join("");
+}
+
+let shiftLeadDutyDate = null;
 
 function updateAuthUI() {
   const authBar = document.getElementById("authBar");
@@ -4368,11 +5273,11 @@ function updateAuthUI() {
   document.querySelectorAll(".tab-auth-only").forEach(el => {
     el.style.display = currentUser ? "" : "none";
   });
-  document.querySelectorAll(".tab-admin-only").forEach(el => {
-    el.style.display = currentUser && currentUser.role === "admin" ? "" : "none";
+  document.querySelectorAll(".tab-team-only").forEach(el => {
+    el.style.display = currentUser && currentUser.permissions?.manageTeam ? "" : "none";
   });
   document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
-    el.style.display = isShiftLeadManager() ? "" : "none";
+    el.style.display = currentUser && currentUser.permissions?.viewShiftReports ? "" : "none";
   });
   document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
     el.style.display = canSubmitShiftSurvey() ? "" : "none";
@@ -4394,7 +5299,11 @@ function updateAuthUI() {
   }
 
   if (userName) userName.textContent = currentUser.name;
-  if (userRole) userRole.textContent = roleLabel(currentUser.role);
+  if (userRole) {
+    let roleText = roleLabel(currentUser.role);
+    if (currentUser.on_shift_lead_duty) roleText += " · on shift lead duty";
+    userRole.textContent = roleText;
+  }
   const signedHtml = `
     <div class="auth-user">
       <strong>${escapeHTML(currentUser.name)}</strong>
@@ -4437,6 +5346,7 @@ async function initAuth() {
     const data = await apiFetch("/api/auth/me");
     currentUser = data.user;
     updateAuthUI();
+    await loadBeerCheckins();
   } catch {
     authToken = "";
     localStorage.removeItem("mp_auth_token");
@@ -4469,9 +5379,9 @@ function renderAuthModal() {
   const showRegister = !microsoftAuthAvailable && authMode === "register";
   document.getElementById("authContent").innerHTML = `
     <div class="auth-panel" style="margin:0;padding:0;border:none;background:transparent;">
-      <h3>${showRegister ? "Create employee account" : "Log in"}</h3>
+      <h3>${showRegister ? "Create staff account" : "Log in"}</h3>
       <p class="hint">${showRegister
-        ? "Staff sign up here to track training progress. The first account becomes admin. Managers, merch leads, and shift leads can register with a setup key."
+        ? "Staff sign up here to track training progress. The first account becomes admin. Use one setup key for manager, merch, inventory admin, shift lead, or event lead roles."
         : microsoftAuthAvailable
           ? "If an admin has approved your work email, sign in with Microsoft to create your account and track training."
           : "Log in to save your quiz scores and track training progress."}</p>
@@ -4486,11 +5396,17 @@ function renderAuthModal() {
       <input id="authPassword" type="password" placeholder="At least 6 characters">
       ${showRegister ? `
         <label for="authAdminKey">Admin setup key (optional)</label>
-        <input id="authAdminKey" type="password" placeholder="Only for manager/admin accounts">
+        <input id="authAdminKey" type="password" placeholder="Full admin access">
+        <label for="authManagerKey">Manager setup key (optional)</label>
+        <input id="authManagerKey" type="password" placeholder="View everything; Team tab">
         <label for="authMerchKey">Merch setup key (optional)</label>
-        <input id="authMerchKey" type="password" placeholder="Only for merch manager accounts">
+        <input id="authMerchKey" type="password" placeholder="Merch inventory and ideas">
+        <label for="authInventoryKey">Inventory admin setup key (optional)</label>
+        <input id="authInventoryKey" type="password" placeholder="Ops inventory counts only">
         <label for="authShiftLeadKey">Shift lead setup key (optional)</label>
-        <input id="authShiftLeadKey" type="password" placeholder="Only for shift lead accounts">
+        <input id="authShiftLeadKey" type="password" placeholder="Shift lead role (schedule on Team tab)">
+        <label for="authEventLeadKey">Event lead setup key (optional)</label>
+        <input id="authEventLeadKey" type="password" placeholder="Private events — full reference access">
       ` : ""}
       <button class="game-next" style="width:100%;" onclick="submitAuth()">${showRegister ? "Create account" : "Log in with email"}</button>
       <p class="hint" style="margin-top:14px;text-align:center;">
@@ -4516,11 +5432,14 @@ async function submitAuth() {
     if (authMode === "register") {
       const name = document.getElementById("authName").value.trim();
       const adminKey = document.getElementById("authAdminKey")?.value || "";
+      const managerKey = document.getElementById("authManagerKey")?.value || "";
       const merchKey = document.getElementById("authMerchKey")?.value || "";
+      const inventoryKey = document.getElementById("authInventoryKey")?.value || "";
       const shiftLeadKey = document.getElementById("authShiftLeadKey")?.value || "";
+      const eventLeadKey = document.getElementById("authEventLeadKey")?.value || "";
       data = await apiFetch("/api/auth/register", {
         method: "POST",
-        body: JSON.stringify({ name, email, password, adminKey, merchKey, shiftLeadKey })
+        body: JSON.stringify({ name, email, password, adminKey, managerKey, merchKey, inventoryKey, shiftLeadKey, eventLeadKey })
       });
     } else {
       data = await apiFetch("/api/auth/login", {
@@ -4534,8 +5453,10 @@ async function submitAuth() {
     currentUser = data.user;
     updateAuthUI();
     closeAuthModal();
-    if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") render();
+    await loadBeerCheckins();
+    if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports" || activeType === "feedback") render();
     await maybeShowDailyBriefing();
+    await maybePromptClosingChecklist();
     await maybePromptShiftSurvey();
     await maybeShowShiftDigest();
   } catch (err) {
@@ -4547,6 +5468,9 @@ function logout() {
   authToken = "";
   currentUser = null;
   myProgressData = null;
+  beerCheckins = {};
+  myTastingData = null;
+  beerCheckinsLoaded = false;
   teamData = null;
   approvedEmailsData = null;
   teamDetailId = null;
@@ -4555,7 +5479,7 @@ function logout() {
   currentBriefingItems = [];
   localStorage.removeItem("mp_auth_token");
   updateAuthUI();
-  if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports") {
+  if (activeType === "progress" || activeType === "team" || activeType === "shift-survey" || activeType === "shift-reports" || activeType === "feedback") {
     activeType = "ontap";
     document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
   }
@@ -4631,7 +5555,7 @@ function collectNewAnnouncements() {
 }
 
 async function maybeShowDailyBriefing() {
-  if (!currentUser || currentUser.role !== "employee") return;
+  if (!currentUser || !receivesDailyBriefing()) return;
 
   const items = collectNewAnnouncements();
   if (!items.length) return;
@@ -4786,11 +5710,7 @@ function buildAnnouncementTrainingHtml(item) {
       <p class="coffee-section-num">${escapeHTML(item.label)} · ${escapeHTML(latte.season)}</p>
       <h2 class="modal-title">${escapeHTML(latte.name)}</h2>
       <p class="modal-style">${escapeHTML(latte.description)}</p>
-      <div class="detail-section">
-        <p class="detail-label">Build</p>
-        <p class="detail-text">${escapeHTML(latte.build)}</p>
-      </div>
-      ${latte.training ? `<div class="detail-section manual-callout"><p class="detail-label">Staff talking points</p><p class="detail-text">${escapeHTML(latte.training)}</p></div>` : ""}
+      ${seasonalLatteRecipeHtml(latte)}
     `;
   }
 
@@ -4826,8 +5746,150 @@ async function recordProgress(activityType, category, score, total, points) {
   }
 }
 
+async function loadBeerCheckins() {
+  if (!currentUser) {
+    beerCheckins = {};
+    myTastingData = null;
+    beerCheckinsLoaded = false;
+    return;
+  }
+
+  try {
+    const data = await apiFetch("/api/beer-checkins/me");
+    beerCheckins = {};
+    for (const row of data.checkins || []) {
+      beerCheckins[row.beer_name.trim().toLowerCase()] = row;
+    }
+    myTastingData = data;
+    beerCheckinsLoaded = true;
+  } catch (_) {
+    beerCheckins = {};
+    myTastingData = null;
+    beerCheckinsLoaded = false;
+  }
+}
+
+function getBeerCheckin(beerName) {
+  if (!beerName) return null;
+  return beerCheckins[String(beerName).trim().toLowerCase()] || null;
+}
+
+function formatBeerRating(rating) {
+  if (!rating) return "";
+  return `${Number(rating)}★`;
+}
+
+function renderBadgeGrid(badges, compact) {
+  if (!badges || !badges.length) return "";
+  const earned = badges.filter(badge => badge.earned);
+  const show = compact ? earned.slice(0, 6) : badges;
+  if (compact && !earned.length) return "";
+
+  return `
+    <div class="badge-grid">
+      ${show.map(badge => `
+        <div class="badge-card ${badge.earned ? "earned" : "locked"}">
+          <div class="badge-icon">${badge.icon}</div>
+          <p class="badge-title">${escapeHTML(badge.title)}</p>
+          <p class="badge-desc">${escapeHTML(badge.description)}</p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderTastingCoverage(summary) {
+  if (!summary) return "";
+  const pct = Math.max(0, Math.min(100, summary.coveragePct || 0));
+  return `
+    <div class="tasting-coverage-wrap">
+      <p class="detail-label" style="margin:0;">On-tap menu coverage</p>
+      <p style="margin:6px 0 0;font-size:14px;color:#333;">
+        You've tasted <strong>${summary.onTapTried || 0}</strong> of <strong>${summary.onTapTotal || 0}</strong> beers currently on tap (${pct}%).
+      </p>
+      <div class="tasting-coverage-bar">
+        <div class="tasting-coverage-fill" style="width:${pct}%;"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderBeerCheckinPanel(beerName) {
+  if (!currentUser) {
+    return `
+      <div class="checkin-panel">
+        <p class="detail-label">Staff tasting journal</p>
+        <p class="checkin-status">Log in to rate beers you've tasted during training — like Untappd check-ins, but for the floor team.</p>
+        <button class="game-next" type="button" onclick="closeModal(); openAuthModal('login');">Log in to check in</button>
+      </div>
+    `;
+  }
+
+  const checkin = getBeerCheckin(beerName);
+  beerModalBeer = beerName;
+  beerModalRating = checkin?.rating ? Math.round(Number(checkin.rating)) : 0;
+
+  return `
+    <div class="checkin-panel">
+      <p class="detail-label">Staff tasting journal</p>
+      <p class="checkin-status">${checkin
+        ? `Checked in ${formatDate(checkin.tasted_at)}${checkin.rating ? ` · ${formatBeerRating(checkin.rating)}` : ""}`
+        : "Haven't logged this one yet — rate it after your shift taste."}</p>
+      <p class="detail-label" style="margin-top:12px;">Your rating</p>
+      <div class="beer-rating-row">
+        ${[1, 2, 3, 4, 5].map(rating => `
+          <button type="button" class="beer-rating-btn ${beerModalRating === rating ? "selected" : ""}" data-rating="${rating}" onclick="selectBeerCheckinRating(${rating})">
+            <span class="survey-rating-num">${rating}</span>
+            <span class="survey-rating-label">${escapeHTML(BEER_RATING_LABELS[rating])}</span>
+          </button>
+        `).join("")}
+      </div>
+      <label for="beerCheckinNotes">Tasting notes</label>
+      <textarea id="beerCheckinNotes" class="checkin-textarea" placeholder="What did you notice? Mouthfeel, aroma, how you'd describe it to a guest…">${escapeHTML(checkin?.notes || "")}</textarea>
+      <p id="beerCheckinError" class="auth-error" style="display:none;margin-top:10px;"></p>
+      <button class="game-next checkin-save" type="button" onclick="saveBeerCheckin()">${checkin ? "Update check-in" : "Check in"}</button>
+    </div>
+  `;
+}
+
+function selectBeerCheckinRating(rating) {
+  beerModalRating = rating;
+  document.querySelectorAll(".beer-rating-btn").forEach(btn => {
+    btn.classList.toggle("selected", Number(btn.dataset.rating) === rating);
+  });
+}
+
+async function saveBeerCheckin() {
+  if (!currentUser || !beerModalBeer) return;
+
+  const errorEl = document.getElementById("beerCheckinError");
+  if (errorEl) errorEl.style.display = "none";
+
+  const notes = document.getElementById("beerCheckinNotes")?.value || "";
+  try {
+    await apiFetch("/api/beer-checkins", {
+      method: "POST",
+      body: JSON.stringify({
+        beerName: beerModalBeer,
+        rating: beerModalRating || null,
+        notes
+      })
+    });
+    await loadBeerCheckins();
+    myProgressData = null;
+    openBeerByName(beerModalBeer);
+    if (activeType === "beer" || activeType === "ontap" || activeType === "progress" || activeType === "games") {
+      render();
+    }
+  } catch (err) {
+    if (errorEl) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = "block";
+    }
+  }
+}
+
 async function loadLeaderboard(period) {
-  if (!currentUser) return null;
   const safePeriod = period || leaderboardPeriod;
   try {
     leaderboardData = await apiFetch(`/api/games/leaderboard?period=${encodeURIComponent(safePeriod)}`);
@@ -4846,11 +5908,74 @@ function setLeaderboardPeriod(period) {
   });
 }
 
-function renderLeaderboardSection() {
-  if (!currentUser) {
-    return `<div class="game-leaderboard"><div class="game-leaderboard-card"><p style="margin:0;color:var(--muted);font-size:13px;">Log in to earn points and appear on the leaderboard.</p></div></div>`;
+function renderFavoriteBeerPrompt() {
+  if (!currentUser) return "";
+  const hasFavorite = Boolean(String(currentUser.favorite_beer || "").trim());
+  const dismissed = sessionStorage.getItem("favorite-beer-dismissed") === "1";
+  if (!hasFavorite && dismissed) return "";
+
+  const value = escapeForAttribute(currentUser.favorite_beer || "");
+  const title = hasFavorite ? "Your favorite beer" : "What's your favorite beer?";
+  const blurb = hasFavorite
+    ? "Teammates unlock yours by guessing it in Staff Favorites. You can update anytime."
+    : "Add it once — teammates unlock it on the leaderboard by guessing correctly in Staff Favorites (+25 pts).";
+
+  return `
+    <div class="favorite-beer-panel" id="favoriteBeerPanel">
+      <h3>${title}</h3>
+      <p>${blurb}</p>
+      <div class="favorite-beer-row">
+        <input id="favoriteBeerInput" type="text" maxlength="80" placeholder="e.g. Black Matter Nitro" value="${value}" autocomplete="off">
+        <button type="button" class="game-next" onclick="saveFavoriteBeer()">${hasFavorite ? "Update" : "Save"}</button>
+        ${!hasFavorite ? `<button type="button" class="briefing-back" style="margin:0;" onclick="dismissFavoriteBeerPrompt()">Later</button>` : ""}
+      </div>
+      <div class="favorite-beer-error" id="favoriteBeerError" hidden></div>
+    </div>
+  `;
+}
+
+function dismissFavoriteBeerPrompt() {
+  sessionStorage.setItem("favorite-beer-dismissed", "1");
+  if (activeType === "game" && !activeGame) render();
+}
+
+async function saveFavoriteBeer() {
+  const input = document.getElementById("favoriteBeerInput");
+  const errorEl = document.getElementById("favoriteBeerError");
+  if (errorEl) {
+    errorEl.hidden = true;
+    errorEl.textContent = "";
+  }
+  if (!currentUser) return;
+
+  const favoriteBeer = String(input?.value || "").trim();
+  if (!favoriteBeer) {
+    if (errorEl) {
+      errorEl.hidden = false;
+      errorEl.textContent = "Enter a beer name (house tap or otherwise).";
+    }
+    return;
   }
 
+  try {
+    const data = await apiFetch("/api/me/favorite-beer", {
+      method: "PATCH",
+      body: JSON.stringify({ favoriteBeer })
+    });
+    currentUser = data.user;
+    sessionStorage.removeItem("favorite-beer-dismissed");
+    leaderboardData = null;
+    updateAuthUI();
+    if (activeType === "game" && !activeGame) render();
+  } catch (err) {
+    if (errorEl) {
+      errorEl.hidden = false;
+      errorEl.textContent = err.message || "Could not save.";
+    }
+  }
+}
+
+function renderLeaderboardSection() {
   const lb = leaderboardData;
   if (!lb) {
     return `<div class="game-leaderboard"><div class="game-leaderboard-card"><p style="margin:0;color:var(--muted);font-size:13px;">Loading leaderboard…</p></div></div>`;
@@ -4864,9 +5989,16 @@ function renderLeaderboardSection() {
 
   const rows = lb.leaderboard.length
     ? lb.leaderboard.map(row => `
-        <tr class="${row.id === currentUser.id ? "me-row" : ""}">
+        <tr class="${currentUser && row.id === currentUser.id ? "me-row" : ""}">
           <td>#${row.rank}</td>
-          <td>${escapeHTML(row.name)}</td>
+          <td class="lb-name-cell">
+            <span class="lb-name">${escapeHTML(row.name)}</span>
+            ${row.favoriteBeer
+              ? `<span class="lb-fav-beer">Favorite: ${escapeHTML(row.favoriteBeer)}</span>`
+              : row.favoriteBeerLocked
+                ? `<span class="lb-fav-beer">Favorite: ??? · guess in Staff Favorites</span>`
+                : `<span class="lb-fav-beer">Favorite: not set yet</span>`}
+          </td>
           <td><span class="game-points-badge">${row.points} pts</span></td>
           <td>${row.accuracy}%</td>
           <td>${row.sessions}</td>
@@ -4875,9 +6007,14 @@ function renderLeaderboardSection() {
     : `<tr><td colspan="5" style="color:var(--muted);">No scores yet — play a game to get on the board.</td></tr>`;
 
   const me = lb.me || {};
-  const meLine = me.points
-    ? `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">Your rank: <strong>#${me.rank || "—"}</strong> · <span class="game-points-badge">${me.points} pts</span> · ${me.accuracy || 0}% accuracy</p>`
-    : `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">You have no points this period yet. Finish a scored game to join the board.</p>`;
+  let meLine = "";
+  if (currentUser) {
+    meLine = me.points
+      ? `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">Your rank: <strong>#${me.rank || "—"}</strong> · <span class="game-points-badge">${me.points} pts</span> · ${me.accuracy || 0}% accuracy</p>`
+      : `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">You have no points this period yet. Finish a scored game to join the board.</p>`;
+  } else {
+    meLine = `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">Log in to earn points and join the leaderboard.</p>`;
+  }
 
   return `
     <div class="game-leaderboard">
@@ -5130,7 +6267,7 @@ function initProgressCharts(stats, prefix) {
 
 function initTeamCharts(employees) {
   destroyCharts();
-  const staff = employees.filter(e => e.role === "employee");
+  const staff = employees.filter(e => isTrainingStaff(e));
   if (!staff.length) return;
 
   const names = staff.map(e => e.name.split(" ")[0]);
@@ -5383,7 +6520,7 @@ async function renderShiftReports(content) {
   }
 
   if (!isShiftLeadManager()) {
-    content.innerHTML = `<div class="status"><strong>Shift lead access required.</strong>Only shift leads and admins can view end-of-day survey reports.</div>`;
+    content.innerHTML = `<div class="status"><strong>Shift lead duty required.</strong>Managers always see shift reports. Shift leads see them on days they are scheduled on the Team tab.</div>`;
     return;
   }
 
@@ -5453,9 +6590,35 @@ async function markShiftDigestViewed(shiftDate, rerender = true) {
   }
 }
 
+function getShiftContext() {
+  return currentUser?.shift || null;
+}
+
+function shouldPromptFromSchedule(flagName, hourFallback) {
+  const shift = getShiftContext();
+  if (shift?.synced) return Boolean(shift[flagName]);
+  return getLocalHour() >= hourFallback;
+}
+
+async function refreshShiftContext() {
+  if (!currentUser) return null;
+  try {
+    const data = await apiFetch("/api/shifts/me");
+    currentUser.shift = data.shift;
+    if (data.shift?.isShiftLeadNow) currentUser.on_shift_lead_duty = true;
+    return data.shift;
+  } catch (err) {
+    console.warn("Shift context unavailable:", err.message);
+    return currentUser.shift || null;
+  }
+}
+
 async function maybePromptShiftSurvey() {
   if (!canSubmitShiftSurvey()) return;
-  if (getLocalHour() < 15) return;
+  if (isShiftPromptModalOpen()) return;
+
+  await refreshShiftContext();
+  if (!shouldPromptFromSchedule("promptEndOfShift", 15)) return;
 
   const dateKey = getLocalDateKey();
   if (sessionStorage.getItem(`shift-survey-prompt-${dateKey}`)) return;
@@ -5467,11 +6630,16 @@ async function maybePromptShiftSurvey() {
       return;
     }
 
+    const mins = getShiftContext()?.minutesToEnd;
+    const timingNote = mins != null
+      ? (mins > 0 ? `Your shift ends in about ${mins} minutes.` : "Your scheduled shift just ended.")
+      : "Before you head out, take a minute to tell the shift lead how today went.";
+
     sessionStorage.setItem(`shift-survey-prompt-${dateKey}`, "shown");
     document.getElementById("shiftDigestContent").innerHTML = `
       <div class="briefing-header">
         <h2 id="shiftDigestTitle">End of shift check-in</h2>
-        <p>Before you head out, take a minute to tell the shift lead how today went. Your feedback is anonymous.</p>
+        <p>${escapeHTML(timingNote)} Your feedback is anonymous.</p>
       </div>
       <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); activateAppTab('shift-survey');">Fill out survey</button>
       <button type="button" class="briefing-back" style="margin-top:12px;" onclick="closeShiftDigestModal()">Remind me later</button>
@@ -5483,9 +6651,54 @@ async function maybePromptShiftSurvey() {
   }
 }
 
+async function maybePromptClosingChecklist() {
+  if (!currentUser) return;
+  if (isShiftPromptModalOpen()) return;
+
+  await refreshShiftContext();
+  if (!shouldPromptFromSchedule("promptClosingChecklist", 21)) return;
+
+  const dateKey = getLocalDateKey();
+  if (sessionStorage.getItem(`shift-checklist-prompt-${dateKey}`)) return;
+
+  const hour = getLocalHour();
+  const listId = hour < 18 ? "afternoon-cut" : "closing";
+  const title = hour < 18 ? "Afternoon cut checklist" : "Closing checklist";
+  const mins = getShiftContext()?.minutesToEnd;
+  const timingNote = mins != null && mins <= 90
+    ? `Your shift ends soon${mins > 0 ? ` (about ${mins} min)` : ""}.`
+    : "Wrap-up time.";
+
+  const alsoSurvey = canSubmitShiftSurvey()
+    && shouldPromptFromSchedule("promptEndOfShift", 15)
+    && !sessionStorage.getItem(`shift-survey-prompt-${dateKey}`);
+
+  sessionStorage.setItem(`shift-checklist-prompt-${dateKey}`, "shown");
+  if (alsoSurvey) sessionStorage.setItem(`shift-survey-prompt-${dateKey}`, "shown");
+
+  document.getElementById("shiftDigestContent").innerHTML = `
+    <div class="briefing-header">
+      <h2 id="shiftDigestTitle">${escapeHTML(title)}</h2>
+      <p>${escapeHTML(timingNote)} Finish your close-out list${alsoSurvey ? ", then leave anonymous shift feedback" : ""}.</p>
+    </div>
+    <button type="button" class="game-next briefing-done" onclick="closeShiftDigestModal(); checklistId='${listId}'; activateAppTab('checklists');">Open checklist</button>
+    ${alsoSurvey ? `<button type="button" class="game-next briefing-done" style="margin-top:10px;" onclick="closeShiftDigestModal(); activateAppTab('shift-survey');">End of shift survey</button>` : ""}
+    <button type="button" class="briefing-back" style="margin-top:12px;" onclick="closeShiftDigestModal()">Remind me later</button>
+  `;
+  document.getElementById("shiftDigestBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function isShiftPromptModalOpen() {
+  return document.getElementById("shiftDigestBackdrop")?.classList.contains("show");
+}
+
 async function maybeShowShiftDigest() {
   if (!isShiftLeadManager()) return;
-  if (getLocalHour() < 21) return;
+  if (isShiftPromptModalOpen()) return;
+
+  await refreshShiftContext();
+  if (!shouldPromptFromSchedule("promptEndOfShift", 21)) return;
 
   const dateKey = getLocalDateKey();
   if (sessionStorage.getItem(`shift-digest-shown-${dateKey}`)) return;
@@ -5535,6 +6748,259 @@ function closeShiftDigestModal(event) {
   document.body.style.overflow = "";
 }
 
+function formatFeedbackCategory(category) {
+  return FEEDBACK_CATEGORY_LABELS[category] || category || "Other";
+}
+
+function formatFeedbackStatus(status) {
+  if (status === "reviewed") return "Reviewed";
+  if (status === "resolved") return "Resolved";
+  return "Open";
+}
+
+function renderFeaturesTab(content) {
+  const features = window.SITE_FEATURES;
+  const sections = getFeatureSections();
+  const updatedLabel = formatFeaturesUpdatedLabel(features.updatedAt);
+  const recentUpdates = (features.recentUpdates || []).slice(0, 3);
+  const roles = features.roles || [];
+
+  content.innerHTML = `
+    <div class="guide-page">
+      <div class="guide-intro">
+        <h2>${escapeHTML(features.tabLabel || "Features")}</h2>
+        <p>Quick reference for each tab and login role.${updatedLabel ? ` Updated ${escapeHTML(updatedLabel)}.` : ""}</p>
+      </div>
+
+      ${roles.length ? `
+        <div class="guide-block">
+          <p class="guide-block-title">Roles</p>
+          <div class="guide-list">
+            ${roles.map(role => `
+              <div class="guide-row">
+                <strong>${escapeHTML(role.name)}</strong>
+                <span>${escapeHTML(role.blurb)}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="guide-block">
+        <p class="guide-block-title">Tabs</p>
+        <div class="guide-list">
+          ${sections.map(section => `
+            <div class="guide-row">
+              <strong>${escapeHTML(section.title)}</strong>
+              <span>${escapeHTML(section.summary)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      ${recentUpdates.length ? `
+        <div class="guide-block">
+          <p class="guide-block-title">Recent</p>
+          <ul class="guide-updates">
+            ${recentUpdates.map(item => `
+              <li><strong>${escapeHTML(item.date)}</strong> — ${escapeHTML(item.text)}</li>
+            `).join("")}
+          </ul>
+        </div>
+      ` : ""}
+
+      <div class="guide-callout">
+        Sign in to save training progress. Wrong menu info or bugs? Use the Feedback tab.
+      </div>
+    </div>
+  `;
+}
+
+function renderFeedbackSubmissionRows(rows, showUser) {
+  if (!rows.length) {
+    return `<div class="status" style="margin-top:12px;"><strong>No submissions yet.</strong></div>`;
+  }
+
+  return `
+    <table class="progress-table" style="margin-top:12px;">
+      <tr>
+        ${showUser ? "<th>From</th>" : ""}
+        <th>When</th>
+        <th>Category</th>
+        <th>Area</th>
+        <th>Subject</th>
+        <th>Status</th>
+      </tr>
+      ${rows.map(row => `
+        <tr>
+          ${showUser ? `<td><strong>${escapeHTML(row.userName || "Staff")}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(row.userRole || "")}</span></td>` : ""}
+          <td>${formatDate(row.createdAt)}</td>
+          <td>${escapeHTML(formatFeedbackCategory(row.category))}</td>
+          <td>${escapeHTML(row.pageTab || "—")}</td>
+          <td><strong>${escapeHTML(row.subject)}</strong><br><span style="color:#666;font-size:12px;">${escapeHTML((row.message || "").slice(0, 120))}${row.message && row.message.length > 120 ? "…" : ""}</span></td>
+          <td><span class="feedback-status ${escapeHTML(row.status || "open")}">${escapeHTML(formatFeedbackStatus(row.status))}</span></td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+async function renderSiteFeedback(content) {
+  if (!currentUser) {
+    content.innerHTML = `
+      <div class="auth-panel">
+        <h3>Log in to submit feedback</h3>
+        <p class="hint">Shift leads and staff can report bugs, wrong menu info, or ideas while we pilot the site.</p>
+        <button class="game-next" onclick="openAuthModal('login')">Log in</button>
+      </div>
+    `;
+    return;
+  }
+
+  content.innerHTML = `<div class="status"><strong>Loading feedback…</strong></div>`;
+
+  try {
+    const mine = await apiFetch("/api/site-feedback/me");
+    let adminBlock = "";
+
+    if (canManageSiteFeedback()) {
+      const all = await apiFetch("/api/site-feedback");
+      adminBlock = `
+        <div class="coffee-intro" style="margin-top:36px;margin-bottom:0;">
+          <h2>All feedback (manager)</h2>
+          <p>Review submissions from staff. Update status as you triage issues.</p>
+        </div>
+        ${all.feedback.length ? all.feedback.map(item => `
+          <div class="shift-report-card" style="margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+              <div>
+                <strong>${escapeHTML(item.subject)}</strong>
+                <p style="margin:6px 0 0;font-size:13px;color:var(--muted);">
+                  ${escapeHTML(item.userName)} · ${escapeHTML(formatFeedbackCategory(item.category))}
+                  ${item.pageTab ? ` · ${escapeHTML(item.pageTab)}` : ""}
+                  · ${formatDate(item.createdAt)}
+                </p>
+              </div>
+              <span class="feedback-status ${escapeHTML(item.status || "open")}">${escapeHTML(formatFeedbackStatus(item.status))}</span>
+            </div>
+            <p style="margin:12px 0 0;font-size:14px;line-height:1.55;">${escapeHTML(item.message)}</p>
+            <div style="margin-top:14px;display:grid;grid-template-columns:160px 1fr auto;gap:10px;align-items:end;">
+              <div>
+                <label for="feedback-status-${item.id}">Status</label>
+                <select id="feedback-status-${item.id}">
+                  <option value="open" ${item.status === "open" ? "selected" : ""}>Open</option>
+                  <option value="reviewed" ${item.status === "reviewed" ? "selected" : ""}>Reviewed</option>
+                  <option value="resolved" ${item.status === "resolved" ? "selected" : ""}>Resolved</option>
+                </select>
+              </div>
+              <div>
+                <label for="feedback-notes-${item.id}">Admin notes</label>
+                <input type="text" id="feedback-notes-${item.id}" value="${escapeHTML(item.adminNotes || "")}" placeholder="Internal follow-up notes">
+              </div>
+              <button type="button" class="auth-btn" onclick="updateSiteFeedbackStatus(${item.id})">Save</button>
+            </div>
+            ${item.adminNotes ? `<p style="margin:10px 0 0;font-size:12px;color:var(--muted);">Notes: ${escapeHTML(item.adminNotes)}</p>` : ""}
+          </div>
+        `).join("") : `<div class="status" style="margin-top:12px;"><strong>No feedback submitted yet.</strong></div>`}
+      `;
+    }
+
+    content.innerHTML = `
+      <div class="feedback-panel">
+        <div class="coffee-intro" style="padding-top:0;">
+          <h2>Site Feedback</h2>
+          <p>Help us improve this portal during the shift lead pilot. Report bugs, incorrect tap or menu info, or share ideas for new features.</p>
+        </div>
+        <div class="auth-panel" style="max-width:none;margin:0;padding:24px;">
+          <div id="siteFeedbackError"></div>
+          <label for="siteFeedbackCategory">What kind of feedback is this?</label>
+          <select id="siteFeedbackCategory">
+            <option value="">Choose a category…</option>
+            ${Object.entries(FEEDBACK_CATEGORY_LABELS).map(([value, label]) => `
+              <option value="${escapeHTML(value)}">${escapeHTML(label)}</option>
+            `).join("")}
+          </select>
+          <label for="siteFeedbackTab">Which part of the site?</label>
+          <select id="siteFeedbackTab">
+            <option value="">Choose an area (optional)…</option>
+            ${FEEDBACK_TAB_OPTIONS.map(tab => `
+              <option value="${escapeHTML(tab)}">${escapeHTML(tab)}</option>
+            `).join("")}
+          </select>
+          <label for="siteFeedbackSubject">Subject</label>
+          <input type="text" id="siteFeedbackSubject" maxlength="160" placeholder="Short summary — e.g. Tap 4 shows wrong beer">
+          <label for="siteFeedbackMessage">Details</label>
+          <textarea id="siteFeedbackMessage" placeholder="What happened? What should it say instead? Steps to reproduce a bug?"></textarea>
+          <button class="game-next" style="width:100%;margin-top:16px;" onclick="submitSiteFeedback()">Submit feedback</button>
+        </div>
+        <div class="coffee-intro" style="margin-top:32px;margin-bottom:0;">
+          <h2>Your submissions</h2>
+          <p>Track status on feedback you've sent. Admins mark items reviewed or resolved.</p>
+        </div>
+        ${renderFeedbackSubmissionRows(mine.submissions || [], false)}
+        ${mine.submissions?.length ? mine.submissions.map(item => item.adminNotes ? `
+          <div class="guide-callout" style="margin-top:10px;">
+            <strong>${escapeHTML(item.subject)}</strong> — admin note: ${escapeHTML(item.adminNotes)}
+          </div>
+        ` : "").join("") : ""}
+        ${adminBlock}
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Could not load feedback.</strong>${escapeHTML(err.message)}</div>`;
+  }
+}
+
+async function submitSiteFeedback() {
+  const errorEl = document.getElementById("siteFeedbackError");
+  if (errorEl) errorEl.innerHTML = "";
+
+  const category = document.getElementById("siteFeedbackCategory")?.value || "";
+  const pageTab = document.getElementById("siteFeedbackTab")?.value || "";
+  const subject = document.getElementById("siteFeedbackSubject")?.value.trim() || "";
+  const message = document.getElementById("siteFeedbackMessage")?.value.trim() || "";
+
+  if (!category) {
+    if (errorEl) errorEl.innerHTML = `<div class="auth-error">Please choose a feedback category.</div>`;
+    return;
+  }
+  if (!subject) {
+    if (errorEl) errorEl.innerHTML = `<div class="auth-error">Please add a subject line.</div>`;
+    return;
+  }
+  if (!message) {
+    if (errorEl) errorEl.innerHTML = `<div class="auth-error">Please describe the issue or idea.</div>`;
+    return;
+  }
+
+  try {
+    await apiFetch("/api/site-feedback", {
+      method: "POST",
+      body: JSON.stringify({ category, pageTab, subject, message })
+    });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.innerHTML = `<div class="auth-error">${escapeHTML(err.message)}</div>`;
+  }
+}
+
+async function updateSiteFeedbackStatus(id) {
+  if (!canManageSiteFeedback()) return;
+
+  const status = document.getElementById(`feedback-status-${id}`)?.value || "open";
+  const adminNotes = document.getElementById(`feedback-notes-${id}`)?.value || "";
+
+  try {
+    await apiFetch(`/api/site-feedback/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status, adminNotes })
+    });
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
 async function renderMyProgress(content) {
   if (!currentUser) {
     content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
@@ -5545,12 +7011,18 @@ async function renderMyProgress(content) {
 
   try {
     if (!myProgressData) myProgressData = await apiFetch("/api/progress/me");
+    if (!myTastingData) await loadBeerCheckins();
     const s = myProgressData.summary;
+    const tasting = myTastingData?.summary || {};
+    const badges = myTastingData?.badges || [];
+    const checkins = myTastingData?.checkins || [];
+    const earnedCount = badges.filter(badge => badge.earned).length;
+    const untried = tasting.untriedOnTap || [];
 
     content.innerHTML = `
       <div class="coffee-intro">
         <h2>My Progress</h2>
-        <p>Hi ${escapeHTML(currentUser.name)} — here's your training activity across beer and coffee modules.</p>
+        <p>Hi ${escapeHTML(currentUser.name)} — training scores, tasting journal, and badges in one place.</p>
       </div>
       <div class="metrics-grid">
         <div class="metric-card">
@@ -5562,11 +7034,49 @@ async function renderMyProgress(content) {
           <p class="metric-value">${s.accuracy}%</p>
           <p class="metric-sub">${s.total_correct} / ${s.total_questions} correct</p>
         </div>
-        <div class="metric-card wide">
-          <p class="metric-label">Last activity</p>
-          <p class="metric-sub" style="margin:0;font-size:14px;color:#333;">${formatDate(s.last_activity)}</p>
+        <div class="metric-card">
+          <p class="metric-label">Beers tasted</p>
+          <p class="metric-value">${tasting.total || 0}</p>
+          <p class="metric-sub">${tasting.onTapTried || 0} / ${tasting.onTapTotal || 0} on tap</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Badges</p>
+          <p class="metric-value">${earnedCount}</p>
+          <p class="metric-sub">of ${badges.length} earned</p>
         </div>
       </div>
+      ${renderTastingCoverage(tasting)}
+      <div class="coffee-intro" style="margin-top:28px;margin-bottom:0;">
+        <h2>Achievements</h2>
+        <p>Unlock badges by logging tastings and hitting training goals — inspired by Untappd's badge system.</p>
+      </div>
+      ${badges.length ? renderBadgeGrid(badges) : ""}
+      ${untried.length ? `
+        <div class="status" style="margin-top:16px;">
+          <strong>Still on tap to try:</strong> ${untried.slice(0, 8).map(name => escapeHTML(name)).join(", ")}${untried.length > 8 ? "…" : ""}
+        </div>
+      ` : tasting.onTapTotal ? `
+        <div class="status" style="margin-top:16px;"><strong>Rotation complete.</strong> You've logged every beer currently on tap.</div>
+      ` : ""}
+      ${checkins.length ? `
+        <div class="coffee-intro" style="margin-top:28px;margin-bottom:0;">
+          <h2>Tasting journal</h2>
+          <p>Your personal check-ins — ratings and notes from shift tastings.</p>
+        </div>
+        <table class="progress-table">
+          <tr><th>Beer</th><th>Rating</th><th>Notes</th><th>When</th></tr>
+          ${checkins.map(row => `
+            <tr class="clickable" onclick="openBeerByName('${escapeForAttribute(row.beer_name)}')">
+              <td><strong>${escapeHTML(row.beer_name)}</strong></td>
+              <td>${row.rating ? formatBeerRating(row.rating) : "—"}</td>
+              <td>${escapeHTML((row.notes || "—").slice(0, 80))}${row.notes && row.notes.length > 80 ? "…" : ""}</td>
+              <td>${formatDate(row.tasted_at)}</td>
+            </tr>
+          `).join("")}
+        </table>
+      ` : `
+        <div class="status" style="margin-top:16px;"><strong>No tastings logged yet.</strong>Open any beer on the On Tap tab and use the tasting journal to check in.</div>
+      `}
       ${myProgressData.by_activity.length || myProgressData.recent.length ? renderProgressChartsHtml("my-progress") : ""}
       ${myProgressData.by_activity.length ? `
         <table class="progress-table">
@@ -5606,8 +7116,8 @@ async function renderMyProgress(content) {
 }
 
 async function renderTeamDashboard(content) {
-  if (!currentUser || currentUser.role !== "admin") {
-    content.innerHTML = `<div class="status"><strong>Admin access required.</strong>Log in with a manager/admin account to view team progress.</div>`;
+  if (!isManager()) {
+    content.innerHTML = `<div class="status"><strong>Manager access required.</strong>Log in with a manager or admin account to view team progress.</div>`;
     return;
   }
 
@@ -5626,8 +7136,24 @@ async function renderTeamDashboard(content) {
         <div class="metrics-grid">
           <div class="metric-card"><p class="metric-label">Sessions</p><p class="metric-value">${s.sessions_completed}</p></div>
           <div class="metric-card"><p class="metric-label">Accuracy</p><p class="metric-value">${s.accuracy}%</p><p class="metric-sub">${s.total_correct} / ${s.total_questions}</p></div>
+          <div class="metric-card"><p class="metric-label">Beers tasted</p><p class="metric-value">${data.tasting?.total || 0}</p><p class="metric-sub">${data.tasting?.onTapTried || 0} / ${data.tasting?.onTapTotal || 0} on tap</p></div>
         </div>
-        ${data.user.role === "employee" ? renderRecommendationsList(data.recommendations) : ""}
+        ${data.recentTastings?.length ? `
+          <div class="coffee-intro" style="margin-top:20px;margin-bottom:0;">
+            <h2>Recent tastings</h2>
+          </div>
+          <table class="progress-table">
+            <tr><th>Beer</th><th>Rating</th><th>When</th></tr>
+            ${data.recentTastings.map(row => `
+              <tr>
+                <td>${escapeHTML(row.beer_name)}</td>
+                <td>${row.rating ? formatBeerRating(row.rating) : "—"}</td>
+                <td>${formatDate(row.tasted_at)}</td>
+              </tr>
+            `).join("")}
+          </table>
+        ` : ""}
+        ${isTrainingStaff(data.user) ? renderRecommendationsList(data.recommendations) : ""}
         ${data.stats.by_activity.length || data.stats.recent.length ? renderProgressChartsHtml("emp-detail") : ""}
         ${data.stats.by_activity.length ? `
           <table class="progress-table">
@@ -5651,25 +7177,44 @@ async function renderTeamDashboard(content) {
       return;
     }
 
-    const [employeesPayload, approvedPayload] = await Promise.all([
-      apiFetch("/api/admin/employees"),
-      apiFetch("/api/admin/approved-emails")
-    ]);
+    if (!shiftLeadDutyDate) shiftLeadDutyDate = getLocalDateKey();
+
+    const employeesPayload = await apiFetch("/api/admin/employees");
     teamData = employeesPayload;
-    approvedEmailsData = approvedPayload;
+
+    let approvedPayload = { emails: [] };
+    if (isAdmin()) {
+      approvedPayload = await apiFetch("/api/admin/approved-emails");
+      approvedEmailsData = approvedPayload;
+    }
+
+    let shiftLeadDutyPayload = { shiftDate: shiftLeadDutyDate, assignments: [] };
+    try {
+      shiftLeadDutyPayload = await apiFetch(`/api/admin/shift-lead-duty?date=${encodeURIComponent(shiftLeadDutyDate)}`);
+    } catch (err) {
+      console.warn("Shift lead duty unavailable:", err.message);
+    }
+
+    const floorStaff = teamData.employees.filter(emp => isTrainingStaff(emp));
+    const otherStaff = teamData.employees.filter(emp => !isTrainingStaff(emp));
+    const shiftLeadCandidates = teamData.employees.filter(emp => hasShiftLeadCapability(emp));
 
     content.innerHTML = `
       <div class="coffee-intro">
         <h2>Team Dashboard</h2>
-        <p>Approve staff emails, then they sign in with Microsoft. Monitor training progress below.</p>
+        <p>${isAdmin()
+          ? "Approve staff emails, schedule shift leads, and monitor training progress."
+          : "Schedule shift leads and monitor training progress across the floor team."}</p>
       </div>
-      ${renderApprovedEmailsPanel(approvedEmailsData.emails)}
-      ${teamData.employees.some(emp => emp.role === "employee") ? renderTeamChartsHtml() : ""}
+      ${renderShiftLeadDutyPanel(shiftLeadDutyPayload, shiftLeadCandidates)}
+      ${isAdmin() ? renderApprovedEmailsPanel(approvedPayload.emails) : ""}
+      ${floorStaff.length ? renderTeamChartsHtml() : ""}
       <table class="progress-table">
-        <tr><th>Employee</th><th>Sessions</th><th>Accuracy</th><th>Last active</th><th>Suggested next step</th></tr>
-        ${teamData.employees.filter(emp => emp.role === "employee").map(emp => `
+        <tr><th>Staff</th><th>Role</th><th>Sessions</th><th>Accuracy</th><th>Last active</th><th>Suggested next step</th></tr>
+        ${floorStaff.map(emp => `
           <tr class="clickable" onclick="teamDetailId=${emp.id}; render();">
             <td><strong>${escapeHTML(emp.name)}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(emp.email)}</span></td>
+            <td>${escapeHTML(roleLabel(emp.role))}</td>
             <td>${emp.sessions_completed}</td>
             <td>${emp.accuracy}%</td>
             <td>${formatDate(emp.last_activity)}</td>
@@ -5680,11 +7225,22 @@ async function renderTeamDashboard(content) {
           </tr>
         `).join("")}
       </table>
-      ${teamData.employees.filter(emp => emp.role !== "employee").length ? `
-        <div class="status" style="margin-top:0;"><strong>Managers & merch</strong> are listed separately and don't receive training suggestions.</div>
+      ${otherStaff.length ? `
+        <div class="status" style="margin-top:0;"><strong>Other roles</strong> — managers, merch, inventory admins, and shift leads are listed below and don't receive training suggestions.</div>
+        <table class="progress-table">
+          <tr><th>Name</th><th>Role</th><th>Sessions</th><th>Last active</th></tr>
+          ${otherStaff.map(emp => `
+            <tr class="clickable" onclick="teamDetailId=${emp.id}; render();">
+              <td><strong>${escapeHTML(emp.name)}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(emp.email)}</span></td>
+              <td>${escapeHTML(roleLabel(emp.role))}</td>
+              <td>${emp.sessions_completed}</td>
+              <td>${formatDate(emp.last_activity)}</td>
+            </tr>
+          `).join("")}
+        </table>
       ` : ""}
     `;
-    if (teamData.employees.some(emp => emp.role === "employee")) {
+    if (floorStaff.length) {
       setTimeout(() => initTeamCharts(teamData.employees), 0);
     } else {
       destroyCharts();
@@ -5695,13 +7251,87 @@ async function renderTeamDashboard(content) {
   }
 }
 
-function renderApprovedEmailsPanel(emails) {
-  const roleOptions = (selected) => `
-    <option value="employee" ${selected === "employee" ? "selected" : ""}>Employee</option>
-    <option value="admin" ${selected === "admin" ? "selected" : ""}>Admin</option>
-    <option value="merch" ${selected === "merch" ? "selected" : ""}>Merch</option>
-    <option value="shift_lead" ${selected === "shift_lead" ? "selected" : ""}>Shift lead</option>
+function renderShiftLeadDutyPanel(dutyData, candidates) {
+  const shiftDate = dutyData.shiftDate || shiftLeadDutyDate || getLocalDateKey();
+  const assignments = dutyData.assignments || [];
+  const assignedIds = new Set(assignments.map(row => row.userId));
+  const available = candidates.filter(user => !assignedIds.has(user.id));
+
+  return `
+    <div class="approve-panel">
+      <div class="approve-card">
+        <h3>Shift lead schedule</h3>
+        <p>Assign who is on shift lead duty for each day. Scheduled shift leads receive end-of-shift reports and priority notifications for that date. Merch staff can also be scheduled if they have shift lead access.</p>
+        <div id="shiftLeadDutyError"></div>
+        <div class="shift-date-picker" style="margin-bottom:14px;">
+          <label for="shiftLeadDutyDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Duty date</label>
+          <input type="date" id="shiftLeadDutyDateInput" value="${escapeForAttribute(shiftDate)}" onchange="shiftLeadDutyDate=this.value; teamData=null; render();">
+          <button class="game-next" type="button" onclick="shiftLeadDutyDate=getLocalDateKey(); teamData=null; render();">Today</button>
+        </div>
+        ${assignments.length ? `
+          <table class="progress-table" style="width:100%;max-width:none;margin:0 0 16px;">
+            <tr><th>Scheduled</th><th>Role</th><th></th></tr>
+            ${assignments.map(row => `
+              <tr>
+                <td><strong>${escapeHTML(row.name)}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(row.email)}</span></td>
+                <td>${escapeHTML(roleLabel(row.role))}${row.extraRoles?.includes("shift_lead") ? " + shift lead" : ""}</td>
+                <td><button type="button" class="approve-remove" onclick="removeShiftLeadDutyAssignment(${row.userId}, '${escapeForAttribute(shiftDate)}')">Remove</button></td>
+              </tr>
+            `).join("")}
+          </table>
+        ` : `<div class="status" style="margin-top:0;"><strong>No shift leads scheduled</strong> for ${escapeHTML(formatShiftDateLabel(shiftDate))}.</div>`}
+        <form class="approve-form" onsubmit="assignShiftLeadDuty(event)">
+          <select id="shiftLeadDutyUserInput" ${available.length ? "" : "disabled"}>
+            ${available.length
+              ? available.map(user => `<option value="${user.id}">${escapeHTML(user.name)} (${escapeHTML(roleLabel(user.role))})</option>`).join("")
+              : `<option value="">All eligible staff already scheduled</option>`}
+          </select>
+          <button type="submit" ${available.length ? "" : "disabled"}>Schedule shift lead</button>
+        </form>
+      </div>
+    </div>
   `;
+}
+
+async function assignShiftLeadDuty(event) {
+  event.preventDefault();
+  const errorEl = document.getElementById("shiftLeadDutyError");
+  const userId = Number(document.getElementById("shiftLeadDutyUserInput")?.value);
+  const shiftDate = shiftLeadDutyDate || getLocalDateKey();
+  if (errorEl) errorEl.innerHTML = "";
+
+  if (!Number.isInteger(userId) || userId <= 0) return;
+
+  try {
+    await apiFetch("/api/admin/shift-lead-duty", {
+      method: "POST",
+      body: JSON.stringify({ userId, shiftDate })
+    });
+    teamData = null;
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.innerHTML = `<p class="approve-error">${escapeHTML(err.message)}</p>`;
+  }
+}
+
+async function removeShiftLeadDutyAssignment(userId, shiftDate) {
+  const errorEl = document.getElementById("shiftLeadDutyError");
+  if (errorEl) errorEl.innerHTML = "";
+
+  try {
+    await apiFetch("/api/admin/shift-lead-duty", {
+      method: "DELETE",
+      body: JSON.stringify({ userId, shiftDate })
+    });
+    teamData = null;
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.innerHTML = `<p class="approve-error">${escapeHTML(err.message)}</p>`;
+  }
+}
+
+function renderApprovedEmailsPanel(emails) {
+  const roleOptions = (selected) => buildRoleOptionsHtml(selected);
 
   const rows = emails.length ? emails.map((row) => `
     <tr>
@@ -5742,10 +7372,7 @@ function renderApprovedEmailsPanel(emails) {
         <form class="approve-form" onsubmit="addApprovedEmail(event)">
           <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
           <select id="approveRoleInput">
-            <option value="employee">Employee</option>
-            <option value="admin">Admin</option>
-            <option value="merch">Merch</option>
-            <option value="shift_lead">Shift lead</option>
+            ${buildRoleOptionsHtml("bartender")}
           </select>
           <button type="submit">Approve email</button>
         </form>
@@ -5924,7 +7551,7 @@ async function openWeeklySpecialTraining(specialId) {
 }
 
 async function maybePromptWeeklySpecial() {
-  if (foodCategory !== "weekly" || !currentUser || currentUser.role !== "employee") return;
+  if (foodCategory !== "weekly" || !receivesDailyBriefing()) return;
 
   const special = getTodayWeeklySpecial();
   if (!special || !special.active) return;
@@ -5957,6 +7584,7 @@ function renderFood(content) {
     <div class="coffee-subtabs">
       <button class="coffee-subtab${foodCategory === "all" ? " active" : ""}" onclick="foodCategory='all'; render();">All</button>
       <button class="coffee-subtab${foodCategory === "breakfast" ? " active" : ""}" onclick="foodCategory='breakfast'; render();">Breakfast</button>
+      <button class="coffee-subtab${foodCategory === "brunch" ? " active" : ""}" onclick="foodCategory='brunch'; render();">Brunch</button>
       <button class="coffee-subtab${foodCategory === "lunch" ? " active" : ""}" onclick="foodCategory='lunch'; render();">Lunch</button>
       <button class="coffee-subtab${foodCategory === "dinner" ? " active" : ""}" onclick="foodCategory='dinner'; render();">Dinner</button>
       <button class="coffee-subtab${foodCategory === "weekly" ? " active" : ""}" onclick="foodCategory='weekly'; render();">Weekly Specials</button>
@@ -5981,11 +7609,15 @@ function renderFood(content) {
     if (!sections.includes(item.section)) sections.push(item.section);
   });
 
+  const introCopy = foodCategory === "brunch"
+    ? `<p>Brunch is served <strong>Sunday 10 am–3 pm</strong>. Fried food is cooked in beef tallow. Flour tortillas and buns are not gluten-free.</p>`
+    : `<p>Breakfast is served Monday–Saturday until 11 am. Brunches Sunday 10 am–3 pm. Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are not gluten-free.</p>
+      <p style="margin-top:8px;font-size:14px;">${escapeHTML(FOOD_SIDE_NOTE)}</p>`;
+
   content.innerHTML = categoryTabs + `
     <div class="coffee-intro">
-      <h2>Food Menu</h2>
-      <p>Breakfast is served Monday–Saturday until 11 am. Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are not gluten-free.</p>
-      <p style="margin-top:8px;font-size:14px;">${escapeHTML(FOOD_SIDE_NOTE)}</p>
+      <h2>${foodCategory === "brunch" ? "Brunch Menu" : "Food Menu"}</h2>
+      ${introCopy}
     </div>
     ${filtered.length ? sections.map(section => {
       const sectionItems = filtered.filter(item => item.section === section);
@@ -6276,7 +7908,7 @@ function renderOpsOrderView() {
 
   return `
     <div class="ops-inv-actions" style="max-width:1200px;margin:0 auto 16px;padding:0 24px;">
-      ${isInventoryManager() ? `<button type="button" class="game-next" onclick="submitOpsOrder()">Submit e-order</button>` : `<div class="status" style="margin:0;"><strong>Order preview</strong>Shift leads / admins can submit.</div>`}
+      ${isInventoryManager() ? `<button type="button" class="game-next" onclick="submitOpsOrder()">Submit e-order</button>` : `<div class="status" style="margin:0;"><strong>Order preview</strong>Inventory admins can submit orders.</div>`}
     </div>
     ${blocks || `<div class="status"><strong>Nothing to order.</strong>Everything is at par.</div>`}
   `;
@@ -6359,7 +7991,7 @@ async function renderInventory(content) {
   `;
 }
 
-const SOP_CATEGORIES = ["Opening", "Closing", "Bar", "Kitchen", "Floor", "Safety", "General"];
+const SOP_CATEGORIES = ["Opening", "Closing", "Bar", "Recipes", "Coffee", "Kitchen", "Floor", "Events", "Safety", "General"];
 
 async function loadSopsData(force) {
   if (sopLoading) return sopDocuments;
@@ -6470,7 +8102,7 @@ function renderSopAdminForm() {
         </div>
         <div style="grid-column:1/-1;">
           <label for="sopBody">Procedure content</label>
-          <textarea id="sopBody" placeholder="Steps, checklists, and notes. HTML is supported for headings and lists.">${(editing?.body || "").replace(/<\//textarea/gi, "&lt;/textarea")}</textarea>
+          <textarea id="sopBody" placeholder="Steps, checklists, and notes. HTML is supported for headings and lists.">${(editing?.body || "").replace(/<\/textarea/gi, "&lt;/textarea")}</textarea>
         </div>
         <div>
           <label for="sopFileUpload">Import text file (.txt, .md, .html)</label>
@@ -6635,6 +8267,169 @@ async function deleteSopDocument(id) {
   }
 }
 
+async function renderChecklists(content) {
+  updateSearchPlaceholder();
+  if (!checklistDate) checklistDate = getLocalDateKey();
+  const query = document.getElementById("search")?.value.toLowerCase().trim() || "";
+
+  content.innerHTML = `<div class="status"><strong>Loading checklists…</strong></div>`;
+
+  try {
+    if (checklistId) {
+      const data = authToken
+        ? await apiFetch(`/api/checklists/${encodeURIComponent(checklistId)}?date=${encodeURIComponent(checklistDate)}`)
+        : await fetch(`${API_BASE}/api/checklists/${encodeURIComponent(checklistId)}?date=${encodeURIComponent(checklistDate)}`).then(async r => {
+            const payload = await r.json();
+            if (!r.ok) throw new Error(payload.error || "Could not load checklist.");
+            return payload;
+          });
+      checklistDetail = data;
+      const completed = new Set(data.completedTaskIds || []);
+      const list = data.checklist;
+      let tasks = list.tasks || [];
+      if (!checklistShowCompleted) tasks = tasks.filter(task => !completed.has(task.id));
+      if (query) {
+        tasks = tasks.filter(task =>
+          (task.title || "").toLowerCase().includes(query) ||
+          (task.section || "").toLowerCase().includes(query)
+        );
+      }
+
+      const doneCount = (data.completedTaskIds || []).length;
+      const total = (list.tasks || []).length;
+      let lastSection = null;
+      const taskHtml = [];
+      for (const task of tasks) {
+        if (task.section && task.section !== lastSection) {
+          lastSection = task.section;
+          taskHtml.push(`<p class="checklist-section-head">${escapeHTML(task.section)}</p>`);
+        }
+        const isDone = completed.has(task.id);
+        taskHtml.push(`
+          <button type="button" class="checklist-task${isDone ? " done" : ""}" onclick="toggleChecklistTask('${escapeForAttribute(list.id)}', ${task.id})">
+            <span class="mark" aria-hidden="true">${isDone ? "✓" : ""}</span>
+            <span class="body">
+              <span class="title">${escapeHTML(task.title)}</span>
+            </span>
+          </button>
+        `);
+      }
+
+      content.innerHTML = `
+        <div class="checklist-page">
+          <div style="padding-bottom:12px;">
+            <button class="game-back" type="button" onclick="checklistId=null; checklistDetail=null; render();">← All checklists</button>
+          </div>
+          <div class="coffee-intro" style="padding-top:0;">
+            <h2>${escapeHTML(list.name)}</h2>
+            <p>${escapeHTML(list.summary || "")}</p>
+            <p style="margin-top:8px;font-size:13px;color:var(--muted);">${escapeHTML(list.dueLabel || "")} · ${doneCount} / ${total} completed · ${escapeHTML(formatShiftDateLabel(checklistDate))}</p>
+          </div>
+          <div class="shift-date-picker" style="margin-bottom:14px;">
+            <label for="checklistDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Date</label>
+            <input type="date" id="checklistDateInput" value="${escapeForAttribute(checklistDate)}" onchange="checklistDate=this.value; checklistDetail=null; render();">
+            <button class="game-next" type="button" onclick="checklistDate=getLocalDateKey(); checklistDetail=null; render();">Today</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+            <label style="font-size:13px;display:flex;gap:8px;align-items:center;">
+              <input type="checkbox" ${checklistShowCompleted ? "checked" : ""} onchange="checklistShowCompleted=this.checked; render();">
+              Show completed
+            </label>
+            ${currentUser ? `<button class="auth-btn" type="button" onclick="resetChecklistProgress('${escapeForAttribute(list.id)}')">Reset today</button>` : `<button class="auth-btn" type="button" onclick="openAuthModal('login')">Log in to check off</button>`}
+          </div>
+          ${taskHtml.length ? taskHtml.join("") : `<div class="status"><strong>No tasks match.</strong>${checklistShowCompleted ? "" : " Turn on Show completed, or clear search."}</div>`}
+          <div class="guide-callout">Need the written procedure? Open the matching doc on the SOPs tab (Opening, Closing, Events, Cleaning Materials, etc.).</div>
+        </div>
+      `;
+      return;
+    }
+
+    const data = authToken
+      ? await apiFetch(`/api/checklists?date=${encodeURIComponent(checklistDate)}`)
+      : await fetch(`${API_BASE}/api/checklists?date=${encodeURIComponent(checklistDate)}`).then(async r => {
+          const payload = await r.json();
+          if (!r.ok) throw new Error(payload.error || "Could not load checklists.");
+          return payload;
+        });
+    checklistCache = data;
+
+    const groups = {};
+    (data.checklists || [])
+      .filter(list => {
+        if (!query) return true;
+        const hay = `${list.name} ${list.summary} ${list.category}`.toLowerCase();
+        return hay.includes(query);
+      })
+      .forEach(list => {
+        if (!groups[list.category]) groups[list.category] = [];
+        groups[list.category].push(list);
+      });
+
+    content.innerHTML = `
+      <div class="checklist-page">
+        <div class="coffee-intro" style="padding-top:0;">
+          <h2>Checklists</h2>
+          <p>Opening, closing, cut, events, and weekly detail lists from the floor. Check off tasks for today's shift.</p>
+        </div>
+        <div class="shift-date-picker" style="margin-bottom:16px;">
+          <label for="checklistDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Date</label>
+          <input type="date" id="checklistDateInput" value="${escapeForAttribute(checklistDate)}" onchange="checklistDate=this.value; checklistCache=null; render();">
+          <button class="game-next" type="button" onclick="checklistDate=getLocalDateKey(); checklistCache=null; render();">Today</button>
+        </div>
+        ${Object.keys(groups).length ? Object.entries(groups).map(([category, lists]) => `
+          <p class="checklist-section-head">${escapeHTML(category)}</p>
+          ${lists.map(list => `
+            <button type="button" class="checklist-card" onclick="checklistId='${escapeForAttribute(list.id)}'; render();">
+              <div class="checklist-card-top">
+                <strong>${escapeHTML(list.name)}</strong>
+                <span class="meta">${escapeHTML(list.dueLabel || "")}</span>
+              </div>
+              <p class="summary">${escapeHTML(list.summary || "")}</p>
+              <p class="checklist-progress">${list.completedCount || 0} / ${list.taskCount} completed</p>
+            </button>
+          `).join("")}
+        `).join("") : `<div class="status"><strong>No checklists match.</strong></div>`}
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Checklists could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+  }
+}
+
+async function toggleChecklistTask(id, taskId) {
+  if (!currentUser) {
+    openAuthModal("login");
+    return;
+  }
+  try {
+    await apiFetch(`/api/checklists/${encodeURIComponent(id)}/toggle`, {
+      method: "POST",
+      body: JSON.stringify({ taskId, shiftDate: checklistDate || getLocalDateKey() })
+    });
+    checklistDetail = null;
+    checklistCache = null;
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function resetChecklistProgress(id) {
+  if (!currentUser) return;
+  if (!confirm("Reset all checked tasks for this checklist today?")) return;
+  try {
+    await apiFetch(`/api/checklists/${encodeURIComponent(id)}/reset`, {
+      method: "POST",
+      body: JSON.stringify({ shiftDate: checklistDate || getLocalDateKey() })
+    });
+    checklistDetail = null;
+    checklistCache = null;
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
 async function renderSops(content) {
   updateSearchPlaceholder();
   const query = document.getElementById("search").value.toLowerCase().trim();
@@ -6651,7 +8446,7 @@ async function renderSops(content) {
   content.innerHTML = `
     <div class="coffee-intro">
       <h2>Standard Operating Procedures</h2>
-      <p>Opening, closing, bar, kitchen, and floor procedures in one place. Search here or ask the training assistant — SOP content feeds both.</p>
+      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Search here or ask the training assistant — SOP content feeds both. Batch recipes (Michelada mix, etc.) live under <strong>Recipes</strong>; seasonal latte builds are on the Coffee tab.</p>
       ${isAdmin() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Admin view — upload and edit procedures below.</p>` : ""}
     </div>
     ${renderSopAdminForm()}
@@ -6689,7 +8484,7 @@ async function loadReviewsData(force) {
 }
 
 async function refreshReviewsFromServer() {
-  if (!currentUser || currentUser.role !== "admin") return;
+  if (!canRefreshReviews()) return;
   try {
     const data = await apiFetch("/api/reviews/refresh", { method: "POST" });
     reviewsData = data;
@@ -6786,7 +8581,7 @@ async function renderReviews(content) {
       <div class="coffee-intro">
         <h2>Guest Reviews</h2>
         <p>What people are saying on Google, Yelp, and other platforms — plus a staff-friendly summary of positives and negatives.</p>
-        ${currentUser && currentUser.role === "admin" ? `<button class="game-next" style="margin-top:12px;" type="button" onclick="refreshReviewsFromServer()">Refresh live reviews</button>` : ""}
+        ${canRefreshReviews() ? `<button class="game-next" style="margin-top:12px;" type="button" onclick="refreshReviewsFromServer()">Refresh live reviews</button>` : ""}
       </div>
       ${syncNote}
       ${renderReviewPlatformCards(data.sources || [])}
@@ -6889,21 +8684,64 @@ async function submitMerchItem() {
   }
 }
 
-async function updateMerchInventory(itemId) {
+async function saveMerchItem(itemId) {
   if (!isMerchManager()) return;
   const item = merchItems.find(entry => entry.id === itemId);
   if (!item) return;
 
-  const sizes = item.sizes.map(size => ({
-    size_label: size.size_label,
-    quantity: Math.max(0, Number(document.getElementById(`merchQty_${itemId}_${size.size_label}`)?.value) || 0)
-  }));
+  const name = document.getElementById(`merchName_${itemId}`)?.value.trim() || item.name;
+  const description = document.getElementById(`merchDesc_${itemId}`)?.value.trim() || "";
+  const price = parseFloat(document.getElementById(`merchPrice_${itemId}`)?.value);
+  const imageInput = document.getElementById(`merchImage_${itemId}`);
+  let image_url = item.image_url || "";
 
   try {
+    if (imageInput?.files?.[0]) {
+      image_url = await readImageInput(`merchImage_${itemId}`, `merchImagePreview_${itemId}`);
+    } else {
+      const imageUrlField = document.getElementById(`merchImageUrl_${itemId}`)?.value.trim();
+      if (imageUrlField) image_url = imageUrlField;
+    }
+
+    const sizes = item.sizes.map(size => ({
+      size_label: size.size_label,
+      quantity: Math.max(0, Number(document.getElementById(`merchQty_${itemId}_${size.id}`)?.value) || 0)
+    }));
+
+    const newSizeLabel = document.getElementById(`merchAddSizeLabel_${itemId}`)?.value.trim();
+    const newSizeQty = Math.max(0, Number(document.getElementById(`merchAddSizeQty_${itemId}`)?.value) || 0);
+    if (newSizeLabel) {
+      sizes.push({ size_label: newSizeLabel, quantity: newSizeQty });
+    }
+
     await apiFetch(`/api/merch/${itemId}`, {
       method: "PATCH",
-      body: JSON.stringify({ sizes })
+      body: JSON.stringify({
+        name,
+        description,
+        price_cents: Math.round(price * 100),
+        image_url,
+        sizes,
+        replace_sizes: true
+      })
     });
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function updateMerchInventory(itemId) {
+  return saveMerchItem(itemId);
+}
+
+async function archiveMerchItem(itemId) {
+  if (!isMerchManager()) return;
+  if (!confirm("Remove this item from the taproom floor list? You can add it again later.")) return;
+
+  try {
+    await apiFetch(`/api/merch/${itemId}`, { method: "DELETE" });
     await loadMerchData(true);
     render();
   } catch (err) {
@@ -6966,11 +8804,31 @@ async function archiveMerchIdea(ideaId) {
 function renderMerchAdminStockForm() {
   if (!isMerchManager()) return "";
   return `
-    <div class="merch-admin-panel">
-      <h3>Taproom inventory</h3>
-      <p class="desc" style="margin:0;line-height:1.55;">
-        Enter how many of each size we have on the floor. Leave blank until counts are confirmed.
+    <div class="merch-admin-panel" id="merchItemForm">
+      <h3>Manage taproom inventory</h3>
+      <p class="desc" style="margin:0 0 12px;line-height:1.55;">
+        As merch admin, you can update counts, prices, photos, and sizes on each card below — changes save for the whole team immediately. No need to ask dev to update the catalog.
       </p>
+      <div class="guide-callout" style="margin-bottom:16px;">
+        <strong>Quick tip:</strong> Update size counts after each floor check. Use <em>Add new item</em> for taproom-only products not on Shopify yet.
+      </div>
+      <details class="merch-admin-panel" style="padding:16px;margin:0;">
+        <summary style="cursor:pointer;font-weight:700;">Add new item</summary>
+        <label for="merchItemName">Item name</label>
+        <input id="merchItemName" type="text" placeholder="Atom T-Shirt">
+        <label for="merchItemPrice">Price ($)</label>
+        <input id="merchItemPrice" type="number" min="0" step="0.01" placeholder="30.00">
+        <label for="merchItemDesc">Description</label>
+        <textarea id="merchItemDesc" placeholder="Short description for staff and guests."></textarea>
+        <label for="merchItemImage">Photo (optional)</label>
+        <input id="merchItemImage" type="file" accept="image/*">
+        <img id="merchItemPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
+        <label for="merchItemSizeLabels">Sizes (comma-separated)</label>
+        <input id="merchItemSizeLabels" type="text" placeholder="S, M, L, XL or OS" oninput="renderMerchSizeInputs('merchItem')">
+        <div id="merchItemSizeInputs" class="merch-size-inputs"></div>
+        <p id="merchItemError" class="auth-error" style="margin-top:10px;"></p>
+        <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchItem()">Add item</button>
+      </details>
     </div>
   `;
 }
@@ -7018,12 +8876,27 @@ function renderMerchStockCards(query) {
   return `<div class="merch-grid">${filtered.map(item => `
     <div class="merch-card">
       ${item.image_url
-        ? `<img class="merch-card-image" src="${escapeHTML(item.image_url)}" alt="${escapeHTML(item.name)}" loading="lazy">`
-        : `<div class="merch-card-image placeholder">No photo</div>`}
+        ? `<img class="merch-card-image" id="merchImagePreview_${item.id}" src="${escapeHTML(item.image_url)}" alt="${escapeHTML(item.name)}" loading="lazy">`
+        : `<div class="merch-card-image placeholder" id="merchImagePreview_${item.id}">No photo</div>`}
       <div class="merch-card-body">
-        <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(item.name)}</p>
-        <p class="merch-price">${escapeHTML(formatMerchPrice(item))}</p>
-        ${item.description ? `<p class="desc">${escapeHTML(item.description)}</p>` : ""}
+        ${isMerchManager() ? `
+          <div class="merch-admin-card">
+            <label for="merchName_${item.id}">Item name</label>
+            <input id="merchName_${item.id}" type="text" value="${escapeHTML(item.name)}">
+            <label for="merchPrice_${item.id}">Price ($)</label>
+            <input id="merchPrice_${item.id}" type="number" min="0" step="0.01" value="${(item.price_cents / 100).toFixed(item.price_cents % 100 ? 2 : 0)}">
+            <label for="merchDesc_${item.id}">Description</label>
+            <textarea id="merchDesc_${item.id}" rows="2">${escapeHTML(item.description || "")}</textarea>
+            <label for="merchImageUrl_${item.id}">Photo URL</label>
+            <input id="merchImageUrl_${item.id}" type="text" value="${escapeHTML(item.image_url || "")}" placeholder="https://…">
+            <label for="merchImage_${item.id}">Or upload new photo</label>
+            <input id="merchImage_${item.id}" type="file" accept="image/*">
+          </div>
+        ` : `
+          <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(item.name)}</p>
+          <p class="merch-price">${escapeHTML(formatMerchPrice(item))}</p>
+          ${item.description ? `<p class="desc">${escapeHTML(item.description)}</p>` : ""}
+        `}
         <table class="merch-size-table">
           <thead><tr><th>Size</th><th>In stock</th></tr></thead>
           <tbody>
@@ -7032,17 +8905,34 @@ function renderMerchStockCards(query) {
                 <td>${escapeHTML(size.size_label)}</td>
                 <td class="merch-qty ${size.quantity != null && size.quantity <= 2 ? merchStockLevelClass(size.quantity || 0) : ""}">
                   ${isMerchManager()
-                    ? `<input id="merchQty_${item.id}_${escapeForAttribute(size.size_label)}" type="number" min="0" value="${size.quantity != null && size.quantity > 0 ? size.quantity : ""}" placeholder="—" style="width:64px;padding:4px 6px;">`
+                    ? `<input id="merchQty_${item.id}_${size.id}" type="number" min="0" value="${size.quantity_raw != null && size.quantity_raw > 0 ? size.quantity_raw : ""}" placeholder="0" style="width:64px;padding:4px 6px;">`
                     : (size.quantity != null && size.quantity > 0 ? size.quantity : "—")}
                 </td>
               </tr>
             `).join("")}
           </tbody>
         </table>
+        ${isMerchManager() ? `
+          <div class="merch-admin-card" style="display:grid;grid-template-columns:1fr 80px;gap:8px;align-items:end;">
+            <div>
+              <label for="merchAddSizeLabel_${item.id}">Add size</label>
+              <input id="merchAddSizeLabel_${item.id}" type="text" placeholder="e.g. 3XL">
+            </div>
+            <div>
+              <label for="merchAddSizeQty_${item.id}">Qty</label>
+              <input id="merchAddSizeQty_${item.id}" type="number" min="0" placeholder="0">
+            </div>
+          </div>
+        ` : ""}
         <p class="merch-pending-note">${item.total_quantity != null
           ? `${item.total_quantity} total on the floor`
           : "Inventory counts not entered yet."}</p>
-        ${isMerchManager() ? `<button class="game-next" style="width:100%;margin-top:10px;" type="button" onclick="updateMerchInventory(${item.id})">Save counts</button>` : ""}
+        ${isMerchManager() ? `
+          <div class="merch-admin-actions">
+            <button class="game-next" type="button" onclick="saveMerchItem(${item.id})">Save item</button>
+            <button class="auth-btn" type="button" onclick="archiveMerchItem(${item.id})">Remove</button>
+          </div>
+        ` : ""}
       </div>
     </div>
   `).join("")}</div>`;
@@ -7078,15 +8968,36 @@ function renderMerchIdeaCards(query) {
   `).join("")}</div>`;
 }
 
+const MERCH_SHOP_URL = "https://shop.manhattanproject.beer/";
+
+function renderMerchSubtabs() {
+  return `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; render();">In Stock</button>
+      <button class="coffee-subtab${merchSection === "ideas" ? " active" : ""}" onclick="merchSection='ideas'; render();">Up & Coming</button>
+    </div>
+  `;
+}
+
+function renderMerchShopBanner() {
+  return `
+    <div class="merch-shop-banner">
+      <div>
+        <p class="detail-label" style="margin:0;">Online shop</p>
+        <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:#333;">Browse limited merch on our public Shopify store — hats, shirts, crewnecks, and more.</p>
+      </div>
+      <a class="merch-shop-link" href="${MERCH_SHOP_URL}" target="_blank" rel="noopener noreferrer">Visit shop.manhattanproject.beer →</a>
+    </div>
+  `;
+}
+
 async function renderMerch(content) {
   updateSearchPlaceholder();
   const query = document.getElementById("search").value.toLowerCase().trim();
 
   content.innerHTML = `
-    <div class="coffee-subtabs">
-      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; render();">In Stock</button>
-      <button class="coffee-subtab${merchSection === "ideas" ? " active" : ""}" onclick="merchSection='ideas'; render();">Up & Coming</button>
-    </div>
+    ${renderMerchSubtabs()}
+    ${renderMerchShopBanner()}
     <div class="status"><strong>Loading merch…</strong></div>
   `;
 
@@ -7094,10 +9005,8 @@ async function renderMerch(content) {
     await loadMerchData(true);
   } catch (err) {
     content.innerHTML = `
-      <div class="coffee-subtabs">
-        <button class="coffee-subtab active">In Stock</button>
-        <button class="coffee-subtab">Up & Coming</button>
-      </div>
+      ${renderMerchSubtabs()}
+      ${renderMerchShopBanner()}
       <div class="status"><strong>Merch could not be loaded.</strong>${escapeHTML(err.message)}</div>
     `;
     return;
@@ -7105,13 +9014,13 @@ async function renderMerch(content) {
 
   if (merchSection === "stock") {
     content.innerHTML = `
-      <div class="coffee-subtabs">
-        <button class="coffee-subtab active" onclick="merchSection='stock'; render();">In Stock</button>
-        <button class="coffee-subtab" onclick="merchSection='ideas'; render();">Up & Coming</button>
-      </div>
+      ${renderMerchSubtabs()}
+      ${renderMerchShopBanner()}
       <div class="coffee-intro">
         <h2>Merch in Stock</h2>
-        <p>What we carry in the taproom — photos, prices, and sizes. Inventory counts can be added when ready.</p>
+        <p>${isMerchManager()
+          ? "You’re logged in as merch admin — edit inventory on each card below. Everyone else sees your updates in real time."
+          : "What we carry in the taproom — photos, prices, and sizes."}</p>
       </div>
       ${renderMerchAdminStockForm()}
       ${renderMerchStockCards(query)}
@@ -7120,10 +9029,8 @@ async function renderMerch(content) {
   }
 
   content.innerHTML = `
-    <div class="coffee-subtabs">
-      <button class="coffee-subtab" onclick="merchSection='stock'; render();">In Stock</button>
-      <button class="coffee-subtab active" onclick="merchSection='ideas'; render();">Up & Coming</button>
-    </div>
+    ${renderMerchSubtabs()}
+    ${renderMerchShopBanner()}
     <div class="coffee-intro">
       <h2>Up & Coming</h2>
       <p>New merch concepts from the team — log in to vote for your favorites.</p>
@@ -7137,6 +9044,7 @@ function updateSearchPlaceholder() {
   const search = document.getElementById("search");
   const coffeePlaceholders = {
     menu: "Search beans or menu drinks",
+    roaster: "Search Viewfinder beans",
     manual: "Search coffee manual topics",
     seasonal: "Search seasonal lattes"
   };
@@ -7149,14 +9057,17 @@ function updateSearchPlaceholder() {
   const placeholders = {
     ontap: "Search beer, style, or flavor",
     beer: "Search beer, style, or flavor",
-    food: foodCategory === "weekly" ? "Search weekly specials" : "Search food items",
+    food: foodCategory === "weekly" ? "Search weekly specials" : foodCategory === "brunch" ? "Search brunch items" : "Search food items",
     merch: merchSection === "ideas" ? "Search merch ideas" : "Search merch",
     inventory: "Search inventory items or sections",
     sops: "Search SOPs, procedures, or categories",
+    checklists: "Search checklists",
     reviews: "Search reviews or platforms",
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",
-    games: "Search beer, style, or flavor"
+    games: "Search beer, style, or flavor",
+    features: "Search",
+    feedback: "Search"
   };
   search.placeholder = placeholders[activeType] || "Search";
 }
@@ -7165,6 +9076,7 @@ function renderCoffeeSectionTabs() {
   return `
     <div class="coffee-subtabs">
       <button class="coffee-subtab${coffeeSection === "menu" ? " active" : ""}" onclick="coffeeSection='menu'; render();">Menu</button>
+      <button class="coffee-subtab${coffeeSection === "roaster" ? " active" : ""}" onclick="coffeeSection='roaster'; render();">Viewfinder Roaster</button>
       <button class="coffee-subtab${coffeeSection === "manual" ? " active" : ""}" onclick="coffeeSection='manual'; coffeeMode='guide'; render();">Training Manual</button>
       <button class="coffee-subtab${coffeeSection === "seasonal" ? " active" : ""}" onclick="coffeeSection='seasonal'; render();">Seasonal Lattes</button>
     </div>
@@ -7188,6 +9100,8 @@ function renderCoffee(content) {
 
   if (coffeeSection === "menu") {
     renderCoffeeMenu(content, sectionTabs, query);
+  } else if (coffeeSection === "roaster") {
+    renderViewfinderRoaster(content, sectionTabs, query);
   } else if (coffeeSection === "seasonal") {
     renderCoffeeSeasonal(content, sectionTabs, query);
   } else if (coffeeMode === "guide") {
@@ -7197,6 +9111,67 @@ function renderCoffee(content) {
   } else if (coffeeMode === "flash") {
     content.innerHTML = sectionTabs + renderCoffeeTrainingTabs() + renderCoffeeFlashInner();
   }
+}
+
+function renderViewfinderRoaster(content, sectionTabs, query) {
+  const matches = item => {
+    const haystack = [
+      item.name, item.use, item.origin, item.tastingNotes, item.description,
+      item.process, item.elevation, item.varietals, item.guestTalk, item.espressoRecipe
+    ].filter(Boolean).join(" ").toLowerCase();
+    return !query || haystack.includes(query);
+  };
+  const current = VIEWFINDER_ROASTER.current.filter(matches);
+  const catalog = VIEWFINDER_ROASTER.catalog.filter(matches);
+
+  content.innerHTML = sectionTabs + `
+    <div class="coffee-intro">
+      <h2>${escapeHTML(VIEWFINDER_ROASTER.name)}</h2>
+      <p>${escapeHTML(VIEWFINDER_ROASTER.summary)}</p>
+      <p style="margin-top:10px;">
+        <a href="${escapeForAttribute(VIEWFINDER_ROASTER.url)}" target="_blank" rel="noopener noreferrer">Shop & current lots →</a>
+        ${VIEWFINDER_ROASTER.aboutUrl ? ` · <a href="${escapeForAttribute(VIEWFINDER_ROASTER.aboutUrl)}" target="_blank" rel="noopener noreferrer">About Viewfinder →</a>` : ""}
+      </p>
+    </div>
+    <div class="guide-callout" style="max-width:760px;margin:0 auto 20px;">
+      <strong>On bar right now:</strong> <strong>Dark Room</strong> for espresso · <strong>Worka Sakaro</strong> for pour overs. Descriptions below are from Viewfinder’s product pages — always confirm the bag if a guest asks for today’s exact notes.
+    </div>
+    ${current.length ? `
+      <div class="coffee-list" style="padding-top:0;">
+        <p class="coffee-section-num">Currently brewing</p>
+        ${current.map(item => `
+          <div class="card coffee-card">
+            <div class="card-top">
+              <div>
+                <p class="name">${escapeHTML(item.name)}</p>
+                <p class="desc">${escapeHTML(item.origin)}${item.use ? ` · ${escapeHTML(item.use)}` : ""}</p>
+              </div>
+              <span class="coffee-tag">${escapeHTML(item.status)}</span>
+            </div>
+            ${viewfinderBeanDetailHtml(item)}
+          </div>
+        `).join("")}
+      </div>
+    ` : ""}
+    ${catalog.length ? `
+      <div class="coffee-list">
+        <p class="coffee-section-num">Other Viewfinder offerings</p>
+        <p class="desc" style="padding:0 4px 10px;color:var(--muted);font-size:13px;">Useful guest talking points from viewfindercoffee.com — not necessarily on bar today. Check the bag or lead before confirming.</p>
+        ${catalog.map(item => `
+          <div class="card coffee-card">
+            <div class="card-top">
+              <div>
+                <p class="name">${escapeHTML(item.name)}</p>
+                <p class="desc">${escapeHTML(item.origin)}</p>
+              </div>
+            </div>
+            ${viewfinderBeanDetailHtml(item)}
+          </div>
+        `).join("")}
+      </div>
+    ` : ""}
+    ${!current.length && !catalog.length ? `<div class="status"><strong>No roaster info matches.</strong>Try a different search.</div>` : ""}
+  `;
 }
 
 function renderCoffeeMenu(content, sectionTabs, query) {
@@ -7220,7 +9195,7 @@ function renderCoffeeMenu(content, sectionTabs, query) {
   content.innerHTML = sectionTabs + `
     <div class="coffee-intro">
       <h2>Caffeine Bar</h2>
-      <p>Manhattan Project coffee menu — purists, pour over, flavored builds, matcha, and tea.</p>
+      <p>Manhattan Project coffee menu — beans from <a href="https://www.viewfindercoffee.com/" target="_blank" rel="noopener noreferrer">Viewfinder Coffee Roasters</a>. Dark Room for espresso · Worka for pour overs.</p>
     </div>
     <div class="coffee-list" style="padding-top:0;">
       <p class="coffee-section-num">Milk options</p>
@@ -7370,9 +9345,7 @@ function openSeasonalLatte(name) {
     <h2 class="modal-title" id="modalTitle">${escapeHTML(item.name)}</h2>
     <p class="modal-style">${escapeHTML(item.description)}</p>
     <div class="detail-section manual-body">
-      <p><strong>Build</strong></p>
-      <p>${escapeHTML(item.build)}</p>
-      ${item.training ? `<p><strong>Staff talking points</strong></p><p>${escapeHTML(item.training)}</p>` : ""}
+      ${seasonalLatteRecipeHtml(item)}
     </div>
   `;
 
@@ -7583,6 +9556,45 @@ function startGame(id) {
   quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = rocketItem = null;
   flashFlipped = false;
   stopRocketLoop();
+
+  if (id === "favbeer") {
+    if (!currentUser) {
+      activeGame = null;
+      openAuthModal("login");
+      return;
+    }
+    gameSession = {
+      id: "favbeer",
+      loading: true,
+      questions: [],
+      index: 0,
+      right: 0,
+      bonusPoints: 0,
+      complete: false,
+      recorded: false,
+      feedback: null
+    };
+    render();
+    apiFetch("/api/games/favorite-beer-quiz")
+      .then(data => {
+        if (activeGame !== "favbeer" || !gameSession || gameSession.id !== "favbeer") return;
+        gameSession.loading = false;
+        gameSession.questions = data.questions || [];
+        gameSession.unlockedCount = data.unlockedCount || 0;
+        gameSession.totalWithFavorites = data.totalWithFavorites || 0;
+        gameSession.message = data.message || "";
+        if (!gameSession.questions.length) gameSession.complete = true;
+        render();
+      })
+      .catch(err => {
+        if (activeGame !== "favbeer" || !gameSession) return;
+        gameSession.loading = false;
+        gameSession.error = err.message || "Could not load quiz.";
+        gameSession.complete = true;
+        render();
+      });
+    return;
+  }
 
   if (id === "flash") {
     const pool = beers.filter(onTapGameBeer(b =>
@@ -8707,11 +10719,26 @@ function wrapGame(html) {
 }
 
 function renderGameHub(content) {
+  const earnedBadges = (myTastingData?.badges || []).filter(badge => badge.earned);
+  const badgesStrip = currentUser && earnedBadges.length
+    ? `
+      <div class="game-badges-strip">
+        <h3>Your badges</h3>
+        <p>${earnedBadges.length} earned — keep logging tastings and training games to unlock more.</p>
+        ${renderBadgeGrid(earnedBadges, true)}
+      </div>
+    `
+    : currentUser
+      ? `<div class="game-badges-strip"><h3>Your badges</h3><p>Check in beers on the On Tap tab and complete training games to unlock achievements.</p></div>`
+      : "";
+
   content.innerHTML = `
     <div class="coffee-intro launchpad-intro">
-      <h2>Launch Pad Training Academy</h2>
-      <p>Floor drills for tap knowledge — quizzes, flashcards, and the gold rocket trainer. Earn points and climb the leaderboard when signed in.</p>
+      <h2>Launch Pad War Games</h2>
+      <p>Floor drills for tap knowledge — plus Staff Favorites: guess teammates’ beers for bonus points and unlock them on the leaderboard.</p>
     </div>
+    ${badgesStrip}
+    ${renderFavoriteBeerPrompt()}
     ${renderLeaderboardSection()}
     <div class="game-hub">
       ${GAMES.map(g => `
@@ -8724,8 +10751,14 @@ function renderGameHub(content) {
     </div>
   `;
 
-  if (currentUser && !leaderboardData) {
+  if (!leaderboardData) {
     loadLeaderboard(leaderboardPeriod).then(() => {
+      if (activeType === "games" && !activeGame) render();
+    });
+  }
+
+  if (currentUser && !beerCheckinsLoaded) {
+    loadBeerCheckins().then(() => {
       if (activeType === "games" && !activeGame) render();
     });
   }
@@ -8747,8 +10780,129 @@ function renderGames(content) {
     case "reverse": renderReverseQuiz(content); break;
     case "speed": renderSpeedRound(content); break;
     case "rocket": renderRocketRound(content); break;
+    case "favbeer": renderFavoriteBeerGame(content); break;
     default: renderGameHub(content);
   }
+}
+
+async function answerFavoriteBeerGuess(guess) {
+  if (!gameSession || gameSession.id !== "favbeer" || gameSession.busy) return;
+  const q = gameSession.questions[gameSession.index];
+  if (!q || gameSession.feedback) return;
+
+  gameSession.busy = true;
+  try {
+    const result = await apiFetch("/api/games/favorite-beer-guess", {
+      method: "POST",
+      body: JSON.stringify({ targetUserId: q.targetUserId, guess })
+    });
+    gameSession.feedback = { ...result, guess };
+    if (result.correct) {
+      gameSession.right += 1;
+      gameSession.bonusPoints += result.pointsAwarded || 0;
+      q.unlocked = true;
+    }
+    leaderboardData = null;
+    myProgressData = null;
+  } catch (err) {
+    gameSession.feedback = { correct: false, error: err.message, guess };
+  } finally {
+    gameSession.busy = false;
+    render();
+  }
+}
+
+function nextFavoriteBeerQuestion() {
+  if (!gameSession || gameSession.id !== "favbeer") return;
+  gameSession.feedback = null;
+  gameSession.index += 1;
+  if (gameSession.index >= gameSession.questions.length) {
+    gameSession.complete = true;
+  }
+  render();
+}
+
+function renderFavoriteBeerGame(content) {
+  if (!currentUser) {
+    content.innerHTML = wrapGame(`
+      <div class="auth-panel">
+        <h3>Log in to play Staff Favorites</h3>
+        <p class="hint">Guess teammates’ favorite beers for bonus points and unlock them on the leaderboard.</p>
+        <button class="game-next" onclick="openAuthModal('login')">Log in</button>
+      </div>
+    `);
+    return;
+  }
+
+  if (!gameSession || gameSession.loading) {
+    content.innerHTML = wrapGame(`<div class="status"><strong>Loading Staff Favorites…</strong></div>`);
+    return;
+  }
+
+  if (gameSession.error) {
+    content.innerHTML = wrapGame(`<div class="status"><strong>Could not start.</strong>${escapeHTML(gameSession.error)}</div>`);
+    return;
+  }
+
+  if (gameSession.complete) {
+    const bonus = gameSession.bonusPoints || 0;
+    content.innerHTML = wrapGame(`
+      <div class="game-card">
+        <p class="game-question">${gameSession.questions.length
+          ? "Staff Favorites round complete!"
+          : escapeHTML(gameSession.message || "No favorites to guess yet.")}</p>
+        ${gameSession.questions.length ? `
+          <p style="margin:12px 0;color:var(--muted);font-size:14px;">
+            ${gameSession.right} / ${gameSession.questions.length} correct
+            ${bonus ? ` · <span class="game-points-badge">+${bonus} bonus pts</span>` : " · no new unlocks this round"}
+          </p>
+          <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">Correct first-time unlocks reveal that person’s favorite on the leaderboard.</p>
+        ` : `<p style="margin:12px 0 16px;font-size:13px;color:var(--muted);">Have teammates set theirs on Launch Pad, then come back.</p>`}
+        <button class="game-next" onclick="stopRocketLoop(); activeGame=null; gameSession=null; render();">Back to Launch Pad</button>
+        ${gameSession.questions.length ? `<button class="briefing-back" style="margin-top:10px;" onclick="startGame('favbeer')">Play again</button>` : ""}
+      </div>
+    `);
+    return;
+  }
+
+  const q = gameSession.questions[gameSession.index];
+  const feedback = gameSession.feedback;
+
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p style="margin:0 0 8px;font-size:13px;color:var(--muted);">
+        Question ${gameSession.index + 1} of ${gameSession.questions.length}
+        · ${gameSession.bonusPoints || 0} bonus pts this round
+        ${q.unlocked ? " · already unlocked" : " · +25 pts if you unlock"}
+      </p>
+      <p class="game-question">What’s <strong>${escapeHTML(q.name)}</strong>’s favorite beer?</p>
+      <div class="game-options">
+        ${q.choices.map(choice => {
+          let cls = "game-option";
+          if (feedback) {
+            cls += " disabled";
+            if (feedback.correct && choice === feedback.guess) cls += " correct";
+            else if (!feedback.correct && choice === feedback.guess) cls += " wrong";
+            else if (feedback.correct && feedback.favoriteBeer && choice === feedback.favoriteBeer) cls += " correct";
+          }
+          const payload = JSON.stringify(choice).replace(/</g, "\\u003c");
+          return `<button class="${cls}" ${feedback || gameSession.busy ? "disabled" : `onclick='answerFavoriteBeerGuess(${payload})'`}>${escapeHTML(choice)}</button>`;
+        }).join("")}
+      </div>
+      ${feedback ? `
+        <p style="margin:16px 0 0;font-size:14px;">
+          ${feedback.error
+            ? escapeHTML(feedback.error)
+            : feedback.correct
+              ? (feedback.pointsAwarded
+                  ? `Correct — unlocked <strong>${escapeHTML(feedback.favoriteBeer)}</strong> for <span class="game-points-badge">+${feedback.pointsAwarded} pts</span>.`
+                  : `Correct — you already had <strong>${escapeHTML(feedback.favoriteBeer || q.name)}</strong> unlocked.`)
+              : "Not quite — try another teammate. Favorites stay hidden until you unlock them."}
+        </p>
+        <button class="game-next" style="margin-top:14px;" onclick="nextFavoriteBeerQuestion()">Next</button>
+      ` : ""}
+    </div>
+  `);
 }
 
 function pickRandom(pool) {
@@ -8887,6 +11041,7 @@ function renderBeerCard(item) {
   const isSpecial = activeType === "food" && isFoodSpecial(item);
   const guidance = getGuestGuidance(item);
   const tapNumber = getTapNumber(item);
+  const checkin = getBeerCheckin(col(item, "Name"));
 
   const subtitle = [style, flavor || description].filter(Boolean).join(" — ");
   const cardBody = `
@@ -8901,6 +11056,7 @@ function renderBeerCard(item) {
     <div class="tags">
       ${isNew ? `<span class="tag new">New</span>` : ""}
       ${isSpecial ? `<span class="tag new">Special</span>` : ""}
+      ${checkin ? `<span class="beer-tried-tag">✓ Tried${checkin.rating ? ` · ${Number(checkin.rating)}★` : ""}</span>` : ""}
       ${gf ? `<span class="tag gf">Gluten-reduced</span>` : ""}
       ${guidance ? `<span class="tag">${escapeHTML(guidance)}</span>` : ""}
     </div>
@@ -8943,6 +11099,7 @@ function openBeerByName(name) {
   const gf = isYes(item["Gluten-Reduced"]);
   const isNew = isYes(item["New Tap"]);
   const style = getStyle(item);
+  const staffNotes = getStaffNotes(item);
 
   document.getElementById("modalContent").innerHTML = `
     <h2 class="modal-title" id="modalTitle">${escapeHTML(col(item, "Name"))}</h2>
@@ -8979,6 +11136,15 @@ function openBeerByName(name) {
         <p class="detail-text">${escapeHTML(guidance)}</p>
       </div>
     ` : ""}
+
+    ${staffNotes ? `
+      <div class="detail-section">
+        <p class="detail-label">Staff notes</p>
+        <p class="detail-text">${escapeHTML(staffNotes)}</p>
+      </div>
+    ` : ""}
+
+    ${beers.some(b => b.Name === name) ? renderBeerCheckinPanel(col(item, "Name")) : ""}
   `;
 
   document.getElementById("modalBackdrop").classList.add("show");
@@ -9419,6 +11585,10 @@ function activateAppTab(type) {
     sopCategory = "all";
     if (sopEditId) resetSopForm();
   }
+  if (activeType !== "checklists") {
+    checklistId = null;
+    checklistDetail = null;
+  }
   if (activeType !== "bar") barSection = "all";
   if (activeType === "team") teamDetailId = null;
   if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
@@ -9719,8 +11889,11 @@ async function sendChatMessage(event, presetText) {
 async function bootstrap() {
   await loadData();
   await initAuth();
+  if (currentUser) await loadBeerCheckins();
+  render();
   loadSopsData(true).catch(() => {});
   await maybeShowDailyBriefing();
+  await maybePromptClosingChecklist();
   await maybePromptShiftSurvey();
   await maybeShowShiftDigest();
   initChat();

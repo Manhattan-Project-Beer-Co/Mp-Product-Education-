@@ -1,19 +1,12 @@
 const BEER_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvDNoqxHQCc7PBCm-xetbdDiAfyfi3ECVbnRAfoCYJmdfSxFuamdGJ6THg97ErXp3hFCLG1IBcZsH/pub?gid=0&single=true&output=csv";
 
-const SITE_OVERVIEW = `
-Manhattan Project staff training portal covers:
-- On Tap / All Beers: live beer menu from the tap list spreadsheet (name, tap number, style, ABV, flavor profile, description, guest guidance, gluten-reduced, new taps).
-- Food tab: Breakfast, Lunch, Dinner, and Weekly Specials (Mon lunch, Taco Tue, Wed dinner) with dietary tags.
-- Merch tab: In Stock and Up & Coming ideas with voting. Merch managers (merch role or admin) manage inventory and post ideas.
-- Coffee tab: Menu (caffeine bar — purists, pour over, flavored, matcha, tea), Training Manual, Seasonal Lattes. Employees get a daily "what's new" briefing on first login when new taps, food specials, or seasonal lattes are flagged.
-- SOPs tab: Standard operating procedures by category (opening, closing, bar, kitchen, floor, safety, etc.). Admins upload and edit procedures; staff search and read them. SOP content is also used by the training assistant chat.
-- Wine + Cocktails tab: wine by the glass/bottle, rotating Shirley Temples, and NA beverages (lemonade, Italian cream soda, ginger beer, etc.).
-- War Games tab: beer training games (Flavor Quiz, Guest Match, Tap Match, ABV Challenge, Style Match, Pick the Profile, Speed Round, Beer Flashcards) — all use on-tap beers from the spreadsheet only.
-- My Progress / Team: training scores when logged in (not guest-facing product info).
-`.trim();
+const { SITE_FEATURES, buildSiteOverviewText } = require("./site-features");
+
+const SITE_OVERVIEW = buildSiteOverviewText();
 
 const TRAINING_GAMES = [
+  { name: "Staff Favorites", desc: "Guess teammates’ favorite beers for bonus points; unlocks them on the leaderboard." },
   { name: "Tap Match", desc: "Match tap numbers to beers — critical for floor service." },
   { name: "Flavor Quiz", desc: "Match flavor profiles to beer names." },
   { name: "Guest Match", desc: "Guest guidance scenarios from the sheet." },
@@ -361,6 +354,56 @@ function localAnswer(query, beers, sops = []) {
   );
 }
 
+/** Local tap/menu patches until the spreadsheet is updated. */
+const BEER_TAP_OVERRIDES = [
+  { name: "Oktoberfest", onTap: 4 },
+  { name: "Diffusion", onTap: 16 },
+  { name: "Black Rain", onTap: 17 },
+  {
+    name: "Cold Brew",
+    description:
+      "Velvety, bold, and refined—diesel fuel in the best way. Smooth going down, with a serious caffeine punch."
+  }
+];
+
+const BEER_TAP_RELEASES = [4, 16, 17];
+
+function beerNameMatches(beer, targetName) {
+  return col(beer, "Name").trim().toLowerCase() === targetName.trim().toLowerCase();
+}
+
+function getOnTapNumber(beer) {
+  const match = String(col(beer, "On Tap") || "").match(/\d+/);
+  return match ? Number(match[0]) : null;
+}
+
+function applyBeerTapOverrides(rows) {
+  const patched = rows.map(b => ({ ...b }));
+  const assignedNames = new Set(
+    BEER_TAP_OVERRIDES.filter(o => o.onTap).map(o => o.name.trim().toLowerCase())
+  );
+
+  for (const beer of patched) {
+    const tapNum = getOnTapNumber(beer);
+    if (
+      tapNum &&
+      BEER_TAP_RELEASES.includes(tapNum) &&
+      !assignedNames.has(col(beer, "Name").trim().toLowerCase())
+    ) {
+      beer["On Tap"] = "";
+    }
+  }
+
+  for (const override of BEER_TAP_OVERRIDES) {
+    const beer = patched.find(b => beerNameMatches(b, override.name));
+    if (!beer) continue;
+    if (override.onTap) beer["On Tap"] = `Yes- Tap ${override.onTap}`;
+    if (override.description) beer["Description / ingredients"] = override.description;
+  }
+
+  return patched;
+}
+
 let beerCache = { rows: [], fetchedAt: 0 };
 
 async function getBeers() {
@@ -372,7 +415,7 @@ async function getBeers() {
   const response = await fetch(BEER_CSV_URL, { cache: "no-store" });
   if (!response.ok) throw new Error("Could not load beer menu data.");
   const text = await response.text();
-  const rows = parseCSV(text).filter(b => col(b, "Name"));
+  const rows = applyBeerTapOverrides(parseCSV(text).filter(b => col(b, "Name")));
   beerCache = { rows, fetchedAt: now };
   return rows;
 }

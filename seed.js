@@ -101,13 +101,16 @@ db.exec(`
 const TEST_PASSWORD = "test1234";
 
 const TEST_USERS = [
-  { name: "Meredith Manager", email: "manager@mp.test", role: "admin" },
-  { name: "Taylor Shift Lead", email: "shiftlead@mp.test", role: "shift_lead" },
-  { name: "Casey Merch", email: "merch@mp.test", role: "merch" },
-  { name: "Alex Rivera", email: "alex@mp.test", role: "employee" },
-  { name: "Jordan Kim", email: "jordan@mp.test", role: "employee" },
-  { name: "Sam Ortiz", email: "sam@mp.test", role: "employee" },
-  { name: "Riley Chen", email: "riley@mp.test", role: "employee" }
+  { name: "Site Admin", email: "admin@mp.test", role: "admin", favorite_beer: "Black Matter Nitro" },
+  { name: "Meredith Manager", email: "manager@mp.test", role: "manager", favorite_beer: "Manhattan Project IPA" },
+  { name: "Taylor Shift Lead", email: "shiftlead@mp.test", role: "shift_lead", favorite_beer: "Hoppenheimer" },
+  { name: "Casey Merch", email: "merch@mp.test", role: "merch", extra_roles: ["shift_lead"], favorite_beer: "Atomic Blonde" },
+  { name: "Ingrid Inventory", email: "inventory@mp.test", role: "inventory_admin", favorite_beer: "Fat Man Stout" },
+  { name: "Evan Event Lead", email: "event@mp.test", role: "event_lead", favorite_beer: "Trinity" },
+  { name: "Alex Rivera", email: "alex@mp.test", role: "bartender", favorite_beer: "Black Matter Nitro" },
+  { name: "Jordan Kim", email: "jordan@mp.test", role: "bartender", favorite_beer: "Little Boy" },
+  { name: "Sam Ortiz", email: "sam@mp.test", role: "bartender", favorite_beer: "Chain Reaction" },
+  { name: "Riley Chen", email: "riley@mp.test", role: "trainee", favorite_beer: "Still deciding" }
 ];
 
 const EMPLOYEE_PROGRESS = {
@@ -169,13 +172,25 @@ function daysAgoDate(days) {
   return d.toISOString().slice(0, 19).replace("T", " ");
 }
 
+(function ensureUserRoleColumns() {
+  const cols = db.prepare("PRAGMA table_info(users)").all();
+  if (!cols.some(c => c.name === "extra_roles")) {
+    db.exec("ALTER TABLE users ADD COLUMN extra_roles TEXT NOT NULL DEFAULT '[]'");
+  }
+  if (!cols.some(c => c.name === "favorite_beer")) {
+    db.exec("ALTER TABLE users ADD COLUMN favorite_beer TEXT NOT NULL DEFAULT ''");
+  }
+})();
+
 const upsertUser = db.prepare(`
-  INSERT INTO users (name, email, password_hash, role)
-  VALUES (?, ?, ?, ?)
+  INSERT INTO users (name, email, password_hash, role, extra_roles, favorite_beer)
+  VALUES (?, ?, ?, ?, ?, ?)
   ON CONFLICT(email) DO UPDATE SET
     name = excluded.name,
     password_hash = excluded.password_hash,
-    role = excluded.role
+    role = excluded.role,
+    extra_roles = excluded.extra_roles,
+    favorite_beer = excluded.favorite_beer
 `);
 
 const deleteProgress = db.prepare("DELETE FROM progress_sessions WHERE user_id = ?");
@@ -200,7 +215,8 @@ const seed = db.transaction(() => {
   const userIds = {};
 
   for (const user of TEST_USERS) {
-    upsertUser.run(user.name, user.email, passwordHash, user.role);
+    const extraRoles = JSON.stringify(user.extra_roles || []);
+    upsertUser.run(user.name, user.email, passwordHash, user.role, extraRoles, user.favorite_beer || "");
     const row = getUserId.get(user.email);
     userIds[user.email] = row.id;
     deleteProgress.run(row.id);
@@ -282,7 +298,7 @@ const seedMerch = db.transaction((userIds) => {
     }
   }
 
-  const adminId = getUserId.get("manager@mp.test")?.id;
+  const adminId = getUserId.get("admin@mp.test")?.id;
   for (const idea of IDEA_SAMPLES) {
     const result = insertIdea.run(idea.title, idea.description, "", adminId || null);
     const ideaId = result.lastInsertRowid;
@@ -325,6 +341,30 @@ try {
   }
 } catch (err) {
   console.warn("Shift survey seed skipped:", err.message);
+}
+
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS shift_lead_duty (
+      user_id INTEGER NOT NULL,
+      shift_date TEXT NOT NULL,
+      assigned_by INTEGER,
+      assigned_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (user_id, shift_date),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+  `);
+  db.prepare("DELETE FROM shift_lead_duty WHERE shift_date = ?").run(today);
+  const insertDuty = db.prepare(`
+    INSERT OR IGNORE INTO shift_lead_duty (user_id, shift_date, assigned_by)
+    VALUES (?, ?, ?)
+  `);
+  const adminId = userIds["admin@mp.test"] || userIds["manager@mp.test"];
+  if (userIds["shiftlead@mp.test"]) {
+    insertDuty.run(userIds["shiftlead@mp.test"], today, adminId || null);
+  }
+} catch (err) {
+  console.warn("Shift lead duty seed skipped:", err.message);
 }
 
 const INVENTORY_SAMPLES = [
@@ -646,20 +686,28 @@ try {
 }
 
 console.log("\nTest data seeded successfully.\n");
-console.log("Admin login (Team dashboard):");
+console.log("Admin login (full access):");
+console.log("  Email:    admin@mp.test");
+console.log("  Password: test1234");
+console.log("\nManager login (Team + shift reports):");
 console.log("  Email:    manager@mp.test");
 console.log("  Password: test1234");
-console.log("\nShift lead login (Shift Reports):");
+console.log("\nShift lead login (Shift Reports when scheduled):");
 console.log("  Email:    shiftlead@mp.test");
 console.log("  Password: test1234");
-console.log("\nMerch manager login:");
+console.log("\nMerch manager login (also schedulable as shift lead):");
 console.log("  Email:    merch@mp.test");
 console.log("  Password: test1234");
-console.log("\nEmployee logins (sample progress):");
-console.log("  alex@mp.test   — strong beer + coffee scores");
-console.log("  jordan@mp.test — mid-level, still learning");
-console.log("  sam@mp.test    — top performer");
-console.log("  riley@mp.test  — new hire, minimal activity");
-console.log("  Password for all employees: test1234");
+console.log("\nInventory admin login:");
+console.log("  Email:    inventory@mp.test");
+console.log("  Password: test1234");
+console.log("\nEvent lead login (reference + training):");
+console.log("  Email:    event@mp.test");
+console.log("  Password: test1234");
+console.log("\nBartender logins (sample progress):");
+console.log("  alex@mp.test, jordan@mp.test, sam@mp.test");
+console.log("\nTrainee login:");
+console.log("  riley@mp.test — new hire, minimal activity");
+console.log("  Password for all staff accounts: test1234");
 console.log("\nOpen http://localhost:8080 → Inventory tab for product stock\n");
-console.log("Managers/shift leads can update counts; log in as manager@mp.test or shiftlead@mp.test\n");
+console.log("Managers schedule shift lead duty on the Team tab; shiftlead@mp.test is scheduled for today.\n");

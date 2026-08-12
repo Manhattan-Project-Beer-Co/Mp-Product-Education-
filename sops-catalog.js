@@ -222,6 +222,34 @@ ${section("Production space safety", bullets([
 `
   },
   {
+    category: "Emergency",
+    title: "Emergency & Incident Quick Guide",
+    summary: "Manager-approved high-level actions — life safety first. Separate from ordinary SOPs.",
+    sort_order: 1,
+    body: `
+${section("Injury", bullets([
+  "Call 911 for serious injuries",
+  "Use first aid kit; notify shift lead/manager immediately",
+  "Document what happened after guests/staff are safe"
+]))}
+${section("Fire", bullets([
+  "Pull alarm / call 911",
+  "Evacuate guests and staff — do not re-enter",
+  "Meet at designated assembly point"
+]))}
+${section("Power outage / POS outage", bullets([
+  "Keep guests calm; secure open checks if possible",
+  "Follow lead for hold vs early close",
+  "Use Fix It guide for POS reboot steps — escalate payments issues"
+]))}
+${section("Intoxicated guest / safety / harassment", bullets([
+  "Prioritize safety over sales — refuse service when needed",
+  "Loop a shift lead/manager; do not handle alone",
+  "Document and report; never investigate harassment alone"
+]))}
+`
+  },
+  {
     category: "Recipes",
     title: "Michelada Mix (Mich. Mix)",
     summary: "Batch recipe for Michelada mix kept on the line. Add more bar batch recipes under Recipes.",

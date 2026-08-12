@@ -6,7 +6,10 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Database = require("better-sqlite3");
-const { buildContext, localAnswer, getBeers } = require("./chat-knowledge");
+const { buildContext, localAnswer, getBeers, universalSearch } = require("./chat-knowledge");
+const { registerFloorOpsApi } = require("./floor-ops-api");
+const { registerPortalPolishApi } = require("./portal-polish-api");
+const { TROUBLESHOOTING, GUEST_SCENARIOS, COMPLAINT_SCENARIOS } = require("./ops-content");
 const {
   buildLocalSummary,
   buildAISummary,
@@ -73,15 +76,16 @@ const AZURE_ADMIN_EMAILS = new Set(
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
 const ALLOWED_APPROVED_ROLES = new Set(ALL_ROLES);
 
-const CHAT_SYSTEM_PROMPT = `You are the Manhattan Project Beer Co. staff training assistant embedded in the internal training portal.
+const CHAT_SYSTEM_PROMPT = `You are Ask MP — the Manhattan Project Beer Co. universal training search assistant in the staff portal.
 
 Rules:
-- Answer ONLY using facts from the provided CONTEXT about beers, coffee training, standard operating procedures (SOPs), and training games.
-- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Coffee, War Games).
-- Never invent beer names, tap numbers, ABVs, styles, or coffee standards.
-- Never answer questions unrelated to this training site (weather, politics, general trivia, other businesses, homework, etc.). Politely redirect to site topics.
+- Answer ONLY using facts from the provided CONTEXT (beers, food cues, coffee, SOPs/recipes, events, checklists, training games, floor tools).
+- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Food, Coffee, SOPs, Floor Tools, Launch Pad).
+- Never invent beer names, tap numbers, ABVs, styles, allergen guarantees, or medical claims. For allergies: advise confirming with kitchen.
+- Never answer questions unrelated to this training site. Politely redirect to site topics.
 - Keep answers concise, practical, and floor-friendly. Use bullet points when listing beers or steps.
-- For beer questions, cite tap number, ABV, and style when available in context.`;
+- For beer questions, cite tap number, ABV, and style when available in context.
+- Help with questions like Michelada ingredients, gluten-reduced beers, closing coffee, events, and training.`;
 
 const chatRateLimit = new Map();
 const CHAT_LIMIT = 30;
@@ -399,7 +403,10 @@ const GAME_POINT_VALUES = {
   rocket: 10,
   coffee_quiz: 10,
   coffee_flash: 3,
-  fav_beer: 25
+  fav_beer: 25,
+  sell_this: 20,
+  guestscene: 12,
+  recovery: 15
 };
 
 function computeSessionPoints(activityType, score, total) {
@@ -1753,6 +1760,7 @@ app.post("/api/progress", authRequired, (req, res) => {
   const score = Number(req.body.score);
   const total = Number(req.body.total);
   const points = clampPoints(activity_type, score, total, Number(req.body.points));
+  const maxStreak = Number(req.body.max_streak || req.body.maxStreak) || 0;
 
   if (!activity_type || !Number.isFinite(score) || !Number.isFinite(total) || total <= 0) {
     return res.status(400).json({ error: "Invalid progress payload." });
@@ -1763,7 +1771,47 @@ app.post("/api/progress", authRequired, (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `).run(req.user.id, activity_type, category, score, total, points);
 
-  res.json({ ok: true, points });
+  const { bumpStreak, awardAchievement, evaluateSecretAchievements } = require("./portal-polish-api");
+  const newly = [];
+  if (maxStreak > 0) {
+    const existing = db.prepare(`
+      SELECT best FROM user_streaks WHERE user_id = ? AND streak_key = 'answer_streak'
+    `).get(req.user.id);
+    const best = Math.max(maxStreak, existing?.best || 0);
+    db.prepare(`
+      INSERT INTO user_streaks (user_id, streak_key, count, best, last_date)
+      VALUES (?, 'answer_streak', ?, ?, date('now'))
+      ON CONFLICT(user_id, streak_key) DO UPDATE SET
+        count = excluded.count,
+        best = excluded.best,
+        last_date = excluded.last_date
+    `).run(req.user.id, maxStreak, best);
+    if (best >= 5 && awardAchievement(db, req.user.id, "critical-mass")) newly.push("critical-mass");
+  }
+  if (score >= total && total > 0 && awardAchievement(db, req.user.id, "trinity-test")) {
+    newly.push("trinity-test");
+  }
+  if (activity_type === "coffee_flash" && awardAchievement(db, req.user.id, "orbital-rendezvous")) {
+    newly.push("orbital-rendezvous");
+  }
+
+  const stats = getUserStats(req.user.id);
+  const byActivity = {};
+  for (const row of stats.by_activity || []) byActivity[row.activity_type] = row;
+  const more = evaluateSecretAchievements(db, req.user.id, {
+    byActivity,
+    maxStreak,
+    perfectRound: score >= total && total > 0
+  });
+  for (const key of more) {
+    if (!newly.includes(key)) newly.push(key);
+  }
+
+  const titles = require("./ops-content").SECRET_ACHIEVEMENTS
+    .filter(a => newly.includes(a.id))
+    .map(a => a.title);
+
+  res.json({ ok: true, points, newlyEarned: newly, titles });
 });
 
 app.get("/api/progress/me", authRequired, (req, res) => {
@@ -1829,7 +1877,9 @@ function formatFeedbackRow(row) {
     subject: row.subject,
     message: row.message,
     status: row.status,
+    pipelineStatus: row.pipeline_status || "submitted",
     adminNotes: row.admin_notes,
+    implementedNote: row.implemented_note || "",
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -2638,13 +2688,30 @@ app.post("/api/checklists/:id/toggle", authRequired, (req, res) => {
     WHERE user_id = ? AND checklist_id = ? AND shift_date = ?
   `).all(req.user.id, checklist.id, shiftDate).map(row => row.task_id);
 
+  let streak = null;
+  if (!existing && completedTaskIds.length >= checklist.tasks.length) {
+    try {
+      const { bumpStreak, awardAchievement } = require("./portal-polish-api");
+      let key = "checklist_days";
+      if (/closing/i.test(checklist.id) || /closing/i.test(checklist.name || "")) key = "closing_days";
+      if (/opening/i.test(checklist.id) || /opening/i.test(checklist.name || "")) key = "opening_days";
+      streak = bumpStreak(db, req.user.id, key, shiftDate);
+      if (key === "closing_days") {
+        awardAchievement(db, req.user.id, "fallout-shelter");
+        if (streak.count >= 10) awardAchievement(db, req.user.id, "ten-perfect-closes");
+      }
+      if (streak.count >= 30) awardAchievement(db, req.user.id, "thirty-checklists");
+    } catch (_) {}
+  }
+
   res.json({
     ok: true,
     shiftDate,
     completed: !existing,
     completedTaskIds,
     completedCount: completedTaskIds.length,
-    taskCount: checklist.tasks.length
+    taskCount: checklist.tasks.length,
+    streak
   });
 });
 
@@ -2977,6 +3044,53 @@ app.post("/api/reviews/refresh", authRequired, adminRequired, async (req, res) =
 });
 
 registerMpInventory(app, db, { authRequired, inventoryManagerRequired, optionalAuth });
+
+registerFloorOpsApi(app, {
+  db,
+  authRequired,
+  managerOrAdminRequired,
+  optionalAuth,
+  todayDate,
+  publicUser
+});
+
+registerPortalPolishApi(app, {
+  db,
+  authRequired,
+  managerOrAdminRequired,
+  optionalAuth,
+  adminRequired,
+  todayDate,
+  getWorkingStaff,
+  getUserStats,
+  getBeerCheckins,
+  getBeers,
+  isBeerOnTap
+});
+
+app.get("/api/search", async (req, res) => {
+  const q = String(req.query.q || "").trim();
+  if (!q) return res.json({ results: [] });
+  try {
+    let beers = [];
+    try {
+      beers = await getBeers();
+    } catch (_) {}
+    const sops = getSopCatalog();
+    const results = universalSearch(q, { beers, sops, foods: [] });
+    res.json({ query: q, results });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Search failed." });
+  }
+});
+
+app.get("/api/scenarios", (req, res) => {
+  res.json({
+    guest: GUEST_SCENARIOS,
+    complaint: COMPLAINT_SCENARIOS,
+    troubleshooting: TROUBLESHOOTING
+  });
+});
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));

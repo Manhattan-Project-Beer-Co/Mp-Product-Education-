@@ -1,144 +1,54 @@
 /**
  * FEATURES TAB — single source of truth for what this site can do.
- *
- * When you add a new sidebar tab or major capability:
- * 1. Add a section below (id, title, summary).
- * 2. Add the tab name to feedbackTabOptions if staff can report issues there.
- * 3. Add a line to recentUpdates with today's date.
- * 4. Bump updatedAt.
- *
- * Used by: index.html (Features tab), chat-knowledge.js (Training Assistant context).
  */
 
 const SITE_FEATURES = {
   tabLabel: "Features",
   updatedAt: "2026-08-11",
   recentUpdates: [
-    { date: "2026-08-11", text: "Launch Pad → Staff Favorites — guess teammates’ favorite beers for bonus points; unlocks them on the leaderboard" },
-    { date: "2026-08-11", text: "Coffee → Viewfinder Roaster — fuller bean descriptions from viewfindercoffee.com (Worka, Landline, Nostalgia, Static Shock, Dial-Up)" },
-    { date: "2026-08-11", text: "Launch Pad leaderboard shows each employee’s favorite beer (staff set their own)" },
-    { date: "2026-08-11", text: "Checklists tab — Opening, Closing, Cut, Events, weekly detail, Clean Don't Lean" },
-    { date: "2026-08-11", text: "Banana Foster Latte recipe on Coffee → Seasonal Lattes; SOPs → Recipes for Mich Mix + batch recipes" }
+    { date: "2026-08-11", text: "Photo standards gallery, checklist before/after photos, shout-outs, team challenges, secret streaks" },
+    { date: "2026-08-11", text: "Tap Change + New Menu Package generators; weekly training pack + deeper Team analytics" },
+    { date: "2026-08-11", text: "Ask MP universal search + Floor Tools pack (86s, handoff, huddle, recommenders, allergy, maintenance, First 5, skills)" },
+    { date: "2026-08-11", text: "Guest Scenarios + Complaint Recovery games; Sell This Today; manager morning digest" }
   ],
   roles: [
-    { name: "Admin", blurb: "Full access — emails, SOPs, Team, merch, inventory, feedback triage" },
-    { name: "Manager", blurb: "See everything — Team, shift scheduling, reports, feedback triage" },
+    { name: "Admin", blurb: "Full access — emails, SOPs, Team, merch, inventory, feedback" },
+    { name: "Manager", blurb: "Team, shift scheduling, reports, digest, feedback triage, Sell This Today" },
     { name: "Merch", blurb: "Edit merch stock & ideas; can be scheduled as shift lead" },
     { name: "Inventory admin", blurb: "Update ops inventory counts and orders" },
     { name: "Shift lead", blurb: "Shift reports & digest when scheduled on duty" },
-    { name: "Event lead", blurb: "All menus + training for private events; no Team/admin tools" },
-    { name: "Bartender", blurb: "Training, briefing, End of Shift, Feedback" },
-    { name: "Trainee", blurb: "Same floor access as bartender while learning" }
+    { name: "Event lead", blurb: "Menus + training for private events" },
+    { name: "Bartender", blurb: "Training, briefing, Floor Tools, End of Shift, Feedback" },
+    { name: "Trainee", blurb: "First 5 Shifts path + same floor tools while learning" }
   ],
   feedbackTabOptions: [
-    "On Tap",
-    "All Beers",
-    "Food",
-    "Coffee",
-    "Wine + Cocktails",
-    "Merch",
-    "Inventory",
-    "SOPs",
-    "Checklists",
-    "Reviews",
-    "Launch Pad",
-    "My Progress",
-    "End of Shift",
-    "Shift Reports",
-    "Team",
-    "Training Assistant",
-    "Features",
-    "Feedback",
-    "General / not sure"
+    "On Tap", "All Beers", "Food", "Coffee", "Wine + Cocktails", "Merch", "Inventory",
+    "SOPs", "Checklists", "Floor Tools", "Reviews", "Launch Pad", "My Progress",
+    "End of Shift", "Shift Reports", "Team", "Ask MP", "Features", "Feedback", "General / not sure"
   ],
   sections: [
-    {
-      id: "ontap",
-      title: "On Tap & All Beers",
-      summary: "Live tap list, beer details, filters, and tasting check-ins."
-    },
-    {
-      id: "food",
-      title: "Food",
-      summary: "Breakfast, brunch (Sun 10–3), lunch, dinner, weekly specials, allergens."
-    },
-    {
-      id: "coffee",
-      title: "Coffee",
-      summary: "Menu, Viewfinder beans, training manual, Seasonal Lattes (Banana Foster recipe + builds)."
-    },
-    {
-      id: "bar",
-      title: "Wine + Cocktails",
-      summary: "Wine, Shirley Temples, and NA drinks."
-    },
-    {
-      id: "merch",
-      title: "Merch",
-      summary: "In-stock counts, Up & Coming votes, Shopify link. Merch role can edit."
-    },
-    {
-      id: "inventory",
-      title: "Inventory",
-      summary: "Ops counts, weekly order, dashboard. Inventory admin can edit."
-    },
-    {
-      id: "sops",
-      title: "SOPs",
-      summary: "Procedures + a Recipes category for Mich Mix and other batch recipes you’ll add later."
-    },
-    {
-      id: "checklists",
-      title: "Checklists",
-      summary: "Interactive Opening, Closing, Cut, Event Setup, weekly detail, and Clean Don't Lean lists."
-    },
-    {
-      id: "reviews",
-      title: "Reviews",
-      summary: "Guest Google/Yelp feedback when sync is configured."
-    },
-    {
-      id: "launchpad",
-      title: "Launch Pad",
-      summary: "Training games, Staff Favorites beer guesses (+bonus pts), leaderboard, and badges."
-    },
-    {
-      id: "progress",
-      title: "My Progress",
-      summary: "Your scores, tasting journal, menu coverage, achievements."
-    },
-    {
-      id: "shift",
-      title: "End of Shift / Reports",
-      summary: "Anonymous surveys for floor staff; digests for managers & on-duty leads."
-    },
-    {
-      id: "team",
-      title: "Team",
-      summary: "Managers/admins: schedule shift leads, monitor training. Admins approve emails."
-    },
-    {
-      id: "assistant",
-      title: "Training Assistant",
-      summary: "Corner chat for taps, coffee, SOPs, and training help."
-    },
-    {
-      id: "briefing",
-      title: "Daily briefing",
-      summary: "First-login popup for new taps, specials, and seasonal drinks."
-    },
-    {
-      id: "feedback",
-      title: "Feedback",
-      summary: "Report bugs, wrong info, or ideas. Managers triage status."
-    }
+    { id: "askmp", title: "Ask MP", summary: "Universal search chatbot for beers, food, coffee, SOPs/recipes, events, and training." },
+    { id: "ontap", title: "On Tap & All Beers", summary: "Live tap list, details, filters, tasting check-ins." },
+    { id: "food", title: "Food", summary: "Breakfast, brunch, lunch, dinner, weekly specials, allergens." },
+    { id: "coffee", title: "Coffee", summary: "Menu, Viewfinder beans, seasonal latte recipes, training manual." },
+    { id: "bar", title: "Wine + Cocktails", summary: "Wine, Shirley Temples, and NA drinks." },
+    { id: "floor", title: "Floor Tools", summary: "86 board, handoff, huddle, Sell This, photo standards, shout-outs, team challenges, tap change + menu packages, recommenders, allergy, maintenance, First 5, skills, secrets/streaks." },
+    { id: "merch", title: "Merch", summary: "In-stock counts, Up & Coming votes, Shopify link." },
+    { id: "inventory", title: "Inventory", summary: "Ops counts, weekly order, dashboard." },
+    { id: "sops", title: "SOPs", summary: "Procedures, Recipes, Emergency, photo standards gallery." },
+    { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with before/after task photos and streaks." },
+    { id: "launchpad", title: "Launch Pad", summary: "Games, Staff Favorites, Guest Scenarios, Complaint Recovery, leaderboard, badges." },
+    { id: "progress", title: "My Progress", summary: "Scores, tasting journal, achievements." },
+    { id: "shift", title: "End of Shift / Reports", summary: "Anonymous surveys + digests for leads." },
+    { id: "team", title: "Team", summary: "Morning digest, AI weekly training pack, deep analytics, shift lead duty." },
+    { id: "briefing", title: "Daily briefing", summary: "New taps, specials, seasonal drinks." },
+    { id: "feedback", title: "Feedback", summary: "Ideas/bugs with Submitted → Reviewing → Planned → Built pipeline for managers." }
   ]
 };
 
 function buildSiteOverviewText() {
   const bullets = SITE_FEATURES.sections.map(section => `- ${section.title}: ${section.summary}`);
   const roles = (SITE_FEATURES.roles || []).map(role => `- ${role.name}: ${role.blurb}`);
-
   return [
     "Manhattan Project staff training portal covers:",
     bullets.join("\n"),
@@ -146,7 +56,7 @@ function buildSiteOverviewText() {
     "Staff roles:",
     roles.join("\n"),
     "",
-    `See the ${SITE_FEATURES.tabLabel} tab for a quick reference (last updated ${SITE_FEATURES.updatedAt}).`
+    `See the ${SITE_FEATURES.tabLabel} tab (updated ${SITE_FEATURES.updatedAt}). Ask MP searches across these areas.`
   ].join("\n");
 }
 
@@ -158,13 +68,8 @@ function formatFeaturesUpdatedLabel(isoDate) {
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    SITE_FEATURES,
-    buildSiteOverviewText,
-    formatFeaturesUpdatedLabel
-  };
+  module.exports = { SITE_FEATURES, buildSiteOverviewText, formatFeaturesUpdatedLabel };
 }
-
 if (typeof window !== "undefined") {
   window.SITE_FEATURES = SITE_FEATURES;
   window.buildSiteOverviewText = buildSiteOverviewText;

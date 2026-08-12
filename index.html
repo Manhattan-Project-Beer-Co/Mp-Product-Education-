@@ -2048,6 +2048,123 @@
     color: var(--muted);
   }
 
+  .classified-dossier {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 18px 16px 28px;
+    position: relative;
+    background:
+      linear-gradient(180deg, rgba(18, 28, 22, 0.04), transparent 40%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 22px,
+        rgba(20, 40, 28, 0.04) 23px
+      );
+    border: 1px solid rgba(50, 80, 55, 0.28);
+  }
+  .classified-stamp {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    transform: rotate(12deg);
+    border: 2px solid #8b1e1e;
+    color: #8b1e1e;
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    font-size: 12px;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .classified-eyebrow {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .classified-dossier h2 {
+    margin: 0 0 6px;
+    font-size: 26px;
+  }
+  .classified-subhead {
+    margin: 22px 0 10px;
+    font-size: 16px;
+  }
+  .classified-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .classified-file {
+    border: 1px solid rgba(40, 60, 45, 0.35);
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.72);
+  }
+  .classified-file.sealed { background: rgba(30, 36, 32, 0.06); }
+  .classified-file.declassified {
+    border-color: rgba(31, 122, 63, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(31, 122, 63, 0.12);
+  }
+  .classified-file-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .classified-level { color: #8b1e1e; font-weight: 700; }
+  .classified-code { color: var(--muted); }
+  .classified-file h3 { margin: 0 0 6px; font-size: 16px; }
+  .classified-file p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .classified-meta {
+    margin-top: 8px !important;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px !important;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .classified-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 12000;
+    min-width: min(420px, calc(100vw - 32px));
+    max-width: 520px;
+    padding: 14px 18px;
+    background: #152018;
+    color: #e8f0e9;
+    border: 1px solid #c9a227;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    font-family: "Courier New", Courier, monospace;
+  }
+  .classified-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .classified-toast strong {
+    display: block;
+    color: #c9a227;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .classified-toast span { font-size: 14px; line-height: 1.4; }
+
   .guide-page {
     max-width: 720px;
     margin: 0 auto;
@@ -3859,6 +3976,7 @@
       <button type="button" class="tab" data-type="inventory">Inventory</button>
       <button type="button" class="tab" data-type="sops">SOPs</button>
       <button type="button" class="tab" data-type="checklists">Checklists</button>
+      <button type="button" class="tab" data-type="floor">Floor Tools</button>
       <button type="button" class="tab" data-type="reviews">Reviews</button>
       <button type="button" class="tab" data-type="games">Launch Pad</button>
       <button type="button" class="tab" data-type="features">Features</button>
@@ -3964,21 +4082,21 @@
   </div>
 </div>
 
-<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Training assistant">
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Ask MP">
   <div class="chat-header">
-    <h3>Training Assistant</h3>
-    <p>Ask about beers on tap, coffee standards, or training games — site content only.</p>
+    <h3>Ask MP</h3>
+    <p>Universal search — beers, food, coffee, SOPs/recipes, events, and training in one place.</p>
     <span class="chat-mode-badge" id="chatModeBadge">Loading…</span>
   </div>
   <div class="chat-messages" id="chatMessages"></div>
   <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What's on tap?</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Gluten-reduced beers</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Espresso dial-in standard</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">Which training game first?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What goes in a Michelada?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What beer is gluten reduced?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">How do I close the coffee station?</button>
+    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What's on Sell This Today?</button>
   </div>
   <form class="chat-input-row" onsubmit="sendChatMessage(event)">
-    <input type="text" id="chatInput" placeholder="Ask about beer, coffee, or training…" autocomplete="off" maxlength="800">
+    <input type="text" id="chatInput" placeholder="Ask MP anything on the portal…" autocomplete="off" maxlength="800">
     <button class="chat-send" id="chatSendBtn" type="submit" aria-label="Send">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
@@ -3987,7 +4105,7 @@
   </form>
 </div>
 
-<button class="chat-fab" id="chatFab" type="button" onclick="toggleChatPanel()" aria-label="Open training assistant">
+<button class="chat-fab" id="chatFab" type="button" onclick="toggleChatPanel()" aria-label="Open Ask MP">
   <svg id="chatFabIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
     <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
   </svg>
@@ -3996,6 +4114,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="roles.js"></script>
 <script src="site-features.js"></script>
+<script src="ops-content.js"></script>
+<script src="floor-tools.js"></script>
 <script>
 const API_BASE = "";
 let currentUser = null;
@@ -4863,11 +4983,16 @@ const GAME_POINT_VALUES = {
   flash: 3,
   coffee_quiz: 10,
   coffee_flash: 3,
-  fav_beer: 25
+  fav_beer: 25,
+  sell_this: 20,
+  guestscene: 12,
+  recovery: 15
 };
 
 const GAMES = [
   { id: "favbeer", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M38 58c0-12 8-22 12-28 4 6 12 16 12 28a12 12 0 0 1-24 0z" fill="none" stroke="#c9a227" stroke-width="3"/><circle cx="50" cy="58" r="3" fill="#c9a227"/></svg>`, title: "Staff Favorites", desc: "Guess teammates’ favorite beers — unlock them on the board for bonus points" },
+  { id: "guestscene", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="28" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M35 55c5 8 25 8 30 0" fill="none" stroke="#c9a227" stroke-width="3"/></svg>`, title: "Guest Scenarios", desc: "What would you recommend? Blue Moon fans, parties, allergies, and more" },
+  { id: "recovery", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 60 L50 30 L70 60 Z" fill="none" stroke="#c9a227" stroke-width="3"/><circle cx="50" cy="52" r="3" fill="#c9a227"/></svg>`, title: "Complaint Recovery", desc: "MP preferred service recovery — increasingly tough guests" },
   { id: "rocket", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(55 50 54)"/><rect x="44" y="28" width="12" height="36" rx="2" fill="#c9a227"/><rect x="47" y="18" width="6" height="12" fill="#c9a227"/><path d="M38 68 L44 58 L56 58 L62 68 Z" fill="#8b6b3c"/></svg>`, title: "Launch Pad", desc: "Gold rocket trainer — blast the correct tap answer" },
   { id: "speed", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M56 22 L38 52h14l-8 26 28-36H56z" fill="#c9a227"/></svg>`, title: "Speed Round", desc: "12 mixed questions from current taps" },
   { id: "tap", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M50 28c8 10 14 18 14 28a14 14 0 0 1-28 0c0-10 6-18 14-28z" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M50 40v28M42 52h16" stroke="#c9a227" stroke-width="2"/></svg>`, title: "Tap Match", desc: "Match tap numbers to beers" },
@@ -5116,7 +5241,7 @@ function render() {
   const searchWrap = document.getElementById("searchWrap");
 
   const showFilters = activeType === "beer" || activeType === "ontap";
-  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "sops" || activeType === "checklists" || activeType === "reviews";
+  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "sops" || activeType === "checklists" || activeType === "floor" || activeType === "reviews";
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
@@ -5146,6 +5271,9 @@ function render() {
   } else if (activeType === "checklists") {
     destroyCharts();
     renderChecklists(content);
+  } else if (activeType === "floor") {
+    destroyCharts();
+    renderFloorTools(content);
   } else if (activeType === "reviews") {
     destroyCharts();
     renderReviews(content);
@@ -5186,7 +5314,10 @@ const ACTIVITY_LABELS = {
   flash: "Beer Flashcards",
   coffee_quiz: "Coffee Quiz",
   coffee_flash: "Coffee Flashcards",
-  fav_beer: "Staff Favorites"
+  fav_beer: "Staff Favorites",
+  guestscene: "Guest Scenarios",
+  recovery: "Complaint Recovery",
+  sell_this: "Sell This Today"
 };
 
 async function apiFetch(path, options = {}) {
@@ -5725,25 +5856,47 @@ function buildAnnouncementTrainingHtml(item) {
   return `<p class="detail-text">No training details available for this item.</p>`;
 }
 
-async function recordProgress(activityType, category, score, total, points) {
+async function recordProgress(activityType, category, score, total, points, extras = {}) {
   if (!currentUser) return;
   try {
-    await apiFetch("/api/progress", {
+    const data = await apiFetch("/api/progress", {
       method: "POST",
       body: JSON.stringify({
         activity_type: activityType,
         category,
         score,
         total,
-        points: points ?? score * (GAME_POINT_VALUES[activityType] || 10)
+        points: points ?? score * (GAME_POINT_VALUES[activityType] || 10),
+        max_streak: extras.maxStreak || 0
       })
     });
     myProgressData = null;
     teamData = null;
     leaderboardData = null;
+    if ((data.titles || []).length) notifyClassifiedUnlock(data.titles);
+    // Re-check Atomic Bartender / coverage-dependent secrets after sessions
+    apiFetch("/api/achievements/check", { method: "POST", body: JSON.stringify({}) })
+      .then(res => { if ((res.titles || []).length) notifyClassifiedUnlock(res.titles); })
+      .catch(() => {});
   } catch (err) {
     console.warn("Could not save progress:", err.message);
   }
+}
+
+function notifyClassifiedUnlock(titles) {
+  const list = (titles || []).filter(Boolean);
+  if (!list.length) return;
+  let toast = document.getElementById("classifiedToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "classifiedToast";
+    toast.className = "classified-toast";
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<strong>CLEARANCE UPGRADE</strong><span>${list.map(escapeHTML).join(" · ")}</span>`;
+  toast.classList.add("show");
+  clearTimeout(notifyClassifiedUnlock._t);
+  notifyClassifiedUnlock._t = setTimeout(() => toast.classList.remove("show"), 4200);
 }
 
 async function loadBeerCheckins() {
@@ -5877,6 +6030,9 @@ async function saveBeerCheckin() {
     });
     await loadBeerCheckins();
     myProgressData = null;
+    apiFetch("/api/achievements/check", { method: "POST", body: JSON.stringify({}) })
+      .then(res => { if ((res.titles || []).length) notifyClassifiedUnlock(res.titles); })
+      .catch(() => {});
     openBeerByName(beerModalBeer);
     if (activeType === "beer" || activeType === "ontap" || activeType === "progress" || activeType === "games") {
       render();
@@ -6884,13 +7040,21 @@ async function renderSiteFeedback(content) {
               <span class="feedback-status ${escapeHTML(item.status || "open")}">${escapeHTML(formatFeedbackStatus(item.status))}</span>
             </div>
             <p style="margin:12px 0 0;font-size:14px;line-height:1.55;">${escapeHTML(item.message)}</p>
-            <div style="margin-top:14px;display:grid;grid-template-columns:160px 1fr auto;gap:10px;align-items:end;">
+            <div style="margin-top:14px;display:grid;grid-template-columns:160px 160px 1fr auto;gap:10px;align-items:end;">
               <div>
                 <label for="feedback-status-${item.id}">Status</label>
                 <select id="feedback-status-${item.id}">
                   <option value="open" ${item.status === "open" ? "selected" : ""}>Open</option>
                   <option value="reviewed" ${item.status === "reviewed" ? "selected" : ""}>Reviewed</option>
                   <option value="resolved" ${item.status === "resolved" ? "selected" : ""}>Resolved</option>
+                </select>
+              </div>
+              <div>
+                <label for="feedback-pipe-${item.id}">Idea pipeline</label>
+                <select id="feedback-pipe-${item.id}">
+                  ${["submitted","reviewing","planned","built"].map(p => `
+                    <option value="${p}" ${(item.pipelineStatus || item.pipeline_status || "submitted") === p ? "selected" : ""}>${p}</option>
+                  `).join("")}
                 </select>
               </div>
               <div>
@@ -6989,11 +7153,16 @@ async function updateSiteFeedbackStatus(id) {
 
   const status = document.getElementById(`feedback-status-${id}`)?.value || "open";
   const adminNotes = document.getElementById(`feedback-notes-${id}`)?.value || "";
+  const pipelineStatus = document.getElementById(`feedback-pipe-${id}`)?.value || "submitted";
 
   try {
     await apiFetch(`/api/site-feedback/${id}`, {
       method: "PATCH",
       body: JSON.stringify({ status, adminNotes })
+    });
+    await apiFetch(`/api/site-feedback/${id}/pipeline`, {
+      method: "PATCH",
+      body: JSON.stringify({ pipelineStatus })
     });
     render();
   } catch (err) {
@@ -7115,6 +7284,40 @@ async function renderMyProgress(content) {
   }
 }
 
+async function loadManagerDigestPanel() {
+  const el = document.getElementById("managerDigestPanel");
+  if (!el) return;
+  try {
+    const [digest, gaps, weekly, deep] = await Promise.all([
+      apiFetch("/api/manager/morning-digest"),
+      apiFetch("/api/manager/knowledge-gaps"),
+      apiFetch("/api/manager/weekly-training"),
+      apiFetch("/api/manager/deep-analytics")
+    ]);
+    el.innerHTML = `
+      <h2>Manager morning digest</h2>
+      <p>Yesterday surveys: <strong>${digest.yesterdaySurveys?.count || 0}</strong> (avg ${digest.yesterdaySurveys?.avg_rating ?? "—"})
+      · Open feedback: <strong>${digest.openFeedback}</strong>
+      · Open maintenance: <strong>${digest.openMaintenance}</strong>
+      · Active 86s: <strong>${digest.activeEightySix}</strong></p>
+      <p style="margin-top:8px;"><strong>What the team doesn’t know:</strong> ${escapeHTML(gaps.weeklyTrainingPrompt || "")}</p>
+      ${(gaps.gaps || []).slice(0, 4).map(g => `<p class="desc">${escapeHTML(g.activity_type)} — ${g.avg_accuracy}% avg · ${g.misses} weak attempts</p>`).join("")}
+      <h3 style="margin:16px 0 8px;">AI weekly training pack (${escapeHTML(weekly.duration || "5 min")})</h3>
+      <ol class="desc" style="margin:0;padding-left:18px;">
+        ${(weekly.agenda || []).map(line => `<li>${escapeHTML(line)}</li>`).join("")}
+      </ol>
+      ${(weekly.topSearches || []).length ? `<p class="desc" style="margin-top:8px;"><strong>Hot Ask MP searches:</strong> ${weekly.topSearches.map(s => `${escapeHTML(s.q)} (${s.hits})`).join(" · ")}</p>` : ""}
+      <h3 style="margin:16px 0 8px;">Deeper analytics (14–30 days)</h3>
+      ${(deep.missedQuestions || []).slice(0, 5).map(g => `<p class="desc">${escapeHTML(g.activity_type)} — ${g.avg_accuracy}% · ${g.weak} weak attempts</p>`).join("") || `<p class="desc">No session data yet.</p>`}
+      ${(deep.checklistLeaders || []).length ? `<p class="desc" style="margin-top:8px;"><strong>Checklist leaders:</strong> ${deep.checklistLeaders.map(r => `${escapeHTML(r.name)} (${r.completions})`).join(" · ")}</p>` : ""}
+      ${(deep.streakLeaders || []).length ? `<p class="desc"><strong>Streak leaders:</strong> ${deep.streakLeaders.slice(0, 5).map(r => `${escapeHTML(r.name)} ${escapeHTML(r.streak_key)} best ${r.best}`).join(" · ")}</p>` : ""}
+      ${(deep.topSearches || []).length ? `<p class="desc"><strong>Search popularity:</strong> ${deep.topSearches.slice(0, 8).map(s => `${escapeHTML(s.q)} (${s.hits})`).join(" · ")}</p>` : ""}
+    `;
+  } catch (err) {
+    el.innerHTML = `<h2>Manager morning digest</h2><p class="desc">${escapeHTML(err.message)}</p>`;
+  }
+}
+
 async function renderTeamDashboard(content) {
   if (!isManager()) {
     content.innerHTML = `<div class="status"><strong>Manager access required.</strong>Log in with a manager or admin account to view team progress.</div>`;
@@ -7207,6 +7410,7 @@ async function renderTeamDashboard(content) {
           : "Schedule shift leads and monitor training progress across the floor team."}</p>
       </div>
       ${renderShiftLeadDutyPanel(shiftLeadDutyPayload, shiftLeadCandidates)}
+      <div id="managerDigestPanel" class="coffee-intro" style="margin-top:8px;"><p>Loading morning digest…</p></div>
       ${isAdmin() ? renderApprovedEmailsPanel(approvedPayload.emails) : ""}
       ${floorStaff.length ? renderTeamChartsHtml() : ""}
       <table class="progress-table">
@@ -7245,6 +7449,7 @@ async function renderTeamDashboard(content) {
     } else {
       destroyCharts();
     }
+    loadManagerDigestPanel();
   } catch (err) {
     content.innerHTML = `<div class="status"><strong>Could not load team dashboard.</strong>${escapeHTML(err.message)}</div>`;
     destroyCharts();
@@ -7991,7 +8196,7 @@ async function renderInventory(content) {
   `;
 }
 
-const SOP_CATEGORIES = ["Opening", "Closing", "Bar", "Recipes", "Coffee", "Kitchen", "Floor", "Events", "Safety", "General"];
+const SOP_CATEGORIES = ["Opening", "Closing", "Bar", "Recipes", "Coffee", "Kitchen", "Floor", "Events", "Emergency", "Safety", "General"];
 
 async function loadSopsData(force) {
   if (sopLoading) return sopDocuments;
@@ -8297,6 +8502,16 @@ async function renderChecklists(content) {
 
       const doneCount = (data.completedTaskIds || []).length;
       const total = (list.tasks || []).length;
+      let photosByTask = {};
+      if (currentUser) {
+        try {
+          const photoData = await apiFetch(`/api/checklists/${encodeURIComponent(list.id)}/photos?date=${encodeURIComponent(checklistDate)}`);
+          for (const p of photoData.photos || []) {
+            if (!photosByTask[p.task_id]) photosByTask[p.task_id] = [];
+            photosByTask[p.task_id].push(p);
+          }
+        } catch (_) {}
+      }
       let lastSection = null;
       const taskHtml = [];
       for (const task of tasks) {
@@ -8305,13 +8520,26 @@ async function renderChecklists(content) {
           taskHtml.push(`<p class="checklist-section-head">${escapeHTML(task.section)}</p>`);
         }
         const isDone = completed.has(task.id);
+        const taskPhotos = photosByTask[String(task.id)] || [];
         taskHtml.push(`
-          <button type="button" class="checklist-task${isDone ? " done" : ""}" onclick="toggleChecklistTask('${escapeForAttribute(list.id)}', ${task.id})">
-            <span class="mark" aria-hidden="true">${isDone ? "✓" : ""}</span>
-            <span class="body">
-              <span class="title">${escapeHTML(task.title)}</span>
-            </span>
-          </button>
+          <div class="checklist-task-wrap" style="margin-bottom:8px;">
+            <button type="button" class="checklist-task${isDone ? " done" : ""}" onclick="toggleChecklistTask('${escapeForAttribute(list.id)}', ${task.id})">
+              <span class="mark" aria-hidden="true">${isDone ? "✓" : ""}</span>
+              <span class="body">
+                <span class="title">${escapeHTML(task.title)}</span>
+              </span>
+            </button>
+            ${currentUser ? `
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 0 36px;">
+                <label class="auth-btn" style="cursor:pointer;margin:0;">
+                  Before/after photo
+                  <input type="file" accept="image/*" style="display:none;" onchange="uploadChecklistTaskPhoto('${escapeForAttribute(list.id)}', ${task.id}, this)">
+                </label>
+                ${taskPhotos.length ? `<span class="desc">${taskPhotos.length} photo${taskPhotos.length === 1 ? "" : "s"}</span>` : ""}
+              </div>
+              ${taskPhotos.map(p => `<img src="${escapeForAttribute(p.photo_url)}" alt="" style="max-width:220px;margin:6px 0 0 36px;border-radius:8px;">`).join("")}
+            ` : ""}
+          </div>
         `);
       }
 
@@ -8402,15 +8630,45 @@ async function toggleChecklistTask(id, taskId) {
     return;
   }
   try {
-    await apiFetch(`/api/checklists/${encodeURIComponent(id)}/toggle`, {
+    const result = await apiFetch(`/api/checklists/${encodeURIComponent(id)}/toggle`, {
       method: "POST",
       body: JSON.stringify({ taskId, shiftDate: checklistDate || getLocalDateKey() })
     });
+    if (result.streak && result.completedCount >= result.taskCount) {
+      // soft: streak bumped on full completion
+    }
     checklistDetail = null;
     checklistCache = null;
     render();
   } catch (err) {
     alert(err.message);
+  }
+}
+
+async function uploadChecklistTaskPhoto(checklistId, taskId, input) {
+  if (!currentUser || !input?.files?.[0]) return;
+  try {
+    const file = input.files[0];
+    const reader = new FileReader();
+    const photoUrl = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Could not read photo."));
+      reader.readAsDataURL(file);
+    });
+    await apiFetch(`/api/checklists/${encodeURIComponent(checklistId)}/photos`, {
+      method: "POST",
+      body: JSON.stringify({
+        taskId: String(taskId),
+        shiftDate: checklistDate || getLocalDateKey(),
+        photoUrl
+      })
+    });
+    checklistDetail = null;
+    render();
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    input.value = "";
   }
 }
 
@@ -8450,8 +8708,43 @@ async function renderSops(content) {
       ${isAdmin() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Admin view — upload and edit procedures below.</p>` : ""}
     </div>
     ${renderSopAdminForm()}
+    <div id="sopPhotoGallery" class="coffee-intro" style="margin-top:8px;"><p>Loading photo standards…</p></div>
     ${renderSopCards(query)}
   `;
+  loadSopPhotoGallery();
+}
+
+async function loadSopPhotoGallery() {
+  const el = document.getElementById("sopPhotoGallery");
+  if (!el) return;
+  try {
+    const data = await apiFetch("/api/photo-standards");
+    const photos = (data.photos || []).slice(0, 12);
+    if (!photos.length) {
+      el.innerHTML = `
+        <h2>What GOOD looks like</h2>
+        <p>Photo standards live in Floor Tools → Photo Standards. Managers can upload station and glassware examples there.</p>
+        <button class="game-next" type="button" onclick="floorSection='photos'; activateAppTab('floor');">Open Photo Standards</button>
+      `;
+      return;
+    }
+    el.innerHTML = `
+      <h2>What GOOD looks like</h2>
+      <p>Match the floor to these station standards. Full gallery in Floor Tools.</p>
+      <div class="list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px;">
+        ${photos.map(p => `
+          <div class="card" style="padding:8px;">
+            <img src="${escapeForAttribute(p.photo_url)}" alt="${escapeForAttribute(p.title)}" style="width:100%;height:120px;object-fit:cover;border-radius:6px;">
+            <p class="name" style="font-size:14px;margin-top:6px;">${escapeHTML(p.title)}</p>
+            <p class="desc">${escapeHTML(p.area)}</p>
+          </div>
+        `).join("")}
+      </div>
+      <button class="game-next" style="margin-top:12px;" type="button" onclick="floorSection='photos'; activateAppTab('floor');">See all / add standards</button>
+    `;
+  } catch (err) {
+    el.innerHTML = `<h2>What GOOD looks like</h2><p class="desc">${escapeHTML(err.message)}</p>`;
+  }
 }
 
 function renderReviewStars(rating) {
@@ -9062,6 +9355,7 @@ function updateSearchPlaceholder() {
     inventory: "Search inventory items or sections",
     sops: "Search SOPs, procedures, or categories",
     checklists: "Search checklists",
+    floor: "Search floor tools",
     reviews: "Search reviews or platforms",
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",
@@ -9557,6 +9851,23 @@ function startGame(id) {
   flashFlipped = false;
   stopRocketLoop();
 
+  if (id === "guestscene" || id === "recovery") {
+    const pack = id === "guestscene"
+      ? (window.FloorContent?.GUEST_SCENARIOS || [])
+      : (window.FloorContent?.COMPLAINT_SCENARIOS || []);
+    gameSession = {
+      id,
+      queue: shuffle([...pack]),
+      index: 0,
+      right: 0,
+      complete: false,
+      recorded: false,
+      feedback: null
+    };
+    render();
+    return;
+  }
+
   if (id === "favbeer") {
     if (!currentUser) {
       activeGame = null;
@@ -9657,7 +9968,9 @@ function beginRound(id, filterFn) {
     index: 0,
     right: 0,
     complete: false,
-    recorded: false
+    recorded: false,
+    streak: 0,
+    maxStreak: 0
   };
   if (id === "rocket") {
     gameSession.lives = 3;
@@ -9672,6 +9985,16 @@ function advanceRound(correct) {
   if (!gameSession || gameSession.complete) return;
   gameSession.right += correct ? 1 : 0;
   gameSession.index++;
+
+  // Track answer streaks for Critical Mass (Launch Pad manages streak in resolveGalagaHit)
+  if (gameSession.id !== "rocket") {
+    if (correct) {
+      gameSession.streak = (gameSession.streak || 0) + 1;
+      gameSession.maxStreak = Math.max(gameSession.maxStreak || 0, gameSession.streak);
+    } else {
+      gameSession.streak = 0;
+    }
+  }
 
   const rocketDead = gameSession.id === "rocket" && (gameSession.lives || 0) <= 0;
   if (gameSession.index >= gameSession.queue.length || rocketDead) {
@@ -9690,8 +10013,17 @@ function advanceRound(correct) {
         category,
         gameSession.right,
         gameSession.id === "rocket" ? attempted : gameSession.queue.length,
-        rocketPoints
+        rocketPoints,
+        { maxStreak: gameSession.maxStreak || 0 }
       );
+      if ((gameSession.maxStreak || 0) >= 5) {
+        apiFetch("/api/achievements/check", {
+          method: "POST",
+          body: JSON.stringify({ event: "streak5", maxStreak: gameSession.maxStreak })
+        }).then(res => {
+          if ((res.titles || []).length) notifyClassifiedUnlock(res.titles);
+        }).catch(() => {});
+      }
     }
     return;
   }
@@ -10781,8 +11113,63 @@ function renderGames(content) {
     case "speed": renderSpeedRound(content); break;
     case "rocket": renderRocketRound(content); break;
     case "favbeer": renderFavoriteBeerGame(content); break;
+    case "guestscene":
+    case "recovery": renderScenarioGame(content); break;
     default: renderGameHub(content);
   }
+}
+
+function renderScenarioGame(content) {
+  if (!gameSession || (gameSession.id !== "guestscene" && gameSession.id !== "recovery")) {
+    content.innerHTML = wrapGame(`<div class="status"><strong>No scenario loaded.</strong></div>`);
+    return;
+  }
+  if (gameSession.complete) {
+    if (!gameSession.recorded && currentUser) {
+      gameSession.recorded = true;
+      recordProgress(gameSession.id === "recovery" ? "recovery" : "guestscene", "beer", gameSession.right, gameSession.queue.length);
+    }
+    content.innerHTML = wrapGame(renderRoundComplete(gameSession.id === "recovery" ? "Recovery training complete" : "Guest scenarios complete"));
+    return;
+  }
+  const item = gameSession.queue[gameSession.index];
+  const fb = gameSession.feedback;
+  content.innerHTML = wrapGame(`
+    <div class="game-card">
+      <p style="margin:0 0 8px;font-size:13px;color:var(--muted);">Scenario ${gameSession.index + 1} of ${gameSession.queue.length}${item.level ? ` · Level ${item.level}` : ""}</p>
+      <p class="game-question">${escapeHTML(item.prompt)}</p>
+      <div class="game-options">
+        ${item.options.map((opt, idx) => {
+          let cls = "game-option";
+          if (fb) {
+            cls += " disabled";
+            if (opt.good) cls += " correct";
+            else if (fb.idx === idx) cls += " wrong";
+          }
+          return `<button class="${cls}" ${fb ? "disabled" : `onclick="answerScenario(${idx})"`}>${escapeHTML(opt.text)}</button>`;
+        }).join("")}
+      </div>
+      ${fb ? `<p style="margin-top:14px;font-size:14px;">${escapeHTML(fb.tip)}</p>
+        <button class="game-next" style="margin-top:12px;" onclick="nextScenario()">Next</button>` : ""}
+    </div>
+  `);
+}
+
+function answerScenario(idx) {
+  if (!gameSession || gameSession.feedback) return;
+  const item = gameSession.queue[gameSession.index];
+  const opt = item.options[idx];
+  if (opt.good) gameSession.right += 1;
+  gameSession.feedback = { idx, tip: opt.tip || (opt.good ? "Solid." : "Not the MP preferred path.") };
+  render();
+}
+
+function nextScenario() {
+  if (!gameSession) return;
+  gameSession.feedback = null;
+  gameSession.index += 1;
+  if (gameSession.index >= gameSession.queue.length) gameSession.complete = true;
+  render();
 }
 
 async function answerFavoriteBeerGuess(guess) {
@@ -11688,7 +12075,7 @@ function localChatAnswer(message) {
   const q = message.toLowerCase();
 
   if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi! I can help with beers on the tap list, coffee bar training, SOPs, and training games on this site. What would you like to know?";
+    return "Hi — I'm Ask MP. Search beers, food, coffee, SOPs/recipes, events, and training in one place. What do you need?";
   }
 
   if (/tap|on tap|what'?s pouring|what is pouring/.test(q) && beers.length) {
@@ -11767,7 +12154,7 @@ function localChatAnswer(message) {
       "\n\nFor coffee: open the Coffee tab → Training Quiz or Flashcards.";
   }
 
-  return "I couldn't find that in the training materials. Try a specific beer name, tap number, 'gluten reduced', 'espresso dial-in', an SOP topic, or 'training games'. I only answer from content on this site.";
+  return "I couldn't find that in Ask MP. Try Michelada mix, gluten-reduced beers, coffee close, an SOP, Floor Tools, or a training game.";
 }
 
 let chatOpen = false;
@@ -11788,7 +12175,7 @@ function toggleChatPanel(force) {
     if (!chatHistory.length) {
       appendChatMessage(
         "assistant",
-        "Hi! I can answer questions about beers on the tap list, coffee bar training, SOPs, and training games on this site. What do you need?"
+        "Hi — I'm Ask MP. Search beers, food, coffee, SOPs/recipes, events, and training in one place. What do you need?"
       );
     }
     document.getElementById("chatInput").focus();
@@ -11847,6 +12234,18 @@ async function sendChatMessage(event, presetText) {
   input.value = "";
   appendChatMessage("user", message);
   chatHistory.push({ role: "user", content: message });
+  apiFetch("/api/search/log", {
+    method: "POST",
+    body: JSON.stringify({ query: message, resultType: "askmp" })
+  }).catch(() => {});
+  if (/michelada|mich\s*mix/i.test(message)) {
+    apiFetch("/api/achievements/check", {
+      method: "POST",
+      body: JSON.stringify({ event: "michelada", query: message })
+    }).then(res => {
+      if ((res.titles || []).length) notifyClassifiedUnlock(res.titles);
+    }).catch(() => {});
+  }
 
   const typingEl = appendChatMessage("assistant", "Thinking…", "typing");
   setChatBusy(true);

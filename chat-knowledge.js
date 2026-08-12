@@ -7,6 +7,8 @@ const SITE_OVERVIEW = buildSiteOverviewText();
 
 const TRAINING_GAMES = [
   { name: "Staff Favorites", desc: "Guess teammates’ favorite beers for bonus points; unlocks them on the leaderboard." },
+  { name: "Guest Scenarios", desc: "Recommend for Blue Moon fans, parties, allergies, intoxicated guests." },
+  { name: "Complaint Recovery", desc: "MP preferred service recovery with tougher guest levels." },
   { name: "Tap Match", desc: "Match tap numbers to beers — critical for floor service." },
   { name: "Flavor Quiz", desc: "Match flavor profiles to beer names." },
   { name: "Guest Match", desc: "Guest guidance scenarios from the sheet." },
@@ -278,7 +280,25 @@ function localAnswer(query, beers, sops = []) {
   const q = query.toLowerCase();
 
   if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi! I can help with beers on the tap list, coffee bar training, and War Games on this site. What would you like to know?";
+    return "Hi — I'm Ask MP. Search beers, food, coffee, SOPs/recipes, events, and training in one place. Try “What goes in a Michelada?” or “How do I close the coffee station?”";
+  }
+
+  if (/michelada|mich\.?\s*mix|mich mix/.test(q)) {
+    const mich = sops.find(doc => /michelada|mich/i.test(doc.title + doc.body));
+    if (mich) {
+      return `**${mich.title}**\n${mich.summary || ""}\n${stripHtml(mich.body).slice(0, 500)}\n\nOpen **SOPs → Recipes** for the full batch recipe.`;
+    }
+  }
+
+  if (/gluten|gf|celiac/.test(q)) {
+    const gfHits = beers.filter(b => /gluten|gf|reduced/i.test(formatBeer(b))).slice(0, 6);
+    if (gfHits.length) {
+      return (
+        "Gluten-related beers from the list (still confirm with kitchen/lead for allergies):\n\n" +
+        gfHits.map(b => `• ${formatBeer(b)}`).join("\n\n") +
+        "\n\nUse **Floor Tools → Allergy Check** for food filters — never guarantee without kitchen confirmation."
+      );
+    }
   }
 
   const beerHits = beers
@@ -349,9 +369,88 @@ function localAnswer(query, beers, sops = []) {
   }
 
   return (
-    "I couldn't find that in the training materials. Try asking about a specific beer, tap number, ABV, coffee dial-in, milk steaming, an SOP topic, or a training game. " +
-    "I only answer from content on this site."
+    "I couldn't find that in Ask MP's training materials. Try a beer name, Michelada mix, coffee close, gluten-reduced taps, an SOP title, or a training game. " +
+    "I only answer from content on this site — open **Floor Tools** for 86s, recommenders, and allergy check."
   );
+}
+
+function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
+  const terms = tokenize(query);
+  const q = String(query || "").toLowerCase();
+  const results = [];
+
+  for (const beer of beers) {
+    const text = formatBeer(beer);
+    const score = scoreText(text, terms) + (/gluten|gf/.test(q) && /gluten|gf|reduced/i.test(text) ? 5 : 0);
+    if (score > 0) {
+      results.push({
+        type: "beer",
+        title: col(beer, "Name") || "Beer",
+        summary: text,
+        score,
+        tab: "ontap"
+      });
+    }
+  }
+
+  for (const food of foods) {
+    const text = `${food.name} ${food.description || ""} ${food.notes || ""} ${food.section || ""}`;
+    const score = scoreText(text, terms);
+    if (score > 0) {
+      results.push({
+        type: "food",
+        title: food.name,
+        summary: food.description || food.notes || "",
+        score,
+        tab: "food"
+      });
+    }
+  }
+
+  for (const section of COFFEE_SECTIONS) {
+    const text = `${section.title} ${section.category} ${section.text}`;
+    const score = scoreText(text, terms);
+    if (score > 0) {
+      results.push({
+        type: "coffee",
+        title: section.title,
+        summary: section.text.slice(0, 220),
+        score,
+        tab: "coffee"
+      });
+    }
+  }
+
+  for (const doc of sops) {
+    const text = `${doc.category} ${doc.title} ${doc.summary} ${stripHtml(doc.body)}`;
+    const score = scoreText(text, terms);
+    if (score > 0) {
+      results.push({
+        type: "sop",
+        title: doc.title,
+        summary: doc.summary || stripHtml(doc.body).slice(0, 220),
+        score,
+        tab: "sops",
+        category: doc.category
+      });
+    }
+  }
+
+  for (const game of TRAINING_GAMES) {
+    const score = scoreText(`${game.name} ${game.desc}`, terms);
+    if (score > 0) {
+      results.push({
+        type: "training",
+        title: game.name,
+        summary: game.desc,
+        score,
+        tab: "game"
+      });
+    }
+  }
+
+  results.sort((a, b) => b.score - a.score);
+  return results.slice(0, 20);
 }
 
 /** Local tap/menu patches until the spreadsheet is updated. */
@@ -427,6 +526,7 @@ module.exports = {
   COFFEE_SECTIONS,
   buildContext,
   localAnswer,
+  universalSearch,
   getBeers,
   formatBeer
 };

@@ -110,7 +110,24 @@ function invalidate() {
   cache.clear();
 }
 
-const getTaps = () => cached("taps", TAPS_TTL_MS, () => request("/api/taps"));
+/**
+ * The tap fixtures, with the embedded product's ABV made display-ready.
+ *
+ * Nucleus serialises ABV at the column's full scale (`6.2000`), which is correct
+ * for a number and wrong for a menu. `/api/beers` already trimmed it; doing it
+ * here too means the Taps screen and the beer list cannot disagree about the
+ * same beer, which is the whole reason the formatter is shared rather than
+ * reimplemented per view.
+ */
+const getTaps = () =>
+  cached("taps", TAPS_TTL_MS, async () => {
+    const taps = await request("/api/taps");
+    return taps.map((tap) =>
+      tap.current_product
+        ? { ...tap, current_product: { ...tap.current_product, abv: formatAbv(tap.current_product.abv) } }
+        : tap
+    );
+  });
 
 //: Nucleus is a shared catalog: it holds Four Corners' products alongside
 //: MPBC's, keyed by the brewery's prefix. This is a Manhattan Project app, so
@@ -226,8 +243,14 @@ function formatAbv(value) {
  * omits `guest_guidance` and `key_ingredients` — the two fields staff lean on
  * hardest. Hence the join in `getBeerRows`.
  */
-function toBeerRow(product, tap) {
+function toBeerRow(product, tap, bulkStamps = new Set()) {
   const tapNumber = tap ? String(tap.tap_number) : "";
+  // A tap counts as new only if its timestamp records an actual keg change.
+  // Rows written in one transaction share `now()` to the microsecond, so the
+  // seed that first wrote the wall down stamped all 21 taps identically — which
+  // would otherwise announce every beer in the taproom as newly tapped for a
+  // fortnight. A timestamp several taps share is an import, not a pour.
+  const tappedAt = tap && !bulkStamps.has(tap.tapped_at) ? tap.tapped_at : null;
   return {
     Name: text(product.name),
     Number: text(product.mp_number),
@@ -246,7 +269,7 @@ function toBeerRow(product, tap) {
     // Read directly by the beer card and the chat formatter, which previously
     // found nothing because the sheet had no such column.
     Tap: tapNumber,
-    "New Tap": isRecent(tap && tap.tapped_at, NEW_TAP_DAYS) ? "Yes" : "",
+    "New Tap": isRecent(tappedAt, NEW_TAP_DAYS) ? "Yes" : "",
     //: The stable identifier. Everything this app stores about a beer keys on
     //: this, never on the name — names get corrected.
     nucleus_product_id: text(product.id),
@@ -271,7 +294,19 @@ async function getBeerRows() {
     if (tap.current_product_id) tapByProduct.set(tap.current_product_id, tap);
   }
 
-  const rows = products.map((product) => toBeerRow(product, tapByProduct.get(product.id) || null));
+  // Timestamps that several taps share were written in one transaction — a
+  // bulk import rather than that many kegs changing in the same microsecond.
+  const stampCounts = new Map();
+  for (const tap of taps) {
+    if (tap.tapped_at) stampCounts.set(tap.tapped_at, (stampCounts.get(tap.tapped_at) || 0) + 1);
+  }
+  const bulkStamps = new Set(
+    [...stampCounts.entries()].filter(([, count]) => count >= 3).map(([stamp]) => stamp)
+  );
+
+  const rows = products.map((product) =>
+    toBeerRow(product, tapByProduct.get(product.id) || null, bulkStamps)
+  );
   rows.sort((a, b) => {
     const aTap = Number(a.Tap || 0);
     const bTap = Number(b.Tap || 0);

@@ -115,14 +115,19 @@ function col(item, field) {
 
 function formatBeer(beer) {
   const tap = col(beer, "Tap") || col(beer, "tap") || col(beer, "Tap Number");
+  const description =
+    col(beer, "Description / ingredients") || col(beer, "Marketing Description");
+  const staffNotes = col(beer, "Staff Notes") || col(beer, "History Note");
   const parts = [
     col(beer, "Name"),
     tap ? `Tap ${tap}` : null,
     col(beer, "Style") || col(beer, "style"),
     col(beer, "ABV") || col(beer, "abv") ? `ABV ${col(beer, "ABV") || col(beer, "abv")}` : null,
+    col(beer, "IBU") ? `IBU ${col(beer, "IBU")}` : null,
     col(beer, "Flavor Profile") ? `Flavor: ${col(beer, "Flavor Profile")}` : null,
-    col(beer, "Description / ingredients") ? `Description: ${col(beer, "Description / ingredients")}` : null,
+    description ? `Description: ${description}` : null,
     col(beer, "Guest Guidance") ? `Guest guidance: ${col(beer, "Guest Guidance")}` : null,
+    staffNotes ? `Staff notes: ${staffNotes}` : null,
     isYes(col(beer, "Gluten-Reduced")) ? "Gluten-reduced" : null,
     isYes(col(beer, "New Tap")) ? "New tap" : null
   ].filter(Boolean);

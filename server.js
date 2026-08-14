@@ -8,7 +8,16 @@ const jwt = require("jsonwebtoken");
 const Database = require("better-sqlite3");
 const { DB_PATH } = require("./db-path");
 const { startBackupSchedule } = require("./backup");
-const { buildContext, localAnswer, getBeers, universalSearch } = require("./chat-knowledge");
+const {
+  buildContext,
+  localAnswer,
+  getBeers,
+  universalSearch
+} = require("./chat-knowledge");
+const {
+  getBeerRowsFromSheet,
+  getPickerOptionsFromSheet
+} = require("./beer-sheet-fallback");
 const nucleus = require("./nucleus");
 const { NucleusError } = nucleus;
 const { registerFloorOpsApi } = require("./floor-ops-api");
@@ -3359,13 +3368,12 @@ function nucleusFailed(res, error, what) {
 }
 
 app.get("/api/beers", authRequired, async (req, res) => {
-  if (!nucleus.configured()) {
-    return res.status(503).json({
-      error: "Beer data is not configured. Set NUCLEUS_BASE_URL and NUCLEUS_API_KEY."
-    });
-  }
   try {
-    res.json({ beers: await nucleus.getBeerRows() });
+    if (nucleus.configured()) {
+      return res.json({ beers: await nucleus.getBeerRows(), source: "nucleus" });
+    }
+    const beers = await getBeerRowsFromSheet();
+    return res.json({ beers, source: "spreadsheet" });
   } catch (error) {
     return nucleusFailed(res, error, "the beer list");
   }
@@ -3374,9 +3382,12 @@ app.get("/api/beers", authRequired, async (req, res) => {
 // Backs every beer picker. The whole catalog, inactive included — a favourite
 // beer is very often a discontinued one.
 app.get("/api/beers/options", authRequired, async (req, res) => {
-  if (!nucleus.configured()) return res.json({ options: [] });
   try {
-    res.json({ options: await nucleus.getPickerOptions() });
+    if (nucleus.configured()) {
+      return res.json({ options: await nucleus.getPickerOptions(), source: "nucleus" });
+    }
+    const beers = await getBeerRowsFromSheet();
+    return res.json({ options: getPickerOptionsFromSheet(beers), source: "spreadsheet" });
   } catch (error) {
     return nucleusFailed(res, error, "the beer catalog");
   }

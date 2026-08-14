@@ -415,9 +415,15 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
  * state now has one home, and correcting it is an edit in Nucleus (or on the
  * Taps screen here), not a deploy.
  *
- * Caching lives in nucleus.js, so there is none here.
+ * Caching lives in nucleus.js when Nucleus is configured. Without a Nucleus
+ * key, we fall back to the published spreadsheet so local/dev still has beers.
  */
-const getBeers = () => nucleus.getBeerRows();
+const sheetFallback = require("./beer-sheet-fallback");
+
+const getBeers = async () => {
+  if (nucleus.configured()) return nucleus.getBeerRows();
+  return sheetFallback.getBeerRowsFromSheet();
+};
 
 module.exports = {
   SITE_OVERVIEW,

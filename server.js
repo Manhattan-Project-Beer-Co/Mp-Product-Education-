@@ -76,6 +76,12 @@ const AZURE_ADMIN_EMAILS = new Set(
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean)
 );
+// Staff sign-in is limited to this email domain (Microsoft path). Local
+// DEV_LOGIN seed accounts are exempt so developers can still use @mp.test users.
+const ALLOWED_EMAIL_DOMAIN = String(process.env.ALLOWED_EMAIL_DOMAIN || "manhattanproject.beer")
+  .trim()
+  .toLowerCase()
+  .replace(/^@/, "");
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
 // Local development sign-in, so the portal can be run without registering an
 // Entra app. Deliberately NOT inferred from "Microsoft is unconfigured" — that
@@ -624,6 +630,13 @@ app.use("/api", (req, res, next) => {
   const user = loadSessionUser(req);
   if (!user) return res.status(401).json({ error: "Login required." });
 
+  if (!devLoginEnabled && !isAllowedStaffEmail(user.email)) {
+    endSession(res);
+    return res.status(403).json({
+      error: `Only @${ALLOWED_EMAIL_DOMAIN} accounts can use this app.`
+    });
+  }
+
   req.user = user;
   next();
 });
@@ -682,6 +695,14 @@ function authRequired(req, res, next) {
   if (!user) {
     endSession(res);
     return res.status(401).json({ error: "Login required." });
+  }
+  // Production / Microsoft sessions must be company email. DEV_LOGIN seed
+  // accounts (@mp.test etc.) stay usable only while local dev sign-in is on.
+  if (!devLoginEnabled && !isAllowedStaffEmail(user.email)) {
+    endSession(res);
+    return res.status(403).json({
+      error: `Only @${ALLOWED_EMAIL_DOMAIN} accounts can use this app.`
+    });
   }
   req.user = user;
   next();
@@ -774,6 +795,12 @@ function inventoryManagerRequired(req, res, next) {
 
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
+}
+
+function isAllowedStaffEmail(email) {
+  if (!ALLOWED_EMAIL_DOMAIN) return true;
+  const normalized = normalizeEmail(email);
+  return normalized.endsWith(`@${ALLOWED_EMAIL_DOMAIN}`);
 }
 
 function getApprovedEmail(email) {
@@ -1603,6 +1630,13 @@ app.get("/api/auth/microsoft/callback", async (req, res) => {
       return fail("Your Microsoft account did not return an email address.");
     }
 
+    if (!isAllowedStaffEmail(email)) {
+      return fail(
+        `Only @${ALLOWED_EMAIL_DOMAIN} Microsoft accounts can sign in. ` +
+          `Signed in as ${email}.`
+      );
+    }
+
     const user = upsertMicrosoftUser({ oid, email, name });
     startSession(res, user);
     return res.redirect("/");
@@ -2123,6 +2157,12 @@ app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =
 
   if (!email || !email.includes("@")) {
     return res.status(400).json({ error: "A valid email address is required." });
+  }
+
+  if (!isAllowedStaffEmail(email)) {
+    return res.status(400).json({
+      error: `Only @${ALLOWED_EMAIL_DOMAIN} emails can be pre-assigned a role.`
+    });
   }
 
   try {
@@ -2975,6 +3015,102 @@ app.patch("/api/admin/users/:id", authRequired, managerOrAdminRequired, (req, re
 
   const updated = getUserRow(id);
   res.json({ ok: true, user: publicUser(updated) });
+});
+
+function deleteUserById(userId) {
+  const id = Number(userId);
+  const existing = getUserRow(id);
+  if (!existing) return { ok: false, status: 404, error: "User not found." };
+
+  const email = normalizeEmail(existing.email);
+  if (AZURE_ADMIN_EMAILS.has(email)) {
+    return {
+      ok: false,
+      status: 400,
+      error: "Bootstrap admins from server config cannot be deleted."
+    };
+  }
+
+  const userTables = [
+    "progress_sessions",
+    "daily_briefings",
+    "announcement_views",
+    "merch_votes",
+    "shift_surveys",
+    "beer_checkins",
+    "site_feedback",
+    "checklist_completions",
+    "shift_lead_duty",
+    "user_streaks"
+  ];
+
+  const run = db.transaction(() => {
+    for (const table of userTables) {
+      try {
+        db.prepare(`DELETE FROM ${table} WHERE user_id = ?`).run(id);
+      } catch {
+        // Older DBs may lack some tables.
+      }
+    }
+
+    try {
+      db.prepare(
+        "DELETE FROM favorite_beer_unlocks WHERE guesser_id = ? OR target_user_id = ?"
+      ).run(id, id);
+    } catch {
+      // optional table
+    }
+
+    try {
+      db.prepare("UPDATE merch_ideas SET created_by = NULL WHERE created_by = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE approved_emails SET added_by = NULL WHERE added_by = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE shift_lead_duty SET assigned_by = NULL WHERE assigned_by = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE seven_shifts_users SET user_id = NULL WHERE user_id = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE sop_documents SET updated_by = NULL WHERE updated_by = ?").run(id);
+    } catch {
+      // optional
+    }
+
+    db.prepare("DELETE FROM approved_emails WHERE email = ?").run(email);
+    db.prepare("DELETE FROM users WHERE id = ?").run(id);
+  });
+
+  run();
+  return { ok: true, email: existing.email, id };
+}
+
+app.delete("/api/admin/users/:id", authRequired, adminRequired, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid user id." });
+  }
+
+  if (id === req.user.id) {
+    return res.status(400).json({ error: "You cannot delete your own account." });
+  }
+
+  const result = deleteUserById(id);
+  if (!result.ok) {
+    return res.status(result.status).json({ error: result.error });
+  }
+
+  res.json({ ok: true, id: result.id, email: result.email });
 });
 
 app.get("/api/chat/status", (req, res) => {

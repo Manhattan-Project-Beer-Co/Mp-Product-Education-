@@ -251,6 +251,19 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
   // would otherwise announce every beer in the taproom as newly tapped for a
   // fortnight. A timestamp several taps share is an import, not a pour.
   const tappedAt = tap && !bulkStamps.has(tap.tapped_at) ? tap.tapped_at : null;
+
+  const ingredients = text(product.key_ingredients);
+  const marketing = text(product.marketing_description);
+  const sensory = text(product.sensory_profile);
+  const history = text(product.history_note);
+  // MenuRef on the tap sometimes carries a resolved IBU when the full product
+  // does not — prefer the pouring projection, then the catalog product.
+  const ibuRaw =
+    tap?.current_product?.ibu ??
+    product.ibu ??
+    product.ibu_target ??
+    "";
+
   return {
     Name: text(product.name),
     Number: text(product.mp_number),
@@ -258,10 +271,15 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
     // Left lowercase to match the sheet's header. getABVText/getABVNumber accept
     // either case; this keeps the one the app already reads first.
     abv: formatAbv(product.abv),
-    "Description / ingredients": text(product.key_ingredients),
+    // Prefer ingredients; fall back to marketing copy so cards are not blank
+    // when Nucleus has a description but no key_ingredients yet.
+    "Description / ingredients": ingredients || marketing,
+    "Marketing Description": marketing,
     "Flavor Profile": text(product.tasting_notes),
     "Guest Guidance": text(product.guest_guidance),
-    "Staff Notes": text(product.sensory_profile),
+    "Staff Notes": sensory || history,
+    "History Note": history,
+    IBU: formatAbv(ibuRaw),
     "Gluten-Reduced": product.is_gluten_reduced ? "Yes" : "No",
     // `isOnTap()` tests that this starts with "yes" and `getTapNumber()` pulls the
     // first digits out of it, so the sheet's exact "Yes- Tap 4" form is preserved.

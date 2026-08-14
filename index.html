@@ -5206,7 +5206,7 @@ function getFlavorProfile(item) {
 }
 
 function getDescription(item) {
-  return col(item, "Description / ingredients");
+  return col(item, "Description / ingredients") || col(item, "Marketing Description");
 }
 
 function getStyle(item) {
@@ -5215,6 +5215,10 @@ function getStyle(item) {
 
 function getGuestGuidance(item) {
   return col(item, "Guest Guidance");
+}
+
+function getIBU(item) {
+  return col(item, "IBU");
 }
 
 function getABVText(item) {
@@ -5237,7 +5241,10 @@ function isFoodSpecial(item) {
 }
 
 function getStaffNotes(item) {
-  return col(item, "Staff Notes") || col(item, "Training Notes");
+  const notes = col(item, "Staff Notes") || col(item, "Training Notes");
+  const history = col(item, "History Note");
+  if (notes && history && notes !== history) return `${notes}\n\n${history}`;
+  return notes || history;
 }
 
 function isOnTap(item) {
@@ -5265,7 +5272,9 @@ function getSearchText(item) {
     getStyle(item),
     getFlavorProfile(item),
     getDescription(item),
-    getGuestGuidance(item)
+    getGuestGuidance(item),
+    getStaffNotes(item),
+    getIBU(item) ? `IBU ${getIBU(item)}` : ""
   ].join(" ").toLowerCase();
 }
 
@@ -5852,13 +5861,14 @@ function buildAnnouncementTrainingHtml(item) {
     const guidance = getGuestGuidance(beer);
     const tapNumber = getTapNumber(beer);
     const abv = getABVText(beer);
+    const ibu = getIBU(beer);
     const style = getStyle(beer);
     const gf = isYes(beer["Gluten-Reduced"]);
 
     return `
       <p class="coffee-section-num">${escapeHTML(item.label)}</p>
       <h2 class="modal-title">${escapeHTML(item.title)}</h2>
-      <p class="modal-style">${[style, abv ? abv + " ABV" : "", tapNumber ? "Tap " + tapNumber : ""].filter(Boolean).map(v => escapeHTML(v)).join(" · ")}</p>
+      <p class="modal-style">${[style, abv ? abv + " ABV" : "", ibu ? "IBU " + ibu : "", tapNumber ? "Tap " + tapNumber : ""].filter(Boolean).map(v => escapeHTML(v)).join(" · ")}</p>
       <div class="tags">${gf ? `<span class="tag gf">Gluten-reduced</span>` : ""}</div>
       ${flavor ? `<div class="detail-section"><p class="detail-label">Flavor profile</p><p class="detail-text">${escapeHTML(flavor)}</p></div>` : ""}
       ${description ? `<div class="detail-section"><p class="detail-label">Description</p><p class="detail-text">${escapeHTML(description)}</p></div>` : ""}
@@ -11695,6 +11705,7 @@ function openBeerByName(name) {
   const guidance = getGuestGuidance(item);
   const tapNumber = getTapNumber(item);
   const abv = getABVText(item);
+  const ibu = getIBU(item);
   const gf = isYes(item["Gluten-Reduced"]);
   const isNew = isYes(item["New Tap"]);
   const style = getStyle(item);
@@ -11706,6 +11717,7 @@ function openBeerByName(name) {
       ${[
         style,
         abv ? abv + " ABV" : "",
+        ibu ? "IBU " + ibu : "",
         tapNumber ? "Tap " + tapNumber : ""
       ].filter(Boolean).map(v => escapeHTML(v)).join(" · ")}
     </p>

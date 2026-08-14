@@ -315,6 +315,9 @@ Work on `feat/…` or `fix/…` branches and merge to `main` by PR. See
 [CONTRIBUTING.md](CONTRIBUTING.md) for the full team workflow (branch names,
 checks, squash merge, what to do when CI is red).
 
+Owner / ops write-ups (meeting briefing, credentials list, Railway DB setup,
+plain-English app review) live in **[docs/](docs/README.md)**.
+
 ---
 
 ## Deployment

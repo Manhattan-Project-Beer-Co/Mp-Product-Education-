@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Block pushes to main / master. Enable with:
+#   git config core.hooksPath .githooks
+set -euo pipefail
+
+zero="0000000000000000000000000000000000000000"
+blocked=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ "$local_sha" == "$zero" ]] && continue
+  target="${remote_ref##*/}"
+  if [[ "$target" == "main" || "$target" == "master" ]]; then
+    echo "Blocked: do not push to $target. Open a PR from a feat/fix/chore branch." >&2
+    blocked=1
+  fi
+done
+
+if [[ "$blocked" -ne 0 ]]; then
+  exit 1
+fi

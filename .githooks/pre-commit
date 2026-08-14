@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Block commits on main / master. Enable with:
+#   git config core.hooksPath .githooks
+set -euo pipefail
+
+branch="$(git branch --show-current 2>/dev/null || true)"
+if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+  cat >&2 <<'EOF'
+Blocked: do not commit on main.
+
+  git checkout -b feat/short-description
+  # then commit on that branch
+
+See CONTRIBUTING.md.
+EOF
+  exit 1
+fi

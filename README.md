@@ -311,7 +311,9 @@ locally while passing vacuously in CI, where no `.env` exists.
 
 ### Conventions
 
-Work on `feat/…` or `fix/…` branches and merge to `main` by PR.
+Work on `feat/…` or `fix/…` branches and merge to `main` by PR. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the full team workflow (branch names,
+checks, squash merge, what to do when CI is red).
 
 ---
 

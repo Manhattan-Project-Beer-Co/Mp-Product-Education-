@@ -145,6 +145,35 @@ async function checkRefusesDevLoginInProduction() {
   }
 }
 
+async function checkRefusesRailwayWithoutDbPath() {
+  const { child, getOutput } = startServer(
+    baseEnv({
+      JWT_SECRET: "ci-smoke-test-secret",
+      RAILWAY_ENVIRONMENT: "production"
+      // deliberately omit DB_PATH
+    })
+  );
+
+  const exitCode = await new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      resolve(null);
+    }, 20_000);
+    child.on("exit", (code) => {
+      clearTimeout(timer);
+      resolve(code);
+    });
+  });
+
+  if (exitCode === 1 && /DB_PATH is not/.test(getOutput())) {
+    pass("refuses to start on Railway without DB_PATH");
+  } else {
+    fail(
+      `expected exit 1 with a DB_PATH refusal on Railway, got exit ${exitCode}.\n${getOutput().slice(0, 800)}`
+    );
+  }
+}
+
 async function checkBootsAndServes() {
   const dbPath = process.env.DB_PATH || freshDbPath("boot");
   const { child, getOutput } = startServer(
@@ -339,6 +368,7 @@ async function checkBackupWasTaken(dbPath) {
 (async () => {
   await checkRefusesDefaultSecretInProduction();
   await checkRefusesDevLoginInProduction();
+  await checkRefusesRailwayWithoutDbPath();
   await checkBootsAndServes();
 
   if (failures) {

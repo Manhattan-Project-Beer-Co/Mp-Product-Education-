@@ -5,9 +5,9 @@ list, food, coffee, merch, SOPs, reviews, and training games. A single Express
 server (`server.js`) serving one large static page (`index.html`) backed by
 SQLite.
 
-Sign-in is Microsoft Entra ID only; there is no password login. Anyone in the
-tenant can sign in and is created as an Employee on first login, and admins
-change roles on the Team page.
+Sign-in is Microsoft Entra ID only; there is no password login. Only
+`@manhattanproject.beer` accounts can sign in (first login creates a bartender
+account). Admins change roles on the Team page.
 
 ---
 

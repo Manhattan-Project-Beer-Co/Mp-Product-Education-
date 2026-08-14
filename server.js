@@ -76,6 +76,12 @@ const AZURE_ADMIN_EMAILS = new Set(
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean)
 );
+// Staff sign-in is limited to this email domain (Microsoft path). Local
+// DEV_LOGIN seed accounts are exempt so developers can still use @mp.test users.
+const ALLOWED_EMAIL_DOMAIN = String(process.env.ALLOWED_EMAIL_DOMAIN || "manhattanproject.beer")
+  .trim()
+  .toLowerCase()
+  .replace(/^@/, "");
 const microsoftAuthEnabled = Boolean(AZURE_CLIENT_ID && AZURE_CLIENT_SECRET);
 // Local development sign-in, so the portal can be run without registering an
 // Entra app. Deliberately NOT inferred from "Microsoft is unconfigured" — that
@@ -613,6 +619,13 @@ app.use("/api", (req, res, next) => {
   const user = loadSessionUser(req);
   if (!user) return res.status(401).json({ error: "Login required." });
 
+  if (!devLoginEnabled && !isAllowedStaffEmail(user.email)) {
+    endSession(res);
+    return res.status(403).json({
+      error: `Only @${ALLOWED_EMAIL_DOMAIN} accounts can use this app.`
+    });
+  }
+
   req.user = user;
   next();
 });
@@ -671,6 +684,14 @@ function authRequired(req, res, next) {
   if (!user) {
     endSession(res);
     return res.status(401).json({ error: "Login required." });
+  }
+  // Production / Microsoft sessions must be company email. DEV_LOGIN seed
+  // accounts (@mp.test etc.) stay usable only while local dev sign-in is on.
+  if (!devLoginEnabled && !isAllowedStaffEmail(user.email)) {
+    endSession(res);
+    return res.status(403).json({
+      error: `Only @${ALLOWED_EMAIL_DOMAIN} accounts can use this app.`
+    });
   }
   req.user = user;
   next();
@@ -763,6 +784,12 @@ function inventoryManagerRequired(req, res, next) {
 
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
+}
+
+function isAllowedStaffEmail(email) {
+  if (!ALLOWED_EMAIL_DOMAIN) return true;
+  const normalized = normalizeEmail(email);
+  return normalized.endsWith(`@${ALLOWED_EMAIL_DOMAIN}`);
 }
 
 function getApprovedEmail(email) {
@@ -1592,6 +1619,13 @@ app.get("/api/auth/microsoft/callback", async (req, res) => {
       return fail("Your Microsoft account did not return an email address.");
     }
 
+    if (!isAllowedStaffEmail(email)) {
+      return fail(
+        `Only @${ALLOWED_EMAIL_DOMAIN} Microsoft accounts can sign in. ` +
+          `Signed in as ${email}.`
+      );
+    }
+
     const user = upsertMicrosoftUser({ oid, email, name });
     startSession(res, user);
     return res.redirect("/");
@@ -2112,6 +2146,12 @@ app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =
 
   if (!email || !email.includes("@")) {
     return res.status(400).json({ error: "A valid email address is required." });
+  }
+
+  if (!isAllowedStaffEmail(email)) {
+    return res.status(400).json({
+      error: `Only @${ALLOWED_EMAIL_DOMAIN} emails can be pre-assigned a role.`
+    });
   }
 
   try {

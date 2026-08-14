@@ -7797,7 +7797,7 @@ function renderApprovedEmailsPanel(emails) {
     </tr>
   `).join("") : `
     <tr>
-      <td colspan="4" style="color:#888;">No role assignments yet. Everyone signs in as an Employee by default; add a work email above to give someone a different role.</td>
+      <td colspan="4" style="color:#888;">No role assignments yet. Everyone with a @manhattanproject.beer account signs in as bartender by default; add a work email above to give someone a different role.</td>
     </tr>
   `;
 
@@ -7805,14 +7805,14 @@ function renderApprovedEmailsPanel(emails) {
     <div class="approve-panel">
       <div class="approve-card">
         <h3>Role assignments</h3>
-        <p>Anyone with a Manhattan Project work account can sign in — an account is created automatically on first login, as an Employee. Add an email here to give someone a different role, before or after their first sign-in.</p>
+        <p>Only <strong>@manhattanproject.beer</strong> Microsoft accounts can sign in. First login creates a bartender account. Add an email here to pre-assign a different role.</p>
         <div id="approveError"></div>
         <form class="approve-form" onsubmit="addApprovedEmail(event)">
           <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
           <select id="approveRoleInput">
             ${buildRoleOptionsHtml("bartender")}
           </select>
-          <button type="submit">Approve email</button>
+          <button type="submit">Save role</button>
         </form>
         <table class="progress-table" style="width:100%;max-width:none;margin:0;">
           <tr><th>Email</th><th>Access type</th><th>Status</th><th></th></tr>
@@ -7871,7 +7871,7 @@ async function updateApprovedEmailRole(id) {
 async function removeApprovedEmail(id) {
   const row = approvedEmailsData?.emails?.find((item) => item.id === id);
   const label = row?.email || "this user";
-  if (!confirm(`Remove access for ${label}? They will not be able to sign in with Microsoft until re-approved.`)) {
+  if (!confirm(`Clear the pre-assigned role for ${label}? Their account and sign-in are unchanged.`)) {
     return;
   }
 

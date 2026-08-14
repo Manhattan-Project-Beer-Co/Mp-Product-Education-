@@ -7568,7 +7568,12 @@ async function renderTeamDashboard(content) {
           <h2>${escapeHTML(data.user.name)}</h2>
           <p>${escapeHTML(data.user.email)} · ${escapeHTML(roleLabel(data.user.role))}</p>
         </div>
-        <div style="padding:0 20px 12px;max-width:960px;margin:0 auto;"><button class="game-back" onclick="teamDetailId=null; render();">← Back to team</button></div>
+        <div style="padding:0 20px 12px;max-width:960px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button class="game-back" onclick="teamDetailId=null; render();">← Back to team</button>
+          ${isAdmin() && currentUser?.id !== data.user.id ? `
+            <button type="button" class="approve-remove" onclick="event.stopPropagation(); deleteTeamUser(${data.user.id}, ${JSON.stringify(data.user.name)}, ${JSON.stringify(data.user.email)})">Delete user</button>
+          ` : ""}
+        </div>
         <div class="metrics-grid">
           <div class="metric-card"><p class="metric-label">Sessions</p><p class="metric-value">${s.sessions_completed}</p></div>
           <div class="metric-card"><p class="metric-label">Accuracy</p><p class="metric-value">${s.accuracy}%</p><p class="metric-sub">${s.total_correct} / ${s.total_questions}</p></div>
@@ -7891,6 +7896,23 @@ async function removeApprovedEmail(id) {
     } else {
       alert(err.message);
     }
+  }
+}
+
+async function deleteTeamUser(id, name, email) {
+  const label = name || email || `user #${id}`;
+  if (!confirm(`Delete ${label}? Their training history and related records will be removed. This cannot be undone.`)) {
+    return;
+  }
+
+  try {
+    await apiFetch(`/api/admin/users/${id}`, { method: "DELETE" });
+    teamDetailId = null;
+    teamData = null;
+    approvedEmailsData = null;
+    render();
+  } catch (err) {
+    alert(err.message || "Could not delete user.");
   }
 }
 

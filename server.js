@@ -3006,6 +3006,102 @@ app.patch("/api/admin/users/:id", authRequired, managerOrAdminRequired, (req, re
   res.json({ ok: true, user: publicUser(updated) });
 });
 
+function deleteUserById(userId) {
+  const id = Number(userId);
+  const existing = getUserRow(id);
+  if (!existing) return { ok: false, status: 404, error: "User not found." };
+
+  const email = normalizeEmail(existing.email);
+  if (AZURE_ADMIN_EMAILS.has(email)) {
+    return {
+      ok: false,
+      status: 400,
+      error: "Bootstrap admins from server config cannot be deleted."
+    };
+  }
+
+  const userTables = [
+    "progress_sessions",
+    "daily_briefings",
+    "announcement_views",
+    "merch_votes",
+    "shift_surveys",
+    "beer_checkins",
+    "site_feedback",
+    "checklist_completions",
+    "shift_lead_duty",
+    "user_streaks"
+  ];
+
+  const run = db.transaction(() => {
+    for (const table of userTables) {
+      try {
+        db.prepare(`DELETE FROM ${table} WHERE user_id = ?`).run(id);
+      } catch {
+        // Older DBs may lack some tables.
+      }
+    }
+
+    try {
+      db.prepare(
+        "DELETE FROM favorite_beer_unlocks WHERE guesser_id = ? OR target_user_id = ?"
+      ).run(id, id);
+    } catch {
+      // optional table
+    }
+
+    try {
+      db.prepare("UPDATE merch_ideas SET created_by = NULL WHERE created_by = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE approved_emails SET added_by = NULL WHERE added_by = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE shift_lead_duty SET assigned_by = NULL WHERE assigned_by = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE seven_shifts_users SET user_id = NULL WHERE user_id = ?").run(id);
+    } catch {
+      // optional
+    }
+    try {
+      db.prepare("UPDATE sop_documents SET updated_by = NULL WHERE updated_by = ?").run(id);
+    } catch {
+      // optional
+    }
+
+    db.prepare("DELETE FROM approved_emails WHERE email = ?").run(email);
+    db.prepare("DELETE FROM users WHERE id = ?").run(id);
+  });
+
+  run();
+  return { ok: true, email: existing.email, id };
+}
+
+app.delete("/api/admin/users/:id", authRequired, adminRequired, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid user id." });
+  }
+
+  if (id === req.user.id) {
+    return res.status(400).json({ error: "You cannot delete your own account." });
+  }
+
+  const result = deleteUserById(id);
+  if (!result.ok) {
+    return res.status(result.status).json({ error: result.error });
+  }
+
+  res.json({ ok: true, id: result.id, email: result.email });
+});
+
 app.get("/api/chat/status", (req, res) => {
   res.json({
     enabled: Boolean(OPENAI_API_KEY),

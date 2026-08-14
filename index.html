@@ -87,6 +87,13 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: left;
   }
 
   .brand-mark {
@@ -3765,7 +3772,22 @@
     z-index: 40;
     padding: 20px 14px 16px;
   }
-  .sidebar-brand { display: flex; align-items: center; gap: 12px; padding: 6px 10px 22px; }
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 10px 22px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+  .sidebar-brand:hover .sidebar-brand-mark {
+    border-color: #e0b93a;
+  }
   .sidebar-brand-mark {
     width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--gold);
     display: grid; place-items: center;
@@ -4029,7 +4051,7 @@
 </div>
 <div class="app-shell">
   <aside class="app-sidebar" id="appSidebar">
-    <div class="sidebar-brand">
+    <button type="button" class="sidebar-brand" onclick="goHome()" aria-label="Go to On Tap home">
       <div class="sidebar-brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
           <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
           <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
@@ -4042,7 +4064,7 @@
         <strong>MANHATTAN PROJECT</strong>
         <span>Staff Training</span>
       </div>
-    </div>
+    </button>
     <nav class="sidebar-nav tabs" id="mainTabs">
       <button type="button" class="tab active" data-type="ontap">On Tap</button>
       <button type="button" class="tab" data-type="beer">All Beers</button>
@@ -4076,7 +4098,7 @@
   <div class="app-stage">
 <header class="site-header">
   <div class="header-inner">
-    <div class="brand">
+    <button type="button" class="brand" onclick="goHome()" aria-label="Go to On Tap home">
       <div class="brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
           <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
           <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
@@ -4089,7 +4111,7 @@
         <h1>MANHATTAN PROJECT</h1>
         <p>Staff Training</p>
       </div>
-    </div>
+    </button>
     <div class="auth-bar" id="authBarMobile"></div>
   </div>
 </header>
@@ -12149,6 +12171,14 @@ function syncMobileTabs() {
     dst.style.display = src.style.display;
     dst.textContent = src.textContent;
   });
+}
+
+function goHome() {
+  // Atom / brand mark — always return to the default floor landing tab.
+  if (typeof closeModal === "function") {
+    try { closeModal(); } catch (_) {}
+  }
+  activateAppTab("ontap");
 }
 
 function activateAppTab(type) {

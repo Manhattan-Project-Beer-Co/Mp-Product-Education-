@@ -5240,11 +5240,13 @@ function isFoodSpecial(item) {
   );
 }
 
+// `Staff Notes` used to hold Nucleus's `sensory_profile` with the history note
+// appended, hence the two-source merge that lived here. `sensory_profile` is
+// QC's tasting record and is no longer served to this app at all, so the note is
+// the whole of it. `Training Notes` stays for the food items, which come from
+// elsewhere and use that key.
 function getStaffNotes(item) {
-  const notes = col(item, "Staff Notes") || col(item, "Training Notes");
-  const history = col(item, "History Note");
-  if (notes && history && notes !== history) return `${notes}\n\n${history}`;
-  return notes || history;
+  return col(item, "Staff Notes") || col(item, "Training Notes");
 }
 
 function isOnTap(item) {
@@ -6208,7 +6210,7 @@ async function renderTaps(content) {
     ? ""
     : `<div class="status" style="margin-bottom:14px;">
          <strong>Read-only.</strong> This app has a read key for Nucleus, so taps can be
-         viewed but not changed. Set <code>NUCLEUS_API_KEY_WRITE</code> to enable editing.
+         viewed but not changed. Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to enable editing.
        </div>`;
 
   const rows = [...tapsState.taps]

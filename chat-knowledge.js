@@ -117,7 +117,7 @@ function formatBeer(beer) {
   const tap = col(beer, "Tap") || col(beer, "tap") || col(beer, "Tap Number");
   const description =
     col(beer, "Description / ingredients") || col(beer, "Marketing Description");
-  const staffNotes = col(beer, "Staff Notes") || col(beer, "History Note");
+  const staffNotes = col(beer, "Staff Notes");
   const parts = [
     col(beer, "Name"),
     tap ? `Tap ${tap}` : null,

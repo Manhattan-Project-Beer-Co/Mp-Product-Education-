@@ -17,8 +17,15 @@
  */
 
 const BASE_URL = (process.env.NUCLEUS_BASE_URL || "").replace(/\/$/, "");
-const API_KEY = process.env.NUCLEUS_API_KEY || "";
-const API_KEY_WRITE = process.env.NUCLEUS_API_KEY_WRITE || "";
+//: The PATRON keys, deliberately — not `NUCLEUS_API_KEY`/`NUCLEUS_API_KEY_WRITE`.
+//: Those resolve to `staff`/`manager` in Nucleus and can read the whole catalog,
+//: including `sensory_profile`, which is QC's tasting record and has no business
+//: on a taproom screen. A patron key sits below `readonly` and is refused by
+//: every endpoint outside `/api/patron/*`; the write key adds one scope,
+//: `taps:pour`, and can do nothing else. So the restriction is Nucleus's to
+//: enforce rather than this app's to remember.
+const API_KEY = process.env.NUCLEUS_API_KEY_PATRON || "";
+const API_KEY_WRITE = process.env.NUCLEUS_API_KEY_PATRON_WRITE || "";
 
 const REQUEST_TIMEOUT_MS = Number(process.env.NUCLEUS_TIMEOUT_MS || 15000);
 
@@ -53,8 +60,8 @@ async function request(path, { method = "GET", body = null, write = false } = {}
   if (!key) {
     throw new NucleusError(
       write
-        ? "NUCLEUS_API_KEY_WRITE is not set — this app can read Nucleus but not write to it."
-        : "NUCLEUS_API_KEY is not set — cannot reach Nucleus."
+        ? "NUCLEUS_API_KEY_PATRON_WRITE is not set — this app can read Nucleus but not write to it."
+        : "NUCLEUS_API_KEY_PATRON is not set — cannot reach Nucleus."
     );
   }
 
@@ -87,7 +94,7 @@ async function request(path, { method = "GET", body = null, write = false } = {}
       response.status === 401
         ? "the API key was rejected"
         : response.status === 403
-          ? "the API key lacks the required role (writes need NUCLEUS_API_KEY_WRITE)"
+          ? "the API key lacks the required role or scope (writes need NUCLEUS_API_KEY_PATRON_WRITE)"
           : `HTTP ${response.status}`;
     throw new NucleusError(`Nucleus ${method} ${path} failed — ${detail}.`, response.status);
   }
@@ -121,10 +128,10 @@ function invalidate() {
  */
 const getTaps = () =>
   cached("taps", TAPS_TTL_MS, async () => {
-    const taps = await request("/api/taps");
+    const taps = await request("/api/patron/taps");
     return taps.map((tap) =>
       tap.current_product
-        ? { ...tap, current_product: { ...tap.current_product, abv: formatAbv(tap.current_product.abv) } }
+        ? { ...tap, current_product: { ...tap.current_product, abv: formatDecimal(tap.current_product.abv) } }
         : tap
     );
   });
@@ -144,7 +151,7 @@ const BREWERY_PREFIX = "MP";
  */
 const getBreweryId = () =>
   cached("brewery-id", CATALOG_TTL_MS, async () => {
-    const breweries = await request("/api/breweries");
+    const breweries = await request("/api/patron/breweries");
     const ours = breweries.find((brewery) => brewery.prefix === BREWERY_PREFIX);
     if (!ours) {
       // Loudly, not quietly: falling back to the unfiltered catalog here would
@@ -175,7 +182,7 @@ async function getProducts() {
   return cached("products", CATALOG_TTL_MS, async () => {
     const breweryId = await getBreweryId();
     const products = await request(
-      `/api/products?include_inactive=true&brewery_id=${encodeURIComponent(breweryId)}`
+      `/api/patron/products?include_inactive=true&brewery_id=${encodeURIComponent(breweryId)}`
     );
 
     // Defence in depth, and cheap. If the server-side filter ever stops doing
@@ -223,11 +230,15 @@ function text(value) {
 }
 
 /**
- * Nucleus serialises ABV as a fixed-scale decimal — `6.2000`, `11.0000` — which
- * the display would print verbatim as "6.2000%". Trim to the significant part:
- * 6.2000 -> "6.2", 7.3500 -> "7.35", 11.0000 -> "11".
+ * Nucleus serialises its numbers as fixed-scale decimals — `6.2000`, `33.0000` —
+ * which a display would print verbatim as "6.2000%" or "IBU 33.0000". Trim to
+ * the significant part: 6.2000 -> "6.2", 7.3500 -> "7.35", 11.0000 -> "11".
+ *
+ * Named for the shape rather than the field: ABV and IBU arrive the same way and
+ * are trimmed the same way, and calling it `formatAbv` while passing it an IBU
+ * reads like a bug at every call site.
  */
-function formatAbv(value) {
+function formatDecimal(value) {
   if (value === null || value === undefined || value === "") return "";
   const number = Number(value);
   if (!Number.isFinite(number)) return text(value);
@@ -254,15 +265,17 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
 
   const ingredients = text(product.key_ingredients);
   const marketing = text(product.marketing_description);
-  const sensory = text(product.sensory_profile);
   const history = text(product.history_note);
-  // MenuRef on the tap sometimes carries a resolved IBU when the full product
-  // does not — prefer the pouring projection, then the catalog product.
-  const ibuRaw =
-    tap?.current_product?.ibu ??
-    product.ibu ??
-    product.ibu_target ??
-    "";
+  // Both projections resolve IBU from the same default-scope target through
+  // Nucleus's `services/menu.py`, so they cannot disagree and the order is
+  // arbitrary — the product is read first only because every beer has one and
+  // only the pouring ones have a tap.
+  //
+  // This used to read `product.ibu ?? product.ibu_target`, neither of which
+  // exists on the internal `ProductOut`: IBU has no product column, so those
+  // were always `undefined` and IBU appeared only on beers currently pouring.
+  // The patron catalog serves it, so it now resolves for the whole catalog.
+  const ibuRaw = product.ibu ?? tap?.current_product?.ibu ?? "";
 
   return {
     Name: text(product.name),
@@ -270,16 +283,20 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
     Style: text(product.style),
     // Left lowercase to match the sheet's header. getABVText/getABVNumber accept
     // either case; this keeps the one the app already reads first.
-    abv: formatAbv(product.abv),
+    abv: formatDecimal(product.abv),
     // Prefer ingredients; fall back to marketing copy so cards are not blank
     // when Nucleus has a description but no key_ingredients yet.
     "Description / ingredients": ingredients || marketing,
     "Marketing Description": marketing,
     "Flavor Profile": text(product.tasting_notes),
     "Guest Guidance": text(product.guest_guidance),
-    "Staff Notes": sensory || history,
-    "History Note": history,
-    IBU: formatAbv(ibuRaw),
+    // Was `sensory_profile || history_note`. `sensory_profile` is QC's
+    // structured tasting record and is not on the patron catalog at all — it
+    // was never staff-facing content, it was internal data that happened to be
+    // reachable. The history note is what remains, and it is the only thing this
+    // section ever should have shown.
+    "Staff Notes": history,
+    IBU: formatDecimal(ibuRaw),
     "Gluten-Reduced": product.is_gluten_reduced ? "Yes" : "No",
     // `isOnTap()` tests that this starts with "yes" and `getTapNumber()` pulls the
     // first digits out of it, so the sheet's exact "Yes- Tap 4" form is preserved.

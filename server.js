@@ -114,6 +114,17 @@ if (IS_PRODUCTION && devLoginEnabled) {
   process.exit(1);
 }
 
+// On Railway the container disk is wiped every deploy. Without DB_PATH on a
+// mounted volume, users/progress/inventory vanish silently. Fail loud instead.
+if (process.env.RAILWAY_ENVIRONMENT && !process.env.DB_PATH) {
+  console.error(
+    "Refusing to start: RAILWAY_ENVIRONMENT is set but DB_PATH is not. " +
+      "Attach a volume (e.g. mount /data) and set DB_PATH=/data/training.db " +
+      "(and ideally BACKUP_DIR=/data/backups)."
+  );
+  process.exit(1);
+}
+
 const CHAT_SYSTEM_PROMPT = `You are Ask MP — the Manhattan Project Beer Co. universal training search assistant in the staff portal.
 
 Rules:

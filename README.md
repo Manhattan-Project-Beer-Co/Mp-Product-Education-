@@ -327,10 +327,12 @@ config in `railway.json`.
 
 The critical setting is `DB_PATH`: container filesystems are ephemeral, so it
 must point at a mounted volume (`/data/training.db` on a volume mounted at
-`/data`) or every deploy and restart wipes the database. Backups default to a
-`backups` directory beside the database — which means the same volume, so they
-cover a bad write or a mistaken delete but **not** losing the volume itself.
-Copying snapshots off-box is still a follow-up.
+`/data`) or every deploy and restart wipes the database. On Railway the server
+**refuses to start** if `RAILWAY_ENVIRONMENT` is set and `DB_PATH` is missing.
+Backups default to a `backups` directory beside the database — which means the
+same volume, so they cover a bad write or a mistaken delete but **not** losing
+the volume itself. Copying snapshots off-box (Drive/Dropbox) is still required
+for disaster recovery.
 
 Two other things in the repo are not the live deployment:
 

@@ -1,0 +1,22 @@
+---
+description: Branch / PR workflow for this repo — never push straight to main
+alwaysApply: true
+---
+
+# Git workflow
+
+`main` is protected on GitHub and locally:
+
+- Repo ruleset: no direct push to `main`; PRs + CI required
+- `.githooks` (enable with `git config core.hooksPath .githooks`): blocks commit/push on `main`
+- Cursor hook `.cursor/hooks/block-main-git.sh`: blocks agent git writes on `main`
+
+When the user asks for code changes that should land in the shared repo:
+
+1. Create or switch to a `feat/…`, `fix/…`, or `chore/…` branch off up-to-date `main`.
+2. Make the change on that branch only.
+3. Run `npm run check` (and `npm run check:boot` if server/schema/seed/API changed).
+4. Open a PR into `main` when asked to ship — do not merge unless the user explicitly asks.
+5. Prefer squash merges. Never force-push `main`, skip hooks, or commit `.env` / `training.db`.
+
+If they ask to commit on `main`, create a branch instead and say why.

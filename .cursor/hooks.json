@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/block-main-git.sh",
+        "matcher": "git\\s+(commit|push|merge|rebase|cherry-pick|am|revert)",
+        "failClosed": true
+      }
+    ]
+  }
+}

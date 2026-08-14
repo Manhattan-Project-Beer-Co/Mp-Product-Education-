@@ -3361,7 +3361,7 @@ function nucleusFailed(res, error, what) {
 app.get("/api/beers", authRequired, async (req, res) => {
   if (!nucleus.configured()) {
     return res.status(503).json({
-      error: "Beer data is not configured. Set NUCLEUS_BASE_URL and NUCLEUS_API_KEY."
+      error: "Beer data is not configured. Set NUCLEUS_BASE_URL and NUCLEUS_API_KEY_PATRON."
     });
   }
   try {
@@ -3400,7 +3400,7 @@ app.put("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async 
     // is a production write key on a laptop, where every click edits the real
     // taproom wall.
     return res.status(503).json({
-      error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_WRITE to change taps."
+      error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_PATRON_WRITE to change taps."
     });
   }
   try {
@@ -3413,7 +3413,7 @@ app.put("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async 
 app.delete("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async (req, res) => {
   if (!nucleus.canWrite()) {
     return res.status(503).json({
-      error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_WRITE to change taps."
+      error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_PATRON_WRITE to change taps."
     });
   }
   try {

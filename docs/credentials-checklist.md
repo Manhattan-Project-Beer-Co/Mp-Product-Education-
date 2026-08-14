@@ -6,8 +6,8 @@ Put values in local `.env` and in **Railway** for production. Never commit real 
 
 | Need | Env var | Who / where | Notes |
 |---|---|---|---|
-| Nucleus read key | `NUCLEUS_API_KEY` | Nucleus / engineering admin | Role **staff** — beer list, pickers, view taps |
-| Nucleus write key | `NUCLEUS_API_KEY_WRITE` | Nucleus / engineering admin | Role **manager** — edit taps (live menu). Careful with production keys locally |
+| Nucleus read key | `NUCLEUS_API_KEY_PATRON` | Nucleus / engineering admin | Role **patron** — beer list, pickers, view taps. Reaches `/api/patron/*` only |
+| Nucleus write key | `NUCLEUS_API_KEY_PATRON_WRITE` | Nucleus / engineering admin | Role **patron** + `taps:pour` scope — edit taps (live menu), nothing else. Careful with production keys locally |
 | Nucleus URL | `NUCLEUS_BASE_URL` | Same | Local: `https://nucleus.manhattanproject.beer` · Railway: internal Nucleus URL |
 
 ## Required for live staff schedule awareness

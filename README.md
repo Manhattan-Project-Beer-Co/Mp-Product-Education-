@@ -43,9 +43,22 @@ browser-direct call is refused anyway. The browser reaches it through
 cards and chat all read those keys through `col()`. Keeping the shape meant the
 cutover changed the data source and almost nothing else.
 
-Two endpoints are joined on product id, not one: `GET /api/taps` embeds only
-`ProductMenuRef`, a narrow menu projection that leaves out `guest_guidance` and
-`key_ingredients` — the two fields staff lean on hardest — so the catalog is
+**This app reads `/api/patron/*`, not the internal catalog endpoints**, using
+`NUCLEUS_API_KEY_PATRON` and `NUCLEUS_API_KEY_PATRON_WRITE`. Those keys resolve
+to Nucleus's `patron` role, which sits below `readonly` and is refused by every
+endpoint outside `/api/patron/*`; the write key carries one extra scope,
+`taps:pour`, and can do nothing beyond setting and clearing a tap's product.
+
+That matters more than it looks. The patron schemas are **allowlists** — a field
+added to Nucleus's catalog later reaches the internal read automatically and this
+app only if someone decides it is patron-safe. Before this, the app held a `staff`
+key and read `GET /api/products`, which returns everything, and so it was
+rendering `sensory_profile` — QC's structured tasting record — to staff as "Staff
+notes". Do not "simplify" this back onto `NUCLEUS_API_KEY`.
+
+Two endpoints are joined on product id, not one: `GET /api/patron/taps` embeds
+only `ProductMenuRef`, a narrow menu projection that leaves out `guest_guidance`
+and `key_ingredients` — the two fields staff lean on hardest — so the catalog is
 fetched alongside it.
 
 | Row key | Nucleus |
@@ -53,21 +66,30 @@ fetched alongside it.
 | `Name`, `Number` | `name`, `mp_number` |
 | `Style` | `style` |
 | `abv` | `abv` — already resolved, see below |
-| `Description / ingredients` | `key_ingredients` |
+| `IBU` | `ibu` — resolved from the default-scope target |
+| `Description / ingredients` | `key_ingredients`, falling back to `marketing_description` |
+| `Marketing Description` | `marketing_description` |
 | `Flavor Profile` | `tasting_notes` |
 | `Guest Guidance` | `guest_guidance` |
-| `Staff Notes` | `sensory_profile` |
+| `Staff Notes` | `history_note` |
 | `Gluten-Reduced` | `is_gluten_reduced` |
 | `On Tap`, `Tap` | `Tap.tap_number` |
 | `New Tap` | derived from `Tap.tapped_at` |
 | `nucleus_product_id` | `id` — the stable identifier |
+
+**`ibu` comes from the patron catalog and exists nowhere else.** IBU has no
+column on Nucleus's `products` table — it lives in `product_targets` under the
+`ibu` metric key — so the internal `GET /api/products` does not serve it at all.
+Only `/api/patron/products` and the tap's `ProductMenuRef` resolve it, both
+through Nucleus's `services/menu.py`, so a catalog row and a menu row cannot
+disagree.
 
 **Do not build an ABV ladder here.** `abv` arrives resolved by Nucleus's
 `services/abv.py` in one priority order — TABC-approved label value, else
 calculated from og/fg, else the estimate — and `abv_source` says which rung
 answered. The arithmetic is deliberately matched to Gadget's so the two apps
 cannot print different numbers for one beer. Nucleus serialises it as a
-fixed-scale decimal (`6.2000`), which `formatAbv` trims for display.
+fixed-scale decimal (`6.2000`), which `formatDecimal` trims for display.
 
 Caching lives in `nucleus.js`: 60s for taps, which change when a keg kicks, and
 10 minutes for the catalog, which is edited by hand. A tap write clears both.
@@ -114,7 +136,7 @@ dead for as long as anyone could remember:
 
 The **Taps** tab — manager-gated, and the only place this app writes to Nucleus.
 A change there is a change to the real menu that every MPBC app reads, so it
-needs `NUCLEUS_API_KEY_WRITE`; with only a read key the screen loads read-only
+needs `NUCLEUS_API_KEY_PATRON_WRITE`; with only a read key the screen loads read-only
 and says so. Clearing a tap is a `DELETE`, because Nucleus keeps the fixture and
 empties the pour — a tap pouring nothing is `current_product_id IS NULL`, never
 a deleted row.
@@ -200,7 +222,7 @@ partners, so the token is the supported path.
 spec at `/openapi.json`). Open it in a browser and it signs you in through Azure
 AD — any MPBC account works, no key needed. Called programmatically it answers
 `401` instead, which is expected rather than a broken link: send
-`Authorization: Bearer <NUCLEUS_API_KEY>`. Treat it as authoritative over
+`Authorization: Bearer <NUCLEUS_API_KEY_PATRON>`. Treat it as authoritative over
 anything written down here.
 
 ### Configuration
@@ -208,8 +230,13 @@ anything written down here.
 | Variable | |
 |---|---|
 | `NUCLEUS_BASE_URL` | where Nucleus is |
-| `NUCLEUS_API_KEY` | read key → `staff`. Enough for the beer list and pickers. |
-| `NUCLEUS_API_KEY_WRITE` | write key → `manager`. Only needed to change taps. |
+| `NUCLEUS_API_KEY_PATRON` | read key → `patron`. Reaches `/api/patron/*` and nothing else. |
+| `NUCLEUS_API_KEY_PATRON_WRITE` | write key → `patron` + the `taps:pour` scope. Only needed to change taps. |
+
+The patron keys are not an alias for `NUCLEUS_API_KEY`/`NUCLEUS_API_KEY_WRITE` —
+they are a strictly smaller grant, and this app is meant to hold only the smaller
+one. Nucleus refuses a `patron` bearer on every endpoint outside `/api/patron/*`,
+so a mistake here fails loudly rather than quietly widening what this app can see.
 
 The base URL has three correct values, and picking the wrong one is the easiest
 mistake to make here:

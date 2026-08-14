@@ -94,7 +94,7 @@ function report(label, rows, index) {
 
 async function main() {
   if (!nucleus.configured()) {
-    console.error("NUCLEUS_BASE_URL and NUCLEUS_API_KEY must be set.");
+    console.error("NUCLEUS_BASE_URL and NUCLEUS_API_KEY_PATRON must be set.");
     process.exit(1);
   }
 

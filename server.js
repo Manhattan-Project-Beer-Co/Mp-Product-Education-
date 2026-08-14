@@ -3302,7 +3302,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
   ensureMerchCatalog();
   ensureSampleSops();
@@ -3332,3 +3332,44 @@ app.listen(PORT, () => {
   // Backs up immediately, then hourly checks that today's snapshot exists.
   startBackupSchedule(db);
 });
+
+/**
+ * Railway sends SIGTERM to replace the container on every deploy. Without a
+ * handler the process dies from the signal, exits non-zero, and Railway reports
+ * a crash for what is a routine redeploy. Stop accepting connections, close the
+ * database so the file on the volume is left clean, then exit 0.
+ */
+let shuttingDown = false;
+
+function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`${signal} received — shutting down.`);
+
+  // Timers (7shifts sync, backup schedule) keep the event loop alive, so exit
+  // explicitly rather than waiting for it to drain.
+  const finish = (code) => {
+    try {
+      db.close();
+    } catch (err) {
+      console.warn("Database close failed:", err.message);
+    }
+    process.exit(code);
+  };
+
+  // Don't let a hung connection hold the container past Railway's grace period.
+  const forced = setTimeout(() => {
+    console.warn("Shutdown timed out — exiting anyway.");
+    finish(0);
+  }, 10000);
+  forced.unref();
+
+  server.close((err) => {
+    if (err) console.warn("Server close failed:", err.message);
+    clearTimeout(forced);
+    finish(0);
+  });
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

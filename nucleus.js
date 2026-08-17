@@ -11,7 +11,7 @@
  * browser reaches this through the proxy routes in server.js.
  *
  * The adapter below emits rows in the *sheet's* shape — `"Name"`, `"On Tap"`,
- * `"Guest Guidance"` and friends. That is deliberate: index.html's filters,
+ * `"Flavor Profile"` and friends. That is deliberate: index.html's filters,
  * search, games, cards and chat all read those keys through `col()`, so keeping
  * the shape means the cutover touches the data source and nothing else.
  */
@@ -251,8 +251,7 @@ function formatDecimal(value) {
  * `product` is the full ProductOut; `tap` is the TapOut it is pouring from, or
  * null for a catalog beer that is not currently on. Both are needed because
  * Nucleus's TapOut embeds only `ProductMenuRef`, a narrow menu projection that
- * omits `guest_guidance` and `key_ingredients` — the two fields staff lean on
- * hardest. Hence the join in `getBeerRows`.
+ * omits `key_ingredients` and `history_note`. Hence the join in `getBeerRows`.
  */
 function toBeerRow(product, tap, bulkStamps = new Set()) {
   const tapNumber = tap ? String(tap.tap_number) : "";
@@ -289,7 +288,11 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
     "Description / ingredients": ingredients || marketing,
     "Marketing Description": marketing,
     "Flavor Profile": text(product.tasting_notes),
-    "Guest Guidance": text(product.guest_guidance),
+    //: There was a `"Guest Guidance"` key here, from Nucleus's `guest_guidance` —
+    //: one comparative line to place a beer for a guest. Nucleus dropped the field
+    //: (migration 0114): three descriptions of a beer were enough, and a fourth
+    //: only this app read went stale differently from the other three. The Guest
+    //: Match game that ran on it now runs on `"Flavor Profile"`.
     // Was `sensory_profile || history_note`. `sensory_profile` is QC's
     // structured tasting record and is not on the patron catalog at all — it
     // was never staff-facing content, it was internal data that happened to be

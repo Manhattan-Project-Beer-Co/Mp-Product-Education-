@@ -29,8 +29,8 @@ anything.
 ### 1. Beers — Nucleus
 
 Nucleus is MPBC's catalog service and the source of truth for beer. Everything
-about a beer — name, style, ABV, tasting notes, guest guidance, gluten-reduced,
-and which tap it is pouring from — comes from there.
+about a beer — name, style, ABV, tasting notes, gluten-reduced, and which tap it
+is pouring from — comes from there.
 
 `nucleus.js` is the only thing that talks to it, and it runs **server-side
 only**, for two independent reasons: the bearer key would be a leaked credential
@@ -39,7 +39,7 @@ browser-direct call is refused anyway. The browser reaches it through
 `/api/beers`, `/api/beers/options` and `/api/taps`.
 
 **The rows are shaped like the old spreadsheet** — `"Name"`, `"On Tap"`,
-`"Guest Guidance"` and the rest — because index.html's filters, search, games,
+`"Flavor Profile"` and the rest — because index.html's filters, search, games,
 cards and chat all read those keys through `col()`. Keeping the shape meant the
 cutover changed the data source and almost nothing else.
 
@@ -57,9 +57,9 @@ rendering `sensory_profile` — QC's structured tasting record — to staff as "
 notes". Do not "simplify" this back onto `NUCLEUS_API_KEY`.
 
 Two endpoints are joined on product id, not one: `GET /api/patron/taps` embeds
-only `ProductMenuRef`, a narrow menu projection that leaves out `guest_guidance`
-and `key_ingredients` — the two fields staff lean on hardest — so the catalog is
-fetched alongside it.
+only `ProductMenuRef`, a narrow menu projection that leaves out `key_ingredients`
+and `history_note` — the fields behind the beer card's Description and Staff
+notes — so the catalog is fetched alongside it.
 
 | Row key | Nucleus |
 |---|---|
@@ -70,12 +70,24 @@ fetched alongside it.
 | `Description / ingredients` | `key_ingredients`, falling back to `marketing_description` |
 | `Marketing Description` | `marketing_description` |
 | `Flavor Profile` | `tasting_notes` |
-| `Guest Guidance` | `guest_guidance` |
 | `Staff Notes` | `history_note` |
 | `Gluten-Reduced` | `is_gluten_reduced` |
 | `On Tap`, `Tap` | `Tap.tap_number` |
 | `New Tap` | derived from `Tap.tapped_at` |
 | `nucleus_product_id` | `id` — the stable identifier |
+
+**`Guest Guidance` is gone, and it was this app's field.** It held one comparative
+line to place a beer for a guest ("like Guinness but sweeter"), and it showed on the
+beer card, in the beer detail, in the briefing, in the chat assistant's beer summary,
+and it was the whole of the **Guest Match** game. Nucleus dropped
+`products.guest_guidance` (migration `0114`) because the catalog already described a
+beer three ways and a fourth that only this app read went stale differently from the
+other three. Nothing here reads it now, and **Guest Match runs on `Flavor Profile`** —
+it hands the profile over as a guest's own words and asks which beer to recommend,
+where Flavor Quiz gives the same text as a fact to match. Thinner than it was: the
+prompt is a description of the beer rather than a comparison a bartender chose. Guest
+Match therefore no longer appears as its own question type in **Speed Round**, since
+there it would have been Flavor Quiz asked twice.
 
 **`ibu` comes from the patron catalog and exists nowhere else.** IBU has no
 column on Nucleus's `products` table — it lives in `product_targets` under the

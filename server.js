@@ -1317,7 +1317,7 @@ const TRAINING_PATH = [
   { type: "abv", category: "beer", label: "ABV Challenge", goal: 70, critical: false,
     suggest: "Memorize ABVs from the sheet for guest questions." },
   { type: "practice", category: "beer", label: "Guest Match", goal: 75, critical: true,
-    suggest: "Practice guest guidance scenarios for service readiness." },
+    suggest: "Practice recommending a tap from what a guest asks for." },
   { type: "reverse", category: "beer", label: "Pick the Profile", goal: 70, critical: false,
     suggest: "Reverse quiz strengthens detailed product knowledge." },
   { type: "speed", category: "beer", label: "Speed Round", goal: 75, critical: false,

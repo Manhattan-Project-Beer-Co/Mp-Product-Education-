@@ -10,7 +10,7 @@ const TRAINING_GAMES = [
   { name: "Complaint Recovery", desc: "MP preferred service recovery with tougher guest levels." },
   { name: "Tap Match", desc: "Match tap numbers to beers — critical for floor service." },
   { name: "Flavor Quiz", desc: "Match flavor profiles to beer names." },
-  { name: "Guest Match", desc: "Guest guidance scenarios from the sheet." },
+  { name: "Guest Match", desc: "A guest describes what they want — recommend a tap." },
   { name: "ABV Challenge", desc: "Pick the correct ABV from the sheet." },
   { name: "Style Match", desc: "Pick the listed style for each beer." },
   { name: "Pick the Profile", desc: "Reverse quiz — pick the flavor profile for a beer." },
@@ -126,7 +126,6 @@ function formatBeer(beer) {
     col(beer, "IBU") ? `IBU ${col(beer, "IBU")}` : null,
     col(beer, "Flavor Profile") ? `Flavor: ${col(beer, "Flavor Profile")}` : null,
     description ? `Description: ${description}` : null,
-    col(beer, "Guest Guidance") ? `Guest guidance: ${col(beer, "Guest Guidance")}` : null,
     staffNotes ? `Staff notes: ${staffNotes}` : null,
     isYes(col(beer, "Gluten-Reduced")) ? "Gluten-reduced" : null,
     isYes(col(beer, "New Tap")) ? "New tap" : null

@@ -4521,28 +4521,128 @@ const COFFEE_MENU_DRINKS = [
   { group: "Flavored", name: "Tres Leches", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with tres leches flavor. Whole or oat milk.", dairy: true },
   { group: "Flavored", name: "Strawberry Matcha", price: "$5.50", description: "Matcha with strawberry, vanilla, and rose.", dairy: true, tags: ["Matcha"] },
   { group: "Flavored", name: "Seasonal", price: "$5 / $6", description: "Banana Foster Latte (seasonal) — cappuccino ($5) or latte ($6). Whole or oat milk. Full recipe under Seasonal Lattes.", dairy: true },
-  { group: "Tea", name: "Hot Tea", price: "$2.50", description: "Hot brewed tea — ask what's available.", dairy: false },
+  { group: "Tea", name: "Hot Tea", price: "$2.50", description: "Earl Grey, black, English, jasmine, oolong, mint, or green.", dairy: false },
   { group: "Tea", name: "Iced Tea", price: "$2", description: "Iced brewed tea.", dairy: false },
-  { group: "Tea", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade.", dairy: false }
+  { group: "Tea", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade. Batch recipe under SOPs → Recipes.", dairy: false }
 ];
 
-/** Wine, Shirley (rotating), and NA beverages — from the taproom drink menu. */
+/** Wine, cocktails, and NA beverages — from the taproom drink menu. */
 const BAR_MENU_DRINKS = [
-  { group: "Wine", section: "wine", name: "Chardonnay", price: "$12 / $48", description: "La Ribera Vineyard Mendocino — Moniker, WA.", detail: "Glass / bottle", dairy: false },
-  { group: "Wine", section: "wine", name: "Rosé", price: "$10 / $40", description: "G.D. Vajra, Piedmont, Italy.", detail: "Glass / bottle", dairy: false },
-  { group: "Wine", section: "wine", name: "Orange Wine", price: "$12 / $48", description: "Domo Arigato Mr. Ramato — Field Recordings, CA.", detail: "Glass / bottle", dairy: false },
-  { group: "Wine", section: "wine", name: "Malbec", price: "$12 / $48", description: "Domaine Bousquet, Mendoza, Argentina.", detail: "Glass / bottle", dairy: false },
-  { group: "Wine", section: "wine", name: "Cabernet Sauvignon", price: "$12 / $48", description: "Milbrandt Vineyards, Wahluke Slope, WA.", detail: "Glass / bottle", dairy: false },
-  { group: "Wine", section: "wine", name: "Prosecco", price: "$10 / $40", description: "Cielo, Veneto, Italy.", detail: "Glass / bottle", dairy: false },
-  { group: "Shirley", section: "cocktails", name: "Rotating Shirley", price: "Market", description: "House Shirley Temple program — flavors rotate. Check the board for today's selection.", detail: "Non-alcoholic", dairy: false, rotating: true },
-  { group: "Shirley", section: "cocktails", name: "Classic Shirley", price: "Market", description: "Ginger ale or soda with grenadine and a cherry — ask bar for current build.", detail: "Non-alcoholic", dairy: false },
-  { group: "NA Beverages", section: "other", name: "Lemonade", price: "$2.50", description: "House lemonade.", dairy: false },
-  { group: "NA Beverages", section: "other", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade.", dairy: false },
-  { group: "NA Beverages", section: "other", name: "Italian Cream Soda", price: "$3", description: "Sparkling cream soda — ask for available flavors.", dairy: true },
+  { group: "Wine", section: "wine", name: "White Blend", price: "$12 / $48", description: "Lucky No. 9 — Evolution, OR.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Pinot Noir", price: "$12 / $48", description: "The Pinot Project, CA.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Cabernet Sauvignon", price: "$12 / $48", description: "Hedges, Columbia Valley, WA.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Rosé", price: "$12 / $48", description: "Love You Bunches, Los Olivos, CA.", detail: "Glass / bottle", dairy: false },
+  { group: "Wine", section: "wine", name: "Sparkling Brut", price: "$10 / $40", description: "Diver — Folktale, CA.", detail: "Glass / bottle", dairy: false },
+  {
+    group: "Fine Wine",
+    section: "wine",
+    name: "Champagne",
+    price: "$65",
+    description: "Deutz Brut Classic, France. Aged 3.5 years — brioche, apple, almond, white peach and pear with lemon peel. Dry with an acidic, clean finish.",
+    detail: "Bottle only",
+    dairy: false
+  },
+  {
+    group: "Fine Wine",
+    section: "wine",
+    name: "Chardonnay",
+    price: "$75",
+    description: "Hanzell Sebella 2020, Sonoma, CA. Crisp with vanilla, honeysuckle, kumquat, and a lemony finish. Native yeast, finished in neutral French oak.",
+    detail: "Bottle only",
+    dairy: false
+  },
+  {
+    group: "Fine Wine",
+    section: "wine",
+    name: "Cabernet Sauvignon (Matthiasson)",
+    price: "$90",
+    description: "Matthiasson, Napa Valley, CA. Elegant balance of tannin, fruit, and acid — red raspberry, cherry, baking spice, cedar, vibrant finish.",
+    detail: "Bottle only",
+    dairy: false
+  },
+  {
+    group: "Cocktails",
+    section: "cocktails",
+    name: "Cappelletti Spritz",
+    price: "$12",
+    description: "Italian bitter apéritif and Prosecco. Build: 12 oz glass · 2 oz Cappelletti · 4 oz Prosecco · ice. Full recipe: SOPs → Recipes.",
+    detail: "Wine cocktail",
+    dairy: false
+  },
+  {
+    group: "Cocktails",
+    section: "cocktails",
+    name: "Spaghett",
+    price: "$10",
+    description: "Half-Life, Italian bitter apéritif, lemon. Build: pint · lemon wedge · 12 oz Half Life · 3 oz Cappelletti · 1 oz lemonade. Full recipe: SOPs → Recipes.",
+    detail: "Beer cocktail",
+    dairy: false
+  },
+  {
+    group: "Cocktails",
+    section: "cocktails",
+    name: "Desert Rose",
+    price: "$12",
+    description: "Cactus pear soda and rosé. Build: 12 oz glass · lemon wheel · 5 oz Rosé · 4 oz Lady Bird Cactus Pear. Full recipe: SOPs → Recipes.",
+    detail: "Wine cocktail",
+    dairy: false
+  },
+  {
+    group: "Cocktails",
+    section: "cocktails",
+    name: "Mimosa",
+    price: "$12",
+    description: "Sparkling brut and OJ. Full recipe: SOPs → Recipes.",
+    detail: "Wine cocktail",
+    dairy: false
+  },
+  {
+    group: "Cocktails",
+    section: "cocktails",
+    name: "Michelada",
+    price: "$10",
+    description: "Housemade Mich. Mix. Build: pint · lime + Tajín · ½ ice · 6 oz Mich. Mix · 8 oz Diffusion / Necessary Evil. Full recipe: SOPs → Recipes.",
+    detail: "Beer cocktail",
+    dairy: false
+  },
+  {
+    group: "NA Beverages",
+    section: "other",
+    name: "Lemonade",
+    price: "$2.50",
+    description: "House lemonade. Batch: 12 oz lemon concentrate + 12 oz simple syrup, fill with water. Full recipe: SOPs → Recipes.",
+    dairy: false
+  },
+  {
+    group: "NA Beverages",
+    section: "other",
+    name: "Hibiscus Tea Lemonade",
+    price: "$2.50",
+    description: "Hibiscus tea with lemonade. Batch: 3 small tea bags, steep 20 min in 24 oz hot water, then fill with cold water. Full recipe: SOPs → Recipes.",
+    dairy: false
+  },
+  {
+    group: "NA Beverages",
+    section: "other",
+    name: "Italian Cream Soda",
+    price: "$3",
+    description: "12 oz glass · ice · 2 pumps simple (vanilla, blueberry, or strawberry) · sparkling water · top with half & half. Full recipe: SOPs → Recipes.",
+    dairy: true
+  },
   { group: "NA Beverages", section: "other", name: "Arnold Palmer", price: "$2.50", description: "Iced tea and lemonade.", dairy: false },
   { group: "NA Beverages", section: "other", name: "Iced Tea", price: "$2", description: "Iced brewed tea.", dairy: false },
-  { group: "NA Beverages", section: "other", name: "Hot Tea", price: "$2.50", description: "Hot brewed tea.", dairy: false },
-  { group: "NA Beverages", section: "other", name: "Soda", price: "$2", description: "Fountain soda.", dairy: false },
+  {
+    group: "NA Beverages",
+    section: "other",
+    name: "Hot Tea",
+    price: "$2.50",
+    description: "Earl Grey, black, English, jasmine, oolong, mint, or green.",
+    dairy: false
+  },
+  { group: "NA Beverages", section: "other", name: "Coke", price: "$2", description: "Fountain soda.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Diet Coke", price: "$2", description: "Fountain soda.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Sprite", price: "$2", description: "Fountain soda.", dairy: false },
+  { group: "NA Beverages", section: "other", name: "Dr. Pepper", price: "$2", description: "Fountain soda.", dairy: false },
   { group: "NA Beverages", section: "other", name: "Ginger Beer", price: "$3", description: "Lady Bird ginger beer.", dairy: false }
 ];
 
@@ -8940,7 +9040,7 @@ async function renderSops(content) {
   content.innerHTML = `
     <div class="coffee-intro">
       <h2>Standard Operating Procedures</h2>
-      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Search here or ask the training assistant — SOP content feeds both. Batch recipes (Michelada mix, etc.) live under <strong>Recipes</strong>; seasonal latte builds are on the Coffee tab.</p>
+      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Search here or ask the training assistant — SOP content feeds both. Drink recipes (lemonade, hibiscus lemonade, Italian cream soda, Michelada, Desert Rose, Cappelletti Spritz, Spaghett, Mimosa, Mich. Mix) live under <strong>Recipes</strong>; seasonal latte builds are on the Coffee tab.</p>
       ${isAdmin() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Admin view — upload and edit procedures below.</p>` : ""}
     </div>
     ${renderSopAdminForm()}
@@ -9576,9 +9676,9 @@ function updateSearchPlaceholder() {
     seasonal: "Search seasonal lattes"
   };
   const barPlaceholders = {
-    all: "Search wine, Shirley, or NA drinks",
+    all: "Search wine, cocktails, or NA drinks",
     wine: "Search wine",
-    cocktails: "Search Shirley / cocktails",
+    cocktails: "Search cocktails",
     other: "Search NA beverages"
   };
   const placeholders = {
@@ -9785,7 +9885,7 @@ function renderBarSectionTabs() {
     <div class="coffee-subtabs">
       <button class="coffee-subtab${barSection === "all" ? " active" : ""}" onclick="barSection='all'; render();">All</button>
       <button class="coffee-subtab${barSection === "wine" ? " active" : ""}" onclick="barSection='wine'; render();">Wine</button>
-      <button class="coffee-subtab${barSection === "cocktails" ? " active" : ""}" onclick="barSection='cocktails'; render();">Shirley & Cocktails</button>
+      <button class="coffee-subtab${barSection === "cocktails" ? " active" : ""}" onclick="barSection='cocktails'; render();">Cocktails</button>
       <button class="coffee-subtab${barSection === "other" ? " active" : ""}" onclick="barSection='other'; render();">NA Beverages</button>
     </div>
   `;
@@ -9810,8 +9910,8 @@ function renderBarMenu(content) {
   content.innerHTML = sectionTabs + `
     <div class="coffee-intro">
       <h2>Wine + Cocktails</h2>
-      <p>Wine by the glass or bottle, rotating Shirley Temples, and non-alcoholic beverages from the taproom drink menu.</p>
-      <p style="margin-top:8px;font-size:14px;color:var(--muted);">Wine prices shown as glass / bottle. Shirley flavors rotate — check the board for today's selection.</p>
+      <p>Wine by the glass or bottle, house cocktails, and non-alcoholic beverages from the taproom drink menu.</p>
+      <p style="margin-top:8px;font-size:14px;color:var(--muted);">Wine prices shown as glass / bottle (fine wine is bottle only). Cocktail and batch builds are under <strong>SOPs → Recipes</strong>.</p>
     </div>
     ${drinks.length ? drinkGroups.map(group => {
       const groupDrinks = drinks.filter(item => item.group === group);

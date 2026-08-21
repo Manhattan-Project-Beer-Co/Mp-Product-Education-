@@ -252,7 +252,7 @@ ${section("Intoxicated guest / safety / harassment", bullets([
   {
     category: "Recipes",
     title: "Michelada Mix (Mich. Mix)",
-    summary: "Batch recipe for Michelada mix kept on the line. Add more bar batch recipes under Recipes.",
+    summary: "Batch recipe for Michelada mix kept on the line.",
     sort_order: 1,
     body: `
 ${section("Recipe", bullets([
@@ -263,6 +263,129 @@ ${section("Recipe", bullets([
   "½ small cup Tabasco"
 ]))}
 <p>Label the container clearly and keep refrigerated per house standards.</p>
+`
+  },
+  {
+    category: "Recipes",
+    title: "Lemonade",
+    summary: "House lemonade batch — lemon concentrate, simple syrup, and water.",
+    sort_order: 2,
+    body: `
+${section("Batch recipe", bullets([
+  "12 oz lemon juice concentrate",
+  "12 oz simple syrup",
+  "Fill the rest with water"
+]))}
+`
+  },
+  {
+    category: "Recipes",
+    title: "Hibiscus Lemonade",
+    summary: "Hibiscus tea lemonade batch — steep tea bags, then top with cold water.",
+    sort_order: 3,
+    body: `
+${section("Batch recipe", bullets([
+  "3 small tea bags",
+  "Fill with hibiscus tea — steep 20 minutes in hot water (fill with 24 oz)",
+  "After 20 minutes, fill the rest of the way with cold water"
+]))}
+`
+  },
+  {
+    category: "Recipes",
+    title: "Michelada",
+    summary: "Pint build — Michelada mix with Diffusion or Necessary Evil.",
+    sort_order: 4,
+    body: `
+${section("Glassware & garnish", bullets([
+  "Glassware: pint glass",
+  "Garnish: lime and Tajín"
+]))}
+${section("Build", bullets([
+  "Fill ½ way with ice",
+  "6 oz Michelada Mix",
+  "8 oz Diffusion / Necessary Evil"
+]))}
+<p>Batch mix recipe is under <strong>Michelada Mix (Mich. Mix)</strong>.</p>
+`
+  },
+  {
+    category: "Recipes",
+    title: "Desert Rose",
+    summary: "Rose + Lady Bird cactus pear in a 12 oz glass.",
+    sort_order: 5,
+    body: `
+${section("Glassware & garnish", bullets([
+  "Glassware: 12 oz glass",
+  "Garnish: lemon wheel"
+]))}
+${section("Build", bullets([
+  "5 oz Rose",
+  "4 oz Lady Bird Cactus Pear"
+]))}
+`
+  },
+  {
+    category: "Recipes",
+    title: "Cappelletti Spritz",
+    summary: "Italian bitter apéritif and Prosecco over ice — $12.",
+    sort_order: 6,
+    body: `
+${section("Glassware", bullets([
+  "Glassware: 12 oz glass"
+]))}
+${section("Build", bullets([
+  "2 oz Cappelletti",
+  "4 oz Prosecco",
+  "Fill with ice"
+]))}
+`
+  },
+  {
+    category: "Recipes",
+    title: "Spaghett",
+    summary: "Half Life, Cappelletti, and lemonade in a pint — $10.",
+    sort_order: 7,
+    body: `
+${section("Glassware & garnish", bullets([
+  "Glassware: pint glass",
+  "Garnish: lemon wedge"
+]))}
+${section("Build", bullets([
+  "12 oz Half Life",
+  "3 oz Cappelletti",
+  "1 oz lemonade"
+]))}
+`
+  },
+  {
+    category: "Recipes",
+    title: "Mimosa",
+    summary: "Sparkling brut and orange juice — $12.",
+    sort_order: 9,
+    body: `
+${section("Build", bullets([
+  "Sparkling brut",
+  "Orange juice"
+]))}
+<p>Menu description: sparkling brut and OJ.</p>
+`
+  },
+  {
+    category: "Recipes",
+    title: "Italian Cream Soda",
+    summary: "Sparkling cream soda with simple syrup and half & half — vanilla, blueberry, or strawberry.",
+    sort_order: 8,
+    body: `
+${section("Glassware", bullets([
+  "Glassware: 12 oz glass"
+]))}
+${section("Build", bullets([
+  "Fill with ice",
+  "2 pumps simple syrup (vanilla, blueberry, or strawberry)",
+  "Fill with sparkling water",
+  "Top with half and half"
+]))}
 `
   },
   {
@@ -295,7 +418,8 @@ ${bullets([
 
 /** Titles moved out of SOPs (e.g. drink recipes that live on the Coffee tab). */
 const SOPS_RETIRED_TITLES = [
-  "Banana Foster Latte (Seasonal)"
+  "Banana Foster Latte (Seasonal)",
+  "Cappalletti Spritz"
 ];
 
 if (typeof module !== "undefined" && module.exports) {

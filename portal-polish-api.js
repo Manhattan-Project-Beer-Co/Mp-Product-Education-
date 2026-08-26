@@ -531,7 +531,7 @@ function registerPortalPolishApi(app, {
     if (gaps[0]) {
       minutes.push(`3) Weak spot drill — ${gaps[0].activity_type} (team avg ${gaps[0].avg_accuracy}%). Do 2 quick questions.`);
     } else {
-      minutes.push("3) Weak spot drill — run one Guest Scenario from Launch Pad.");
+      minutes.push("3) Weak spot drill — run one Guest Scenario from War Games.");
     }
     if (packages[0]) {
       minutes.push(`4) New menu talking points — ${packages[0].item_name}: ${packages[0].talking_points || "ingredients + allergens confirm with kitchen"}.`);

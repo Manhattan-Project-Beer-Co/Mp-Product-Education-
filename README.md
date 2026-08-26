@@ -1,6 +1,6 @@
-# MP Product Education
+# MP LAUNCH PAD
 
-Front-of-house staff training portal for Manhattan Project Beer Company — tap
+Staff operations portal for Manhattan Project Beer Company — tap
 list, food, coffee, merch, SOPs, reviews, and training games. A single Express
 server (`server.js`) serving one large static page (`index.html`) backed by
 SQLite.

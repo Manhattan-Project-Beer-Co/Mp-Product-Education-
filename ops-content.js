@@ -183,7 +183,7 @@ const SECRET_ACHIEVEMENTS = [
     title: "Level 5 Clearance",
     clearance: "L5",
     codename: "NEED-TO-KNOW",
-    hint: "Clear five different Launch Pad war games.",
+    hint: "Clear five different War Games drills.",
     declassified: "You completed training across five distinct game types. Welcome to the inner ring."
   },
   {
@@ -191,7 +191,7 @@ const SECRET_ACHIEVEMENTS = [
     title: "Critical Mass",
     clearance: "L4",
     codename: "CHAIN-REACTION",
-    hint: "Sustain a 5-answer correct streak in Launch Pad or Speed Round.",
+    hint: "Sustain a 5-answer correct streak in War Games or Speed Round.",
     declassified: "Five consecutive correct answers — reaction sustained. Do not lose containment."
   },
   {
@@ -223,7 +223,7 @@ const SECRET_ACHIEVEMENTS = [
     title: "Trinity Test",
     clearance: "L4",
     codename: "PERFECT-SHOT",
-    hint: "Finish any scored Launch Pad game with a perfect score.",
+    hint: "Finish any scored War Games drill with a perfect score.",
     declassified: "100% — first successful detonation of a flawless round."
   },
   {

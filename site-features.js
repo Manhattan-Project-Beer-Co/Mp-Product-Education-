@@ -23,7 +23,7 @@ const SITE_FEATURES = {
   ],
   feedbackTabOptions: [
     "On Tap", "All Beers", "Food", "Coffee", "Wine + Cocktails", "Merch", "Inventory",
-    "SOPs", "Checklists", "Floor Tools", "Reviews", "Launch Pad", "My Progress",
+    "SOPs", "Checklists", "Floor Tools", "Reviews", "War Games", "My Progress",
     "End of Shift", "Shift Reports", "Team", "Ask MP", "Features", "Feedback", "General / not sure"
   ],
   sections: [
@@ -31,13 +31,13 @@ const SITE_FEATURES = {
     { id: "ontap", title: "On Tap & All Beers", summary: "Live tap list, details, filters, tasting check-ins." },
     { id: "food", title: "Food", summary: "Breakfast, brunch, lunch, dinner, weekly specials, allergens." },
     { id: "coffee", title: "Coffee", summary: "Menu, Viewfinder beans, seasonal latte recipes, training manual." },
-    { id: "bar", title: "Wine + Cocktails", summary: "Wine, Shirley Temples, and NA drinks." },
+    { id: "bar", title: "Wine + Cocktails", summary: "Wine, house cocktails, and NA drinks." },
     { id: "floor", title: "Floor Tools", summary: "86 board, handoff, huddle, Sell This, photo standards, shout-outs, team challenges, tap change + menu packages, recommenders, allergy, maintenance, First 5, skills, secrets/streaks." },
     { id: "merch", title: "Merch", summary: "In-stock counts, Up & Coming votes, Shopify link." },
     { id: "inventory", title: "Inventory", summary: "Ops counts, weekly order, dashboard." },
     { id: "sops", title: "SOPs", summary: "Procedures, Recipes, Emergency, photo standards gallery." },
     { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with before/after task photos and streaks." },
-    { id: "launchpad", title: "Launch Pad", summary: "Games, Staff Favorites, Guest Scenarios, Complaint Recovery, leaderboard, badges." },
+    { id: "launchpad", title: "War Games", summary: "Arcade drills, Staff Favorites, Guest Scenarios, Complaint Recovery, leaderboard, badges." },
     { id: "progress", title: "My Progress", summary: "Scores, tasting journal, achievements." },
     { id: "shift", title: "End of Shift / Reports", summary: "Anonymous surveys + digests for leads." },
     { id: "team", title: "Team", summary: "Morning digest, AI weekly training pack, deep analytics, shift lead duty." },
@@ -50,7 +50,7 @@ function buildSiteOverviewText() {
   const bullets = SITE_FEATURES.sections.map(section => `- ${section.title}: ${section.summary}`);
   const roles = (SITE_FEATURES.roles || []).map(role => `- ${role.name}: ${role.blurb}`);
   return [
-    "Manhattan Project staff training portal covers:",
+    "MP LAUNCH PAD (Manhattan Project staff portal) covers:",
     bullets.join("\n"),
     "",
     "Staff roles:",

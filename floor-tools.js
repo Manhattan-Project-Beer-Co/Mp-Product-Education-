@@ -877,7 +877,7 @@ async function renderTeamChallengesBoard(el) {
               <p class="name">${escapeHTML(c.title)}</p>
               <p class="desc">${c.progress_count} / ${c.goal_count} · ${pct}%${c.reward ? ` · Reward: ${escapeHTML(c.reward)}` : ""}</p>
               <div style="height:8px;background:#ddd;border-radius:4px;overflow:hidden;margin-top:8px;">
-                <div style="height:100%;width:${pct}%;background:var(--green, #1f7a3f);"></div>
+                <div style="height:100%;width:${pct}%;background:var(--gold, #9c6b4a);"></div>
               </div>
             </div>
           `;
@@ -1090,7 +1090,7 @@ async function renderAchievementsBoard(el) {
               <p class="name">${escapeHTML(formatStreakKey(s.streak_key))}</p>
               <p class="desc">Current ${s.count} · Best ${s.best}${s.last_date ? ` · Last ${escapeHTML(s.last_date)}` : ""}</p>
             </div>
-          `).join("") : `<div class="status"><strong>No streaks logged.</strong>Finish opening/closing checklists or hit a 5-answer Launch Pad streak.</div>`}
+          `).join("") : `<div class="status"><strong>No streaks logged.</strong>Finish opening/closing checklists or hit a 5-answer War Games streak.</div>`}
         </div>
       </div>
     `;

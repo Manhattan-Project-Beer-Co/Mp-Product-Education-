@@ -184,7 +184,7 @@ function buildContext(query, beers, sops = []) {
 
   if (beerSelection.length) {
     chunks.push(
-      "=== BEER MENU (from tap list spreadsheet) ===\n" +
+      "=== BEER MENU (from Nucleus tap list) ===\n" +
         beerSelection.map(b => b.text).join("\n")
     );
   }

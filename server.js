@@ -129,7 +129,7 @@ const CHAT_SYSTEM_PROMPT = `You are Ask MP — the Manhattan Project Beer Co. un
 
 Rules:
 - Answer ONLY using facts from the provided CONTEXT (beers, food cues, coffee, SOPs/recipes, events, checklists, training games, floor tools).
-- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Food, Coffee, SOPs, Floor Tools, Launch Pad).
+- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Food, Coffee, SOPs, Floor Tools, War Games).
 - Never invent beer names, tap numbers, ABVs, styles, allergen guarantees, or medical claims. For allergies: advise confirming with kitchen.
 - Never answer questions unrelated to this training site. Politely redirect to site topics.
 - Keep answers concise, practical, and floor-friendly. Use bullet points when listing beers or steps.
@@ -1740,7 +1740,7 @@ app.get("/api/games/favorite-beer-quiz", authRequired, async (req, res) => {
       questions: [],
       unlockedCount: 0,
       totalWithFavorites: 0,
-      message: "Nobody has set a favorite beer yet — ask teammates to add theirs on Launch Pad."
+      message: "Nobody has set a favorite beer yet — ask teammates to add theirs on War Games."
     });
   }
 
@@ -3440,6 +3440,11 @@ const CLIENT_SCRIPTS = new Set([
   "floor-tools.js"
 ]);
 
+app.use("/images", express.static(path.join(__dirname, "images"), {
+  fallthrough: false,
+  maxAge: process.env.NODE_ENV === "production" ? "7d" : 0
+}));
+
 app.get("/:file", (req, res, next) => {
   if (!CLIENT_SCRIPTS.has(req.params.file)) return next();
   res.sendFile(path.join(__dirname, req.params.file));
@@ -3454,7 +3459,7 @@ const server = app.listen(PORT, () => {
   ensureMerchCatalog();
   ensureSampleSops();
   ensureSevenShiftsTables(db);
-  console.log(`MP Training server running on port ${PORT}`);
+  console.log(`MP LAUNCH PAD server running on port ${PORT}`);
   console.log(`Database: ${DB_PATH} (${Math.max(1, Math.round(fs.statSync(DB_PATH).size / 1024))} KB)`);
   console.log(`Microsoft sign-in: ${microsoftAuthEnabled ? "enabled" : "disabled (set AZURE_CLIENT_ID + AZURE_CLIENT_SECRET)"}`);
   if (devLoginEnabled) {

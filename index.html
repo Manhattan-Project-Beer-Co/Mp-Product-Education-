@@ -3,46 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manhattan Project | Staff Training</title>
+<title>MP LAUNCH PAD | Manhattan Project Beer Co.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
 
   :root {
-    --void: #0a0a0a;
-    --bg: #0d0d0d;
-    --surface: #141414;
-    --surface-2: #1a1a1a;
-    --ink: #f5f5f5;
-    --gold: #c9a227;
-    --gold-bright: #e0b93a;
-    --gold-dim: #8b6b3c;
-    --gold-glow: rgba(201, 162, 39, 0.2);
+    /* MP LAUNCH PAD — public-site B/W + warm earth accents (no green) */
+    --void: #000000;
+    --bg: #ffffff;
+    --surface: #f3f1ee;
+    --surface-2: #ebe7e1;
+    --ink: #181818;
+    --gold: #9c6b4a;
+    --gold-bright: #b8835c;
+    --gold-dim: #7a5338;
+    --gold-glow: rgba(156, 107, 74, 0.18);
     --sidebar-w: 248px;
 
-    /* Legacy tokens remapped to POURMP dark/gold */
-    --black: #f5f5f5;
-    --charcoal: #1a1a1a;
-    --cream: #0d0d0d;
-    --paper: #161616;
-    --muted: #9a9a9a;
-    --line: rgba(201, 162, 39, 0.18);
-    --line-strong: rgba(201, 162, 39, 0.32);
-    --green: rgba(46, 74, 37, 0.35);
-    --green-text: #9fbf88;
-    --accent: #c9a227;
-    --accent-light: rgba(201, 162, 39, 0.08);
-    --accent-glow: rgba(201, 162, 39, 0.2);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
-    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.55);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --black: #181818;
+    --charcoal: #2a2622;
+    --cream: #f7f5f2;
+    --paper: #ffffff;
+    --muted: #7a736b;
+    --line: #e4dfd8;
+    --line-strong: #cfc7bc;
+    --green: rgba(156, 107, 74, 0.14);
+    --green-text: #7a5338;
+    --accent: #9c6b4a;
+    --accent-light: rgba(156, 107, 74, 0.08);
+    --accent-glow: rgba(156, 107, 74, 0.16);
+    --sand: #c4a574;
+    --stone: #6e6358;
+    --shadow-sm: 0 1px 2px rgba(24, 24, 24, 0.06);
+    --shadow-md: 0 10px 28px rgba(24, 24, 24, 0.08);
+    --shadow-lg: 0 20px 48px rgba(24, 24, 24, 0.12);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --font: "Crimson Text", Georgia, "Times New Roman", serif;
+    --font-display: "Josefin Sans", "Helvetica Neue", Arial, sans-serif;
+    --font-script: "Dancing Script", "Brush Script MT", cursive;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -53,21 +57,30 @@
     margin: 0;
     background: var(--bg);
     background-image:
-      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(201, 162, 39, 0.08), transparent 50%),
-      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(201, 162, 39, 0.04), transparent 45%);
+      radial-gradient(ellipse 70% 45% at 0% 0%, rgba(196, 165, 116, 0.12), transparent 55%),
+      radial-gradient(ellipse 55% 40% at 100% 0%, rgba(156, 107, 74, 0.07), transparent 50%);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.55;
+    line-height: 1.65;
+    font-size: 17px;
     min-height: 100vh;
+  }
+
+  h1, h2, h3, h4,
+  .tab, .filter-btn, .auth-btn, .coffee-subtab,
+  .stage-title, .brand-text h1, .brand-text p,
+  .sidebar-brand-text, .login-card h1, .login-card .login-sub,
+  .name, .coffee-section-num, .btn, button {
+    font-family: var(--font-display);
   }
 
   /* ── Top bar ── */
   .site-header {
-    background: rgba(9, 9, 11, 0.92);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--line);
     position: sticky;
     top: 0;
     z-index: 30;
@@ -111,19 +124,20 @@
   .brand-mark svg { display: block; }
 
   .brand-text h1 {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     margin: 0;
-    color: #fff;
-    letter-spacing: 0.04em;
+    color: #181818;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
   .brand-text p {
     font-size: 10px;
-    font-weight: 500;
-    margin: 1px 0 0;
-    color: rgba(255, 255, 255, 0.42);
-    letter-spacing: 0.14em;
+    font-weight: 600;
+    margin: 3px 0 0;
+    color: var(--muted);
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
@@ -287,32 +301,34 @@
   }
 
   .auth-btn {
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.04);
-    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: #181818;
     padding: 8px 14px;
     border-radius: var(--radius-sm);
-    font-family: var(--font);
+    font-family: var(--font-display);
     font-size: 12px;
     font-weight: 600;
+    letter-spacing: 0.04em;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s, color 0.2s;
   }
 
   .auth-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.22);
+    background: var(--surface);
+    border-color: var(--gold);
+    color: #181818;
   }
 
   .auth-btn:active { transform: scale(0.97); }
 
   .auth-btn.primary {
-    background: #fff;
-    color: var(--black);
-    border-color: #fff;
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
+    color: #fff;
+    border-color: var(--gold);
   }
 
-  .auth-btn.primary:hover { background: #f4f4f5; }
+  .auth-btn.primary:hover { filter: brightness(1.05); }
 
   .auth-btn.microsoft {
     display: inline-flex;
@@ -357,14 +373,14 @@
 
   .auth-user {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.48);
+    color: var(--muted);
     text-align: right;
     line-height: 1.4;
   }
 
   .auth-user strong {
     display: block;
-    color: #fff;
+    color: #181818;
     font-size: 13px;
     font-weight: 600;
   }
@@ -909,17 +925,15 @@
     min-width: 180px;
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(0,0,0,0.25);
-    color: inherit;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: var(--ink);
     font: inherit;
   }
 
-  /* The dropdown's own list is drawn by the OS, so it ignores the dark palette
-     above — set both explicitly or the options render as dark-on-dark. */
   .favorite-beer-row select option {
-    background: #1c1f26;
-    color: #f2f4f8;
+    background: #fff;
+    color: #181818;
   }
 
   .favorite-beer-legacy {
@@ -933,15 +947,21 @@
     align-items: center;
     gap: 14px;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid var(--line);
   }
 
-  .tap-number {
+  .tap-row .tap-number {
     flex: 0 0 42px;
     font-size: 1.2rem;
     font-weight: 700;
     text-align: center;
     opacity: 0.8;
+    width: auto;
+    min-height: 0;
+    background: transparent;
+    color: var(--ink);
+    box-shadow: none;
+    border-radius: 0;
   }
 
   .tap-beer { flex: 1; min-width: 0; }
@@ -951,13 +971,13 @@
     max-width: 420px;
     padding: 8px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(0,0,0,0.25);
-    color: inherit;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: var(--ink);
     font: inherit;
   }
 
-  .tap-beer select option { background: #1c1f26; color: #f2f4f8; }
+  .tap-beer select option { background: #fff; color: #181818; }
 
   .tap-meta { font-size: 0.82rem; opacity: 0.7; margin-top: 4px; }
 
@@ -3148,8 +3168,9 @@
   }
 
   .inventory-row-actions button {
-    border: 1px solid var(--line);
-    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: #181818;
     border-radius: var(--radius-sm);
     padding: 6px 10px;
     font-size: 12px;
@@ -3407,7 +3428,8 @@
 
   .vote-btn {
     border: 1px solid var(--line-strong);
-    background: var(--paper);
+    background: #fff;
+    color: #181818;
     border-radius: 999px;
     padding: 8px 14px;
     font-family: var(--font);
@@ -3757,12 +3779,12 @@
     .chat-fab { right: 16px; bottom: 16px; }
   }
 
-  /* ── POURMP shell + dark surface overrides ── */
-  .app-shell { display: flex; min-height: 100vh; }
+  /* ── Light shell: B/W site DNA + earth accents ── */
+  .app-shell { display: flex; min-height: 100vh; background: var(--bg); }
   .app-sidebar {
     width: var(--sidebar-w);
     flex-shrink: 0;
-    background: #0a0a0a !important;
+    background: #fff !important;
     border-right: 1px solid var(--line);
     display: flex;
     flex-direction: column;
@@ -3785,17 +3807,20 @@
     font: inherit;
     color: inherit;
   }
-  .sidebar-brand:hover .sidebar-brand-mark {
-    border-color: #e0b93a;
-  }
   .sidebar-brand-mark {
     width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--gold);
     display: grid; place-items: center;
-    background: radial-gradient(circle at 40% 35%, rgba(201,162,39,0.25), transparent 60%);
+    background: radial-gradient(circle at 40% 35%, rgba(156,107,74,0.18), transparent 60%);
     flex-shrink: 0;
   }
-  .sidebar-brand-text strong { display:block; color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; line-height: 1.25; }
-  .sidebar-brand-text span { display:block; margin-top: 2px; color: var(--muted); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .sidebar-brand-text strong {
+    display:block; color: #181818; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; line-height: 1.3; text-transform: uppercase;
+  }
+  .sidebar-brand-text span {
+    display:block; margin-top: 4px; color: var(--muted); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
   .sidebar-nav { display:flex; flex-direction:column; gap:4px; flex:1; overflow-y:auto; }
   .sidebar-nav.tabs,
   .app-sidebar .tabs {
@@ -3806,34 +3831,34 @@
   .sidebar-nav .tab {
     display:flex; align-items:center; width:100%; text-align:left; padding:11px 12px;
     border-radius:10px; border:1px solid transparent; background:transparent !important;
-    color:#d4d4d4 !important;
-    font-family:var(--font); font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+    color:#3a3530 !important;
+    font-family:var(--font-display); font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;
     cursor:pointer; transition: background .2s, border-color .2s, color .2s; box-shadow:none !important;
   }
   .sidebar-nav .tab:hover {
-    color:#fff !important;
-    background: rgba(255,255,255,0.06) !important;
+    color:#181818 !important;
+    background: var(--surface) !important;
   }
   .sidebar-nav .tab.active {
-    color:#fff !important;
-    background: linear-gradient(135deg, rgba(201,162,39,0.28), rgba(139,107,60,0.16)) !important;
-    border-color: var(--gold) !important;
+    color:#181818 !important;
+    background: rgba(156,107,74,0.12) !important;
+    border-color: rgba(156,107,74,0.35) !important;
     box-shadow:none !important;
   }
-  .sidebar-user { margin-top:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background:#101010; }
-  .sidebar-user-name { font-size:13px; font-weight:700; color:#fff; }
+  .sidebar-user { margin-top:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background: var(--surface); }
+  .sidebar-user-name { font-size:13px; font-weight:700; color:#181818; font-family: var(--font-display); }
   .sidebar-user-role { margin-top:2px; font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
   .sidebar-user .auth-bar { margin-top:10px; flex-direction:column; align-items:stretch; gap:8px; }
   .sidebar-user .auth-btn { width:100%; justify-content:center; }
-  .app-stage { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .app-stage { flex:1; min-width:0; display:flex; flex-direction:column; background: transparent; }
   .stage-title {
-    margin:0; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
-    color: var(--gold); flex:1; min-width:120px;
+    margin:0; font-size:12px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase;
+    color: var(--gold-dim); flex:1; min-width:120px;
   }
 
-  .site-header { display:none; border-bottom:1px solid var(--line); background: rgba(10,10,10,0.92); }
+  .site-header { display:none; border-bottom:1px solid var(--line); background: rgba(255,255,255,0.94); }
   .toolbar {
-    top:0; background: rgba(13,13,13,0.94); border-bottom:1px solid var(--line); box-shadow:none;
+    top:0; background: rgba(255,255,255,0.94); border-bottom:1px solid var(--line); box-shadow:none;
   }
   .toolbar-inner { max-width:1200px; padding:14px 28px; }
   .tabs { display:none !important; }
@@ -3847,36 +3872,66 @@
     padding: 0 !important;
   }
   #mobileTabs { display:none !important; }
-  .brand-text h1 { color: var(--gold); }
-  .brand-mark { border-radius:50%; border-color: var(--gold); background: radial-gradient(circle at 40% 35%, rgba(201,162,39,0.25), transparent 60%); }
+  .brand-text h1 { color: #181818; }
+  .brand-text p { color: var(--muted); }
+  .brand-mark {
+    border-radius:50%; border-color: var(--gold);
+    background: radial-gradient(circle at 40% 35%, rgba(156,107,74,0.18), transparent 60%);
+  }
 
   .filter-wrap { max-width:1200px; padding:0 28px 14px; }
-  .filter-btn { background: transparent; color: var(--muted); border-color: var(--line-strong); }
-  .filter-btn:hover { color: var(--gold); border-color: var(--gold); transform:none; }
-  .filter-btn.active {
-    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
-    border-color: var(--gold); color:#0a0a0a; box-shadow: 0 4px 16px rgba(201,162,39,0.25);
+  .filter-btn, .coffee-subtab {
+    background: #fff !important;
+    color: #3a3530 !important;
+    border: 1px solid var(--line-strong) !important;
+  }
+  .filter-btn:hover, .coffee-subtab:hover {
+    color: #181818 !important;
+    border-color: var(--gold) !important;
+    background: var(--surface) !important;
+    transform: none;
+  }
+  .filter-btn.active, .coffee-subtab.active {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)) !important;
+    border-color: var(--gold) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 14px rgba(156,107,74,0.22);
   }
 
   .auth-btn {
-    border-color: var(--line-strong); background: transparent; color: #fff;
+    border-color: var(--line-strong) !important;
+    background: #fff !important;
+    color: #181818 !important;
   }
-  .auth-btn:hover { background: rgba(201,162,39,0.1); border-color: var(--gold); }
+  .auth-btn:hover {
+    background: var(--surface) !important;
+    border-color: var(--gold) !important;
+    color: #181818 !important;
+  }
   .auth-btn.primary {
-    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
-    color: #0a0a0a; border-color: var(--gold);
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)) !important;
+    color: #fff !important;
+    border-color: var(--gold) !important;
   }
-  .auth-btn.primary:hover { filter: brightness(1.05); background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)); }
-  .auth-btn.microsoft { background:#111; color:#fff; border-color: var(--line-strong); }
-  .auth-user strong { color:#fff; }
+  .auth-btn.primary:hover { filter: brightness(1.05); }
+  .auth-btn.microsoft {
+    background: #fff !important;
+    color: #242424 !important;
+    border: 1px solid #8c8c8c !important;
+  }
+  .auth-user strong { color: #181818; }
 
   input[type="text"], input[type="email"], input[type="password"], select, textarea {
-    background: var(--surface) !important; color: var(--ink) !important; border-color: var(--line-strong) !important; box-shadow:none !important;
+    background: #fff !important;
+    color: var(--ink) !important;
+    border-color: var(--line-strong) !important;
+    box-shadow: none !important;
   }
   input:focus, select:focus, textarea:focus {
-    border-color: var(--gold) !important; box-shadow: 0 0 0 3px var(--gold-glow) !important;
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 3px var(--gold-glow) !important;
   }
-  input::placeholder { color: #7a7a7a !important; }
+  input::placeholder { color: #9a9288 !important; }
 
   .search-wrap svg {
     color: var(--gold);
@@ -3885,72 +3940,148 @@
   }
   .search-wrap input[type="text"]#search,
   .search-wrap input[type="text"] {
-    background: #0f0f0f !important;
-    color: #f5f5f5 !important;
-    border: 1px solid rgba(201, 162, 39, 0.28) !important;
+    background: #fff !important;
+    color: #181818 !important;
+    border: 1px solid var(--line-strong) !important;
     box-shadow: none !important;
     caret-color: var(--gold);
   }
   .search-wrap input::placeholder {
-    color: #8a8a8a !important;
+    color: #9a9288 !important;
     opacity: 1;
   }
   .search-wrap input:focus {
     border-color: var(--gold) !important;
-    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.18) !important;
-    background: #121212 !important;
+    box-shadow: 0 0 0 3px var(--gold-glow) !important;
+    background: #fff !important;
   }
   .search-wrap input:-webkit-autofill,
   .search-wrap input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #f5f5f5 !important;
+    -webkit-text-fill-color: #181818 !important;
     caret-color: var(--gold);
-    box-shadow: 0 0 0 1000px #0f0f0f inset !important;
+    box-shadow: 0 0 0 1000px #fff inset !important;
     transition: background-color 99999s ease-out;
   }
 
   .card, .game-card, .flash-card, .game-tile, .metric-card, .chart-card, .rec-card,
   .speed-header, .approve-card, .progress-table, .inventory-table, .modal, .chat-panel,
   .coffee-subtab, .auth-panel {
-    background: var(--paper) !important;
+    background: #fff !important;
     border-color: var(--line-strong) !important;
     color: var(--ink);
   }
-  .card:hover, .game-tile:hover { border-color: var(--gold) !important; box-shadow: 0 0 0 1px rgba(201,162,39,0.2), var(--shadow-md); }
-  .game-tile-icon { background: rgba(201,162,39,0.08) !important; color: var(--gold); border: 1px solid var(--line); }
-  .game-option { background: var(--surface) !important; color: var(--ink); border-color: var(--line-strong) !important; }
-  .game-option:hover:not(.correct):not(.wrong):not(.disabled) { background: rgba(201,162,39,0.08) !important; border-color: var(--gold) !important; }
-  .game-next, .auth-panel .game-next, .approve-form button {
+  .card:hover, .game-tile:hover {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 1px rgba(156,107,74,0.2), var(--shadow-md);
+  }
+  .game-tile-icon {
+    background: rgba(156,107,74,0.1) !important;
+    color: var(--gold);
+    border: 1px solid var(--line) !important;
+  }
+  .game-option {
+    background: var(--surface) !important;
+    color: var(--ink) !important;
+    border-color: var(--line-strong) !important;
+  }
+  .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
+    background: rgba(156,107,74,0.1) !important;
+    border-color: var(--gold) !important;
+  }
+  .game-next, .auth-panel .game-next, .approve-form button,
+  .inventory-row-actions button, .merch-admin-actions .game-next,
+  .flash-nav button.primary, button.game-next {
     background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)) !important;
-    color: #0a0a0a !important; border: none !important;
+    color: #fff !important;
+    border: 1px solid var(--gold) !important;
   }
   .game-back, .flash-nav button, .approve-edit {
-    background: transparent !important; color: var(--gold) !important; border: 1px solid var(--line-strong) !important;
+    background: #fff !important;
+    color: var(--gold-dim) !important;
+    border: 1px solid var(--line-strong) !important;
   }
   .approve-remove {
-    background: rgba(120, 30, 30, 0.25) !important;
-    color: #f0a8a8 !important;
-    border: 1px solid rgba(180, 70, 70, 0.45) !important;
+    background: #fdf2f2 !important;
+    color: #9b2c2c !important;
+    border: 1px solid #f0c0c0 !important;
   }
-  .approve-remove:hover { background: rgba(140, 40, 40, 0.4) !important; }
-  .progress-table th, .inventory-table th, .progress-table tr.clickable:hover,
-  .chat-header, .chat-messages, .briefing-item, .approve-form input, .approve-form select {
-    background: #121212 !important; color: var(--ink) !important;
+  .approve-remove:hover { background: #fde8e8 !important; }
+  .progress-table th, .inventory-table th {
+    background: var(--surface) !important;
+    color: var(--ink) !important;
   }
-  .coffee-intro h2, .name, .game-tile-title, .metric-value { color: #fff !important; }
-  .desc, .game-tile-desc, .metric-label, .hint, .status { color: var(--muted) !important; }
+  .progress-table tr.clickable:hover {
+    background: var(--surface) !important;
+    color: var(--ink) !important;
+  }
+  .chat-header, .chat-messages, .briefing-item,
+  .approve-form input, .approve-form select {
+    background: #fff !important;
+    color: var(--ink) !important;
+  }
+  .coffee-intro h2, .name, .game-tile-title, .metric-value {
+    color: #181818 !important;
+  }
+  .desc, .game-tile-desc, .metric-label, .hint, .status {
+    color: var(--muted) !important;
+  }
   .status { background: var(--surface); border: 1px solid var(--line); }
-  .status strong { color: var(--gold) !important; }
-  .tag { background: rgba(201,162,39,0.12); color: var(--gold); border: 1px solid var(--line); }
-  .tag.new { background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)); color:#0a0a0a; border:none; }
-  .abv { color: var(--gold); }
-  .tap-number strong { color: var(--gold); }
+  .status strong { color: var(--gold-dim) !important; }
+  .tag {
+    background: rgba(156,107,74,0.1);
+    color: var(--gold-dim);
+    border: 1px solid var(--line);
+  }
+  .tag.new {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
+    color: #fff;
+    border: none;
+  }
+  .abv { color: var(--gold-dim); }
+  .tap-number strong { color: #fff; }
   .detail-text, .modal, .auth-panel { color: var(--ink) !important; }
-  .modal { background: #141414 !important; }
-  .modal-close { color: var(--gold); }
-  .app-footer { color: #666; }
-  .chat-fab { background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim)); color:#0a0a0a; }
-  .chat-panel { background:#141414 !important; }
+  .modal { background: #fff !important; }
+  .modal-close { color: var(--gold-dim); }
+  .app-footer {
+    color: var(--muted);
+    font-family: var(--font-display);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+  .app-footer a { color: var(--gold-dim); border-bottom: 1px solid currentColor; }
+  .chat-fab {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
+    color: #fff;
+  }
+  .chat-panel { background: #fff !important; }
+  .chat-send {
+    background: var(--gold) !important;
+    color: #fff !important;
+  }
   .list, .coffee-intro, .metrics-grid, .chart-grid, .game-hub, .approve-panel { max-width: 1200px; }
+
+  /* Mobile tabs readable on light header */
+  #mobileTabs .tab {
+    background: #fff !important;
+    color: #3a3530 !important;
+    border: 1px solid var(--line-strong) !important;
+  }
+  #mobileTabs .tab.active {
+    background: rgba(156,107,74,0.14) !important;
+    color: #181818 !important;
+    border-color: var(--gold) !important;
+  }
+  .coffee-subtab {
+    background: #fff !important;
+    color: #3a3530 !important;
+    border: 1px solid var(--line) !important;
+  }
+  .coffee-subtab.active {
+    background: rgba(156,107,74,0.14) !important;
+    color: #181818 !important;
+    border-color: var(--gold) !important;
+  }
 
   /* Launch Pad combat accents */
   .galaga-hud span, .galaga-mission { color: var(--gold-bright); }
@@ -3960,14 +4091,14 @@
     .site-header { display:block; }
     #mobileTabs.tabs {
       display:flex !important; gap:3px; flex:1; min-width:0; overflow-x:auto; scrollbar-width:none;
-      padding:4px; background:#151515; border-radius: var(--radius-md);
+      padding:4px; background: var(--surface); border-radius: var(--radius-md);
     }
     #mobileTabs .tab {
-      padding:9px 14px; border:1px solid transparent; border-radius:8px; color:var(--muted); background:transparent;
+      padding:9px 14px; border:1px solid var(--line-strong); border-radius:8px; color:#3a3530; background:#fff;
       font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; white-space:nowrap; cursor:pointer;
-      font-family: var(--font);
+      font-family: var(--font-display);
     }
-    #mobileTabs .tab.active { background: rgba(201,162,39,0.16); color:#fff; border-color: var(--gold); }
+    #mobileTabs .tab.active { background: rgba(156,107,74,0.14); color:#181818; border-color: var(--gold); }
     .stage-title { display:none; }
     .toolbar { top: 62px; }
   }
@@ -3985,7 +4116,7 @@
     min-height: 220px;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:28px 20px 24px;
-    background: linear-gradient(180deg, #161616, #101010) !important;
+    background: #fff !important;
     border: 1px solid var(--line-strong) !important;
     border-radius: 14px;
     position: relative;
@@ -4000,10 +4131,10 @@
     width: 88px; height: 88px; border-radius: 50% !important;
     display:grid; place-items:center;
     background:
-      radial-gradient(circle at 50% 50%, rgba(201,162,39,0.18), transparent 62%),
-      #0f0f0f !important;
+      radial-gradient(circle at 50% 50%, rgba(156,107,74,0.16), transparent 62%),
+      var(--surface) !important;
     border: 1px solid var(--gold) !important;
-    box-shadow: inset 0 0 0 1px rgba(201,162,39,0.15);
+    box-shadow: inset 0 0 0 1px rgba(156,107,74,0.12);
     margin-bottom: 14px;
     font-size: 0 !important;
     position: relative;
@@ -4016,33 +4147,132 @@
 
 
 
-  /* Sign-in gate. The app shell stays hidden until /api/auth/me has answered,
-     so nothing is ever briefly visible to someone who is not signed in. */
-  .login-gate { display: none; position: fixed; inset: 0; z-index: 200; align-items: center; justify-content: center; background: #0d0d0d; padding: 24px; }
+  /* Sign-in — light + earth, comfortable for staff */
+  .login-gate {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,165,116,0.2), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgba(156,107,74,0.1), transparent 50%),
+      #f7f5f2;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    color: var(--ink);
+    padding: 36px 28px 28px;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    box-shadow: var(--shadow-lg);
+  }
+  .login-card .login-atom {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(156,107,74,0.45);
+    background: radial-gradient(circle at 40% 35%, rgba(156,107,74,0.16), transparent 65%);
+    animation: atomPulse 5.5s ease-in-out infinite;
+  }
+  .login-card .login-atom svg { display: block; }
+  @keyframes atomPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(156,107,74,0.18); }
+    50% { box-shadow: 0 0 0 10px rgba(156,107,74,0); }
+  }
+  .login-card h1 {
+    font-size: 1.2rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #181818;
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  .login-card .login-sub {
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0 0 26px;
+  }
+  .login-card .login-message {
+    color: #4a453f;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin: 0 0 20px;
+    font-family: var(--font);
+  }
+  .login-card .auth-error { margin-bottom: 16px; }
+  .login-actions { max-width: 300px; margin: 0 auto; }
+  .login-actions button {
+    width: 100%;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1px solid var(--gold);
+    background: rgba(156,107,74,0.1);
+    color: #181818;
+    padding: 14px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .15s ease;
+  }
+  .login-actions button:hover { background: var(--gold); color: #fff; transform: translateY(-1px); }
+  .login-foot {
+    color: #9a9288;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 28px;
+  }
   body.auth-pending .login-gate, body.signed-out .login-gate { display: flex; }
   body.auth-pending .app-shell, body.signed-out .app-shell { display: none; }
-  .login-card { width: 100%; max-width: 400px; text-align: center; }
-  .login-card h1 { font-size: 20px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9a227; margin: 22px 0 6px; }
-  .login-card .login-sub { color: #8a8a8a; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 26px; }
-  .login-card .login-message { color: #cfcfcf; font-size: 14px; line-height: 1.6; margin: 0 0 22px; }
-  .login-card .auth-error { margin-bottom: 18px; }
-  .login-actions button { width: 100%; }
-  .login-foot { color: #5c5c5c; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 30px; }
+
+  /* Distinctive command accents (not public-site layout) */
+  .stage-title::after {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 2px;
+    margin-top: 8px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .card {
+    position: relative;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 12px; bottom: 12px;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--gold), transparent 85%);
+    opacity: 0.55;
+  }
+  .sidebar-brand img { display: none; }
 </style>
 </head>
 <body class="auth-pending">
 <div id="loginGate" class="login-gate">
   <div class="login-card">
-    <svg width="54" height="54" viewBox="0 0 100 100" aria-hidden="true">
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
-      <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
-      <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
-      <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
-    </svg>
-    <h1>Manhattan Project</h1>
-    <p class="login-sub">Staff Training</p>
+    <div class="login-atom" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3"/>
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/>
+      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/>
+      <rect x="43" y="32" width="14" height="40" rx="2" fill="#9c6b4a"/>
+      <rect x="46" y="22" width="8" height="12" fill="#9c6b4a"/>
+      <rect x="47" y="16" width="6" height="8" rx="1" fill="#9c6b4a"/>
+    </svg></div>
+    <h1>MP LAUNCH PAD</h1>
+    <p class="login-sub">Manhattan Project · Staff portal</p>
     <div id="loginError"></div>
     <p class="login-message" id="loginMessage">Checking your sign-in…</p>
     <div class="login-actions" id="loginActions"></div>
@@ -4053,16 +4283,16 @@
   <aside class="app-sidebar" id="appSidebar">
     <button type="button" class="sidebar-brand" onclick="goHome()" aria-label="Go to On Tap home">
       <div class="sidebar-brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
-          <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
-          <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
-          <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/>
+          <rect x="43" y="32" width="14" height="40" rx="2" fill="#9c6b4a"/>
+          <rect x="46" y="22" width="8" height="12" fill="#9c6b4a"/>
+          <rect x="47" y="16" width="6" height="8" rx="1" fill="#9c6b4a"/>
         </svg></div>
       <div class="sidebar-brand-text">
-        <strong>MANHATTAN PROJECT</strong>
-        <span>Staff Training</span>
+        <strong>MP LAUNCH PAD</strong>
+        <span>Staff portal</span>
       </div>
     </button>
     <nav class="sidebar-nav tabs" id="mainTabs">
@@ -4077,7 +4307,7 @@
       <button type="button" class="tab" data-type="checklists">Checklists</button>
       <button type="button" class="tab" data-type="floor">Floor Tools</button>
       <button type="button" class="tab" data-type="reviews">Reviews</button>
-      <button type="button" class="tab" data-type="games">Launch Pad</button>
+      <button type="button" class="tab" data-type="games">War Games</button>
       <button type="button" class="tab" data-type="features">Features</button>
       <button type="button" class="tab tab-auth-only" data-type="feedback" style="display:none;">Feedback</button>
       <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
@@ -4100,16 +4330,16 @@
   <div class="header-inner">
     <button type="button" class="brand" onclick="goHome()" aria-label="Go to On Tap home">
       <div class="brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/>
-          <rect x="43" y="32" width="14" height="40" rx="2" fill="#c9a227"/>
-          <rect x="46" y="22" width="8" height="12" fill="#c9a227"/>
-          <rect x="47" y="16" width="6" height="8" rx="1" fill="#c9a227"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/>
+          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/>
+          <rect x="43" y="32" width="14" height="40" rx="2" fill="#9c6b4a"/>
+          <rect x="46" y="22" width="8" height="12" fill="#9c6b4a"/>
+          <rect x="47" y="16" width="6" height="8" rx="1" fill="#9c6b4a"/>
         </svg></div>
       <div class="brand-text">
-        <h1>MANHATTAN PROJECT</h1>
-        <p>Staff Training</p>
+        <h1>MP LAUNCH PAD</h1>
+        <p>Staff portal</p>
       </div>
     </button>
     <div class="auth-bar" id="authBarMobile"></div>
@@ -4146,7 +4376,7 @@
 </div>
 </main>
 
-<footer class="app-footer">Manhattan Project Beer Co. · Internal Staff Training</footer>
+<footer class="app-footer">MP LAUNCH PAD · Manhattan Project Beer Co. · Internal use</footer>
   </div>
 </div>
 
@@ -5174,18 +5404,18 @@ const GAME_POINT_VALUES = {
 };
 
 const GAMES = [
-  { id: "favbeer", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M38 58c0-12 8-22 12-28 4 6 12 16 12 28a12 12 0 0 1-24 0z" fill="none" stroke="#c9a227" stroke-width="3"/><circle cx="50" cy="58" r="3" fill="#c9a227"/></svg>`, title: "Staff Favorites", desc: "Guess teammates’ favorite beers — unlock them on the board for bonus points" },
-  { id: "guestscene", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="28" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M35 55c5 8 25 8 30 0" fill="none" stroke="#c9a227" stroke-width="3"/></svg>`, title: "Guest Scenarios", desc: "What would you recommend? Blue Moon fans, parties, allergies, and more" },
-  { id: "recovery", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 60 L50 30 L70 60 Z" fill="none" stroke="#c9a227" stroke-width="3"/><circle cx="50" cy="52" r="3" fill="#c9a227"/></svg>`, title: "Complaint Recovery", desc: "MP preferred service recovery — increasingly tough guests" },
-  { id: "rocket", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(55 50 54)"/><rect x="44" y="28" width="12" height="36" rx="2" fill="#c9a227"/><rect x="47" y="18" width="6" height="12" fill="#c9a227"/><path d="M38 68 L44 58 L56 58 L62 68 Z" fill="#8b6b3c"/></svg>`, title: "Launch Pad", desc: "Gold rocket trainer — blast the correct tap answer" },
-  { id: "speed", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M56 22 L38 52h14l-8 26 28-36H56z" fill="#c9a227"/></svg>`, title: "Speed Round", desc: "12 mixed questions from current taps" },
-  { id: "tap", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M50 28c8 10 14 18 14 28a14 14 0 0 1-28 0c0-10 6-18 14-28z" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M50 40v28M42 52h16" stroke="#c9a227" stroke-width="2"/></svg>`, title: "Tap Match", desc: "Match tap numbers to beers" },
-  { id: "quiz", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Flavor Quiz", desc: "Match on-tap flavor profiles" },
-  { id: "practice", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Guest Match", desc: "A guest describes what they want — recommend a tap" },
-  { id: "abv", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "ABV Challenge", desc: "Pick ABV from current taps" },
-  { id: "style", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Style Match", desc: "Pick the style of on-tap beers" },
-  { id: "reverse", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#c9a227"/></svg>`, title: "Pick the Profile", desc: "Match on-tap flavor profiles" },
-  { id: "flash", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#c9a227" stroke-width="2.5" transform="rotate(60 50 50)"/><rect x="34" y="30" width="32" height="42" rx="4" fill="none" stroke="#c9a227" stroke-width="3"/><path d="M42 44h16M42 54h12" stroke="#c9a227" stroke-width="2"/></svg>`, title: "Flashcards", desc: "15 cards — current tap list only" }
+  { id: "favbeer", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M38 58c0-12 8-22 12-28 4 6 12 16 12 28a12 12 0 0 1-24 0z" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="50" cy="58" r="3" fill="#9c6b4a"/></svg>`, title: "Staff Favorites", desc: "Guess teammates’ favorite beers — unlock them on the board for bonus points" },
+  { id: "guestscene", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="28" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M35 55c5 8 25 8 30 0" fill="none" stroke="#9c6b4a" stroke-width="3"/></svg>`, title: "Guest Scenarios", desc: "What would you recommend? Blue Moon fans, parties, allergies, and more" },
+  { id: "recovery", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 60 L50 30 L70 60 Z" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="50" cy="52" r="3" fill="#9c6b4a"/></svg>`, title: "Complaint Recovery", desc: "MP preferred service recovery — increasingly tough guests" },
+  { id: "rocket", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(55 50 54)"/><rect x="44" y="28" width="12" height="36" rx="2" fill="#9c6b4a"/><rect x="47" y="18" width="6" height="12" fill="#9c6b4a"/><path d="M38 68 L44 58 L56 58 L62 68 Z" fill="#8b6b3c"/></svg>`, title: "Launch Pad", desc: "Gold rocket trainer — blast the correct tap answer" },
+  { id: "speed", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M56 22 L38 52h14l-8 26 28-36H56z" fill="#9c6b4a"/></svg>`, title: "Speed Round", desc: "12 mixed questions from current taps" },
+  { id: "tap", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M50 28c8 10 14 18 14 28a14 14 0 0 1-28 0c0-10 6-18 14-28z" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M50 40v28M42 52h16" stroke="#9c6b4a" stroke-width="2"/></svg>`, title: "Tap Match", desc: "Match tap numbers to beers" },
+  { id: "quiz", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Flavor Quiz", desc: "Match on-tap flavor profiles" },
+  { id: "practice", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Guest Match", desc: "A guest describes what they want — recommend a tap" },
+  { id: "abv", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "ABV Challenge", desc: "Pick ABV from current taps" },
+  { id: "style", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Style Match", desc: "Pick the style of on-tap beers" },
+  { id: "reverse", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Pick the Profile", desc: "Match on-tap flavor profiles" },
+  { id: "flash", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><rect x="34" y="30" width="32" height="42" rx="4" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M42 44h16M42 54h12" stroke="#9c6b4a" stroke-width="2"/></svg>`, title: "Flashcards", desc: "15 cards — current tap list only" }
 ];
 
 function parseCSV(text) {
@@ -5404,7 +5634,6 @@ function shuffle(arr) {
 
 function render() {
   queueMicrotask(populateBeerSelects);
-
   const content = document.getElementById("content");
   const filterWrap = document.getElementById("filterWrap");
   const searchWrap = document.getElementById("searchWrap");
@@ -10386,7 +10615,7 @@ function renderRoundComplete(title) {
   return `
     <div class="game-card">
       <p class="game-question" style="font-size:20px;font-weight:750;">${title}</p>
-      <p style="font-size:15px;color:var(--muted);margin:0;">You got <strong style="color:#fff">${gameSession.right}</strong> out of <strong style="color:#fff">${attempted}</strong> correct (${pct}%)</p>
+      <p style="font-size:15px;color:var(--muted);margin:0;">You got <strong style="color:var(--gold-dim)">${gameSession.right}</strong> out of <strong style="color:#181818">${attempted}</strong> correct (${pct}%)</p>
       ${rocketStats}
       <button class="game-next" onclick="startGame('${activeGame}')">Play Again</button>
     </div>
@@ -10768,20 +10997,20 @@ function makeRocketJunk(seed = 0) {
 function launchPadJunkSvg(kind) {
   if (kind === "hop") {
     return `<svg viewBox="0 0 40 40" aria-hidden="true">
-      <path d="M20 6c6 8 10 14 10 20a10 10 0 0 1-20 0c0-6 4-12 10-20z" fill="none" stroke="#c9a227" stroke-width="2.2"/>
+      <path d="M20 6c6 8 10 14 10 20a10 10 0 0 1-20 0c0-6 4-12 10-20z" fill="none" stroke="#9c6b4a" stroke-width="2.2"/>
       <path d="M20 14v16M14 22h12" stroke="#8b6b3c" stroke-width="1.6"/>
     </svg>`;
   }
   if (kind === "scrap") {
     return `<svg viewBox="0 0 40 40" aria-hidden="true">
-      <path d="M8 14 L18 8 L32 12 L28 28 L12 30 Z" fill="none" stroke="#c9a227" stroke-width="2"/>
+      <path d="M8 14 L18 8 L32 12 L28 28 L12 30 Z" fill="none" stroke="#9c6b4a" stroke-width="2"/>
       <circle cx="20" cy="18" r="2.5" fill="#e0b93a"/>
     </svg>`;
   }
   if (kind === "ore") {
     return `<svg viewBox="0 0 40 40" aria-hidden="true">
       <path d="M20 6 L32 16 L28 32 L12 32 L8 16 Z" fill="none" stroke="#8b6b3c" stroke-width="2"/>
-      <path d="M20 12 L26 18 L20 28 L14 18 Z" fill="#c9a227" opacity="0.85"/>
+      <path d="M20 12 L26 18 L20 28 L14 18 Z" fill="#9c6b4a" opacity="0.85"/>
     </svg>`;
   }
   return `<svg viewBox="0 0 40 40" aria-hidden="true">
@@ -10793,8 +11022,8 @@ function launchPadAtomSvg(kind = 0) {
   const rot = [0, 35, 70, 110][kind % 4];
   return `<div class="galaga-sprite-spin">
     <svg viewBox="0 0 64 64" aria-hidden="true">
-      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2" transform="rotate(${rot} 32 32)"/>
-      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#c9a227" stroke-width="2" transform="rotate(${rot + 60} 32 32)"/>
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#9c6b4a" stroke-width="2" transform="rotate(${rot} 32 32)"/>
+      <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#9c6b4a" stroke-width="2" transform="rotate(${rot + 60} 32 32)"/>
       <ellipse cx="32" cy="32" rx="24" ry="9" fill="none" stroke="#8b6b3c" stroke-width="1.5" transform="rotate(${rot + 120} 32 32)"/>
       <circle cx="32" cy="32" r="5.5" fill="#e0b93a"/>
       <circle cx="30.5" cy="30.5" r="1.6" fill="#fff6c8" opacity="0.8"/>
@@ -10804,9 +11033,9 @@ function launchPadAtomSvg(kind = 0) {
 
 function launchPadShipSvg() {
   return `<svg viewBox="0 0 48 56" aria-hidden="true">
-    <ellipse cx="24" cy="28" rx="18" ry="7" fill="none" stroke="#c9a227" stroke-width="1.6" transform="rotate(55 24 28)"/>
+    <ellipse cx="24" cy="28" rx="18" ry="7" fill="none" stroke="#9c6b4a" stroke-width="1.6" transform="rotate(55 24 28)"/>
     <ellipse cx="24" cy="28" rx="18" ry="7" fill="none" stroke="#8b6b3c" stroke-width="1.2" transform="rotate(-55 24 28)"/>
-    <path d="M24 4 L28 14 L28 36 L24 44 L20 36 L20 14 Z" fill="#c9a227"/>
+    <path d="M24 4 L28 14 L28 36 L24 44 L20 36 L20 14 Z" fill="#9c6b4a"/>
     <path d="M24 4 L26.5 14 L21.5 14 Z" fill="#e0b93a"/>
     <path d="M20 34 L14 44 L20 40 Z" fill="#8b6b3c"/>
     <path d="M28 34 L34 44 L28 40 Z" fill="#8b6b3c"/>
@@ -11376,7 +11605,7 @@ function prepareSpeedQuestion() {
 
 function wrapGame(html) {
   return `
-    <button class="game-back" onclick="stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();">← Launch Pad</button>
+    <button class="game-back" onclick="stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();">← War Games</button>
     ${html}
   `;
 }
@@ -11397,7 +11626,7 @@ function renderGameHub(content) {
 
   content.innerHTML = `
     <div class="coffee-intro launchpad-intro">
-      <h2>Launch Pad War Games</h2>
+      <h2>War Games</h2>
       <p>Floor drills for tap knowledge — plus Staff Favorites: guess teammates’ beers for bonus points and unlock them on the leaderboard.</p>
     </div>
     ${badgesStrip}
@@ -11575,8 +11804,8 @@ function renderFavoriteBeerGame(content) {
             ${bonus ? ` · <span class="game-points-badge">+${bonus} bonus pts</span>` : " · no new unlocks this round"}
           </p>
           <p style="margin:0 0 16px;font-size:13px;color:var(--muted);">Correct first-time unlocks reveal that person’s favorite on the leaderboard.</p>
-        ` : `<p style="margin:12px 0 16px;font-size:13px;color:var(--muted);">Have teammates set theirs on Launch Pad, then come back.</p>`}
-        <button class="game-next" onclick="stopRocketLoop(); activeGame=null; gameSession=null; render();">Back to Launch Pad</button>
+        ` : `<p style="margin:12px 0 16px;font-size:13px;color:var(--muted);">Have teammates set theirs on War Games, then come back.</p>`}
+        <button class="game-next" onclick="stopRocketLoop(); activeGame=null; gameSession=null; render();">Back to War Games</button>
         ${gameSession.questions.length ? `<button class="briefing-back" style="margin-top:10px;" onclick="startGame('favbeer')">Play again</button>` : ""}
       </div>
     `);
@@ -11733,7 +11962,7 @@ function renderList(content) {
   if (filtered.length === 0) {
     const message =
       activeType === "ontap" && source.length === 0
-        ? "No beers are currently marked as On Tap. Check the On Tap column in your spreadsheet."
+        ? "No beers are currently marked as On Tap. Confirm beers are marked on tap in Nucleus."
         : "Nothing matches your search or selected filter.";
 
     content.innerHTML = banner + `
@@ -11890,7 +12119,7 @@ function escapeForAttribute(value) {
 
 function renderFlash(content) {
   if (!gameSession || gameSession.id !== "flash") {
-    content.innerHTML = wrapGame('<div class="status"><strong>No flashcard deck ready.</strong>Mark at least one on-tap beer with flavor, style, or description info in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>No flashcard deck ready.</strong>Need at least one on-tap beer with flavor, style, or description in Nucleus.</div>');
     return;
   }
 
@@ -11940,7 +12169,7 @@ function renderFlash(content) {
 
 function renderQuiz(content) {
   if (!gameSession || gameSession.id !== "quiz") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Mark at least four on-tap beers with Flavor Profile in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Need at least four on-tap beers with Flavor Profile in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -11976,7 +12205,7 @@ function answerQuiz(name) {
 // beer rather than a comparison a bartender chose ("like Guinness but sweeter").
 function renderPractice(content) {
   if (!gameSession || gameSession.id !== "practice") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Mark at least four on-tap beers with Flavor Profile in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Need at least four on-tap beers with Flavor Profile in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -12005,7 +12234,7 @@ function answerPractice(name) {
 
 function renderTapMatch(content) {
   if (!gameSession || gameSession.id !== "tap") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Need on-tap data.</strong>Mark at least four on-tap beers with tap numbers in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Need on-tap data.</strong>Need at least four on-tap beers with tap numbers in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -12034,7 +12263,7 @@ function answerTap(name) {
 
 function renderABVChallenge(content) {
   if (!gameSession || gameSession.id !== "abv") {
-    content.innerHTML = wrapGame('<div class="status"><strong>ABV data needed.</strong>Mark at least four on-tap beers with ABV and three different values in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>ABV data needed.</strong>Need at least four on-tap beers with ABV (three different values) in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -12078,7 +12307,7 @@ function answerABV(value) {
 
 function renderStyleMatch(content) {
   if (!gameSession || gameSession.id !== "style") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Style data needed.</strong>Mark at least four on-tap beers with Style and three different styles in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Style data needed.</strong>Need at least four on-tap beers with Style (three different styles) in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -12117,7 +12346,7 @@ function answerStyle(index) {
 
 function renderReverseQuiz(content) {
   if (!gameSession || gameSession.id !== "reverse") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough flavor profiles.</strong>Mark at least four on-tap beers with unique Flavor Profile values in the spreadsheet.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough flavor profiles.</strong>Need at least four on-tap beers with unique Flavor Profile values in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {

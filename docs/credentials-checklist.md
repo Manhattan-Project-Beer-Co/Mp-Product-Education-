@@ -27,11 +27,11 @@ Put values in local `.env` and in **Railway** for production. Never commit real 
 | Yelp Fusion API key | `YELP_API_KEY` | [Yelp Developers](https://www.yelp.com/developers) |
 | Yelp business id | `YELP_BUSINESS_ID` | Default: `manhattan-project-beer-company-dallas` |
 
-## Optional — better Ask MP answers
+## Optional — smarter review summaries
 
 | Need | Env var | Who / where |
 |---|---|---|
-| OpenAI API key | `OPENAI_API_KEY` | OpenAI org owner |
+| OpenAI API key | `OPENAI_API_KEY` | OpenAI org owner — used for AI guest-review summaries on Reviews |
 
 ## Usually already set (confirm)
 

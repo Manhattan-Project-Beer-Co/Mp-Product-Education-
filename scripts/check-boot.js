@@ -253,8 +253,6 @@ async function checkApiRequiresSession() {
     ["GET", "/api/merch"],
     ["GET", "/api/merch/ideas"],
     ["GET", "/api/reviews"],
-    ["GET", "/api/chat/status"],
-    ["POST", "/api/chat"],
     ["GET", "/api/games/leaderboard"],
     ["GET", "/api/admin/employees"]
   ];

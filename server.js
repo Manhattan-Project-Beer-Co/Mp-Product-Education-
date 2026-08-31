@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const Database = require("better-sqlite3");
 const { DB_PATH } = require("./db-path");
 const { startBackupSchedule } = require("./backup");
-const { buildContext, localAnswer, getBeers, universalSearch } = require("./chat-knowledge");
+const { getBeers, universalSearch } = require("./chat-knowledge");
 const nucleus = require("./nucleus");
 const { NucleusError } = nucleus;
 const { registerFloorOpsApi } = require("./floor-ops-api");
@@ -63,8 +63,6 @@ const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
 const IS_PRODUCTION = process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
 const SESSION_COOKIE = "mp_session";
 const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
-const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const APP_BASE_URL = (process.env.APP_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
 const AZURE_CLIENT_ID = process.env.AZURE_CLIENT_ID || "";
 const AZURE_CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET || "";
@@ -124,21 +122,6 @@ if (process.env.RAILWAY_ENVIRONMENT && !process.env.DB_PATH) {
   );
   process.exit(1);
 }
-
-const CHAT_SYSTEM_PROMPT = `You are Ask MP — the Manhattan Project Beer Co. universal training search assistant in the staff portal.
-
-Rules:
-- Answer ONLY using facts from the provided CONTEXT (beers, food cues, coffee, SOPs/recipes, events, checklists, training games, floor tools).
-- If the answer is not in the context, say you don't have that in the training materials and point the user to the relevant tab (On Tap, Food, Coffee, SOPs, Floor Tools, War Games).
-- Never invent beer names, tap numbers, ABVs, styles, allergen guarantees, or medical claims. For allergies: advise confirming with kitchen.
-- Never answer questions unrelated to this training site. Politely redirect to site topics.
-- Keep answers concise, practical, and floor-friendly. Use bullet points when listing beers or steps.
-- For beer questions, cite tap number, ABV, and style when available in context.
-- Help with questions like Michelada ingredients, gluten-reduced beers, closing coffee, events, and training.`;
-
-const chatRateLimit = new Map();
-const CHAT_LIMIT = 30;
-const CHAT_WINDOW_MS = 60 * 1000;
 
 const db = new Database(DB_PATH);
 
@@ -554,6 +537,39 @@ function ensureMerchCatalog() {
   } catch (err) {
     console.warn("Merch catalog load skipped:", err.message);
   }
+}
+
+function ensureMerchStoreColumns() {
+  const columns = [
+    ["sku", "TEXT NOT NULL DEFAULT ''"],
+    ["category", "TEXT NOT NULL DEFAULT ''"],
+    ["product_type", "TEXT NOT NULL DEFAULT ''"],
+    ["tags", "TEXT NOT NULL DEFAULT ''"],
+    ["color", "TEXT NOT NULL DEFAULT ''"],
+    ["vendor", "TEXT NOT NULL DEFAULT ''"],
+    ["barcode", "TEXT NOT NULL DEFAULT ''"],
+    ["weight_oz", "REAL"],
+    ["compare_at_cents", "INTEGER"],
+    ["cost_cents", "INTEGER"],
+    ["status", "TEXT NOT NULL DEFAULT 'active'"],
+    ["taxable", "INTEGER NOT NULL DEFAULT 1"],
+    ["requires_shipping", "INTEGER NOT NULL DEFAULT 1"],
+    ["shop_url", "TEXT NOT NULL DEFAULT ''"]
+  ];
+  for (const [name, type] of columns) {
+    try {
+      db.exec(`ALTER TABLE merch_items ADD COLUMN ${name} ${type}`);
+    } catch (_) {
+      // Column already exists.
+    }
+  }
+  try {
+    db.prepare(`
+      UPDATE merch_items
+      SET status = CASE WHEN active = 1 THEN 'active' ELSE 'archived' END
+      WHERE status IS NULL OR status = ''
+    `).run();
+  } catch (_) {}
 }
 
 function ensureSampleSops() {
@@ -1040,38 +1056,146 @@ function optionalAuth(req, res, next) {
 }
 
 function formatMerchItem(row, sizes) {
-  const counted = sizes.filter(s => s.quantity > 0);
-  const totalQuantity = counted.length
-    ? counted.reduce((sum, s) => sum + s.quantity, 0)
-    : null;
+  const counted = sizes.filter(s => Number(s.quantity) > 0);
+  const totalQuantity = counted.reduce((sum, s) => sum + Number(s.quantity), 0);
+  const status = String(row.status || (row.active ? "active" : "archived")).toLowerCase();
 
   return {
     id: row.id,
     name: row.name,
-    description: row.description,
+    description: row.description || "",
     price_cents: row.price_cents,
     price: (row.price_cents / 100).toFixed(row.price_cents % 100 ? 2 : 0),
-    image_url: row.image_url,
-    active: Boolean(row.active),
-    sort_order: row.sort_order,
+    compare_at_cents: row.compare_at_cents == null ? null : Number(row.compare_at_cents),
+    cost_cents: row.cost_cents == null ? null : Number(row.cost_cents),
+    image_url: row.image_url || "",
+    shop_url: row.shop_url || "",
+    sku: row.sku || "",
+    category: row.category || "",
+    product_type: row.product_type || "",
+    tags: row.tags || "",
+    color: row.color || "",
+    vendor: row.vendor || "",
+    barcode: row.barcode || "",
+    weight_oz: row.weight_oz == null || row.weight_oz === "" ? null : Number(row.weight_oz),
+    status,
+    taxable: row.taxable == null ? true : Boolean(row.taxable),
+    requires_shipping: row.requires_shipping == null ? true : Boolean(row.requires_shipping),
+    active: status === "active",
+    sort_order: row.sort_order || 0,
     sizes: sizes.map(s => ({
       id: s.id,
       size_label: s.size_label,
-      quantity: s.quantity > 0 ? s.quantity : null,
-      quantity_raw: s.quantity
+      quantity: Number(s.quantity) || 0,
+      quantity_raw: Number(s.quantity) || 0
     })),
     total_quantity: totalQuantity
   };
 }
 
-function getMerchCatalog() {
-  const items = db.prepare(`
-    SELECT * FROM merch_items WHERE active = 1 ORDER BY sort_order ASC, name ASC
-  `).all();
+function getMerchCatalog({ includeInactive = false } = {}) {
+  const items = includeInactive
+    ? db.prepare(`SELECT * FROM merch_items ORDER BY sort_order ASC, name ASC`).all()
+    : db.prepare(`SELECT * FROM merch_items WHERE active = 1 AND COALESCE(status, 'active') = 'active' ORDER BY sort_order ASC, name ASC`).all();
   const sizeStmt = db.prepare(`
     SELECT id, size_label, quantity FROM merch_sizes WHERE item_id = ? ORDER BY size_label ASC
   `);
   return items.map(item => formatMerchItem(item, sizeStmt.all(item.id)));
+}
+
+function parseMerchMoneyCents(value, fallback = null) {
+  if (value === undefined) return fallback;
+  if (value === null || value === "") return null;
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return null;
+  return Math.round(num);
+}
+
+function normalizeMerchStatus(value, activeFallback = 1) {
+  const status = String(value || "").trim().toLowerCase();
+  if (status === "draft" || status === "active" || status === "archived") return status;
+  return activeFallback ? "active" : "archived";
+}
+
+function readMerchPayload(body, existing = null) {
+  const name = String(body.name ?? existing?.name ?? "").trim();
+  const description = String(body.description ?? existing?.description ?? "").trim();
+  const image_url = String(body.image_url ?? existing?.image_url ?? "").trim();
+  const shop_url = String(body.shop_url ?? existing?.shop_url ?? "").trim();
+  const sku = String(body.sku ?? existing?.sku ?? "").trim();
+  const category = String(body.category ?? existing?.category ?? "").trim();
+  const product_type = String(body.product_type ?? existing?.product_type ?? "").trim();
+  const tags = String(body.tags ?? existing?.tags ?? "").trim();
+  const color = String(body.color ?? existing?.color ?? "").trim();
+  const vendor = String(body.vendor ?? existing?.vendor ?? "").trim();
+  const barcode = String(body.barcode ?? existing?.barcode ?? "").trim();
+
+  let price_cents = existing?.price_cents ?? null;
+  if (body.price_cents != null && body.price_cents !== "") {
+    price_cents = Math.round(Number(body.price_cents));
+  } else if (body.price != null && body.price !== "") {
+    price_cents = Math.round(Number(body.price) * 100);
+  }
+
+  const compare_at_cents = body.compare_at_cents !== undefined || body.compare_at_price !== undefined
+    ? parseMerchMoneyCents(
+        body.compare_at_cents != null ? body.compare_at_cents : Number(body.compare_at_price) * 100,
+        existing?.compare_at_cents ?? null
+      )
+    : (existing?.compare_at_cents ?? null);
+
+  const cost_cents = body.cost_cents !== undefined || body.cost !== undefined
+    ? parseMerchMoneyCents(
+        body.cost_cents != null ? body.cost_cents : Number(body.cost) * 100,
+        existing?.cost_cents ?? null
+      )
+    : (existing?.cost_cents ?? null);
+
+  let weight_oz = existing?.weight_oz ?? null;
+  if (body.weight_oz !== undefined) {
+    if (body.weight_oz === null || body.weight_oz === "") weight_oz = null;
+    else {
+      const w = Number(body.weight_oz);
+      weight_oz = Number.isFinite(w) && w >= 0 ? w : null;
+    }
+  }
+
+  const status = normalizeMerchStatus(
+    body.status,
+    body.active != null ? (body.active ? 1 : 0) : (existing?.active ?? 1)
+  );
+  const taxable = body.taxable != null
+    ? (body.taxable ? 1 : 0)
+    : (existing?.taxable == null ? 1 : (existing.taxable ? 1 : 0));
+  const requires_shipping = body.requires_shipping != null
+    ? (body.requires_shipping ? 1 : 0)
+    : (existing?.requires_shipping == null ? 1 : (existing.requires_shipping ? 1 : 0));
+  const sort_order = body.sort_order != null
+    ? Math.round(Number(body.sort_order) || 0)
+    : (existing?.sort_order || 0);
+
+  return {
+    name,
+    description,
+    image_url,
+    shop_url,
+    sku,
+    category,
+    product_type,
+    tags,
+    color,
+    vendor,
+    barcode,
+    price_cents,
+    compare_at_cents,
+    cost_cents,
+    weight_oz,
+    status,
+    active: status === "active" ? 1 : 0,
+    taxable,
+    requires_shipping,
+    sort_order
+  };
 }
 
 function getMerchIdeas(userId) {
@@ -1449,50 +1573,6 @@ function getTrainingRecommendations(stats) {
   }
 
   return unique.slice(0, 5);
-}
-
-function chatRateOk(ip) {
-  const now = Date.now();
-  const bucket = chatRateLimit.get(ip) || [];
-  const recent = bucket.filter(ts => now - ts < CHAT_WINDOW_MS);
-  if (recent.length >= CHAT_LIMIT) return false;
-  recent.push(now);
-  chatRateLimit.set(ip, recent);
-  return true;
-}
-
-async function askOpenAI(message, history, context) {
-  const messages = [
-    { role: "system", content: `${CHAT_SYSTEM_PROMPT}\n\nCONTEXT:\n${context}` },
-    ...history
-      .filter(m => m && (m.role === "user" || m.role === "assistant") && m.content)
-      .slice(-8)
-      .map(m => ({ role: m.role, content: String(m.content).slice(0, 2000) })),
-    { role: "user", content: message }
-  ];
-
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: OPENAI_MODEL,
-      messages,
-      temperature: 0.2,
-      max_tokens: 700
-    })
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error?.message || "AI request failed.");
-  }
-
-  const reply = data.choices?.[0]?.message?.content?.trim();
-  if (!reply) throw new Error("Empty AI response.");
-  return reply;
 }
 
 app.post("/api/auth/logout", (req, res) => {
@@ -2422,25 +2502,48 @@ app.post("/api/announcements/view", authRequired, (req, res) => {
   res.json({ ok: true });
 });
 
-app.get("/api/merch", (req, res) => {
-  res.json({ items: getMerchCatalog() });
+app.get("/api/merch", optionalAuth, (req, res) => {
+  const authUser = req.user?.id ? loadAuthedUser({ user: req.user }) : null;
+  const includeInactive = Boolean(authUser && canManageMerch(authUser));
+  res.json({ items: getMerchCatalog({ includeInactive }) });
 });
 
 app.post("/api/merch", authRequired, merchManagerRequired, (req, res) => {
-  const name = (req.body.name || "").trim();
-  const description = (req.body.description || "").trim();
-  const price_cents = Number(req.body.price_cents);
-  const image_url = (req.body.image_url || "").trim();
+  const payload = readMerchPayload(req.body);
   const sizes = Array.isArray(req.body.sizes) ? req.body.sizes : [];
 
-  if (!name || !Number.isFinite(price_cents) || price_cents < 0) {
+  if (!payload.name || payload.price_cents == null || !Number.isFinite(payload.price_cents) || payload.price_cents < 0) {
     return res.status(400).json({ error: "Name and valid price are required." });
   }
 
   const result = db.prepare(`
-    INSERT INTO merch_items (name, description, price_cents, image_url)
-    VALUES (?, ?, ?, ?)
-  `).run(name, description, Math.round(price_cents), image_url);
+    INSERT INTO merch_items (
+      name, description, price_cents, compare_at_cents, cost_cents, image_url, shop_url,
+      sku, category, product_type, tags, color, vendor, barcode, weight_oz,
+      status, active, taxable, requires_shipping, sort_order
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    payload.name,
+    payload.description,
+    Math.round(payload.price_cents),
+    payload.compare_at_cents,
+    payload.cost_cents,
+    payload.image_url,
+    payload.shop_url,
+    payload.sku,
+    payload.category,
+    payload.product_type,
+    payload.tags,
+    payload.color,
+    payload.vendor,
+    payload.barcode,
+    payload.weight_oz,
+    payload.status,
+    payload.active,
+    payload.taxable,
+    payload.requires_shipping,
+    payload.sort_order
+  );
 
   const itemId = result.lastInsertRowid;
   const insertSize = db.prepare(`
@@ -2462,21 +2565,42 @@ app.patch("/api/merch/:id", authRequired, merchManagerRequired, (req, res) => {
   const item = db.prepare("SELECT * FROM merch_items WHERE id = ?").get(req.params.id);
   if (!item) return res.status(404).json({ error: "Merch item not found." });
 
-  const name = (req.body.name ?? item.name).trim();
-  const description = (req.body.description ?? item.description).trim();
-  const price_cents = req.body.price_cents != null ? Math.round(Number(req.body.price_cents)) : item.price_cents;
-  const image_url = (req.body.image_url ?? item.image_url).trim();
-  const active = req.body.active != null ? (req.body.active ? 1 : 0) : item.active;
+  const payload = readMerchPayload(req.body, item);
 
-  if (!name || !Number.isFinite(price_cents) || price_cents < 0) {
+  if (!payload.name || payload.price_cents == null || !Number.isFinite(payload.price_cents) || payload.price_cents < 0) {
     return res.status(400).json({ error: "Invalid merch item payload." });
   }
 
   db.prepare(`
     UPDATE merch_items
-    SET name = ?, description = ?, price_cents = ?, image_url = ?, active = ?, updated_at = datetime('now')
+    SET name = ?, description = ?, price_cents = ?, compare_at_cents = ?, cost_cents = ?,
+        image_url = ?, shop_url = ?, sku = ?, category = ?, product_type = ?, tags = ?,
+        color = ?, vendor = ?, barcode = ?, weight_oz = ?, status = ?, active = ?,
+        taxable = ?, requires_shipping = ?, sort_order = ?, updated_at = datetime('now')
     WHERE id = ?
-  `).run(name, description, price_cents, image_url, active, item.id);
+  `).run(
+    payload.name,
+    payload.description,
+    Math.round(payload.price_cents),
+    payload.compare_at_cents,
+    payload.cost_cents,
+    payload.image_url,
+    payload.shop_url,
+    payload.sku,
+    payload.category,
+    payload.product_type,
+    payload.tags,
+    payload.color,
+    payload.vendor,
+    payload.barcode,
+    payload.weight_oz,
+    payload.status,
+    payload.active,
+    payload.taxable,
+    payload.requires_shipping,
+    payload.sort_order,
+    item.id
+  );
 
   if (Array.isArray(req.body.sizes)) {
     const upsertSize = db.prepare(`
@@ -2513,8 +2637,22 @@ app.patch("/api/merch/:id", authRequired, merchManagerRequired, (req, res) => {
 app.delete("/api/merch/:id", authRequired, merchManagerRequired, (req, res) => {
   const item = db.prepare("SELECT id FROM merch_items WHERE id = ?").get(req.params.id);
   if (!item) return res.status(404).json({ error: "Merch item not found." });
-  db.prepare("UPDATE merch_items SET active = 0, updated_at = datetime('now') WHERE id = ?").run(item.id);
-  res.json({ ok: true });
+
+  const hard = String(req.query.hard || req.body?.hard || "") === "1"
+    || req.body?.hard === true;
+
+  if (hard) {
+    db.prepare("DELETE FROM merch_sizes WHERE item_id = ?").run(item.id);
+    db.prepare("DELETE FROM merch_items WHERE id = ?").run(item.id);
+    return res.json({ ok: true, deleted: true });
+  }
+
+  db.prepare(`
+    UPDATE merch_items
+    SET active = 0, status = 'archived', updated_at = datetime('now')
+    WHERE id = ?
+  `).run(item.id);
+  res.json({ ok: true, archived: true });
 });
 
 app.get("/api/merch/ideas", optionalAuth, (req, res) => {
@@ -3113,53 +3251,6 @@ app.delete("/api/admin/users/:id", authRequired, adminRequired, (req, res) => {
   res.json({ ok: true, id: result.id, email: result.email });
 });
 
-app.get("/api/chat/status", (req, res) => {
-  res.json({
-    enabled: Boolean(OPENAI_API_KEY),
-    mode: OPENAI_API_KEY ? "ai" : "local"
-  });
-});
-
-app.post("/api/chat", async (req, res) => {
-  const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.socket.remoteAddress || "local";
-  if (!chatRateOk(ip)) {
-    return res.status(429).json({ error: "Too many messages. Please wait a moment." });
-  }
-
-  const message = String(req.body.message || "").trim();
-  const history = Array.isArray(req.body.history) ? req.body.history : [];
-
-  if (!message) {
-    return res.status(400).json({ error: "Message is required." });
-  }
-  if (message.length > 800) {
-    return res.status(400).json({ error: "Message is too long." });
-  }
-
-  try {
-    let beers = [];
-    try {
-      beers = await getBeers();
-    } catch (fetchErr) {
-      console.warn("Beer menu unavailable for chat:", fetchErr.message);
-    }
-
-    const sops = getSopCatalog();
-    const context = buildContext(message, beers, sops);
-
-    if (OPENAI_API_KEY) {
-      const reply = await askOpenAI(message, history, context);
-      return res.json({ reply, mode: "ai" });
-    }
-
-    const reply = localAnswer(message, beers, sops);
-    return res.json({ reply, mode: "local" });
-  } catch (err) {
-    console.error("Chat error:", err.message);
-    return res.status(500).json({ error: "Could not get an answer right now. Try again in a moment." });
-  }
-});
-
 app.get("/api/shift-surveys/status", authRequired, (req, res) => {
   const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
   const row = db.prepare(`
@@ -3383,15 +3474,19 @@ app.get("/api/beers/options", authRequired, async (req, res) => {
 });
 
 app.get("/api/taps", authRequired, async (req, res) => {
-  if (!nucleus.configured()) return res.json({ taps: [] });
+  if (!nucleus.configured()) return res.json({ taps: [], canWrite: false });
   try {
-    res.json({ taps: await nucleus.getTaps(), canWrite: nucleus.canWrite() });
+    const user = loadAuthedUser(req);
+    const canWrite = Boolean(
+      nucleus.canWrite() && user && hasRole(user, ROLES.ADMIN)
+    );
+    res.json({ taps: await nucleus.getTaps(), canWrite });
   } catch (error) {
     return nucleusFailed(res, error, "the tap list");
   }
 });
 
-app.put("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async (req, res) => {
+app.put("/api/taps/:tapId/product", authRequired, adminRequired, async (req, res) => {
   const productId = String(req.body.productId || req.body.product_id || "").trim();
   if (!productId) return res.status(400).json({ error: "A beer is required." });
   if (!nucleus.canWrite()) {
@@ -3410,7 +3505,7 @@ app.put("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async 
   }
 });
 
-app.delete("/api/taps/:tapId/product", authRequired, managerOrAdminRequired, async (req, res) => {
+app.delete("/api/taps/:tapId/product", authRequired, adminRequired, async (req, res) => {
   if (!nucleus.canWrite()) {
     return res.status(503).json({
       error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_PATRON_WRITE to change taps."
@@ -3456,6 +3551,7 @@ app.get("*", (req, res) => {
 
 const server = app.listen(PORT, () => {
   maybeAutoSeedOnFirstBoot();
+  ensureMerchStoreColumns();
   ensureMerchCatalog();
   ensureSampleSops();
   ensureSevenShiftsTables(db);

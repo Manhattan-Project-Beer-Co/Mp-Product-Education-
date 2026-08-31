@@ -18,7 +18,7 @@ anything.
 
 | Content | Source today | Editable by |
 |---|---|---|
-| **Beers / tap list** | Nucleus (`nucleus.js` → `/api/beers`) | Managers, on the Taps tab |
+| **Beers / tap list** | Nucleus (`nucleus.js` → `/api/beers`) | Admins change pours on On Tap cards |
 | Food, coffee, wine & cocktails | Hardcoded arrays in `index.html` | Developers only |
 | Merch, ops inventory | SQLite (`training.db`) | Staff, in the app |
 | SOPs | `sops-catalog.js`, synced into SQLite on server start | Developers seed, admins edit |

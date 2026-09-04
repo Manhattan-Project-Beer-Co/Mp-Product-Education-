@@ -286,6 +286,8 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
     // Prefer ingredients; fall back to marketing copy so cards are not blank
     // when Nucleus has a description but no key_ingredients yet.
     "Description / ingredients": ingredients || marketing,
+    // Raw key_ingredients only (no marketing fallback) — CSV yeast/hops export.
+    "Key Ingredients": ingredients,
     "Marketing Description": marketing,
     "Flavor Profile": text(product.tasting_notes),
     //: There was a `"Guest Guidance"` key here, from Nucleus's `guest_guidance` —
@@ -311,6 +313,8 @@ function toBeerRow(product, tap, bulkStamps = new Set()) {
     //: The stable identifier. Everything this app stores about a beer keys on
     //: this, never on the name — names get corrected.
     nucleus_product_id: text(product.id),
+    //: Tap fixture id when pouring — used by On Tap admin editors.
+    nucleus_tap_id: tap ? text(tap.id) : "",
     //: "approved" | "calculated" | "estimated" | "none" — which rung answered.
     //: Nucleus resolves the ABV; a display that must qualify an unapproved
     //: figure reads this rather than re-deriving it.

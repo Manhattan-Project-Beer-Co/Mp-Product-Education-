@@ -56,7 +56,7 @@ These are access items, not budget items. Someone with admin rights in each syst
 | 7shifts Access Token + Company ID | 7shifts Admin → Company Settings → Developer Tools | Who’s working / shift-lead awareness |
 | Google Places key + Place ID; Yelp API key (optional) | Google Cloud / Yelp Developers | Live guest reviews instead of samples |
 
-**Already in place:** Microsoft sign-in for `@manhattanproject.beer`. OpenAI for smarter “Ask MP” is optional later.
+**Already in place:** Microsoft sign-in for `@manhattanproject.beer`. OpenAI for smarter review summaries is optional.
 
 Full list: [credentials-checklist.md](./credentials-checklist.md).
 

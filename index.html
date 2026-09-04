@@ -22,6 +22,9 @@
     --gold-dim: #7a5338;
     --gold-glow: rgba(156, 107, 74, 0.18);
     --sidebar-w: 248px;
+    --content-max: 1200px;
+    --chrome-offset: 0px;
+    --page-pad: 24px;
 
     --black: #181818;
     --charcoal: #2a2622;
@@ -50,7 +53,10 @@
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
 
   body {
     font-family: var(--font);
@@ -65,6 +71,7 @@
     line-height: 1.65;
     font-size: 17px;
     min-height: 100vh;
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4,
@@ -110,18 +117,24 @@
   }
 
   .brand-mark {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
     background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
   }
 
-  .brand-mark svg { display: block; }
+  .brand-mark img {
+    display: block;
+    width: 86%;
+    height: 86%;
+    object-fit: contain;
+  }
 
   .brand-text h1 {
     font-size: 12px;
@@ -144,7 +157,7 @@
   /* ── Sticky toolbar ── */
   .toolbar {
     position: sticky;
-    top: 67px;
+    top: var(--chrome-offset, 0px);
     z-index: 25;
     background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(20px);
@@ -154,9 +167,9 @@
   }
 
   .toolbar-inner {
-    max-width: 1080px;
+    max-width: var(--content-max);
     margin: 0 auto;
-    padding: 12px 24px;
+    padding: 12px var(--page-pad);
     display: flex;
     align-items: center;
     gap: 14px;
@@ -419,12 +432,13 @@
 
   /* ── Cards ── */
   .list {
-    padding: 20px 24px;
+    padding: 20px var(--page-pad);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-width: 1080px;
+    max-width: var(--content-max);
     margin: 0 auto;
+    width: 100%;
   }
 
   .card {
@@ -435,6 +449,9 @@
     cursor: pointer;
     transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s;
     box-shadow: var(--shadow-sm);
+    min-width: 0;
+    /* Do not clip — tap Save / beer selects must stay fully visible. */
+    overflow: visible;
   }
 
   .card:hover {
@@ -445,7 +462,7 @@
 
   .tap-layout {
     display: grid;
-    grid-template-columns: 56px 1fr;
+    grid-template-columns: 56px minmax(0, 1fr);
     gap: 16px;
     align-items: start;
   }
@@ -462,6 +479,7 @@
     justify-content: center;
     line-height: 1;
     box-shadow: 0 4px 12px rgba(9, 9, 11, 0.2);
+    flex-shrink: 0;
   }
 
   .tap-number small {
@@ -483,6 +501,12 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
+    min-width: 0;
+  }
+
+  .card-top > div {
+    min-width: 0;
+    flex: 1;
   }
 
   .name {
@@ -491,6 +515,7 @@
     margin: 0 0 5px;
     letter-spacing: -0.02em;
     color: var(--black);
+    overflow-wrap: anywhere;
   }
 
   .desc {
@@ -498,16 +523,18 @@
     color: var(--muted);
     margin: 0;
     line-height: 1.6;
+    overflow-wrap: anywhere;
   }
 
   .abv {
     font-size: 11px;
     font-weight: 700;
     background: var(--black);
-    color: #fff;
+    color: #fff !important;
     padding: 6px 10px;
     border-radius: 999px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .tags {
@@ -540,16 +567,28 @@
   }
 
   .new-banner {
-    margin: 20px 24px 0;
-    max-width: 1032px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 20px auto 0;
+    max-width: min(var(--content-max), calc(100% - (2 * var(--page-pad))));
+    width: 100%;
     background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
     border-radius: var(--radius-lg);
-    padding: 24px;
+    padding: 20px 22px;
     color: #fff;
     box-shadow: var(--shadow-md);
     border: 1px solid rgba(255, 255, 255, 0.06);
+    box-sizing: border-box;
+  }
+
+  .new-banner-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px 24px;
+  }
+
+  .new-banner-copy {
+    flex: 1;
+    min-width: 0;
   }
 
   .new-banner-label {
@@ -562,10 +601,11 @@
   }
 
   .new-banner-name {
-    font-size: 20px;
+    font-size: clamp(18px, 2.4vw, 24px);
     font-weight: 700;
     margin: 0 0 6px;
     letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
   }
 
   .new-banner-desc {
@@ -573,18 +613,50 @@
     color: rgba(255, 255, 255, 0.58);
     margin: 0;
     line-height: 1.55;
+    max-width: 48rem;
+  }
+
+  .new-banner-meta {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    text-align: right;
+  }
+
+  .new-banner-tap,
+  .new-banner-abv {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+  }
+
+  .new-banner-abv {
+    background: rgba(255, 255, 255, 0.08);
   }
 
   .new-banner-dots {
     display: flex;
-    gap: 6px;
-    margin-top: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
   }
 
   .new-banner-dot {
-    width: 6px;
-    height: 6px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
+    border: none;
+    padding: 0;
     background: rgba(255, 255, 255, 0.22);
     transition: background 0.2s, transform 0.2s;
     cursor: pointer;
@@ -593,6 +665,19 @@
   .new-banner-dot.active {
     background: #fff;
     transform: scale(1.15);
+  }
+
+  @media (max-width: 720px) {
+    .new-banner-main {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .new-banner-meta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: left;
+    }
   }
 
   /* ── Games ── */
@@ -975,6 +1060,64 @@
     background: #fff;
     color: var(--ink);
     font: inherit;
+  }
+
+  .tap-inline-editor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: stretch;
+    margin-top: 12px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .tap-inline-editor select {
+    flex: 1 1 140px;
+    min-width: 0;
+    width: auto;
+    max-width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+  }
+
+  .tap-inline-save {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+
+  .tap-empty-card .details-hint { display: none; }
+
+  .ontap-export-bar {
+    max-width: var(--content-max);
+    width: 100%;
+    margin: 8px auto 28px;
+    padding: 18px var(--page-pad);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .ontap-export-bar .game-next {
+    margin: 0;
+  }
+
+  .ontap-export-bar p {
+    margin: 0;
+    flex: 1;
+    min-width: 200px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
   }
 
   .tap-beer select option { background: #fff; color: #181818; }
@@ -2835,6 +2978,158 @@
     margin: 0 auto;
   }
 
+  .merch-inventory-wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 28px;
+  }
+
+  .merch-inventory-wrap .merch-admin-panel {
+    margin: 0 0 16px;
+    max-width: none;
+  }
+
+  .merch-inventory-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .merch-status-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .merch-status-filters button {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .merch-status-filters button.active {
+    border-color: var(--black);
+    color: var(--black);
+    background: #f4f4f5;
+  }
+
+  .merch-inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .merch-inventory-table th,
+  .merch-inventory-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .merch-inventory-table th {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: #fafafa;
+  }
+
+  .merch-inventory-table tr:last-child td { border-bottom: 0; }
+
+  .merch-inventory-thumb {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #f4f4f5;
+    display: block;
+  }
+
+  .merch-inventory-thumb.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .merch-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: #f4f4f5;
+    color: #52525b;
+  }
+
+  .merch-badge.active { background: #ecfdf5; color: #047857; }
+  .merch-badge.draft { background: #fff7ed; color: #c2410c; }
+  .merch-badge.archived { background: #f4f4f5; color: #71717a; }
+
+  .merch-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+  }
+
+  .merch-form-grid .full { grid-column: 1 / -1; }
+
+  .merch-check-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .merch-check-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 13px;
+    color: var(--black);
+    font-weight: 600;
+  }
+
+  .merch-check-row input { width: auto; }
+
+  .merch-size-remove {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: #b91c1c;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  @media (max-width: 720px) {
+    .merch-form-grid { grid-template-columns: 1fr; }
+    .merch-inventory-table .hide-sm { display: none; }
+  }
+
   .merch-shop-banner {
     display: flex;
     justify-content: space-between;
@@ -3337,13 +3632,15 @@
   }
 
   .merch-admin-panel input,
-  .merch-admin-panel textarea {
+  .merch-admin-panel textarea,
+  .merch-admin-panel select {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-sm);
     font-family: var(--font);
     font-size: 14px;
+    background: var(--paper);
   }
 
   .merch-admin-panel textarea { min-height: 72px; resize: vertical; }
@@ -3553,230 +3850,49 @@
     .toolbar-inner { flex-wrap: nowrap; }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 720px) {
+    :root { --page-pad: 16px; }
+
     .header-inner,
     .toolbar-inner,
     .filter-wrap,
+    .hub-chips-wrap,
     .list,
     .coffee-intro,
     .metrics-grid,
     .chart-grid,
-    .rec-list { padding-left: 16px; padding-right: 16px; }
+    .rec-list,
+    .ontap-export-bar { padding-left: var(--page-pad); padding-right: var(--page-pad); }
 
-    .toolbar { top: 62px; }
     .search-wrap { max-width: none; order: 3; flex-basis: 100%; }
     .coffee-intro h2 { font-size: 24px; }
     .metrics-grid { grid-template-columns: 1fr; }
     .metric-card.wide { grid-column: auto; }
-    .progress-table { width: calc(100% - 32px); }
-  }
-
-  /* ── AI Chat ── */
-  .chat-fab {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 90;
-    width: 56px;
-    height: 56px;
-    border: none;
-    border-radius: 18px;
-    background: linear-gradient(145deg, #18181b 0%, #09090b 100%);
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 8px 28px rgba(9, 9, 11, 0.28);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s var(--ease), box-shadow 0.2s;
-  }
-
-  .chat-fab:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 12px 32px rgba(9, 9, 11, 0.32);
-  }
-
-  .chat-fab.open { border-radius: 14px; }
-
-  .chat-panel {
-    position: fixed;
-    right: 20px;
-    bottom: 88px;
-    z-index: 89;
-    width: min(400px, calc(100vw - 32px));
-    height: min(560px, calc(100vh - 120px));
-    background: var(--paper);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-lg);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    animation: chatSlideUp 0.3s var(--ease) both;
-  }
-
-  .chat-panel.open { display: flex; }
-
-  @keyframes chatSlideUp {
-    from { opacity: 0; transform: translateY(12px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  .chat-header {
-    padding: 16px 18px 14px;
-    border-bottom: 1px solid var(--line);
-    background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
-  }
-
-  .chat-header h3 {
-    margin: 0 0 4px;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-
-  .chat-header p {
-    margin: 0;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.45;
-  }
-
-  .chat-mode-badge {
-    display: inline-block;
-    margin-top: 8px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 4px 8px;
-    border-radius: 999px;
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: #fafafa;
-  }
-
-  .chat-msg {
-    max-width: 92%;
-    padding: 12px 14px;
-    border-radius: 16px;
-    font-size: 13.5px;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .chat-msg.user {
-    align-self: flex-end;
-    background: var(--black);
-    color: #fff;
-    border-bottom-right-radius: 6px;
-  }
-
-  .chat-msg.assistant {
-    align-self: flex-start;
-    background: var(--paper);
-    color: #27272a;
-    border: 1px solid var(--line);
-    border-bottom-left-radius: 6px;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .chat-msg.typing {
-    color: var(--muted);
-    font-style: italic;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0 4px;
-  }
-
-  .chat-suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 0 16px 12px;
-    background: #fafafa;
-  }
-
-  .chat-suggestion {
-    border: 1px solid var(--line-strong);
-    background: var(--paper);
-    color: var(--muted);
-    font-family: var(--font);
-    font-size: 11.5px;
-    font-weight: 600;
-    padding: 7px 11px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .chat-suggestion:hover {
-    color: var(--black);
-    border-color: rgba(9, 9, 11, 0.18);
-  }
-
-  .chat-input-row {
-    display: flex;
-    gap: 8px;
-    padding: 12px 14px 14px;
-    border-top: 1px solid var(--line);
-    background: var(--paper);
-  }
-
-  .chat-input-row input {
-    flex: 1;
-    padding: 12px 14px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-md);
-    font-family: var(--font);
-    font-size: 14px;
-    background: #fafafa;
-    box-shadow: none;
-  }
-
-  .chat-input-row input:focus {
-    background: var(--paper);
-    box-shadow: 0 0 0 4px rgba(9, 9, 11, 0.06);
-  }
-
-  .chat-send {
-    border: none;
-    background: var(--black);
-    color: #fff;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s, transform 0.1s;
-  }
-
-  .chat-send:hover { background: #27272a; }
-  .chat-send:disabled { opacity: 0.45; cursor: not-allowed; }
-  .chat-send:active:not(:disabled) { transform: scale(0.96); }
-
-  @media (max-width: 640px) {
-    .chat-panel {
-      right: 12px;
-      left: 12px;
-      width: auto;
-      bottom: 84px;
+    .progress-table { width: 100%; max-width: 100%; display: block; overflow-x: auto; }
+    .tap-layout { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; }
+    .tap-number { width: 48px; min-height: 48px; }
+    .tap-number strong { font-size: 18px; }
+    .card { padding: 14px 16px; }
+    .card-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
     }
-    .chat-fab { right: 16px; bottom: 16px; }
+    .tap-inline-editor {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .tap-inline-editor select {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+    .tap-inline-save,
+    .tap-inline-editor .game-next {
+      width: 100%;
+      justify-content: center;
+    }
+    .game-hub { grid-template-columns: 1fr; }
+    .modal { max-width: 100%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
   }
 
   /* ── Light shell: B/W site DNA + earth accents ── */
@@ -3808,10 +3924,17 @@
     color: inherit;
   }
   .sidebar-brand-mark {
-    width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--gold);
+    width: 78px; height: 78px; border-radius: 50%; border: 1px solid var(--gold);
     display: grid; place-items: center;
     background: radial-gradient(circle at 40% 35%, rgba(156,107,74,0.18), transparent 60%);
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .sidebar-brand-mark img {
+    display: block;
+    width: 84%;
+    height: 84%;
+    object-fit: contain;
   }
   .sidebar-brand-text strong {
     display:block; color: #181818; font-size: 11px; font-weight: 700;
@@ -3848,19 +3971,48 @@
   .sidebar-user { margin-top:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background: var(--surface); }
   .sidebar-user-name { font-size:13px; font-weight:700; color:#181818; font-family: var(--font-display); }
   .sidebar-user-role { margin-top:2px; font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+  .sidebar-account-links {
+    display:flex; flex-direction:column; gap:2px;
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
+  }
+  .sidebar-account-link {
+    display:block; width:100%; text-align:left;
+    border:0; background:transparent; cursor:pointer;
+    padding:6px 4px; border-radius:8px;
+    font-size:12px; font-weight:600; color:var(--muted);
+    font-family: var(--font-body, inherit);
+  }
+  .sidebar-account-link:hover { color:#181818; background: rgba(156,107,74,0.08); }
+  .sidebar-account-link.is-active { color: var(--gold-dim); background: rgba(156,107,74,0.12); }
+  .mobile-account-links { display:none; }
   .sidebar-user .auth-bar { margin-top:10px; flex-direction:column; align-items:stretch; gap:8px; }
   .sidebar-user .auth-btn { width:100%; justify-content:center; }
-  .app-stage { flex:1; min-width:0; display:flex; flex-direction:column; background: transparent; }
+  .hub-chips-wrap {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) 10px;
+    width: 100%;
+  }
+  .hub-chips-wrap .coffee-subtabs {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .hub-chips-wrap[hidden] { display:none !important; }
+  .app-stage { flex:1; min-width:0; display:flex; flex-direction:column; background: transparent; overflow-x: clip; }
   .stage-title {
     margin:0; font-size:12px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase;
-    color: var(--gold-dim); flex:1; min-width:120px;
+    color: var(--gold-dim); flex:1; min-width:0;
   }
 
   .site-header { display:none; border-bottom:1px solid var(--line); background: rgba(255,255,255,0.94); }
   .toolbar {
-    top:0; background: rgba(255,255,255,0.94); border-bottom:1px solid var(--line); box-shadow:none;
+    top: var(--chrome-offset, 0px);
+    background: rgba(255,255,255,0.94);
+    border-bottom:1px solid var(--line);
+    box-shadow:none;
   }
-  .toolbar-inner { max-width:1200px; padding:14px 28px; }
+  .toolbar-inner { max-width: var(--content-max); padding:14px var(--page-pad); }
   .tabs { display:none !important; }
   .sidebar-nav.tabs {
     display:flex !important;
@@ -3879,7 +4031,7 @@
     background: radial-gradient(circle at 40% 35%, rgba(156,107,74,0.18), transparent 60%);
   }
 
-  .filter-wrap { max-width:1200px; padding:0 28px 14px; }
+  .filter-wrap { max-width: var(--content-max); padding:0 var(--page-pad) 14px; width: 100%; margin: 0 auto; }
   .filter-btn, .coffee-subtab {
     background: #fff !important;
     color: #3a3530 !important;
@@ -3964,7 +4116,7 @@
   }
 
   .card, .game-card, .flash-card, .game-tile, .metric-card, .chart-card, .rec-card,
-  .speed-header, .approve-card, .progress-table, .inventory-table, .modal, .chat-panel,
+  .speed-header, .approve-card, .progress-table, .inventory-table, .modal,
   .coffee-subtab, .auth-panel {
     background: #fff !important;
     border-color: var(--line-strong) !important;
@@ -4014,7 +4166,7 @@
     background: var(--surface) !important;
     color: var(--ink) !important;
   }
-  .chat-header, .chat-messages, .briefing-item,
+  .briefing-item,
   .approve-form input, .approve-form select {
     background: #fff !important;
     color: var(--ink) !important;
@@ -4037,7 +4189,10 @@
     color: #fff;
     border: none;
   }
-  .abv { color: var(--gold-dim); }
+  .abv {
+    color: #fff !important;
+    background: var(--black) !important;
+  }
   .tap-number strong { color: #fff; }
   .detail-text, .modal, .auth-panel { color: var(--ink) !important; }
   .modal { background: #fff !important; }
@@ -4050,18 +4205,20 @@
     font-size: 10px;
   }
   .app-footer a { color: var(--gold-dim); border-bottom: 1px solid currentColor; }
-  .chat-fab {
-    background: linear-gradient(135deg, var(--gold-bright), var(--gold-dim));
-    color: #fff;
+  .list, .coffee-intro, .metrics-grid, .chart-grid, .game-hub, .approve-panel {
+    max-width: var(--content-max);
+    width: 100%;
   }
-  .chat-panel { background: #fff !important; }
-  .chat-send {
-    background: var(--gold) !important;
-    color: #fff !important;
-  }
-  .list, .coffee-intro, .metrics-grid, .chart-grid, .game-hub, .approve-panel { max-width: 1200px; }
 
-  /* Mobile tabs readable on light header */
+  .progress-table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile tabs / chips readable on light header */
   #mobileTabs .tab {
     background: #fff !important;
     color: #3a3530 !important;
@@ -4082,13 +4239,23 @@
     color: #181818 !important;
     border-color: var(--gold) !important;
   }
-
-  /* Launch Pad combat accents */
   .galaga-hud span, .galaga-mission { color: var(--gold-bright); }
 
-  @media (max-width: 900px) {
+  /* Mid tablets: keep sidebar but slim it so content isn’t crushed */
+  @media (min-width: 1025px) and (max-width: 1280px) {
+    :root { --sidebar-w: 200px; --page-pad: 20px; }
+    .sidebar-nav .tab { padding: 9px 10px; font-size: 12px; }
+    .sidebar-brand-text strong { font-size: 13px; }
+  }
+
+  @media (max-width: 1024px) {
     .app-sidebar { display:none; }
-    .site-header { display:block; }
+    .site-header {
+      display:block;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
     #mobileTabs.tabs {
       display:flex !important; gap:3px; flex:1; min-width:0; overflow-x:auto; scrollbar-width:none;
       padding:4px; background: var(--surface); border-radius: var(--radius-md);
@@ -4100,7 +4267,30 @@
     }
     #mobileTabs .tab.active { background: rgba(156,107,74,0.14); color:#181818; border-color: var(--gold); }
     .stage-title { display:none; }
-    .toolbar { top: 62px; }
+    .toolbar { top: var(--chrome-offset, 0px); }
+    .hub-chips-wrap { padding:0 var(--page-pad) 8px; }
+    .mobile-account-links {
+      display:flex; flex-wrap:wrap; gap:4px;
+      padding:0 14px 10px;
+      border-top:1px solid var(--line);
+    }
+    .mobile-account-links .sidebar-account-link {
+      width:auto; padding:6px 10px; font-size:11px;
+      border:1px solid var(--line); border-radius:8px; background:#fff;
+    }
+    .header-inner {
+      max-width: none;
+      padding: 12px var(--page-pad);
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root { --page-pad: 12px; }
+    body { font-size: 16px; }
+    .brand-text h1 { font-size: 15px; }
+    .brand-text p { display: none; }
+    .ontap-export-bar { flex-direction: column; align-items: stretch; }
+    .ontap-export-bar .game-next { width: 100%; }
   }
 
   /* Launch Pad academy tiles */
@@ -4172,17 +4362,23 @@
     box-shadow: var(--shadow-lg);
   }
   .login-card .login-atom {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 18px;
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 22px;
     display: grid;
     place-items: center;
     border-radius: 50%;
     border: 1px solid rgba(156,107,74,0.45);
     background: radial-gradient(circle at 40% 35%, rgba(156,107,74,0.16), transparent 65%);
     animation: atomPulse 5.5s ease-in-out infinite;
+    overflow: hidden;
   }
-  .login-card .login-atom svg { display: block; }
+  .login-card .login-atom img {
+    display: block;
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+  }
   @keyframes atomPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(156,107,74,0.18); }
     50% { box-shadow: 0 0 0 10px rgba(156,107,74,0); }
@@ -4258,19 +4454,13 @@
     opacity: 0.55;
   }
   .sidebar-brand img { display: none; }
+  .sidebar-brand-mark img { display: block; }
 </style>
 </head>
 <body class="auth-pending">
 <div id="loginGate" class="login-gate">
   <div class="login-card">
-    <div class="login-atom" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 100 100">
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3"/>
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/>
-      <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/>
-      <rect x="43" y="32" width="14" height="40" rx="2" fill="#9c6b4a"/>
-      <rect x="46" y="22" width="8" height="12" fill="#9c6b4a"/>
-      <rect x="47" y="16" width="6" height="8" rx="1" fill="#9c6b4a"/>
-    </svg></div>
+    <div class="login-atom" aria-hidden="true"><img src="/images/atom-bottle-gold.png" alt="" width="96" height="96"></div>
     <h1>MP LAUNCH PAD</h1>
     <p class="login-sub">Manhattan Project · Staff portal</p>
     <div id="loginError"></div>
@@ -4282,43 +4472,30 @@
 <div class="app-shell">
   <aside class="app-sidebar" id="appSidebar">
     <button type="button" class="sidebar-brand" onclick="goHome()" aria-label="Go to On Tap home">
-      <div class="sidebar-brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/>
-          <rect x="43" y="32" width="14" height="40" rx="2" fill="#9c6b4a"/>
-          <rect x="46" y="22" width="8" height="12" fill="#9c6b4a"/>
-          <rect x="47" y="16" width="6" height="8" rx="1" fill="#9c6b4a"/>
-        </svg></div>
+      <div class="sidebar-brand-mark"><img src="/images/atom-bottle-gold.png" alt="" width="60" height="60"></div>
       <div class="sidebar-brand-text">
         <strong>MP LAUNCH PAD</strong>
         <span>Staff portal</span>
       </div>
     </button>
     <nav class="sidebar-nav tabs" id="mainTabs">
-      <button type="button" class="tab active" data-type="ontap">On Tap</button>
-      <button type="button" class="tab" data-type="beer">All Beers</button>
-      <button type="button" class="tab" data-type="food">Food</button>
-      <button type="button" class="tab" data-type="coffee">Coffee</button>
-      <button type="button" class="tab" data-type="bar">Wine + Cocktails</button>
-      <button type="button" class="tab" data-type="merch">Merch</button>
+      <button type="button" class="tab active" data-type="menu">Menu</button>
       <button type="button" class="tab" data-type="inventory">Inventory</button>
-      <button type="button" class="tab" data-type="sops">SOPs</button>
-      <button type="button" class="tab" data-type="checklists">Checklists</button>
-      <button type="button" class="tab" data-type="floor">Floor Tools</button>
+      <button type="button" class="tab" data-type="floor">Floor</button>
       <button type="button" class="tab" data-type="reviews">Reviews</button>
       <button type="button" class="tab" data-type="games">War Games</button>
-      <button type="button" class="tab" data-type="features">Features</button>
-      <button type="button" class="tab tab-auth-only" data-type="feedback" style="display:none;">Feedback</button>
-      <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
-      <button type="button" class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</button>
       <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
-      <button type="button" class="tab tab-taps-only" data-type="taps" style="display:none;">Taps</button>
       <button type="button" class="tab tab-team-only" data-type="team" style="display:none;">Team</button>
     </nav>
     <div class="sidebar-user" id="sidebarUser">
       <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
       <div class="sidebar-user-role" id="sidebarUserRole">Sign in to track training</div>
+      <div class="sidebar-account-links" id="sidebarAccountLinks">
+        <button type="button" class="sidebar-account-link tab-auth-only" data-type="progress" style="display:none;" onclick="activateAppTab('progress')">My Progress</button>
+        <button type="button" class="sidebar-account-link tab-auth-only" data-type="feedback" style="display:none;" onclick="activateAppTab('feedback')">Feedback</button>
+        <button type="button" class="sidebar-account-link tab-auth-only" data-type="shift-survey" style="display:none;" onclick="activateAppTab('shift-survey')">End of Shift</button>
+        <button type="button" class="sidebar-account-link" data-type="features" onclick="activateAppTab('features')">How this app works</button>
+      </div>
       <div class="auth-bar" id="authBar">
         <button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>
       </div>
@@ -4329,20 +4506,19 @@
 <header class="site-header">
   <div class="header-inner">
     <button type="button" class="brand" onclick="goHome()" aria-label="Go to On Tap home">
-      <div class="brand-mark"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true">
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/>
-          <ellipse cx="50" cy="50" rx="46" ry="18" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/>
-          <rect x="43" y="32" width="14" height="40" rx="2" fill="#9c6b4a"/>
-          <rect x="46" y="22" width="8" height="12" fill="#9c6b4a"/>
-          <rect x="47" y="16" width="6" height="8" rx="1" fill="#9c6b4a"/>
-        </svg></div>
+      <div class="brand-mark"><img src="/images/atom-bottle-gold.png" alt="" width="56" height="56"></div>
       <div class="brand-text">
         <h1>MP LAUNCH PAD</h1>
         <p>Staff portal</p>
       </div>
     </button>
     <div class="auth-bar" id="authBarMobile"></div>
+  </div>
+  <div class="mobile-account-links" id="mobileAccountLinks">
+    <button type="button" class="sidebar-account-link tab-auth-only" data-type="progress" style="display:none;" onclick="activateAppTab('progress')">My Progress</button>
+    <button type="button" class="sidebar-account-link tab-auth-only" data-type="feedback" style="display:none;" onclick="activateAppTab('feedback')">Feedback</button>
+    <button type="button" class="sidebar-account-link tab-auth-only" data-type="shift-survey" style="display:none;" onclick="activateAppTab('shift-survey')">End of Shift</button>
+    <button type="button" class="sidebar-account-link" data-type="features" onclick="activateAppTab('features')">App guide</button>
   </div>
 </header>
 
@@ -4356,6 +4532,10 @@
       </svg>
       <input type="text" id="search" placeholder="Search beer, style, or flavor">
     </div>
+  </div>
+
+  <div id="hubChipsWrap" class="hub-chips-wrap" hidden>
+    <div class="coffee-subtabs" id="hubChips"></div>
   </div>
 
   <div id="filterWrap" class="filter-wrap">
@@ -4403,35 +4583,6 @@
     <div id="shiftDigestContent"></div>
   </div>
 </div>
-
-<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Ask MP">
-  <div class="chat-header">
-    <h3>Ask MP</h3>
-    <p>Universal search — beers, food, coffee, SOPs/recipes, events, and training in one place.</p>
-    <span class="chat-mode-badge" id="chatModeBadge">Loading…</span>
-  </div>
-  <div class="chat-messages" id="chatMessages"></div>
-  <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What goes in a Michelada?</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What beer is gluten reduced?</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">How do I close the coffee station?</button>
-    <button class="chat-suggestion" type="button" onclick="askChatSuggestion(this)">What's on Sell This Today?</button>
-  </div>
-  <form class="chat-input-row" onsubmit="sendChatMessage(event)">
-    <input type="text" id="chatInput" placeholder="Ask MP anything on the portal…" autocomplete="off" maxlength="800">
-    <button class="chat-send" id="chatSendBtn" type="submit" aria-label="Send">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
-      </svg>
-    </button>
-  </form>
-</div>
-
-<button class="chat-fab" id="chatFab" type="button" onclick="toggleChatPanel()" aria-label="Open Ask MP">
-  <svg id="chatFabIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
-  </svg>
-</button>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="roles.js"></script>
@@ -4516,6 +4667,8 @@ let merchSection = "stock";
 let merchItems = [];
 let merchIdeas = [];
 let merchLoading = false;
+let merchEditId = null; // null | "new" | number
+let merchStatusFilter = "active";
 let inventoryItems = [];
 let inventoryLoading = false;
 let inventoryFilter = "all";
@@ -4536,7 +4689,114 @@ let sopLoading = false;
 let reviewsData = null;
 let reviewsLoading = false;
 let reviewPlatform = "all";
-let activeType = "ontap";
+let activeType = "menu";
+let menuSubView = "ontap";
+let floorHubView = "tools";
+try {
+  const savedMenu = sessionStorage.getItem("mpMenuSubView");
+  const savedFloor = sessionStorage.getItem("mpFloorHubView");
+  if (savedMenu) menuSubView = savedMenu;
+  if (savedFloor) floorHubView = savedFloor;
+} catch (_) {}
+
+const MENU_SUBVIEWS = [
+  { id: "ontap", label: "On Tap" },
+  { id: "beer", label: "All Beers" },
+  { id: "food", label: "Food" },
+  { id: "coffee", label: "Coffee" },
+  { id: "bar", label: "Wine + Cocktails" },
+  { id: "merch", label: "Merch" }
+];
+const FLOOR_HUB_VIEWS = [
+  { id: "tools", label: "Floor Tools" },
+  { id: "sops", label: "SOPs" },
+  { id: "checklists", label: "Checklists" }
+];
+const MENU_SUBVIEW_IDS = new Set(MENU_SUBVIEWS.map((v) => v.id));
+const TOP_LEVEL_TAB_IDS = new Set([
+  "menu", "inventory", "floor", "reviews", "games", "shift-reports", "team"
+]);
+if (!MENU_SUBVIEW_IDS.has(menuSubView)) menuSubView = "ontap";
+if (!FLOOR_HUB_VIEWS.some((v) => v.id === floorHubView)) floorHubView = "tools";
+
+function contentType() {
+  if (activeType === "menu") return menuSubView;
+  if (activeType === "floor") {
+    if (floorHubView === "sops") return "sops";
+    if (floorHubView === "checklists") return "checklists";
+    return "floor";
+  }
+  return activeType;
+}
+
+function persistHubViews() {
+  try {
+    sessionStorage.setItem("mpMenuSubView", menuSubView);
+    sessionStorage.setItem("mpFloorHubView", floorHubView);
+  } catch (_) {}
+}
+
+function setMenuSubView(id) {
+  if (!MENU_SUBVIEW_IDS.has(id)) return;
+  menuSubView = id;
+  persistHubViews();
+  if (id !== "coffee") {
+    coffeeSection = "menu";
+    coffeeMode = "guide";
+  }
+  if (id !== "food") foodCategory = "all";
+  if (id !== "merch") merchSection = "stock";
+  if (id !== "bar") barSection = "all";
+  updateHubChips();
+  updateSearchPlaceholder();
+  updateStageTitle();
+  render();
+}
+
+function setFloorHubView(id) {
+  if (!FLOOR_HUB_VIEWS.some((v) => v.id === id)) return;
+  floorHubView = id;
+  persistHubViews();
+  if (id !== "sops") {
+    sopCategory = "all";
+    if (sopEditId) resetSopForm();
+  }
+  if (id !== "checklists") {
+    checklistId = null;
+    checklistDetail = null;
+  }
+  updateHubChips();
+  updateSearchPlaceholder();
+  updateStageTitle();
+  render();
+}
+
+function updateHubChips() {
+  const wrap = document.getElementById("hubChipsWrap");
+  const chips = document.getElementById("hubChips");
+  if (!wrap || !chips) return;
+  if (activeType === "menu") {
+    wrap.hidden = false;
+    chips.innerHTML = MENU_SUBVIEWS.map((v) => `
+      <button type="button" class="coffee-subtab${menuSubView === v.id ? " active" : ""}" onclick="setMenuSubView('${v.id}')">${v.label}</button>
+    `).join("");
+  } else if (activeType === "floor") {
+    wrap.hidden = false;
+    chips.innerHTML = FLOOR_HUB_VIEWS.map((v) => `
+      <button type="button" class="coffee-subtab${floorHubView === v.id ? " active" : ""}" onclick="setFloorHubView('${v.id}')">${v.label}</button>
+    `).join("");
+  } else {
+    wrap.hidden = true;
+    chips.innerHTML = "";
+  }
+}
+
+function syncAccountLinkActive() {
+  document.querySelectorAll("#sidebarAccountLinks .sidebar-account-link, #mobileAccountLinks .sidebar-account-link").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.type === activeType);
+  });
+}
+
 let activeFilter = "all";
 let activeGame = null;
 let gameSession = null;
@@ -5470,7 +5730,8 @@ function parseCSV(text) {
   });
 }
 
-async function loadData() {
+async function loadData(options = {}) {
+  const skipRender = Boolean(options.skipRender);
   const content = document.getElementById("content");
 
   try {
@@ -5509,7 +5770,7 @@ async function loadData() {
       }));
     }
 
-    render();
+    if (!skipRender) render();
     startNewTapRotation();
     updateSearchPlaceholder();
   } catch (error) {
@@ -5637,65 +5898,65 @@ function render() {
   const content = document.getElementById("content");
   const filterWrap = document.getElementById("filterWrap");
   const searchWrap = document.getElementById("searchWrap");
+  const view = contentType();
 
-  const showFilters = activeType === "beer" || activeType === "ontap";
-  const showSearch = activeType === "beer" || activeType === "food" || activeType === "ontap" || activeType === "coffee" || activeType === "bar" || activeType === "merch" || activeType === "inventory" || activeType === "sops" || activeType === "checklists" || activeType === "floor" || activeType === "reviews";
+  const showFilters = view === "beer" || view === "ontap";
+  const showSearch = view === "beer" || view === "food" || view === "ontap" || view === "coffee" || view === "bar" || view === "merch" || view === "inventory" || view === "sops" || view === "checklists" || view === "floor" || view === "reviews";
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
+  updateHubChips();
+  syncAccountLinkActive();
   if (typeof updateStageTitle === "function") updateStageTitle();
 
-  if (activeType === "beer" || activeType === "ontap") {
+  if (view === "beer" || view === "ontap") {
     destroyCharts();
     renderList(content);
-  } else if (activeType === "food") {
+  } else if (view === "food") {
     destroyCharts();
     renderFood(content);
-  } else if (activeType === "coffee") {
+  } else if (view === "coffee") {
     destroyCharts();
     renderCoffee(content);
-  } else if (activeType === "bar") {
+  } else if (view === "bar") {
     destroyCharts();
     renderBarMenu(content);
-  } else if (activeType === "merch") {
+  } else if (view === "merch") {
     destroyCharts();
     renderMerch(content);
-  } else if (activeType === "inventory") {
+  } else if (view === "inventory") {
     destroyCharts();
     renderInventory(content);
-  } else if (activeType === "sops") {
+  } else if (view === "sops") {
     destroyCharts();
     renderSops(content);
-  } else if (activeType === "checklists") {
+  } else if (view === "checklists") {
     destroyCharts();
     renderChecklists(content);
-  } else if (activeType === "floor") {
+  } else if (view === "floor") {
     destroyCharts();
     renderFloorTools(content);
-  } else if (activeType === "reviews") {
+  } else if (view === "reviews") {
     destroyCharts();
     renderReviews(content);
-  } else if (activeType === "games") {
+  } else if (view === "games") {
     destroyCharts();
     renderGames(content);
-  } else if (activeType === "taps") {
-    destroyCharts();
-    renderTaps(content);
-  } else if (activeType === "features") {
+  } else if (view === "features") {
     destroyCharts();
     renderFeaturesTab(content);
-  } else if (activeType === "feedback") {
+  } else if (view === "feedback") {
     destroyCharts();
     renderSiteFeedback(content);
-  } else if (activeType === "progress") {
+  } else if (view === "progress") {
     renderMyProgress(content);
-  } else if (activeType === "shift-survey") {
+  } else if (view === "shift-survey") {
     destroyCharts();
     renderShiftSurvey(content);
-  } else if (activeType === "shift-reports") {
+  } else if (view === "shift-reports") {
     destroyCharts();
     renderShiftReports(content);
-  } else if (activeType === "team") {
+  } else if (view === "team") {
     renderTeamDashboard(content);
   }
 
@@ -5751,6 +6012,8 @@ function clearSessionState() {
   briefingView = "list";
   briefingActiveItem = null;
   currentBriefingItems = [];
+  tapsState = { taps: [], canWrite: false, loaded: false, loading: false, error: "" };
+  tapsLoadPromise = null;
 }
 
 function handleSessionEnded() {
@@ -5784,6 +6047,10 @@ function isInventoryManager() {
 
 function isMerchManager() {
   return currentUser && (currentUser.permissions?.manageMerch || StaffRoles?.canManageMerch(currentUser));
+}
+
+function canManageTaps() {
+  return currentUser && (currentUser.permissions?.manageTaps || StaffRoles?.canManageTaps?.(currentUser));
 }
 
 function receivesDailyBriefing() {
@@ -5824,6 +6091,32 @@ function buildRoleOptionsHtml(selected) {
 
 let shiftLeadDutyDate = null;
 
+function syncChromeOffset() {
+  const root = document.documentElement;
+  const header = document.querySelector(".site-header");
+  const useMobileChrome = window.matchMedia("(max-width: 1024px)").matches;
+  let offset = 0;
+  if (useMobileChrome && header) {
+    const shown = getComputedStyle(header).display !== "none";
+    if (shown) offset = Math.ceil(header.getBoundingClientRect().height);
+  }
+  root.style.setProperty("--chrome-offset", `${offset}px`);
+}
+
+let chromeOffsetObserver = null;
+function watchChromeOffset() {
+  syncChromeOffset();
+  const header = document.querySelector(".site-header");
+  if (!header || typeof ResizeObserver === "undefined") return;
+  if (chromeOffsetObserver) chromeOffsetObserver.disconnect();
+  chromeOffsetObserver = new ResizeObserver(() => syncChromeOffset());
+  chromeOffsetObserver.observe(header);
+  window.addEventListener("resize", syncChromeOffset, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", syncChromeOffset, { passive: true });
+  }
+}
+
 function updateAuthUI() {
   const authBar = document.getElementById("authBar");
   const authBarMobile = document.getElementById("authBarMobile");
@@ -5832,21 +6125,18 @@ function updateAuthUI() {
   document.querySelectorAll(".tab-auth-only").forEach(el => {
     el.style.display = currentUser ? "" : "none";
   });
+  // Changing a tap writes to Nucleus; editors live on the On Tap list for admins.
   document.querySelectorAll(".tab-team-only").forEach(el => {
     el.style.display = currentUser && currentUser.permissions?.manageTeam ? "" : "none";
   });
   document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
     el.style.display = currentUser && currentUser.permissions?.viewShiftReports ? "" : "none";
   });
-  // Changing a tap writes to Nucleus, which every other MPBC app reads, so this
-  // is manager-gated here as well as server-side.
-  document.querySelectorAll(".tab-taps-only").forEach(el => {
-    el.style.display = currentUser && currentUser.permissions?.manageTeam ? "" : "none";
-  });
   document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
     el.style.display = canSubmitShiftSurvey() ? "" : "none";
   });
   syncMobileTabs();
+  syncChromeOffset();
 
   if (!currentUser) {
     if (userName) userName.textContent = "Guest";
@@ -6009,8 +6299,12 @@ async function logout() {
   clearSessionState();
   // Back to the sign-in screen. Returning to a browsable shell would be
   // misleading now that every endpoint behind it requires a session.
-  activeType = "ontap";
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.type === "ontap"));
+  menuSubView = "ontap";
+  floorHubView = "tools";
+  persistHubViews();
+  activeType = "menu";
+  document.querySelectorAll("#mainTabs .tab, #mobileTabs .tab").forEach(t => t.classList.toggle("active", t.dataset.type === "menu"));
+  syncAccountLinkActive();
   showLoginGate();
 }
 
@@ -6431,7 +6725,7 @@ async function saveBeerCheckin() {
       .then(res => { if ((res.titles || []).length) notifyClassifiedUnlock(res.titles); })
       .catch(() => {});
     openBeerByName(beerModalBeer);
-    if (activeType === "beer" || activeType === "ontap" || activeType === "progress" || activeType === "games") {
+    if (activeType === "menu" || activeType === "progress" || activeType === "games") {
       render();
     }
   } catch (err) {
@@ -6504,83 +6798,98 @@ function dismissFavoriteBeerPrompt() {
 }
 
 // ── Taps ───────────────────────────────────────────────────────────────────
-// The tap wall, editable. This is the only place the app writes to Nucleus, and
-// what it writes is read by every other MPBC app — so a change here is a change
-// to the real menu, not a local note.
+// Tap editors live on Menu → On Tap cards (admins, managers, shift leads).
+// Changing a tap writes to Nucleus and updates every app that reads the catalog.
+let tapsState = { taps: [], canWrite: false, loaded: false, loading: false, error: "" };
+let tapsLoadPromise = null;
 
-let tapsState = { taps: [], canWrite: false, loaded: false, error: "" };
-
-async function renderTaps(content) {
-  if (!tapsState.loaded) {
-    content.innerHTML = `<div class="status">Loading taps…</div>`;
-    try {
-      const data = await apiFetch("/api/taps");
-      tapsState = { taps: data.taps || [], canWrite: Boolean(data.canWrite), loaded: true, error: "" };
-    } catch (error) {
-      tapsState = { taps: [], canWrite: false, loaded: true, error: error.message || "Could not load taps." };
-    }
-  }
-
-  if (tapsState.error) {
-    content.innerHTML = `<div class="status"><strong>Taps could not be loaded.</strong> ${escapeHTML(tapsState.error)}</div>`;
-    return;
-  }
-
-  const readOnlyNote = tapsState.canWrite
-    ? ""
-    : `<div class="status" style="margin-bottom:14px;">
-         <strong>Read-only.</strong> This app has a read key for Nucleus, so taps can be
-         viewed but not changed. Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to enable editing.
-       </div>`;
-
-  const rows = [...tapsState.taps]
-    .sort((a, b) => (a.sort_order - b.sort_order) || (a.tap_number - b.tap_number))
-    .map(tap => {
-      const pouring = tap.current_product;
-      return `
-        <div class="tap-row">
-          <div class="tap-number">${tap.tap_number}</div>
-          <div class="tap-beer">
-            <select data-selected="${escapeForAttribute(tap.current_product_id || "")}"
-                    id="tapSelect-${escapeForAttribute(tap.id)}"
-                    ${tapsState.canWrite ? "" : "disabled"}>
-              <option value="">— empty —</option>
-            </select>
-            <div class="tap-meta">${pouring
-              ? `${escapeHTML(pouring.name)}${pouring.style ? ` · ${escapeHTML(pouring.style)}` : ""}` +
-                `${pouring.abv ? ` · ${escapeHTML(String(pouring.abv))}%` : ""}`
-              : "Nothing pouring"}</div>
-          </div>
-          ${tapsState.canWrite ? `
-            <button type="button" class="game-next" onclick="saveTap('${escapeForAttribute(tap.id)}')">Save</button>` : ""}
-        </div>
-      `;
-    })
-    .join("");
-
-  content.innerHTML = `
-    <div class="tap-admin">
-      <h2>Tap wall</h2>
-      <p class="detail-label">
-        Straight from Nucleus. Changing a tap here updates it for every app that reads the catalog.
-      </p>
-      ${readOnlyNote}
-      <div id="tapSaveError" class="auth-error" style="display:none;"></div>
-      ${rows || `<div class="status">No taps are configured in Nucleus yet.</div>`}
-    </div>
-  `;
-
-  // The markup only exists now, after the await — render()'s pass ran before it.
-  populateBeerSelects();
+function canEditTapsUi() {
+  return Boolean(canManageTaps() && tapsState.canWrite);
 }
 
+async function ensureTapsState() {
+  if (tapsState.loaded) return tapsState;
+  if (tapsLoadPromise) return tapsLoadPromise;
+
+  tapsState.loading = true;
+  tapsLoadPromise = (async () => {
+    try {
+      const data = await apiFetch("/api/taps");
+      tapsState = {
+        taps: data.taps || [],
+        canWrite: Boolean(data.canWrite),
+        loaded: true,
+        loading: false,
+        error: ""
+      };
+    } catch (error) {
+      tapsState = {
+        taps: [],
+        canWrite: false,
+        loaded: true,
+        loading: false,
+        error: error.message || "Could not load taps."
+      };
+    } finally {
+      tapsLoadPromise = null;
+    }
+    return tapsState;
+  })();
+
+  return tapsLoadPromise;
+}
+
+function renderTapEditor(tapId, productId) {
+  if (!canEditTapsUi() || !tapId) return "";
+  return `
+    <div class="tap-inline-editor" onclick="event.stopPropagation()">
+      <select data-selected="${escapeForAttribute(productId || "")}"
+              id="tapSelect-${escapeForAttribute(tapId)}">
+        <option value="">— empty —</option>
+      </select>
+      <button type="button" class="game-next tap-inline-save" id="tapSaveBtn-${escapeForAttribute(tapId)}" onclick="saveTap('${escapeForAttribute(tapId)}')">Save</button>
+    </div>
+  `;
+}
+
+function renderEmptyTapCard(tap) {
+  return `
+    <div class="card tap-empty-card">
+      <div class="tap-layout">
+        <div class="tap-number">
+          <small>TAP</small>
+          <strong>${escapeHTML(String(tap.tap_number || "—"))}</strong>
+        </div>
+        <div>
+          <div class="card-top">
+            <div>
+              <p class="name">Empty</p>
+              <p class="desc">Nothing pouring on this tap.</p>
+            </div>
+          </div>
+          ${renderTapEditor(tap.id, "")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+let tapSaveBusy = false;
+
 async function saveTap(tapId) {
+  if (tapSaveBusy) return;
   const select = document.getElementById(`tapSelect-${tapId}`);
+  const saveBtn = document.getElementById(`tapSaveBtn-${tapId}`);
   const errorEl = document.getElementById("tapSaveError");
   if (!select) return;
   if (errorEl) errorEl.style.display = "none";
 
   const productId = String(select.value || "").trim();
+  tapSaveBusy = true;
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving…";
+  }
   try {
     // No product selected means the keg kicked — clearing is a DELETE, not a
     // write of nothing, because Nucleus keeps the fixture and empties the pour.
@@ -6589,12 +6898,24 @@ async function saveTap(tapId) {
       ...(productId ? { body: JSON.stringify({ productId }) } : {})
     });
     tapsState.loaded = false;
+    tapsState.loading = false;
+    tapsLoadPromise = null;
+    await loadData({ skipRender: true });
+    await ensureTapsState();
     render();
   } catch (error) {
     if (errorEl) {
       errorEl.style.display = "";
       errorEl.textContent = error.message || "Could not change the tap.";
+    } else {
+      alert(error.message || "Could not change the tap.");
     }
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save";
+    }
+  } finally {
+    tapSaveBusy = false;
   }
 }
 
@@ -6631,22 +6952,29 @@ function populateBeerSelects() {
 }
 
 /** Fill a <select> with the catalog, preselecting its data-selected id. */
-async function populateBeerSelect(select) {
-  if (!select || select.dataset.populated === "1") return;
-  const options = await loadBeerOptions();
-  if (!options.length) return;
+let beerOptionsHtmlCache = "";
 
-  const selected = select.dataset.selected || "";
-  select.insertAdjacentHTML(
-    "beforeend",
-    options
+async function populateBeerSelect(select) {
+  if (!select || select.dataset.populated === "1" || select.dataset.populated === "pending") return;
+  select.dataset.populated = "pending";
+  const options = await loadBeerOptions();
+  if (!options.length) {
+    select.dataset.populated = "";
+    return;
+  }
+  if (!beerOptionsHtmlCache) {
+    beerOptionsHtmlCache = options
       .map(
         (beer) =>
-          `<option value="${escapeForAttribute(beer.id)}"${beer.id === selected ? " selected" : ""}>` +
+          `<option value="${escapeForAttribute(beer.id)}">` +
           `${escapeHTML(beer.name)}${beer.style ? ` — ${escapeHTML(beer.style)}` : ""}</option>`
       )
-      .join("")
-  );
+      .join("");
+  }
+  if (!select.isConnected) return;
+  const selected = select.dataset.selected || "";
+  select.insertAdjacentHTML("beforeend", beerOptionsHtmlCache);
+  if (selected) select.value = selected;
   select.dataset.populated = "1";
 }
 
@@ -7521,7 +7849,7 @@ function renderFeaturesTab(content) {
       ` : ""}
 
       <div class="guide-callout">
-        Sign in to save training progress. Wrong menu info or bugs? Use the Feedback tab.
+        Sign in to save training progress. Wrong menu info or bugs? Use Feedback under your name in the sidebar.
       </div>
     </div>
   `;
@@ -7861,7 +8189,7 @@ async function loadManagerDigestPanel() {
       <ol class="desc" style="margin:0;padding-left:18px;">
         ${(weekly.agenda || []).map(line => `<li>${escapeHTML(line)}</li>`).join("")}
       </ol>
-      ${(weekly.topSearches || []).length ? `<p class="desc" style="margin-top:8px;"><strong>Hot Ask MP searches:</strong> ${weekly.topSearches.map(s => `${escapeHTML(s.q)} (${s.hits})`).join(" · ")}</p>` : ""}
+      ${(weekly.topSearches || []).length ? `<p class="desc" style="margin-top:8px;"><strong>Hot searches:</strong> ${weekly.topSearches.map(s => `${escapeHTML(s.q)} (${s.hits})`).join(" · ")}</p>` : ""}
       <h3 style="margin:16px 0 8px;">Deeper analytics (14–30 days)</h3>
       ${(deep.missedQuestions || []).slice(0, 5).map(g => `<p class="desc">${escapeHTML(g.activity_type)} — ${g.avg_accuracy}% · ${g.weak} weak attempts</p>`).join("") || `<p class="desc">No session data yet.</p>`}
       ${(deep.checklistLeaders || []).length ? `<p class="desc" style="margin-top:8px;"><strong>Checklist leaders:</strong> ${deep.checklistLeaders.map(r => `${escapeHTML(r.name)} (${r.completions})`).join(" · ")}</p>` : ""}
@@ -8464,6 +8792,734 @@ function formatMerchPrice(item) {
   return `$${item.price}`;
 }
 
+function formatMerchMoneyInput(cents) {
+  if (cents == null || cents === "") return "";
+  const n = Number(cents);
+  if (!Number.isFinite(n)) return "";
+  return (n / 100).toFixed(n % 100 ? 2 : 0);
+}
+
+function merchStatusLabel(status) {
+  const value = String(status || "active").toLowerCase();
+  if (value === "draft") return "Draft";
+  if (value === "archived") return "Archived";
+  return "Active";
+}
+
+function centsFromMoneyInput(id) {
+  const raw = document.getElementById(id)?.value;
+  if (raw == null || String(raw).trim() === "") return null;
+  const num = Number(raw);
+  if (!Number.isFinite(num) || num < 0) return null;
+  return Math.round(num * 100);
+}
+
+function readMerchFormPayload(prefix) {
+  const status = document.getElementById(`${prefix}Status`)?.value || "active";
+  return {
+    name: document.getElementById(`${prefix}Name`)?.value.trim() || "",
+    description: document.getElementById(`${prefix}Desc`)?.value.trim() || "",
+    price_cents: centsFromMoneyInput(`${prefix}Price`) ?? 0,
+    compare_at_cents: centsFromMoneyInput(`${prefix}CompareAt`),
+    cost_cents: centsFromMoneyInput(`${prefix}Cost`),
+    sku: document.getElementById(`${prefix}Sku`)?.value.trim() || "",
+    barcode: document.getElementById(`${prefix}Barcode`)?.value.trim() || "",
+    category: document.getElementById(`${prefix}Category`)?.value.trim() || "",
+    product_type: document.getElementById(`${prefix}ProductType`)?.value.trim() || "",
+    tags: document.getElementById(`${prefix}Tags`)?.value.trim() || "",
+    color: document.getElementById(`${prefix}Color`)?.value.trim() || "",
+    vendor: document.getElementById(`${prefix}Vendor`)?.value.trim() || "",
+    weight_oz: (() => {
+      const raw = document.getElementById(`${prefix}Weight`)?.value;
+      if (raw == null || String(raw).trim() === "") return null;
+      const n = Number(raw);
+      return Number.isFinite(n) && n >= 0 ? n : null;
+    })(),
+    shop_url: document.getElementById(`${prefix}ShopUrl`)?.value.trim() || "",
+    image_url: document.getElementById(`${prefix}ImageUrl`)?.value.trim() || "",
+    status,
+    taxable: Boolean(document.getElementById(`${prefix}Taxable`)?.checked),
+    requires_shipping: Boolean(document.getElementById(`${prefix}Shipping`)?.checked),
+    sort_order: Math.round(Number(document.getElementById(`${prefix}Sort`)?.value) || 0)
+  };
+}
+
+async function loadMerchData(force) {
+  if (merchLoading) return;
+  if (!force && merchItems.length && merchIdeas.length) return;
+
+  merchLoading = true;
+  try {
+    const [stockRes, ideasRes] = await Promise.all([
+      fetch(`${API_BASE}/api/merch`, { credentials: "include" }),
+      fetch(`${API_BASE}/api/merch/ideas`, { credentials: "include" })
+    ]);
+    const stockData = await stockRes.json();
+    const ideasData = await ideasRes.json();
+    if (!stockRes.ok) throw new Error(stockData.error || "Could not load merch.");
+    if (!ideasRes.ok) throw new Error(ideasData.error || "Could not load ideas.");
+    merchItems = stockData.items || [];
+    merchIdeas = ideasData.ideas || [];
+  } finally {
+    merchLoading = false;
+  }
+}
+
+function readImageInput(inputId, previewId) {
+  const input = document.getElementById(inputId);
+  const preview = previewId ? document.getElementById(previewId) : null;
+  if (!input?.files?.[0]) return Promise.resolve("");
+  const file = input.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    alert("Image must be under 2 MB.");
+    return Promise.resolve("");
+  }
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (preview) {
+        preview.src = reader.result;
+        preview.style.display = "block";
+      }
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function parseMerchSizesFromForm(prefix) {
+  const labels = (document.getElementById(`${prefix}SizeLabels`)?.value || "")
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
+  return labels.map(label => ({
+    size_label: label,
+    quantity: Math.max(0, Number(document.getElementById(`${prefix}Size_${label}`)?.value) || 0)
+  }));
+}
+
+function collectMerchEditSizes(itemId) {
+  const item = merchItems.find(entry => entry.id === itemId);
+  if (!item) return [];
+  const sizes = item.sizes.map(size => ({
+    size_label: size.size_label,
+    quantity: Math.max(0, Number(document.getElementById(`merchQty_${itemId}_${size.id}`)?.value) || 0)
+  }));
+  const newSizeLabel = document.getElementById(`merchAddSizeLabel_${itemId}`)?.value.trim();
+  const newSizeQty = Math.max(0, Number(document.getElementById(`merchAddSizeQty_${itemId}`)?.value) || 0);
+  if (newSizeLabel) sizes.push({ size_label: newSizeLabel, quantity: newSizeQty });
+  return sizes;
+}
+
+async function submitMerchItem() {
+  if (!isMerchManager()) return;
+  const errorEl = document.getElementById("merchItemError");
+  if (errorEl) errorEl.textContent = "";
+
+  try {
+    const payload = readMerchFormPayload("merchItem");
+    const uploaded = await readImageInput("merchItemImage", "merchItemPreview");
+    if (uploaded) payload.image_url = uploaded;
+    payload.sizes = parseMerchSizesFromForm("merchItem");
+
+    if (!payload.name) throw new Error("Item name is required.");
+    if (payload.price_cents == null) throw new Error("Price is required.");
+
+    await apiFetch("/api/merch", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    merchEditId = null;
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+  }
+}
+
+async function saveMerchItem(itemId) {
+  if (!isMerchManager()) return;
+  const item = merchItems.find(entry => entry.id === itemId);
+  if (!item) return;
+  const errorEl = document.getElementById(`merchEditError_${itemId}`);
+  if (errorEl) errorEl.textContent = "";
+
+  try {
+    const payload = readMerchFormPayload(`merchEdit_${itemId}`);
+    const uploaded = await readImageInput(`merchImage_${itemId}`, `merchImagePreview_${itemId}`);
+    if (uploaded) payload.image_url = uploaded;
+    else if (!payload.image_url) payload.image_url = item.image_url || "";
+    payload.sizes = collectMerchEditSizes(itemId);
+    payload.replace_sizes = true;
+
+    if (!payload.name) throw new Error("Item name is required.");
+
+    await apiFetch(`/api/merch/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload)
+    });
+    merchEditId = null;
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+    else alert(err.message);
+  }
+}
+
+async function updateMerchInventory(itemId) {
+  return saveMerchItem(itemId);
+}
+
+async function archiveMerchItem(itemId) {
+  if (!isMerchManager()) return;
+  if (!confirm("Archive this product? It will leave the active inventory list.")) return;
+
+  try {
+    await apiFetch(`/api/merch/${itemId}`, { method: "DELETE" });
+    if (merchEditId === itemId) merchEditId = null;
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function restoreMerchItem(itemId) {
+  if (!isMerchManager()) return;
+  try {
+    await apiFetch(`/api/merch/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "active", active: true })
+    });
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function deleteMerchItemHard(itemId) {
+  if (!isMerchManager()) return;
+  if (!confirm("Permanently delete this product and its size inventory? This cannot be undone.")) return;
+
+  try {
+    await apiFetch(`/api/merch/${itemId}?hard=1`, { method: "DELETE" });
+    if (merchEditId === itemId) merchEditId = null;
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function openMerchCreate() {
+  merchEditId = "new";
+  render();
+}
+
+function openMerchEdit(itemId) {
+  merchEditId = itemId;
+  render();
+}
+
+function cancelMerchEdit() {
+  merchEditId = null;
+  render();
+}
+
+function setMerchStatusFilter(value) {
+  merchStatusFilter = value;
+  render();
+}
+
+async function removeMerchSizeRow(itemId, sizeId) {
+  if (!isMerchManager()) return;
+  const item = merchItems.find(entry => entry.id === itemId);
+  if (!item) return;
+  const size = item.sizes.find(entry => entry.id === sizeId);
+  if (!size) return;
+  if (!confirm(`Remove size ${size.size_label}?`)) return;
+
+  const sizes = item.sizes
+    .filter(entry => entry.id !== sizeId)
+    .map(entry => ({
+      size_label: entry.size_label,
+      quantity: Math.max(0, Number(document.getElementById(`merchQty_${itemId}_${entry.id}`)?.value) || entry.quantity_raw || 0)
+    }));
+
+  try {
+    await apiFetch(`/api/merch/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ sizes, replace_sizes: true })
+    });
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function submitMerchIdea() {
+  if (!isMerchManager()) return;
+  const errorEl = document.getElementById("merchIdeaError");
+  if (errorEl) errorEl.textContent = "";
+
+  try {
+    const image_url = await readImageInput("merchIdeaImage", "merchIdeaPreview");
+    const data = await apiFetch("/api/merch/ideas", {
+      method: "POST",
+      body: JSON.stringify({
+        title: document.getElementById("merchIdeaTitle").value.trim(),
+        description: document.getElementById("merchIdeaDesc").value.trim(),
+        image_url
+      })
+    });
+    merchIdeas = data.ideas || [];
+    document.getElementById("merchIdeaForm").reset();
+    if (document.getElementById("merchIdeaPreview")) {
+      document.getElementById("merchIdeaPreview").style.display = "none";
+    }
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message;
+  }
+}
+
+async function toggleMerchVote(ideaId) {
+  if (!currentUser) {
+    showLoginGate();
+    return;
+  }
+  try {
+    const data = await apiFetch(`/api/merch/ideas/${ideaId}/vote`, { method: "POST" });
+    merchIdeas = data.ideas || [];
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function archiveMerchIdea(ideaId) {
+  if (!isMerchManager()) return;
+  if (!confirm("Remove this idea from the board?")) return;
+  try {
+    await apiFetch(`/api/merch/ideas/${ideaId}`, { method: "DELETE" });
+    await loadMerchData(true);
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function renderMerchSizeInputs(prefix) {
+  const wrap = document.getElementById(`${prefix}SizeInputs`);
+  if (!wrap) return;
+  const labels = (document.getElementById(`${prefix}SizeLabels`)?.value || "")
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
+  wrap.innerHTML = labels.map(label => `
+    <label>${escapeHTML(label)} qty<input id="${prefix}Size_${escapeForAttribute(label)}" type="number" min="0" value="0"></label>
+  `).join("");
+}
+
+function renderMerchStoreFields(prefix, item = null) {
+  const isNew = !item;
+  const price = item ? formatMerchMoneyInput(item.price_cents) : "";
+  const compareAt = item ? formatMerchMoneyInput(item.compare_at_cents) : "";
+  const cost = item ? formatMerchMoneyInput(item.cost_cents) : "";
+  const status = item?.status || "active";
+
+  return `
+    <div class="merch-form-grid">
+      <div class="full">
+        <label for="${prefix}Name">Item name</label>
+        <input id="${prefix}Name" type="text" value="${escapeHTML(item?.name || "")}" placeholder="Atom T-Shirt">
+      </div>
+      <div>
+        <label for="${prefix}Price">Price ($)</label>
+        <input id="${prefix}Price" type="number" min="0" step="0.01" value="${escapeHTML(price)}" placeholder="30.00">
+      </div>
+      <div>
+        <label for="${prefix}CompareAt">Compare-at price ($)</label>
+        <input id="${prefix}CompareAt" type="number" min="0" step="0.01" value="${escapeHTML(compareAt)}" placeholder="Optional">
+      </div>
+      <div>
+        <label for="${prefix}Cost">Cost / COGS ($)</label>
+        <input id="${prefix}Cost" type="number" min="0" step="0.01" value="${escapeHTML(cost)}" placeholder="Optional">
+      </div>
+      <div>
+        <label for="${prefix}Status">Status</label>
+        <select id="${prefix}Status">
+          <option value="active"${status === "active" ? " selected" : ""}>Active</option>
+          <option value="draft"${status === "draft" ? " selected" : ""}>Draft</option>
+          <option value="archived"${status === "archived" ? " selected" : ""}>Archived</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="${prefix}Desc">Description</label>
+        <textarea id="${prefix}Desc" placeholder="Product description for the online store.">${escapeHTML(item?.description || "")}</textarea>
+      </div>
+      <div>
+        <label for="${prefix}Sku">SKU</label>
+        <input id="${prefix}Sku" type="text" value="${escapeHTML(item?.sku || "")}" placeholder="MP-TEE-ATOM">
+      </div>
+      <div>
+        <label for="${prefix}Barcode">Barcode / UPC</label>
+        <input id="${prefix}Barcode" type="text" value="${escapeHTML(item?.barcode || "")}" placeholder="Optional">
+      </div>
+      <div>
+        <label for="${prefix}Category">Category</label>
+        <input id="${prefix}Category" type="text" value="${escapeHTML(item?.category || "")}" placeholder="Hats, Apparel, Accessories">
+      </div>
+      <div>
+        <label for="${prefix}ProductType">Product type</label>
+        <input id="${prefix}ProductType" type="text" value="${escapeHTML(item?.product_type || "")}" placeholder="T-Shirt, Cap, Crewneck">
+      </div>
+      <div>
+        <label for="${prefix}Color">Color</label>
+        <input id="${prefix}Color" type="text" value="${escapeHTML(item?.color || "")}" placeholder="Grey, Black">
+      </div>
+      <div>
+        <label for="${prefix}Vendor">Vendor / supplier</label>
+        <input id="${prefix}Vendor" type="text" value="${escapeHTML(item?.vendor || "")}" placeholder="Optional">
+      </div>
+      <div>
+        <label for="${prefix}Weight">Weight (oz)</label>
+        <input id="${prefix}Weight" type="number" min="0" step="0.1" value="${item?.weight_oz != null ? escapeHTML(String(item.weight_oz)) : ""}" placeholder="For shipping">
+      </div>
+      <div>
+        <label for="${prefix}Sort">Sort order</label>
+        <input id="${prefix}Sort" type="number" step="1" value="${escapeHTML(String(item?.sort_order ?? 0))}">
+      </div>
+      <div class="full">
+        <label for="${prefix}Tags">Tags</label>
+        <input id="${prefix}Tags" type="text" value="${escapeHTML(item?.tags || "")}" placeholder="atom, summer, limited — comma-separated">
+      </div>
+      <div class="full">
+        <label for="${prefix}ShopUrl">Online store URL</label>
+        <input id="${prefix}ShopUrl" type="url" value="${escapeHTML(item?.shop_url || "")}" placeholder="https://shop.manhattanproject.beer/products/…">
+      </div>
+      <div class="full">
+        <label for="${prefix}ImageUrl">Photo URL</label>
+        <input id="${prefix}ImageUrl" type="text" value="${escapeHTML(item?.image_url || "")}" placeholder="https://cdn.shopify.com/…">
+      </div>
+      <div class="full">
+        <label for="${isNew ? "merchItemImage" : `merchImage_${item.id}`}">Or upload photo</label>
+        <input id="${isNew ? "merchItemImage" : `merchImage_${item.id}`}" type="file" accept="image/*">
+        <img id="${isNew ? "merchItemPreview" : `merchImagePreview_${item.id}`}" class="merch-card-image" style="display:${item?.image_url ? "block" : "none"};margin-top:10px;max-height:160px;width:auto;border-radius:10px;" ${item?.image_url ? `src="${escapeHTML(item.image_url)}"` : ""} alt="">
+      </div>
+    </div>
+    <div class="merch-check-row">
+      <label><input id="${prefix}Taxable" type="checkbox"${item?.taxable !== false ? " checked" : ""}> Taxable</label>
+      <label><input id="${prefix}Shipping" type="checkbox"${item?.requires_shipping !== false ? " checked" : ""}> Requires shipping</label>
+    </div>
+  `;
+}
+
+function renderMerchAdminStockForm() {
+  if (!isMerchManager() || merchEditId !== "new") return "";
+  return `
+    <div class="merch-admin-panel" id="merchItemForm">
+      <h3>Add merch product</h3>
+      <p class="desc" style="margin:0 0 12px;line-height:1.55;">
+        Create a full online-store product record with inventory by size.
+      </p>
+      ${renderMerchStoreFields("merchItem")}
+      <label for="merchItemSizeLabels">Sizes / variants (comma-separated)</label>
+      <input id="merchItemSizeLabels" type="text" placeholder="S, M, L, XL or OS" oninput="renderMerchSizeInputs('merchItem')">
+      <div id="merchItemSizeInputs" class="merch-size-inputs"></div>
+      <p id="merchItemError" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button class="game-next" type="button" onclick="submitMerchItem()">Create product</button>
+        <button class="auth-btn" type="button" onclick="cancelMerchEdit()">Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderMerchEditForm(item) {
+  if (!isMerchManager() || merchEditId !== item.id) return "";
+  return `
+    <div class="merch-admin-panel" style="margin:12px 0 0;">
+      <h3>Edit ${escapeHTML(item.name)}</h3>
+      ${renderMerchStoreFields(`merchEdit_${item.id}`, item)}
+      <table class="merch-size-table">
+        <thead><tr><th>Size / variant</th><th>In stock</th><th></th></tr></thead>
+        <tbody>
+          ${item.sizes.map(size => `
+            <tr>
+              <td>${escapeHTML(size.size_label)}</td>
+              <td>
+                <input id="merchQty_${item.id}_${size.id}" type="number" min="0" value="${size.quantity_raw != null ? size.quantity_raw : 0}" style="width:72px;padding:4px 6px;">
+              </td>
+              <td>
+                <button type="button" class="merch-size-remove" onclick="removeMerchSizeRow(${item.id}, ${size.id})">Remove</button>
+              </td>
+            </tr>
+          `).join("") || `<tr><td colspan="3" style="color:var(--muted);">No sizes yet — add one below.</td></tr>`}
+        </tbody>
+      </table>
+      <div class="merch-admin-card" style="display:grid;grid-template-columns:1fr 80px;gap:8px;align-items:end;border-top:0;padding-top:0;">
+        <div>
+          <label for="merchAddSizeLabel_${item.id}">Add size / variant</label>
+          <input id="merchAddSizeLabel_${item.id}" type="text" placeholder="e.g. 3XL or Color-Red">
+        </div>
+        <div>
+          <label for="merchAddSizeQty_${item.id}">Qty</label>
+          <input id="merchAddSizeQty_${item.id}" type="number" min="0" value="0">
+        </div>
+      </div>
+      <p id="merchEditError_${item.id}" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button class="game-next" type="button" onclick="saveMerchItem(${item.id})">Save changes</button>
+        <button class="auth-btn" type="button" onclick="cancelMerchEdit()">Cancel</button>
+        ${item.status === "archived"
+          ? `<button class="auth-btn" type="button" onclick="restoreMerchItem(${item.id})">Restore</button>`
+          : `<button class="auth-btn" type="button" onclick="archiveMerchItem(${item.id})">Archive</button>`}
+        <button class="auth-btn" type="button" onclick="deleteMerchItemHard(${item.id})">Delete forever</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderMerchAdminIdeaForm() {
+  if (!isMerchManager()) return "";
+  return `
+    <div class="merch-admin-panel" id="merchIdeaForm">
+      <h3>Post a new merch idea</h3>
+      <label for="merchIdeaTitle">Idea title</label>
+      <input id="merchIdeaTitle" type="text" placeholder="Winter beanie with woven label">
+      <label for="merchIdeaDesc">Description</label>
+      <textarea id="merchIdeaDesc" placeholder="Tell the team what you're thinking — style, use case, price range."></textarea>
+      <label for="merchIdeaImage">Mockup or reference photo (optional)</label>
+      <input id="merchIdeaImage" type="file" accept="image/*">
+      <img id="merchIdeaPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
+      <p id="merchIdeaError" class="auth-error" style="margin-top:10px;"></p>
+      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchIdea()">Post idea</button>
+    </div>
+  `;
+}
+
+function filteredMerchItems(query) {
+  return merchItems.filter(item => {
+    if (isMerchManager() && merchStatusFilter !== "all" && (item.status || "active") !== merchStatusFilter) {
+      return false;
+    }
+    if (!isMerchManager() && (item.status || "active") !== "active") return false;
+    const haystack = [
+      item.name,
+      item.description,
+      item.sku,
+      item.category,
+      item.product_type,
+      item.tags,
+      item.color,
+      item.vendor,
+      item.barcode,
+      ...item.sizes.map(s => s.size_label)
+    ].join(" ").toLowerCase();
+    return !query || haystack.includes(query);
+  });
+}
+
+function renderMerchInventoryTable(query) {
+  const filtered = filteredMerchItems(query);
+
+  if (!filtered.length) {
+    return `<div class="status"><strong>No merch products match.</strong>${isMerchManager() ? " Add a product or change the status filter." : " Check back soon."}</div>`;
+  }
+
+  if (!isMerchManager()) {
+    return `<div class="merch-grid">${filtered.map(item => `
+      <div class="merch-card">
+        ${item.image_url
+          ? `<img class="merch-card-image" src="${escapeHTML(item.image_url)}" alt="${escapeHTML(item.name)}" loading="lazy">`
+          : `<div class="merch-card-image placeholder">No photo</div>`}
+        <div class="merch-card-body">
+          <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(item.name)}</p>
+          <p class="merch-price">${escapeHTML(formatMerchPrice(item))}</p>
+          ${item.description ? `<p class="desc">${escapeHTML(item.description)}</p>` : ""}
+          <table class="merch-size-table">
+            <thead><tr><th>Size</th><th>In stock</th></tr></thead>
+            <tbody>
+              ${item.sizes.map(size => `
+                <tr>
+                  <td>${escapeHTML(size.size_label)}</td>
+                  <td class="merch-qty ${merchStockLevelClass(size.quantity || 0)}">${size.quantity || 0}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          <p class="merch-pending-note">${item.total_quantity || 0} total on the floor</p>
+        </div>
+      </div>
+    `).join("")}</div>`;
+  }
+
+  return `
+    <div class="merch-inventory-wrap">
+      <div class="merch-inventory-toolbar">
+        <div class="merch-status-filters">
+          ${["active", "draft", "archived", "all"].map(value => `
+            <button type="button" class="${merchStatusFilter === value ? "active" : ""}" onclick="setMerchStatusFilter('${value}')">${value === "all" ? "All" : merchStatusLabel(value)}</button>
+          `).join("")}
+        </div>
+        <button class="game-next" type="button" onclick="openMerchCreate()">Add product</button>
+      </div>
+      ${renderMerchAdminStockForm()}
+      ${typeof merchEditId === "number" ? (() => {
+        const editing = merchItems.find(entry => entry.id === merchEditId);
+        return editing ? renderMerchEditForm(editing) : "";
+      })() : ""}
+      <table class="merch-inventory-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Product</th>
+            <th class="hide-sm">SKU</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(item => `
+            <tr>
+              <td>
+                ${item.image_url
+                  ? `<img class="merch-inventory-thumb" src="${escapeHTML(item.image_url)}" alt="">`
+                  : `<div class="merch-inventory-thumb placeholder">N/A</div>`}
+              </td>
+              <td>
+                <strong>${escapeHTML(item.name)}</strong>
+                <div style="color:var(--muted);font-size:12px;margin-top:2px;">
+                  ${[item.category, item.product_type, item.color].filter(Boolean).map(escapeHTML).join(" · ") || "No category"}
+                </div>
+              </td>
+              <td class="hide-sm">${escapeHTML(item.sku || "—")}</td>
+              <td>${escapeHTML(formatMerchPrice(item))}</td>
+              <td class="merch-qty ${merchStockLevelClass(item.total_quantity || 0)}">${item.total_quantity || 0}</td>
+              <td><span class="merch-badge ${escapeHTML(item.status || "active")}">${escapeHTML(merchStatusLabel(item.status))}</span></td>
+              <td>
+                <div class="inventory-row-actions">
+                  <button type="button" onclick="openMerchEdit(${item.id})">${merchEditId === item.id ? "Editing…" : "Edit"}</button>
+                  ${item.status === "archived"
+                    ? `<button type="button" onclick="restoreMerchItem(${item.id})">Restore</button>`
+                    : `<button type="button" onclick="archiveMerchItem(${item.id})">Archive</button>`}
+                </div>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderMerchIdeaCards(query) {
+  const filtered = merchIdeas.filter(idea => {
+    const haystack = (idea.title + " " + idea.description).toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  if (!filtered.length) {
+    return `<div class="status"><strong>No ideas posted yet.</strong>${isMerchManager() ? " Post the first concept above." : " Check back soon."}</div>`;
+  }
+
+  return `<div class="merch-grid">${filtered.map(idea => `
+    <div class="idea-card">
+      ${idea.image_url
+        ? `<img class="merch-card-image" src="${idea.image_url}" alt="${escapeHTML(idea.title)}">`
+        : `<div class="merch-card-image placeholder">Concept sketch</div>`}
+      <div class="idea-card-body">
+        <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(idea.title)}</p>
+        <p class="desc">${escapeHTML(idea.description)}</p>
+        <div class="idea-vote-row">
+          <button type="button" class="vote-btn${idea.user_voted ? " active" : ""}" onclick="toggleMerchVote(${idea.id})">
+            ${idea.user_voted ? "Voted" : "Vote"}
+          </button>
+          <span class="vote-count">${idea.vote_count} vote${idea.vote_count === 1 ? "" : "s"}</span>
+        </div>
+        ${isMerchManager() ? `<button class="auth-btn" style="margin-top:10px;width:100%;" type="button" onclick="archiveMerchIdea(${idea.id})">Remove idea</button>` : ""}
+      </div>
+    </div>
+  `).join("")}</div>`;
+}
+
+const MERCH_SHOP_URL = "https://shop.manhattanproject.beer/";
+
+function renderMerchSubtabs() {
+  return `
+    <div class="coffee-subtabs">
+      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; merchEditId=null; render();">Inventory</button>
+      <button class="coffee-subtab${merchSection === "ideas" ? " active" : ""}" onclick="merchSection='ideas'; merchEditId=null; render();">Up & Coming</button>
+    </div>
+  `;
+}
+
+function renderMerchShopBanner() {
+  return `
+    <div class="merch-shop-banner">
+      <div>
+        <p class="detail-label" style="margin:0;">Online shop</p>
+        <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:#333;">Browse limited merch on our public Shopify store — hats, shirts, crewnecks, and more.</p>
+      </div>
+      <a class="merch-shop-link" href="${MERCH_SHOP_URL}" target="_blank" rel="noopener noreferrer">Visit shop.manhattanproject.beer →</a>
+    </div>
+  `;
+}
+
+async function renderMerch(content) {
+  updateSearchPlaceholder();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  content.innerHTML = `
+    ${renderMerchSubtabs()}
+    ${renderMerchShopBanner()}
+    <div class="status"><strong>Loading merch…</strong></div>
+  `;
+
+  try {
+    await loadMerchData(true);
+  } catch (err) {
+    content.innerHTML = `
+      ${renderMerchSubtabs()}
+      ${renderMerchShopBanner()}
+      <div class="status"><strong>Merch could not be loaded.</strong>${escapeHTML(err.message)}</div>
+    `;
+    return;
+  }
+
+  if (merchSection === "stock") {
+    content.innerHTML = `
+      ${renderMerchSubtabs()}
+      ${renderMerchShopBanner()}
+      <div class="coffee-intro">
+        <h2>Merch inventory</h2>
+        <p>${isMerchManager()
+          ? "Full product CRUD for taproom and online-store fields — SKU, pricing, shipping, status, and size inventory."
+          : "What we carry in the taproom — photos, prices, and sizes."}</p>
+      </div>
+      ${renderMerchInventoryTable(query)}
+    `;
+    return;
+  }
+
+  content.innerHTML = `
+    ${renderMerchSubtabs()}
+    ${renderMerchShopBanner()}
+    <div class="coffee-intro">
+      <h2>Up & Coming</h2>
+      <p>New merch concepts from the team — log in to vote for your favorites.</p>
+    </div>
+    ${renderMerchAdminIdeaForm()}
+    ${renderMerchIdeaCards(query)}
+  `;
+}
+
 const INVENTORY_CATEGORIES = ["Kitchen", "Bar", "Coffee", "Beer", "Paper & Supplies", "Cleaning", "General"];
 
 function inventoryStatusMeta(item) {
@@ -8864,7 +9920,7 @@ function renderSopAdminForm() {
   return `
     <div class="inventory-admin-panel" id="sopAdminForm">
       <h3 style="margin:0 0 8px;font-size:18px;">${editing ? "Edit SOP" : "Upload SOP"}</h3>
-      <p class="desc" style="margin:0 0 16px;line-height:1.55;">Add procedures staff can search, read, and ask the training assistant about. Upload a .txt, .md, or .html file or paste content below.</p>
+      <p class="desc" style="margin:0 0 16px;line-height:1.55;">Add procedures staff can search and read. Upload a .txt, .md, or .html file or paste content below.</p>
       <div class="inventory-admin-grid">
         <div style="grid-column:1/-1;">
           <label for="sopTitle">Title</label>
@@ -9269,7 +10325,7 @@ async function renderSops(content) {
   content.innerHTML = `
     <div class="coffee-intro">
       <h2>Standard Operating Procedures</h2>
-      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Search here or ask the training assistant — SOP content feeds both. Drink recipes (lemonade, hibiscus lemonade, Italian cream soda, Michelada, Desert Rose, Cappelletti Spritz, Spaghett, Mimosa, Mich. Mix) live under <strong>Recipes</strong>; seasonal latte builds are on the Coffee tab.</p>
+      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Search here to find procedures quickly. Drink recipes (lemonade, hibiscus lemonade, Italian cream soda, Michelada, Desert Rose, Cappelletti Spritz, Spaghett, Mimosa, Mich. Mix) live under <strong>Recipes</strong>; seasonal latte builds are on the Coffee tab.</p>
       ${isAdmin() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Admin view — upload and edit procedures below.</p>` : ""}
     </div>
     ${renderSopAdminForm()}
@@ -9288,7 +10344,7 @@ async function loadSopPhotoGallery() {
     if (!photos.length) {
       el.innerHTML = `
         <h2>What GOOD looks like</h2>
-        <p>Photo standards live in Floor Tools → Photo Standards. Managers can upload station and glassware examples there.</p>
+        <p>Photo standards live in Floor → Floor Tools → Photo Standards. Managers can upload station and glassware examples there.</p>
         <button class="game-next" type="button" onclick="floorSection='photos'; activateAppTab('floor');">Open Photo Standards</button>
       `;
       return;
@@ -9457,444 +10513,6 @@ function merchStockLevelClass(qty) {
   return "";
 }
 
-async function loadMerchData(force) {
-  if (merchLoading) return;
-  if (!force && merchItems.length && merchIdeas.length) return;
-
-  merchLoading = true;
-  try {
-    const [stockRes, ideasRes] = await Promise.all([
-      fetch(`${API_BASE}/api/merch`),
-      fetch(`${API_BASE}/api/merch/ideas`)
-    ]);
-    const stockData = await stockRes.json();
-    const ideasData = await ideasRes.json();
-    if (!stockRes.ok) throw new Error(stockData.error || "Could not load merch.");
-    if (!ideasRes.ok) throw new Error(ideasData.error || "Could not load ideas.");
-    merchItems = stockData.items || [];
-    merchIdeas = ideasData.ideas || [];
-  } finally {
-    merchLoading = false;
-  }
-}
-
-function readImageInput(inputId, previewId) {
-  const input = document.getElementById(inputId);
-  const preview = previewId ? document.getElementById(previewId) : null;
-  if (!input?.files?.[0]) return Promise.resolve("");
-  const file = input.files[0];
-  if (file.size > 2 * 1024 * 1024) {
-    alert("Image must be under 2 MB.");
-    return Promise.resolve("");
-  }
-  return new Promise(resolve => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (preview) {
-        preview.src = reader.result;
-        preview.style.display = "block";
-      }
-      resolve(reader.result);
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function parseMerchSizesFromForm(prefix) {
-  const labels = (document.getElementById(`${prefix}SizeLabels`)?.value || "")
-    .split(",")
-    .map(v => v.trim())
-    .filter(Boolean);
-  return labels.map(label => ({
-    size_label: label,
-    quantity: Math.max(0, Number(document.getElementById(`${prefix}Size_${label}`)?.value) || 0)
-  }));
-}
-
-async function submitMerchItem() {
-  if (!isMerchManager()) return;
-  const errorEl = document.getElementById("merchItemError");
-  if (errorEl) errorEl.textContent = "";
-
-  try {
-    const image_url = await readImageInput("merchItemImage", "merchItemPreview");
-    const price = parseFloat(document.getElementById("merchItemPrice").value);
-    const data = await apiFetch("/api/merch", {
-      method: "POST",
-      body: JSON.stringify({
-        name: document.getElementById("merchItemName").value.trim(),
-        description: document.getElementById("merchItemDesc").value.trim(),
-        price_cents: Math.round(price * 100),
-        image_url,
-        sizes: parseMerchSizesFromForm("merchItem")
-      })
-    });
-    merchItems = (await fetch(`${API_BASE}/api/merch`).then(r => r.json())).items;
-    document.getElementById("merchItemForm").reset();
-    if (document.getElementById("merchItemPreview")) {
-      document.getElementById("merchItemPreview").style.display = "none";
-    }
-    render();
-  } catch (err) {
-    if (errorEl) errorEl.textContent = err.message;
-  }
-}
-
-async function saveMerchItem(itemId) {
-  if (!isMerchManager()) return;
-  const item = merchItems.find(entry => entry.id === itemId);
-  if (!item) return;
-
-  const name = document.getElementById(`merchName_${itemId}`)?.value.trim() || item.name;
-  const description = document.getElementById(`merchDesc_${itemId}`)?.value.trim() || "";
-  const price = parseFloat(document.getElementById(`merchPrice_${itemId}`)?.value);
-  const imageInput = document.getElementById(`merchImage_${itemId}`);
-  let image_url = item.image_url || "";
-
-  try {
-    if (imageInput?.files?.[0]) {
-      image_url = await readImageInput(`merchImage_${itemId}`, `merchImagePreview_${itemId}`);
-    } else {
-      const imageUrlField = document.getElementById(`merchImageUrl_${itemId}`)?.value.trim();
-      if (imageUrlField) image_url = imageUrlField;
-    }
-
-    const sizes = item.sizes.map(size => ({
-      size_label: size.size_label,
-      quantity: Math.max(0, Number(document.getElementById(`merchQty_${itemId}_${size.id}`)?.value) || 0)
-    }));
-
-    const newSizeLabel = document.getElementById(`merchAddSizeLabel_${itemId}`)?.value.trim();
-    const newSizeQty = Math.max(0, Number(document.getElementById(`merchAddSizeQty_${itemId}`)?.value) || 0);
-    if (newSizeLabel) {
-      sizes.push({ size_label: newSizeLabel, quantity: newSizeQty });
-    }
-
-    await apiFetch(`/api/merch/${itemId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        name,
-        description,
-        price_cents: Math.round(price * 100),
-        image_url,
-        sizes,
-        replace_sizes: true
-      })
-    });
-    await loadMerchData(true);
-    render();
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function updateMerchInventory(itemId) {
-  return saveMerchItem(itemId);
-}
-
-async function archiveMerchItem(itemId) {
-  if (!isMerchManager()) return;
-  if (!confirm("Remove this item from the taproom floor list? You can add it again later.")) return;
-
-  try {
-    await apiFetch(`/api/merch/${itemId}`, { method: "DELETE" });
-    await loadMerchData(true);
-    render();
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function submitMerchIdea() {
-  if (!isMerchManager()) return;
-  const errorEl = document.getElementById("merchIdeaError");
-  if (errorEl) errorEl.textContent = "";
-
-  try {
-    const image_url = await readImageInput("merchIdeaImage", "merchIdeaPreview");
-    const data = await apiFetch("/api/merch/ideas", {
-      method: "POST",
-      body: JSON.stringify({
-        title: document.getElementById("merchIdeaTitle").value.trim(),
-        description: document.getElementById("merchIdeaDesc").value.trim(),
-        image_url
-      })
-    });
-    merchIdeas = data.ideas || [];
-    document.getElementById("merchIdeaForm").reset();
-    if (document.getElementById("merchIdeaPreview")) {
-      document.getElementById("merchIdeaPreview").style.display = "none";
-    }
-    render();
-  } catch (err) {
-    if (errorEl) errorEl.textContent = err.message;
-  }
-}
-
-async function toggleMerchVote(ideaId) {
-  if (!currentUser) {
-    showLoginGate();
-    return;
-  }
-  try {
-    const data = await apiFetch(`/api/merch/ideas/${ideaId}/vote`, { method: "POST" });
-    merchIdeas = data.ideas || [];
-    render();
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-async function archiveMerchIdea(ideaId) {
-  if (!isMerchManager()) return;
-  if (!confirm("Remove this idea from the board?")) return;
-  try {
-    await apiFetch(`/api/merch/ideas/${ideaId}`, { method: "DELETE" });
-    await loadMerchData(true);
-    render();
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-function renderMerchAdminStockForm() {
-  if (!isMerchManager()) return "";
-  return `
-    <div class="merch-admin-panel" id="merchItemForm">
-      <h3>Manage taproom inventory</h3>
-      <p class="desc" style="margin:0 0 12px;line-height:1.55;">
-        As merch admin, you can update counts, prices, photos, and sizes on each card below — changes save for the whole team immediately. No need to ask dev to update the catalog.
-      </p>
-      <div class="guide-callout" style="margin-bottom:16px;">
-        <strong>Quick tip:</strong> Update size counts after each floor check. Use <em>Add new item</em> for taproom-only products not on Shopify yet.
-      </div>
-      <details class="merch-admin-panel" style="padding:16px;margin:0;">
-        <summary style="cursor:pointer;font-weight:700;">Add new item</summary>
-        <label for="merchItemName">Item name</label>
-        <input id="merchItemName" type="text" placeholder="Atom T-Shirt">
-        <label for="merchItemPrice">Price ($)</label>
-        <input id="merchItemPrice" type="number" min="0" step="0.01" placeholder="30.00">
-        <label for="merchItemDesc">Description</label>
-        <textarea id="merchItemDesc" placeholder="Short description for staff and guests."></textarea>
-        <label for="merchItemImage">Photo (optional)</label>
-        <input id="merchItemImage" type="file" accept="image/*">
-        <img id="merchItemPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
-        <label for="merchItemSizeLabels">Sizes (comma-separated)</label>
-        <input id="merchItemSizeLabels" type="text" placeholder="S, M, L, XL or OS" oninput="renderMerchSizeInputs('merchItem')">
-        <div id="merchItemSizeInputs" class="merch-size-inputs"></div>
-        <p id="merchItemError" class="auth-error" style="margin-top:10px;"></p>
-        <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchItem()">Add item</button>
-      </details>
-    </div>
-  `;
-}
-
-function renderMerchSizeInputs(prefix) {
-  const wrap = document.getElementById(`${prefix}SizeInputs`);
-  if (!wrap) return;
-  const labels = (document.getElementById(`${prefix}SizeLabels`)?.value || "")
-    .split(",")
-    .map(v => v.trim())
-    .filter(Boolean);
-  wrap.innerHTML = labels.map(label => `
-    <label>${escapeHTML(label)} qty<input id="${prefix}Size_${escapeForAttribute(label)}" type="number" min="0" value="0"></label>
-  `).join("");
-}
-
-function renderMerchAdminIdeaForm() {
-  if (!isMerchManager()) return "";
-  return `
-    <div class="merch-admin-panel" id="merchIdeaForm">
-      <h3>Post a new merch idea</h3>
-      <label for="merchIdeaTitle">Idea title</label>
-      <input id="merchIdeaTitle" type="text" placeholder="Winter beanie with woven label">
-      <label for="merchIdeaDesc">Description</label>
-      <textarea id="merchIdeaDesc" placeholder="Tell the team what you're thinking — style, use case, price range."></textarea>
-      <label for="merchIdeaImage">Mockup or reference photo (optional)</label>
-      <input id="merchIdeaImage" type="file" accept="image/*">
-      <img id="merchIdeaPreview" class="merch-card-image" style="display:none;margin-top:10px;max-height:160px;width:auto;border-radius:10px;" alt="">
-      <p id="merchIdeaError" class="auth-error" style="margin-top:10px;"></p>
-      <button class="game-next" style="margin-top:12px;" type="button" onclick="submitMerchIdea()">Post idea</button>
-    </div>
-  `;
-}
-
-function renderMerchStockCards(query) {
-  const filtered = merchItems.filter(item => {
-    const haystack = (item.name + " " + item.description + " " + item.sizes.map(s => s.size_label).join(" ")).toLowerCase();
-    return !query || haystack.includes(query);
-  });
-
-  if (!filtered.length) {
-    return `<div class="status"><strong>No merch in stock yet.</strong>${isMerchManager() ? " Run node seed.js to load the catalog." : " Check back soon."}</div>`;
-  }
-
-  return `<div class="merch-grid">${filtered.map(item => `
-    <div class="merch-card">
-      ${item.image_url
-        ? `<img class="merch-card-image" id="merchImagePreview_${item.id}" src="${escapeHTML(item.image_url)}" alt="${escapeHTML(item.name)}" loading="lazy">`
-        : `<div class="merch-card-image placeholder" id="merchImagePreview_${item.id}">No photo</div>`}
-      <div class="merch-card-body">
-        ${isMerchManager() ? `
-          <div class="merch-admin-card">
-            <label for="merchName_${item.id}">Item name</label>
-            <input id="merchName_${item.id}" type="text" value="${escapeHTML(item.name)}">
-            <label for="merchPrice_${item.id}">Price ($)</label>
-            <input id="merchPrice_${item.id}" type="number" min="0" step="0.01" value="${(item.price_cents / 100).toFixed(item.price_cents % 100 ? 2 : 0)}">
-            <label for="merchDesc_${item.id}">Description</label>
-            <textarea id="merchDesc_${item.id}" rows="2">${escapeHTML(item.description || "")}</textarea>
-            <label for="merchImageUrl_${item.id}">Photo URL</label>
-            <input id="merchImageUrl_${item.id}" type="text" value="${escapeHTML(item.image_url || "")}" placeholder="https://…">
-            <label for="merchImage_${item.id}">Or upload new photo</label>
-            <input id="merchImage_${item.id}" type="file" accept="image/*">
-          </div>
-        ` : `
-          <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(item.name)}</p>
-          <p class="merch-price">${escapeHTML(formatMerchPrice(item))}</p>
-          ${item.description ? `<p class="desc">${escapeHTML(item.description)}</p>` : ""}
-        `}
-        <table class="merch-size-table">
-          <thead><tr><th>Size</th><th>In stock</th></tr></thead>
-          <tbody>
-            ${item.sizes.map(size => `
-              <tr>
-                <td>${escapeHTML(size.size_label)}</td>
-                <td class="merch-qty ${size.quantity != null && size.quantity <= 2 ? merchStockLevelClass(size.quantity || 0) : ""}">
-                  ${isMerchManager()
-                    ? `<input id="merchQty_${item.id}_${size.id}" type="number" min="0" value="${size.quantity_raw != null && size.quantity_raw > 0 ? size.quantity_raw : ""}" placeholder="0" style="width:64px;padding:4px 6px;">`
-                    : (size.quantity != null && size.quantity > 0 ? size.quantity : "—")}
-                </td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-        ${isMerchManager() ? `
-          <div class="merch-admin-card" style="display:grid;grid-template-columns:1fr 80px;gap:8px;align-items:end;">
-            <div>
-              <label for="merchAddSizeLabel_${item.id}">Add size</label>
-              <input id="merchAddSizeLabel_${item.id}" type="text" placeholder="e.g. 3XL">
-            </div>
-            <div>
-              <label for="merchAddSizeQty_${item.id}">Qty</label>
-              <input id="merchAddSizeQty_${item.id}" type="number" min="0" placeholder="0">
-            </div>
-          </div>
-        ` : ""}
-        <p class="merch-pending-note">${item.total_quantity != null
-          ? `${item.total_quantity} total on the floor`
-          : "Inventory counts not entered yet."}</p>
-        ${isMerchManager() ? `
-          <div class="merch-admin-actions">
-            <button class="game-next" type="button" onclick="saveMerchItem(${item.id})">Save item</button>
-            <button class="auth-btn" type="button" onclick="archiveMerchItem(${item.id})">Remove</button>
-          </div>
-        ` : ""}
-      </div>
-    </div>
-  `).join("")}</div>`;
-}
-
-function renderMerchIdeaCards(query) {
-  const filtered = merchIdeas.filter(idea => {
-    const haystack = (idea.title + " " + idea.description).toLowerCase();
-    return !query || haystack.includes(query);
-  });
-
-  if (!filtered.length) {
-    return `<div class="status"><strong>No ideas posted yet.</strong>${isMerchManager() ? " Post the first concept above." : " Check back soon."}</div>`;
-  }
-
-  return `<div class="merch-grid">${filtered.map(idea => `
-    <div class="idea-card">
-      ${idea.image_url
-        ? `<img class="merch-card-image" src="${idea.image_url}" alt="${escapeHTML(idea.title)}">`
-        : `<div class="merch-card-image placeholder">Concept sketch</div>`}
-      <div class="idea-card-body">
-        <p class="name" style="font-size:17px;font-weight:700;margin:0 0 6px;">${escapeHTML(idea.title)}</p>
-        <p class="desc">${escapeHTML(idea.description)}</p>
-        <div class="idea-vote-row">
-          <button type="button" class="vote-btn${idea.user_voted ? " active" : ""}" onclick="toggleMerchVote(${idea.id})" ${!currentUser ? "" : ""}>
-            ${idea.user_voted ? "Voted" : "Vote"}
-          </button>
-          <span class="vote-count">${idea.vote_count} vote${idea.vote_count === 1 ? "" : "s"}</span>
-        </div>
-        ${isMerchManager() ? `<button class="auth-btn" style="margin-top:10px;width:100%;" type="button" onclick="archiveMerchIdea(${idea.id})">Remove idea</button>` : ""}
-      </div>
-    </div>
-  `).join("")}</div>`;
-}
-
-const MERCH_SHOP_URL = "https://shop.manhattanproject.beer/";
-
-function renderMerchSubtabs() {
-  return `
-    <div class="coffee-subtabs">
-      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; render();">In Stock</button>
-      <button class="coffee-subtab${merchSection === "ideas" ? " active" : ""}" onclick="merchSection='ideas'; render();">Up & Coming</button>
-    </div>
-  `;
-}
-
-function renderMerchShopBanner() {
-  return `
-    <div class="merch-shop-banner">
-      <div>
-        <p class="detail-label" style="margin:0;">Online shop</p>
-        <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:#333;">Browse limited merch on our public Shopify store — hats, shirts, crewnecks, and more.</p>
-      </div>
-      <a class="merch-shop-link" href="${MERCH_SHOP_URL}" target="_blank" rel="noopener noreferrer">Visit shop.manhattanproject.beer →</a>
-    </div>
-  `;
-}
-
-async function renderMerch(content) {
-  updateSearchPlaceholder();
-  const query = document.getElementById("search").value.toLowerCase().trim();
-
-  content.innerHTML = `
-    ${renderMerchSubtabs()}
-    ${renderMerchShopBanner()}
-    <div class="status"><strong>Loading merch…</strong></div>
-  `;
-
-  try {
-    await loadMerchData(true);
-  } catch (err) {
-    content.innerHTML = `
-      ${renderMerchSubtabs()}
-      ${renderMerchShopBanner()}
-      <div class="status"><strong>Merch could not be loaded.</strong>${escapeHTML(err.message)}</div>
-    `;
-    return;
-  }
-
-  if (merchSection === "stock") {
-    content.innerHTML = `
-      ${renderMerchSubtabs()}
-      ${renderMerchShopBanner()}
-      <div class="coffee-intro">
-        <h2>Merch in Stock</h2>
-        <p>${isMerchManager()
-          ? "You’re logged in as merch admin — edit inventory on each card below. Everyone else sees your updates in real time."
-          : "What we carry in the taproom — photos, prices, and sizes."}</p>
-      </div>
-      ${renderMerchAdminStockForm()}
-      ${renderMerchStockCards(query)}
-    `;
-    return;
-  }
-
-  content.innerHTML = `
-    ${renderMerchSubtabs()}
-    ${renderMerchShopBanner()}
-    <div class="coffee-intro">
-      <h2>Up & Coming</h2>
-      <p>New merch concepts from the team — log in to vote for your favorites.</p>
-    </div>
-    ${renderMerchAdminIdeaForm()}
-    ${renderMerchIdeaCards(query)}
-  `;
-}
 
 function updateSearchPlaceholder() {
   const search = document.getElementById("search");
@@ -9910,11 +10528,12 @@ function updateSearchPlaceholder() {
     cocktails: "Search cocktails",
     other: "Search NA beverages"
   };
+  const view = contentType();
   const placeholders = {
     ontap: "Search beer, style, or flavor",
     beer: "Search beer, style, or flavor",
     food: foodCategory === "weekly" ? "Search weekly specials" : foodCategory === "brunch" ? "Search brunch items" : "Search food items",
-    merch: merchSection === "ideas" ? "Search merch ideas" : "Search merch",
+    merch: merchSection === "ideas" ? "Search merch ideas" : "Search products, SKU, or size",
     inventory: "Search inventory items or sections",
     sops: "Search SOPs, procedures, or categories",
     checklists: "Search checklists",
@@ -9926,7 +10545,7 @@ function updateSearchPlaceholder() {
     features: "Search",
     feedback: "Search"
   };
-  search.placeholder = placeholders[activeType] || "Search";
+  search.placeholder = placeholders[view] || "Search";
 }
 
 function renderCoffeeSectionTabs() {
@@ -11880,6 +12499,15 @@ function newTapBeers() {
   return beers.filter(b => isYes(b["New Tap"]) && isYes(b["On Tap"]));
 }
 
+function showNewTapBannerIndex(index, event) {
+  if (event) event.stopPropagation();
+  const beersOnBanner = newTapBeers();
+  if (!beersOnBanner.length) return;
+  newTapIndex = ((index % beersOnBanner.length) + beersOnBanner.length) % beersOnBanner.length;
+  const banner = document.getElementById("newTapBanner");
+  if (banner) banner.outerHTML = renderNewTapBanner();
+}
+
 function renderNewTapBanner() {
   const newBeers = newTapBeers();
 
@@ -11890,17 +12518,27 @@ function renderNewTapBanner() {
   const b = newBeers[newTapIndex];
   const style = getStyle(b);
   const flavor = getFlavorProfile(b);
+  const tapNumber = getTapNumber(b);
+  const abv = getABVText(b);
 
   return `
     <div class="new-banner" id="newTapBanner" onclick="openBeerByName('${escapeForAttribute(b.Name)}')" style="cursor:pointer;">
-      <p class="new-banner-label">NEWLY TAPPED</p>
-      <p class="new-banner-name">${escapeHTML(b.Name)}</p>
-      <p class="new-banner-desc">
-        ${escapeHTML(style)}${flavor ? " — " + escapeHTML(flavor.slice(0, 105)) : ""}
-      </p>
-      <div class="new-banner-dots">
+      <div class="new-banner-main">
+        <div class="new-banner-copy">
+          <p class="new-banner-label">NEWLY TAPPED</p>
+          <p class="new-banner-name">${escapeHTML(b.Name)}</p>
+          <p class="new-banner-desc">
+            ${escapeHTML(style)}${flavor ? " — " + escapeHTML(flavor.slice(0, 140)) : ""}
+          </p>
+        </div>
+        <div class="new-banner-meta">
+          ${tapNumber ? `<span class="new-banner-tap">Tap ${escapeHTML(tapNumber)}</span>` : ""}
+          ${abv ? `<span class="new-banner-abv">${escapeHTML(abv)}</span>` : ""}
+        </div>
+      </div>
+      <div class="new-banner-dots" onclick="event.stopPropagation()">
         ${newBeers.map((_, i) =>
-          `<div class="new-banner-dot${i === newTapIndex ? " active" : ""}"></div>`
+          `<button type="button" class="new-banner-dot${i === newTapIndex ? " active" : ""}" aria-label="Show newly tapped beer ${i + 1}" onclick="showNewTapBannerIndex(${i}, event)"></button>`
         ).join("")}
       </div>
     </div>
@@ -11922,17 +12560,139 @@ function startNewTapRotation() {
     // page flickering. It went unnoticed for as long as it existed because the
     // `New Tap` column it depends on was never populated, so the rotation never
     // actually ran; making that column work is what surfaced it.
-    if (activeType !== "beer" && activeType !== "ontap") return;
+    if (contentType() !== "beer" && contentType() !== "ontap") return;
     const banner = document.getElementById("newTapBanner");
     if (banner) banner.outerHTML = renderNewTapBanner();
   }, 4500);
 }
 
-function renderList(content) {
-  const query = document.getElementById("search").value.toLowerCase().trim();
-  let source = activeType === "food" ? foods : beers;
+function csvEscapeCell(value) {
+  const text = String(value ?? "");
+  if (/[",\n\r]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
 
-  if (activeType === "ontap") {
+/** Yeast + hop types from Nucleus key_ingredients — skips malt/grain and marketing copy. */
+function getYeastAndHops(item) {
+  const raw = col(item, "Key Ingredients");
+  if (!raw) return "";
+
+  const parts = raw.split(/[,;|/]+/).map((part) => part.trim()).filter(Boolean);
+  if (!parts.length) return "";
+
+  const isYeast = (part) => /\byeasts?\b/i.test(part);
+  const isHop = (part) => /\bhops?\b/i.test(part);
+  const isGrainOrOther = (part) =>
+    /\b(malts?|oats?|wheat|barley|rye|rice|corn|maize|honey|lactose|sugar|fruit|coffee|vanilla|cocoa|chocolate|salt|spice|pepper|chili|water)\b/i.test(
+      part
+    );
+
+  const yeastParts = parts.filter(isYeast);
+
+  // Trailing hop run: "Wheat, Oats, Citra Azacca, Zythos hops" → Citra… + Zythos hops
+  let hopParts = [];
+  if (parts.some(isHop) || /\bhops?\b/i.test(raw)) {
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (isYeast(parts[i]) || isGrainOrOther(parts[i])) break;
+      hopParts.unshift(parts[i]);
+    }
+    if (!hopParts.some(isHop)) hopParts = [];
+  }
+
+  const combined = [...hopParts, ...yeastParts];
+  return [...new Set(combined)].join(", ");
+}
+
+function getOnTapBeersSorted() {
+  return beers
+    .filter(isOnTap)
+    .sort((a, b) => Number(getTapNumber(a) || 999) - Number(getTapNumber(b) || 999));
+}
+
+function downloadOnTapCsv(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  try {
+    const rows = getOnTapBeersSorted();
+    if (!rows.length) {
+      alert("No beers are currently on tap to export.");
+      return;
+    }
+
+    const headers = [
+      "Tap",
+      "Name",
+      "Style",
+      "ABV",
+      "Gluten-Reduced",
+      "New Tap",
+      "Tasting Notes",
+      "Description"
+    ];
+
+    const lines = [
+      headers.join(","),
+      ...rows.map((beer) =>
+        [
+          getTapNumber(beer) || "",
+          col(beer, "Name"),
+          getStyle(beer),
+          getABVText(beer).replace(/%/g, ""),
+          isYes(beer["Gluten-Reduced"]) ? "Yes" : "No",
+          isYes(beer["New Tap"]) ? "Yes" : "No",
+          getFlavorProfile(beer),
+          getYeastAndHops(beer)
+        ]
+          .map(csvEscapeCell)
+          .join(",")
+      )
+    ];
+
+    // BOM helps Excel open UTF-8 correctly on Windows.
+    const blob = new Blob(["\uFEFF" + lines.join("\r\n")], {
+      type: "text/csv;charset=utf-8;"
+    });
+    const url = URL.createObjectURL(blob);
+    const stamp = new Date().toISOString().slice(0, 10);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `mp-on-tap-${stamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    console.error(error);
+    alert(error.message || "Could not download the tap list.");
+  }
+}
+
+function renderOnTapExportBar() {
+  if (!getOnTapBeersSorted().length) return "";
+  return `
+    <div class="ontap-export-bar">
+      <button type="button" class="game-next" onclick="downloadOnTapCsv(event)">Download tap list (CSV)</button>
+      <p>Opens in Excel / Sheets — tap, tasting notes, gluten-reduced, ABV, and yeast/hops. Print from there.</p>
+    </div>
+  `;
+}
+
+function renderList(content) {
+  const view = contentType();
+  const query = document.getElementById("search").value.toLowerCase().trim();
+  let source = view === "food" ? foods : beers;
+
+  if (view === "ontap" && canManageTaps() && !tapsState.loaded) {
+    if (!tapsState.loading) {
+      content.innerHTML = `<div class="status"><strong>Loading taps…</strong></div>`;
+      ensureTapsState().then(() => render());
+    }
+    return;
+  }
+
+  if (view === "ontap") {
     source = source
       .filter(isOnTap)
       .sort((a, b) => {
@@ -11948,37 +12708,63 @@ function renderList(content) {
       getSearchText(item).includes(query);
 
     const matchesActiveFilter =
-      activeType === "food" ||
+      view === "food" ||
       matchesFilter(item);
 
     return matchesSearch && matchesActiveFilter;
   });
 
   const banner =
-    activeType === "ontap"
+    view === "ontap"
       ? renderNewTapBanner()
       : "";
 
-  if (filtered.length === 0) {
+  const adminNote = view === "ontap" && canManageTaps()
+    ? (tapsState.error
+      ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors unavailable.</strong> ${escapeHTML(tapsState.error)}</div>`
+      : canEditTapsUi()
+        ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors:</strong> Change what’s pouring with the dropdown on each tap, then Save. Updates Nucleus for every app.</div>
+           <div id="tapSaveError" class="auth-error" style="display:none;margin:0 0 12px;"></div>`
+        : `<div class="status" style="margin-bottom:12px;"><strong>Read-only taps.</strong> Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to edit what’s pouring.</div>`)
+    : "";
+
+  let emptyTapCards = "";
+  if (view === "ontap" && canEditTapsUi() && !query) {
+    const emptyTaps = [...(tapsState.taps || [])]
+      .filter((tap) => !tap.current_product_id)
+      .sort((a, b) => (a.sort_order - b.sort_order) || (a.tap_number - b.tap_number));
+    emptyTapCards = emptyTaps.map(renderEmptyTapCard).join("");
+  }
+
+  const exportBar = view === "ontap" ? renderOnTapExportBar() : "";
+
+  if (filtered.length === 0 && !emptyTapCards) {
     const message =
-      activeType === "ontap" && source.length === 0
+      view === "ontap" && source.length === 0
         ? "No beers are currently marked as On Tap. Confirm beers are marked on tap in Nucleus."
         : "Nothing matches your search or selected filter.";
 
-    content.innerHTML = banner + `
+    content.innerHTML = banner + adminNote + `
       <div class="status">
         <strong>Nothing to show yet.</strong>
         ${message}
       </div>
-    `;
+    ` + exportBar;
     return;
   }
 
   content.innerHTML =
     banner +
+    adminNote +
     '<div class="list">' +
     filtered.map(item => renderBeerCard(item)).join("") +
-    "</div>";
+    emptyTapCards +
+    "</div>" +
+    exportBar;
+
+  if (view === "ontap" && canEditTapsUi()) {
+    queueMicrotask(populateBeerSelects);
+  }
 }
 
 function renderBeerCard(item) {
@@ -11988,9 +12774,12 @@ function renderBeerCard(item) {
   const abv = getABVText(item);
   const gf = isYes(item["Gluten-Reduced"]);
   const isNew = isYes(item["New Tap"]);
-  const isSpecial = activeType === "food" && isFoodSpecial(item);
+  const isSpecial = contentType() === "food" && isFoodSpecial(item);
   const tapNumber = getTapNumber(item);
   const checkin = getBeerCheckin(col(item, "Name"));
+  const tapEditor = contentType() === "ontap"
+    ? renderTapEditor(item.nucleus_tap_id, item.nucleus_product_id)
+    : "";
 
   const subtitle = [style, flavor || description].filter(Boolean).join(" — ");
   const cardBody = `
@@ -12010,9 +12799,10 @@ function renderBeerCard(item) {
     </div>
 
     <div class="details-hint">Tap to view sheet details</div>
+    ${tapEditor}
   `;
 
-  if (activeType === "ontap") {
+  if (contentType() === "ontap") {
     return `
       <div class="card" onclick="openBeerByName('${escapeForAttribute(item.Name)}')">
         <div class="tap-layout">
@@ -12483,6 +13273,27 @@ document.getElementById("search").addEventListener("input", render);
 function updateStageTitle() {
   const el = document.getElementById("stageTitle");
   if (!el) return;
+  const view = contentType();
+  const menuLabel = MENU_SUBVIEWS.find((v) => v.id === view)?.label;
+  const floorLabel = FLOOR_HUB_VIEWS.find((v) => v.id === floorHubView)?.label;
+  const accountLabels = {
+    features: "How this app works",
+    feedback: "Feedback",
+    progress: "My Progress",
+    "shift-survey": "End of Shift"
+  };
+  if (activeType === "menu" && menuLabel) {
+    el.textContent = menuLabel;
+    return;
+  }
+  if (activeType === "floor" && floorLabel) {
+    el.textContent = floorLabel;
+    return;
+  }
+  if (accountLabels[activeType]) {
+    el.textContent = accountLabels[activeType];
+    return;
+  }
   const active = document.querySelector("#mainTabs .tab.active");
   el.textContent = active ? active.textContent.trim() : "Manhattan Project";
 }
@@ -12495,6 +13306,9 @@ function syncMobileTabs() {
     mobile.innerHTML = main.innerHTML;
     mobile.dataset.ready = "1";
   }
+  mobile.querySelectorAll(".tab").forEach((dst) => {
+    if (!main.querySelector(`.tab[data-type="${dst.dataset.type}"]`)) dst.remove();
+  });
   main.querySelectorAll(".tab").forEach((src) => {
     let dst = mobile.querySelector(`.tab[data-type="${src.dataset.type}"]`);
     if (!dst) {
@@ -12517,36 +13331,61 @@ function goHome() {
 
 function activateAppTab(type) {
   if (!type) return;
+
+  let nextActive = type;
+  if (MENU_SUBVIEW_IDS.has(type)) {
+    menuSubView = type;
+    nextActive = "menu";
+  } else if (type === "menu") {
+    nextActive = "menu";
+  } else if (type === "sops") {
+    floorHubView = "sops";
+    nextActive = "floor";
+  } else if (type === "checklists") {
+    floorHubView = "checklists";
+    nextActive = "floor";
+  } else if (type === "floor") {
+    floorHubView = "tools";
+    nextActive = "floor";
+  }
+
+  persistHubViews();
+
+  const tabHighlight = TOP_LEVEL_TAB_IDS.has(nextActive) ? nextActive : null;
   document.querySelectorAll("#mainTabs .tab, #mobileTabs .tab").forEach((t) => {
-    t.classList.toggle("active", t.dataset.type === type);
+    t.classList.toggle("active", tabHighlight != null && t.dataset.type === tabHighlight);
   });
-  activeType = type;
-  if (activeType !== "games") {
+
+  activeType = nextActive;
+  const view = contentType();
+
+  if (view !== "games") {
     activeGame = null;
     gameSession = null;
     rocketItem = null;
     stopRocketLoop();
   }
-  if (activeType !== "coffee") {
+  if (view !== "coffee") {
     coffeeSection = "menu";
     coffeeMode = "guide";
-    if (activeType !== "progress" && activeType !== "team") coffeeSession = null;
+    if (view !== "progress" && activeType !== "team") coffeeSession = null;
   }
-  if (activeType !== "food") foodCategory = "all";
-  if (activeType !== "merch") merchSection = "stock";
-  if (activeType !== "sops") {
+  if (view !== "food") foodCategory = "all";
+  if (view !== "merch") merchSection = "stock";
+  if (view !== "sops") {
     sopCategory = "all";
     if (sopEditId) resetSopForm();
   }
-  if (activeType !== "checklists") {
+  if (view !== "checklists") {
     checklistId = null;
     checklistDetail = null;
   }
-  if (activeType !== "bar") barSection = "all";
+  if (view !== "bar") barSection = "all";
   if (activeType === "team") teamDetailId = null;
   if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
   updateSearchPlaceholder();
   updateStageTitle();
+  syncAccountLinkActive();
   render();
 }
 
@@ -12557,7 +13396,10 @@ document.addEventListener("click", (event) => {
 });
 
 syncMobileTabs();
+updateHubChips();
 updateStageTitle();
+syncAccountLinkActive();
+watchChromeOffset();
 
 document.querySelectorAll(".filter-btn").forEach(button => {
   button.addEventListener("click", () => {
@@ -12587,8 +13429,6 @@ document.addEventListener("keydown", event => {
       closeBriefingModal();
     } else if (document.getElementById("shiftDigestBackdrop").classList.contains("show")) {
       closeShiftDigestModal();
-    } else if (chatOpen) {
-      toggleChatPanel(false);
     } else {
       closeModal();
     }
@@ -12604,250 +13444,6 @@ function stripHtmlForChat(html) {
   return String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function formatBeerForChat(beer) {
-  const tap = col(beer, "Tap") || col(beer, "tap") || col(beer, "Tap Number");
-  const abv = getABVNumber(beer) || col(beer, "ABV") || col(beer, "abv");
-  const parts = [
-    col(beer, "Name"),
-    tap ? `Tap ${tap}` : null,
-    getStyle(beer) || null,
-    abv ? `ABV ${abv}${String(abv).includes("%") ? "" : "%"}` : null,
-    getFlavorProfile(beer) ? `Flavor: ${getFlavorProfile(beer)}` : null,
-    getDescription(beer) ? `Description: ${getDescription(beer)}` : null,
-    isYes(col(beer, "Gluten-Reduced")) ? "Gluten-reduced" : null,
-    isYes(col(beer, "New Tap")) ? "New tap" : null
-  ].filter(Boolean);
-  return parts.join(" | ");
-}
-
-function chatTerms(query) {
-  return String(query || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2);
-}
-
-function chatScore(text, terms) {
-  const lower = String(text || "").toLowerCase();
-  let score = 0;
-  for (const term of terms) {
-    if (lower.includes(term)) score += term.length > 4 ? 3 : 1;
-  }
-  return score;
-}
-
-function localChatAnswer(message) {
-  const terms = chatTerms(message);
-  const q = message.toLowerCase();
-
-  if (/^(hi|hello|hey)\b/.test(q)) {
-    return "Hi — I'm Ask MP. Search beers, food, coffee, SOPs/recipes, events, and training in one place. What do you need?";
-  }
-
-  if (/tap|on tap|what'?s pouring|what is pouring/.test(q) && beers.length) {
-    const onTap = beers
-      .filter(b => (col(b, "Tap") || col(b, "tap")) && col(b, "Name"))
-      .sort((a, b) => Number(col(a, "Tap") || col(a, "tap")) - Number(col(b, "Tap") || col(b, "tap")));
-    if (onTap.length) {
-      return "Current tap list:\n\n" + onTap.map(b => "• " + formatBeerForChat(b)).join("\n");
-    }
-  }
-
-  if (/gluten|gf\b/.test(q)) {
-    const gf = beers.filter(b => isYes(col(b, "Gluten-Reduced")));
-    if (gf.length) {
-      return "Gluten-reduced beers:\n\n" + gf.map(b => "• " + formatBeerForChat(b)).join("\n");
-    }
-  }
-
-  const beerHits = beers
-    .map(beer => ({ beer, score: chatScore(formatBeerForChat(beer), terms) }))
-    .filter(row => row.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
-
-  if (beerHits.length) {
-    return "Here's what I found in the beer menu:\n\n" +
-      beerHits.map(({ beer }) => "• " + formatBeerForChat(beer)).join("\n\n") +
-      "\n\nCheck the On Tap or All Beers tab for full details.";
-  }
-
-  const coffeeHits = COFFEE_SECTIONS
-    .map(section => ({
-      section,
-      score: chatScore(`${section.title} ${section.summary} ${stripHtmlForChat(section.body)}`, terms)
-    }))
-    .filter(row => row.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
-
-  if (coffeeHits.length) {
-    return "From the coffee training manual:\n\n" +
-      coffeeHits.map(({ section }) => {
-        const excerpt = stripHtmlForChat(section.body).slice(0, 360);
-        return `${section.title}\n${section.summary}\n${excerpt}${excerpt.length >= 360 ? "…" : ""}`;
-      }).join("\n\n");
-  }
-
-  const sopHits = sopDocuments
-    .map(doc => ({
-      doc,
-      score: chatScore(`${doc.title} ${doc.category} ${doc.summary} ${stripHtmlForChat(doc.body)}`, terms)
-    }))
-    .filter(row => row.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
-
-  if (sopHits.length) {
-    return "From the SOP library:\n\n" +
-      sopHits.map(({ doc }) => {
-        const excerpt = stripHtmlForChat(doc.body).slice(0, 360);
-        return `${doc.title} (${doc.category})\n${doc.summary || excerpt}${doc.summary ? `\n${excerpt}` : ""}${excerpt.length >= 360 ? "…" : ""}`;
-      }).join("\n\n") +
-      "\n\nOpen the SOPs tab for the full procedure.";
-  }
-
-  if (/sop|procedure|standard operating|opening checklist|closing checklist/.test(q)) {
-    return "Standard operating procedures are on the SOPs tab." +
-      (sopDocuments.length
-        ? " Categories: " + [...new Set(sopDocuments.map(doc => doc.category))].join(", ") + "."
-        : " Ask an admin to upload procedures there.");
-  }
-
-  if (/game|quiz|flashcard|training/.test(q)) {
-    return "Training games on this site:\n\n" +
-      GAMES.map(g => `• ${g.title} — ${g.desc}`).join("\n") +
-      "\n\nFor coffee: open the Coffee tab → Training Quiz or Flashcards.";
-  }
-
-  return "I couldn't find that in Ask MP. Try Michelada mix, gluten-reduced beers, coffee close, an SOP, Floor Tools, or a training game.";
-}
-
-let chatOpen = false;
-let chatHistory = [];
-let chatBusy = false;
-let chatMode = "local";
-let chatApiAvailable = false;
-
-function toggleChatPanel(force) {
-  chatOpen = typeof force === "boolean" ? force : !chatOpen;
-  document.getElementById("chatPanel").classList.toggle("open", chatOpen);
-  document.getElementById("chatFab").classList.toggle("open", chatOpen);
-  document.getElementById("chatFabIcon").innerHTML = chatOpen
-    ? `<path d="M18 6L6 18"/><path d="M6 6l12 12"/>`
-    : `<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>`;
-
-  if (chatOpen) {
-    if (!chatHistory.length) {
-      appendChatMessage(
-        "assistant",
-        "Hi — I'm Ask MP. Search beers, food, coffee, SOPs/recipes, events, and training in one place. What do you need?"
-      );
-    }
-    document.getElementById("chatInput").focus();
-  }
-}
-
-function appendChatMessage(role, content, extraClass) {
-  const wrap = document.getElementById("chatMessages");
-  const el = document.createElement("div");
-  el.className = `chat-msg ${role}${extraClass ? " " + extraClass : ""}`;
-  el.textContent = content;
-  wrap.appendChild(el);
-  wrap.scrollTop = wrap.scrollHeight;
-  return el;
-}
-
-function setChatBusy(busy) {
-  chatBusy = busy;
-  document.getElementById("chatSendBtn").disabled = busy;
-  document.getElementById("chatInput").disabled = busy;
-}
-
-async function initChat() {
-  try {
-    const response = await fetch(`${API_BASE}/api/chat/status`);
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) throw new Error("not json");
-    const data = await response.json();
-    if (!response.ok || !data.mode) throw new Error("unavailable");
-    chatApiAvailable = true;
-    chatMode = data.mode;
-    document.getElementById("chatModeBadge").textContent =
-      data.enabled ? "AI · site content only" : "Quick search · add API key for AI";
-  } catch {
-    chatApiAvailable = false;
-    document.getElementById("chatModeBadge").textContent = "On-device search";
-  }
-}
-
-function askChatSuggestion(button) {
-  const text = button.textContent.trim();
-  document.getElementById("chatInput").value = text;
-  sendChatMessage(null, text);
-}
-
-async function sendChatMessage(event, presetText) {
-  if (event) event.preventDefault();
-  if (chatBusy) return;
-
-  const input = document.getElementById("chatInput");
-  const message = (presetText || input.value).trim();
-  if (!message) return;
-
-  if (!chatOpen) toggleChatPanel(true);
-
-  input.value = "";
-  appendChatMessage("user", message);
-  chatHistory.push({ role: "user", content: message });
-  apiFetch("/api/search/log", {
-    method: "POST",
-    body: JSON.stringify({ query: message, resultType: "askmp" })
-  }).catch(() => {});
-  if (/michelada|mich\s*mix/i.test(message)) {
-    apiFetch("/api/achievements/check", {
-      method: "POST",
-      body: JSON.stringify({ event: "michelada", query: message })
-    }).then(res => {
-      if ((res.titles || []).length) notifyClassifiedUnlock(res.titles);
-    }).catch(() => {});
-  }
-
-  const typingEl = appendChatMessage("assistant", "Thinking…", "typing");
-  setChatBusy(true);
-
-  try {
-    let reply;
-    let mode = chatMode;
-
-    if (chatApiAvailable) {
-      const data = await apiFetch("/api/chat", {
-        method: "POST",
-        body: JSON.stringify({
-          message,
-          history: chatHistory.slice(0, -1)
-        })
-      });
-      reply = data.reply;
-      mode = data.mode || chatMode;
-    } else {
-      reply = localChatAnswer(message);
-    }
-
-    typingEl.remove();
-    appendChatMessage("assistant", reply);
-    chatHistory.push({ role: "assistant", content: reply });
-    chatMode = mode;
-  } catch (err) {
-    typingEl.remove();
-    const reply = localChatAnswer(message);
-    appendChatMessage("assistant", reply);
-    chatHistory.push({ role: "assistant", content: reply });
-    chatApiAvailable = false;
-    document.getElementById("chatModeBadge").textContent = "On-device search";
-  } finally {
-    setChatBusy(false);
-    input.focus();
-  }
-}
-
 async function bootstrap() {
   // Auth first. Everything below either calls a gated endpoint or renders the
   // app, and neither is any use to someone who is not signed in.
@@ -12861,7 +13457,6 @@ async function bootstrap() {
   await maybePromptClosingChecklist();
   await maybePromptShiftSurvey();
   await maybeShowShiftDigest();
-  initChat();
 }
 
 bootstrap();

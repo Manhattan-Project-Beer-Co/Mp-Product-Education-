@@ -207,7 +207,7 @@ const SECRET_ACHIEVEMENTS = [
     title: "Classified File",
     clearance: "L3",
     codename: "MICH-MIX",
-    hint: "Open Ask MP and inquire about a certain red batch recipe.",
+    hint: "Open SOPs → Recipes and look up the red batch recipe.",
     declassified: "You accessed the Michelada mix file. Contents remain need-to-know for the floor."
   },
   {

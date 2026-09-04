@@ -538,7 +538,7 @@ function registerPortalPolishApi(app, {
     } else {
       minutes.push("4) Upsell — Sell This Today item + one pairing line.");
     }
-    minutes.push("5) Close with Ask MP challenge — everyone asks one real floor question.");
+    minutes.push("5) Close with one floor question — everyone practices looking up one real answer in Menu or Floor.");
 
     res.json({
       weekOf: todayDate(),

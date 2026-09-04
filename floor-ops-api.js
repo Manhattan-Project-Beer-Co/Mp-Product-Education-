@@ -162,7 +162,7 @@ const FIRST_FIVE = [
   {
     shift: 1,
     title: "Shift 1 — Survive & orient",
-    focus: "Tour, login, On Tap, Ask MP, allergy disclaimer, one tasting.",
+    focus: "Tour, login, On Tap, allergy disclaimer, one tasting.",
     skills: ["login_portal", "find_on_tap", "ask_mp", "allergy_confirm", "taste_one_beer"]
   },
   {

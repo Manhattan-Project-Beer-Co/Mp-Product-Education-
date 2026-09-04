@@ -6012,6 +6012,8 @@ function clearSessionState() {
   briefingView = "list";
   briefingActiveItem = null;
   currentBriefingItems = [];
+  tapsState = { taps: [], canWrite: false, loaded: false, loading: false, error: "" };
+  tapsLoadPromise = null;
 }
 
 function handleSessionEnded() {
@@ -6045,6 +6047,10 @@ function isInventoryManager() {
 
 function isMerchManager() {
   return currentUser && (currentUser.permissions?.manageMerch || StaffRoles?.canManageMerch(currentUser));
+}
+
+function canManageTaps() {
+  return currentUser && (currentUser.permissions?.manageTaps || StaffRoles?.canManageTaps?.(currentUser));
 }
 
 function receivesDailyBriefing() {
@@ -6792,15 +6798,13 @@ function dismissFavoriteBeerPrompt() {
 }
 
 // ── Taps ───────────────────────────────────────────────────────────────────
-// The tap wall, editable. This is the only place the app writes to Nucleus, and
-// what it writes is read by every other MPBC app — so a change here is a change
-// Tap wall editors live on the On Tap list (admins only). Changing a tap here
-// writes to Nucleus and updates every app that reads the catalog.
+// Tap editors live on Menu → On Tap cards (admins, managers, shift leads).
+// Changing a tap writes to Nucleus and updates every app that reads the catalog.
 let tapsState = { taps: [], canWrite: false, loaded: false, loading: false, error: "" };
 let tapsLoadPromise = null;
 
 function canEditTapsUi() {
-  return Boolean(isAdmin() && tapsState.canWrite);
+  return Boolean(canManageTaps() && tapsState.canWrite);
 }
 
 async function ensureTapsState() {
@@ -12680,7 +12684,7 @@ function renderList(content) {
   const query = document.getElementById("search").value.toLowerCase().trim();
   let source = view === "food" ? foods : beers;
 
-  if (view === "ontap" && isAdmin() && !tapsState.loaded) {
+  if (view === "ontap" && canManageTaps() && !tapsState.loaded) {
     if (!tapsState.loading) {
       content.innerHTML = `<div class="status"><strong>Loading taps…</strong></div>`;
       ensureTapsState().then(() => render());
@@ -12715,11 +12719,11 @@ function renderList(content) {
       ? renderNewTapBanner()
       : "";
 
-  const adminNote = view === "ontap" && isAdmin()
+  const adminNote = view === "ontap" && canManageTaps()
     ? (tapsState.error
       ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors unavailable.</strong> ${escapeHTML(tapsState.error)}</div>`
       : canEditTapsUi()
-        ? `<div class="status" style="margin-bottom:12px;"><strong>Admin:</strong> Change what’s pouring with the dropdown on each tap, then Save. Updates Nucleus for every app.</div>
+        ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors:</strong> Change what’s pouring with the dropdown on each tap, then Save. Updates Nucleus for every app.</div>
            <div id="tapSaveError" class="auth-error" style="display:none;margin:0 0 12px;"></div>`
         : `<div class="status" style="margin-bottom:12px;"><strong>Read-only taps.</strong> Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to edit what’s pouring.</div>`)
     : "";

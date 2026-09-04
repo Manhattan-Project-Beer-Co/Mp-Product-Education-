@@ -28,7 +28,7 @@ const SITE_FEATURES = {
   ],
   sections: [
     { id: "menu", title: "Menu", summary: "Hub for On Tap, All Beers, Food, Coffee, Wine + Cocktails, and Merch — switch with chips under the title." },
-    { id: "ontap", title: "On Tap & All Beers", summary: "Live tap list, details, filters, tasting check-ins (under Menu). Admins can change what’s pouring from each On Tap card." },
+    { id: "ontap", title: "On Tap & All Beers", summary: "Live tap list, details, filters, tasting check-ins (under Menu). Admins, managers, and shift leads can change what’s pouring from each On Tap card." },
     { id: "food", title: "Food", summary: "Breakfast, brunch, lunch, dinner, weekly specials, allergens (under Menu)." },
     { id: "coffee", title: "Coffee", summary: "Menu, Viewfinder beans, seasonal latte recipes, training manual (under Menu)." },
     { id: "bar", title: "Wine + Cocktails", summary: "Wine, house cocktails, and NA drinks (under Menu)." },

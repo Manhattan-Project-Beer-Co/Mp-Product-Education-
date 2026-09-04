@@ -45,6 +45,7 @@ const {
   canManageApprovedEmails,
   canManageMerch,
   canManageOpsInventory,
+  canManageTaps,
   canViewShiftReports,
   canSubmitShiftSurvey,
   receivesDailyBriefing,
@@ -777,6 +778,15 @@ function managerOrAdminRequired(req, res, next) {
   const user = loadAuthedUser(req);
   if (!user || !canManageTeam(user)) {
     return res.status(403).json({ error: "Manager or admin access required." });
+  }
+  req.authUser = user;
+  next();
+}
+
+function tapManagerRequired(req, res, next) {
+  const user = loadAuthedUser(req);
+  if (!user || !canManageTaps(user)) {
+    return res.status(403).json({ error: "Shift lead, manager, or admin access required to change taps." });
   }
   req.authUser = user;
   next();
@@ -3478,7 +3488,7 @@ app.get("/api/taps", authRequired, async (req, res) => {
   try {
     const user = loadAuthedUser(req);
     const canWrite = Boolean(
-      nucleus.canWrite() && user && hasRole(user, ROLES.ADMIN)
+      nucleus.canWrite() && user && canManageTaps(user)
     );
     res.json({ taps: await nucleus.getTaps(), canWrite });
   } catch (error) {
@@ -3486,7 +3496,7 @@ app.get("/api/taps", authRequired, async (req, res) => {
   }
 });
 
-app.put("/api/taps/:tapId/product", authRequired, adminRequired, async (req, res) => {
+app.put("/api/taps/:tapId/product", authRequired, tapManagerRequired, async (req, res) => {
   const productId = String(req.body.productId || req.body.product_id || "").trim();
   if (!productId) return res.status(400).json({ error: "A beer is required." });
   if (!nucleus.canWrite()) {
@@ -3505,7 +3515,7 @@ app.put("/api/taps/:tapId/product", authRequired, adminRequired, async (req, res
   }
 });
 
-app.delete("/api/taps/:tapId/product", authRequired, adminRequired, async (req, res) => {
+app.delete("/api/taps/:tapId/product", authRequired, tapManagerRequired, async (req, res) => {
   if (!nucleus.canWrite()) {
     return res.status(503).json({
       error: "This app is configured read-only for Nucleus. Set NUCLEUS_API_KEY_PATRON_WRITE to change taps."

@@ -8,6 +8,33 @@ const seven = require("./seven-shifts");
 
 const DEFAULT_TZ = process.env.SEVEN_SHIFTS_TIMEZONE || "America/Chicago";
 
+const FLOOR_STATIONS = [
+  { key: "run_bus", label: "Run / Bus" },
+  { key: "coffee_bar", label: "Coffee / Bar" },
+  { key: "event", label: "Event" },
+  { key: "bar", label: "Bar" }
+];
+
+const FLOOR_STATION_KEYS = new Set(FLOOR_STATIONS.map(s => s.key));
+
+function floorStationLabel(key) {
+  return FLOOR_STATIONS.find(s => s.key === key)?.label || key || "";
+}
+
+function personKeyFromRow(row) {
+  if (row?.user_id != null) return `user:${Number(row.user_id)}`;
+  if (row?.seven_user_id != null) return `seven:${Number(row.seven_user_id)}`;
+  if (row?.seven_shift_id != null) return `shift:${Number(row.seven_shift_id)}`;
+  return null;
+}
+
+function parsePersonKey(personKey) {
+  const raw = String(personKey || "").trim();
+  const match = /^(user|seven|shift):(\d+)$/.exec(raw);
+  if (!match) return null;
+  return { kind: match[1], id: Number(match[2]), personKey: raw };
+}
+
 function localDateKey(date = new Date(), timeZone = DEFAULT_TZ) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -52,6 +79,25 @@ function ensureTables(db) {
     );
     CREATE INDEX IF NOT EXISTS idx_seven_shifts_users_email
       ON seven_shifts_users(email);
+
+    CREATE TABLE IF NOT EXISTS floor_station_assignments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      shift_date TEXT NOT NULL,
+      station_key TEXT NOT NULL,
+      person_key TEXT NOT NULL,
+      user_id INTEGER,
+      seven_user_id INTEGER,
+      display_name TEXT NOT NULL DEFAULT '',
+      assigned_by INTEGER,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(shift_date, person_key),
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (assigned_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_floor_station_assignments_date
+      ON floor_station_assignments(shift_date);
+    CREATE INDEX IF NOT EXISTS idx_floor_station_assignments_station
+      ON floor_station_assignments(shift_date, station_key);
   `);
 
   const userCols = new Set(db.prepare("PRAGMA table_info(users)").all().map(c => c.name));
@@ -347,12 +393,286 @@ function getUserShiftContext(db, userId, now = new Date()) {
 function getWorkingStaff(db, shiftDate = localDateKey()) {
   ensureTables(db);
   return db.prepare(`
-    SELECT s.*, u.name AS portal_name, u.email AS portal_email
+    SELECT s.*,
+      u.name AS portal_name,
+      u.email AS portal_email,
+      su.name AS seven_name,
+      su.email AS seven_email
     FROM scheduled_shifts s
     LEFT JOIN users u ON u.id = s.user_id
+    LEFT JOIN seven_shifts_users su ON su.seven_user_id = s.seven_user_id
     WHERE s.shift_date = ?
     ORDER BY s.start_at ASC, s.role_name ASC
   `).all(shiftDate);
+}
+
+function buildCoverageAlerts(staff, { isToday = true } = {}) {
+  const alerts = [];
+  const leads = staff.filter(s => s.isShiftLead);
+  if (!leads.length) {
+    alerts.push({
+      level: "warn",
+      code: "no_lead",
+      roleName: "Shift Lead",
+      message: "No shift lead scheduled",
+      nextAt: null
+    });
+  } else if (isToday && !leads.some(s => s.status === "now")) {
+    const next = leads
+      .filter(s => s.status === "upcoming")
+      .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt))[0];
+    alerts.push({
+      level: "warn",
+      code: "no_lead_now",
+      roleName: "Shift Lead",
+      message: "No shift lead on the floor now",
+      nextAt: next?.startAt || null
+    });
+  }
+
+  const byRole = new Map();
+  for (const person of staff) {
+    const role = String(person.roleName || "").trim() || "Unassigned";
+    if (/lead/i.test(role)) continue;
+    if (!byRole.has(role)) byRole.set(role, []);
+    byRole.get(role).push(person);
+  }
+
+  for (const [role, list] of byRole) {
+    if (isToday) {
+      const onNow = list.filter(s => s.status === "now");
+      const upcoming = list
+        .filter(s => s.status === "upcoming")
+        .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
+      if (onNow.length === 0 && upcoming.length > 0) {
+        alerts.push({
+          level: "info",
+          code: "gap_now",
+          roleName: role,
+          message: `No ${role} on now`,
+          nextAt: upcoming[0].startAt
+        });
+      }
+    } else if (list.length === 1) {
+      alerts.push({
+        level: "info",
+        code: "thin",
+        roleName: role,
+        message: `Only one ${role} scheduled`,
+        nextAt: list[0].startAt
+      });
+    }
+  }
+
+  return alerts.slice(0, 8);
+}
+
+function getFloorStationAssignments(db, shiftDate = localDateKey()) {
+  ensureTables(db);
+  return db.prepare(`
+    SELECT shift_date, station_key, person_key, user_id, seven_user_id, display_name, assigned_by, updated_at
+    FROM floor_station_assignments
+    WHERE shift_date = ?
+    ORDER BY station_key ASC, display_name ASC
+  `).all(shiftDate).map(row => ({
+    shiftDate: row.shift_date,
+    stationKey: row.station_key,
+    stationLabel: floorStationLabel(row.station_key),
+    personKey: row.person_key,
+    userId: row.user_id,
+    sevenUserId: row.seven_user_id,
+    displayName: row.display_name,
+    assignedBy: row.assigned_by,
+    updatedAt: row.updated_at
+  }));
+}
+
+function setFloorStationAssignment(db, {
+  shiftDate,
+  personKey,
+  stationKey,
+  displayName = "",
+  assignedBy = null
+} = {}) {
+  ensureTables(db);
+  const parsed = parsePersonKey(personKey);
+  if (!parsed) {
+    const err = new Error("Invalid person key.");
+    err.status = 400;
+    throw err;
+  }
+  if (!isValidShiftDateLike(shiftDate)) {
+    const err = new Error("Invalid shift date.");
+    err.status = 400;
+    throw err;
+  }
+  if (!FLOOR_STATION_KEYS.has(stationKey)) {
+    const err = new Error("Invalid floor station.");
+    err.status = 400;
+    throw err;
+  }
+
+  const userId = parsed.kind === "user" ? parsed.id : null;
+  const sevenUserId = parsed.kind === "seven" ? parsed.id : null;
+
+  db.prepare(`
+    INSERT INTO floor_station_assignments (
+      shift_date, station_key, person_key, user_id, seven_user_id, display_name, assigned_by, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(shift_date, person_key) DO UPDATE SET
+      station_key = excluded.station_key,
+      user_id = excluded.user_id,
+      seven_user_id = excluded.seven_user_id,
+      display_name = excluded.display_name,
+      assigned_by = excluded.assigned_by,
+      updated_at = datetime('now')
+  `).run(
+    shiftDate,
+    stationKey,
+    parsed.personKey,
+    userId,
+    sevenUserId,
+    String(displayName || "").trim(),
+    assignedBy
+  );
+
+  return getFloorStationAssignments(db, shiftDate)
+    .find(row => row.personKey === parsed.personKey) || null;
+}
+
+function clearFloorStationAssignment(db, { shiftDate, personKey } = {}) {
+  ensureTables(db);
+  const parsed = parsePersonKey(personKey);
+  if (!parsed || !isValidShiftDateLike(shiftDate)) {
+    const err = new Error("Invalid assignment target.");
+    err.status = 400;
+    throw err;
+  }
+  db.prepare(`
+    DELETE FROM floor_station_assignments
+    WHERE shift_date = ? AND person_key = ?
+  `).run(shiftDate, parsed.personKey);
+  return { ok: true, shiftDate, personKey: parsed.personKey };
+}
+
+function isValidShiftDateLike(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function getTodayFloorBoard(db, {
+  shiftDate = localDateKey(),
+  viewerUserId = null,
+  now = new Date(),
+  privileged = false
+} = {}) {
+  ensureTables(db);
+  const soonStart = new Date(now.getTime() + 30 * 60 * 1000).toISOString();
+  const recentEnd = new Date(now.getTime() - 15 * 60 * 1000).toISOString();
+  const soonMs = Date.parse(soonStart);
+  const recentMs = Date.parse(recentEnd);
+  const nowMs = now.getTime();
+  const isToday = shiftDate === localDateKey(now);
+
+  const rows = getWorkingStaff(db, shiftDate);
+  const assignmentByPerson = new Map(
+    getFloorStationAssignments(db, shiftDate).map(row => [row.personKey, row])
+  );
+
+  const staff = rows.map(row => {
+    const startMs = Date.parse(row.start_at);
+    const endMs = Date.parse(row.end_at);
+    const onNow = Number.isFinite(startMs) && Number.isFinite(endMs)
+      && startMs <= soonMs
+      && endMs >= recentMs;
+    let status = "done";
+    if (onNow) status = "now";
+    else if (Number.isFinite(startMs) && startMs > nowMs) status = "upcoming";
+
+    const personKey = personKeyFromRow(row);
+    const assignment = personKey ? assignmentByPerson.get(personKey) : null;
+
+    const entry = {
+      personKey,
+      name: String(row.portal_name || row.seven_name || "").trim() || "Staff",
+      roleName: row.role_name || "",
+      stationName: row.station_name || "",
+      startAt: row.start_at,
+      endAt: row.end_at,
+      isShiftLead: Boolean(row.is_shift_lead),
+      onNow,
+      status,
+      isYou: viewerUserId != null && row.user_id === viewerUserId,
+      floorStation: assignment?.stationKey || null,
+      floorStationLabel: assignment?.stationLabel || null
+    };
+
+    if (privileged) {
+      entry.email = String(row.portal_email || row.seven_email || "").trim() || null;
+      entry.mapped = Boolean(row.user_id);
+    }
+
+    return entry;
+  });
+
+  const statusOrder = { now: 0, upcoming: 1, done: 2 };
+  staff.sort((a, b) => {
+    const byStatus = statusOrder[a.status] - statusOrder[b.status];
+    if (byStatus) return byStatus;
+    if (a.isShiftLead !== b.isShiftLead) return a.isShiftLead ? -1 : 1;
+    return Date.parse(a.startAt) - Date.parse(b.startAt);
+  });
+
+  const synced = Boolean(db.prepare("SELECT 1 FROM scheduled_shifts LIMIT 1").get());
+  const latest = db.prepare(`SELECT MAX(synced_at) AS synced_at FROM scheduled_shifts`).get();
+  const unmappedCount = rows.filter(row => !row.user_id).length;
+  const leadsNow = staff.filter(s => s.status === "now" && s.isShiftLead).map(s => s.name);
+  const roles = [...new Set(staff.map(s => String(s.roleName || "").trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+
+  const seenPeople = new Set();
+  const uniquePeople = [];
+  for (const person of staff) {
+    const key = person.personKey || `${person.name}:${person.startAt}`;
+    if (seenPeople.has(key)) continue;
+    seenPeople.add(key);
+    uniquePeople.push(person);
+  }
+
+  const stationBoard = FLOOR_STATIONS.map(station => ({
+    key: station.key,
+    label: station.label,
+    people: uniquePeople
+      .filter(person => person.floorStation === station.key)
+      .map(person => ({
+        personKey: person.personKey,
+        name: person.name,
+        roleName: person.roleName,
+        status: person.status,
+        isShiftLead: person.isShiftLead
+      }))
+  }));
+
+  const result = {
+    shiftDate,
+    isToday,
+    synced,
+    count: staff.length,
+    onNowCount: staff.filter(s => s.status === "now").length,
+    roles,
+    stations: FLOOR_STATIONS,
+    stationBoard,
+    staff
+  };
+
+  if (privileged) {
+    result.privileged = true;
+    result.lastSyncedAt = latest?.synced_at || null;
+    result.unmappedCount = unmappedCount;
+    result.leadsNow = leadsNow;
+    result.coverageAlerts = buildCoverageAlerts(staff, { isToday });
+  }
+
+  return result;
 }
 
 module.exports = {
@@ -360,6 +680,13 @@ module.exports = {
   syncSevenShifts,
   getUserShiftContext,
   getWorkingStaff,
+  getTodayFloorBoard,
+  getFloorStationAssignments,
+  setFloorStationAssignment,
+  clearFloorStationAssignment,
+  FLOOR_STATIONS,
+  FLOOR_STATION_KEYS,
+  floorStationLabel,
   localDateKey,
   DEFAULT_TZ
 };

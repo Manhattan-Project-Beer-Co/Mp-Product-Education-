@@ -46,6 +46,7 @@ const {
   canManageMerch,
   canManageOpsInventory,
   canManageTaps,
+  canManageWeeklySpecials,
   canViewShiftReports,
   canSubmitShiftSurvey,
   receivesDailyBriefing,
@@ -55,6 +56,8 @@ const {
   canRefreshReviews,
   buildPermissions
 } = require("./roles");
+const { registerWeeklySpecialsApi } = require("./weekly-specials-api");
+const { registerTapDisplayApi } = require("./tap-display-api");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -787,6 +790,15 @@ function tapManagerRequired(req, res, next) {
   const user = loadAuthedUser(req);
   if (!user || !canManageTaps(user)) {
     return res.status(403).json({ error: "Shift lead, manager, or admin access required to change taps." });
+  }
+  req.authUser = user;
+  next();
+}
+
+function weeklySpecialsManagerRequired(req, res, next) {
+  const user = loadAuthedUser(req);
+  if (!user || !canManageWeeklySpecials(user)) {
+    return res.status(403).json({ error: "Shift lead, manager, or admin access required to update food and coffee specials." });
   }
   req.authUser = user;
   next();
@@ -3405,6 +3417,22 @@ registerFloorOpsApi(app, {
   publicUser
 });
 
+registerWeeklySpecialsApi(app, {
+  db,
+  authRequired,
+  optionalAuth,
+  weeklySpecialsManagerRequired,
+  loadAuthedUser,
+  canManageWeeklySpecials
+});
+
+registerTapDisplayApi(app, {
+  db,
+  authRequired,
+  optionalAuth,
+  tapManagerRequired
+});
+
 registerPortalPolishApi(app, {
   db,
   authRequired,
@@ -3542,7 +3570,9 @@ const CLIENT_SCRIPTS = new Set([
   "roles.js",
   "site-features.js",
   "ops-content.js",
-  "floor-tools.js"
+  "floor-tools.js",
+  "ui.js",
+  "training.js"
 ]);
 
 app.use("/images", express.static(path.join(__dirname, "images"), {

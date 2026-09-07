@@ -298,7 +298,7 @@ async function checkApiRequiresSession() {
   // because DB_PATH is unset on Railway and Render, training.db and backups/.
   // That happened once already. These two checks pin both halves: the scripts
   // the login gate needs must be served, and nothing else may be.
-  for (const file of ["roles.js", "site-features.js", "ops-content.js", "floor-tools.js"]) {
+  for (const file of ["roles.js", "site-features.js", "ops-content.js", "floor-tools.js", "ui.js", "training.js"]) {
     const res = await fetch(`${BASE}/${file}`);
     const body = await res.text();
     // The catch-all answers unknown paths with index.html, so a 200 alone

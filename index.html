@@ -51,6 +51,17 @@
     --font-display: "Josefin Sans", "Helvetica Neue", Arial, sans-serif;
     --font-script: "Dancing Script", "Brush Script MT", cursive;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Phase 1 design system */
+    --btn-height: 42px;
+    --btn-height-sm: 34px;
+    --btn-pad-x: 16px;
+    --btn-radius: 10px;
+    --card-pad: 18px;
+    --card-radius: 14px;
+    --section-gap: 28px;
+    --title-size: 1.35rem;
+    --sub-size: 0.95rem;
   }
 
   html {
@@ -349,8 +360,8 @@
     justify-content: center;
     gap: 10px;
     width: 100%;
-    background: #fff;
-    color: #242424;
+    background: var(--surface);
+    color: var(--ink);
     border: 1px solid #8c8c8c;
     padding: 11px 14px;
     font-size: 13px;
@@ -393,7 +404,7 @@
 
   .auth-user strong {
     display: block;
-    color: #181818;
+    color: var(--ink);
     font-size: 13px;
     font-weight: 600;
   }
@@ -724,7 +735,7 @@
 
   .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
     border-color: rgba(9, 9, 11, 0.18);
-    background: #fafafa;
+    background: var(--surface-2);
     transform: translateX(4px);
   }
 
@@ -735,21 +746,13 @@
   .auth-panel .game-next {
     margin-top: 24px;
     padding: 13px 26px;
-    background: var(--black);
-    color: #fff;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--btn-radius, var(--radius-md));
     font-family: var(--font);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: 0 4px 14px rgba(9, 9, 11, 0.2);
-  }
-
-  .game-next:hover {
-    background: #27272a;
-    box-shadow: 0 6px 20px rgba(9, 9, 11, 0.24);
   }
 
   .game-next:active { transform: scale(0.98); }
@@ -760,6 +763,52 @@
     color: var(--muted);
     margin: 14px 24px 0;
     font-weight: 600;
+  }
+
+  .answer-review {
+    max-width: 1032px;
+    margin: 14px auto 0;
+    padding: 0 24px;
+    text-align: left;
+  }
+  .answer-review h3 {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .answer-review-list {
+    display: grid;
+    gap: 10px;
+  }
+  .answer-review-item {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid #c65c52;
+    border-radius: var(--radius-md);
+    background: var(--paper);
+  }
+  .answer-review-question {
+    margin: 0 0 9px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .answer-review-row {
+    margin: 3px 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .answer-review-row strong { color: var(--ink); }
+  .answer-review-correct strong { color: #3f6b4a; }
+  .answer-review-note {
+    margin: 9px 0 0;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--muted);
   }
 
   .flash-card {
@@ -1011,14 +1060,19 @@
     padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid var(--line-strong);
-    background: #fff;
+    background: var(--surface);
     color: var(--ink);
     font: inherit;
   }
+  .favorite-beer-row button {
+    min-height: var(--btn-height, 42px);
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
   .favorite-beer-row select option {
-    background: #fff;
-    color: #181818;
+    background: var(--surface);
+    color: var(--ink);
   }
 
   .favorite-beer-legacy {
@@ -1057,7 +1111,7 @@
     padding: 8px 10px;
     border-radius: 8px;
     border: 1px solid var(--line-strong);
-    background: #fff;
+    background: var(--surface);
     color: var(--ink);
     font: inherit;
   }
@@ -1080,7 +1134,7 @@
     padding: 8px 10px;
     border-radius: 8px;
     border: 1px solid var(--line-strong);
-    background: #fff;
+    background: var(--surface);
     color: var(--ink);
     font: inherit;
   }
@@ -1120,7 +1174,7 @@
     line-height: 1.45;
   }
 
-  .tap-beer select option { background: #fff; color: #181818; }
+  .tap-beer select option { background: var(--surface); color: var(--ink); }
 
   .tap-meta { font-size: 0.82rem; opacity: 0.7; margin-top: 4px; }
 
@@ -1849,8 +1903,8 @@
   }
 
   .approve-card {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #fff;
+    border: 1px solid var(--line);
+    background: var(--paper);
     padding: 18px 20px;
   }
 
@@ -1880,9 +1934,9 @@
   .approve-form select {
     font-family: var(--font);
     font-size: 13px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: #fff;
-    color: var(--black);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
     padding: 10px 12px;
     border-radius: var(--radius-sm);
   }
@@ -1955,9 +2009,9 @@
   .approve-edit-select {
     font-family: var(--font);
     font-size: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: #fff;
-    color: var(--black);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
     padding: 6px 8px;
     border-radius: var(--radius-sm);
   }
@@ -1966,9 +2020,9 @@
     font-family: var(--font);
     font-size: 12px;
     font-weight: 600;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: #fff;
-    color: var(--black);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
     padding: 6px 10px;
     border-radius: var(--radius-sm);
     cursor: pointer;
@@ -2724,6 +2778,14 @@
     border-radius: var(--radius-sm);
     font: inherit;
     background: var(--paper);
+  }
+  .shift-date-picker input,
+  .shift-date-picker button {
+    min-height: var(--btn-height, 42px);
+  }
+  .shift-date-picker .game-next,
+  .shift-date-picker .auth-btn {
+    margin-top: 0;
   }
 
   @media (max-width: 640px) {
@@ -3757,10 +3819,12 @@
     background: var(--paper);
     width: 100%;
     max-width: 560px;
-    max-height: 88vh;
+    max-height: min(88vh, calc(100dvh - 16px));
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    padding: 28px 24px 36px;
+    padding: 28px 24px calc(36px + env(safe-area-inset-bottom, 0px));
     box-shadow: var(--shadow-lg);
     animation: modalUp 0.35s var(--ease) both;
   }
@@ -3893,6 +3957,8 @@
     }
     .game-hub { grid-template-columns: 1fr; }
     .modal { max-width: 100%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+    .game-card, .flash-card { margin-left: var(--page-pad); margin-right: var(--page-pad); }
+    .answer-review { padding: 0 var(--page-pad); }
   }
 
   /* ── Light shell: B/W site DNA + earth accents ── */
@@ -3968,6 +4034,558 @@
     border-color: rgba(156,107,74,0.35) !important;
     box-shadow:none !important;
   }
+
+  /* ── Phase 1: buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: var(--btn-height);
+    padding: 0 var(--btn-pad-x);
+    border-radius: var(--btn-radius);
+    border: 1px solid transparent;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-sm { min-height: var(--btn-height-sm); padding: 0 12px; font-size: 12px; }
+  .btn-primary,
+  .game-next,
+  .auth-panel .game-next {
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
+    box-shadow: 0 4px 14px rgba(9, 9, 11, 0.16);
+  }
+  .btn-primary:hover,
+  .game-next:hover {
+    background: #27272a;
+    box-shadow: 0 6px 18px rgba(9, 9, 11, 0.2);
+  }
+  .btn-secondary {
+    background: #fff;
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+  .btn-secondary:hover {
+    background: var(--surface);
+    border-color: var(--gold);
+  }
+  .btn-subtle {
+    background: transparent;
+    color: var(--muted);
+    border-color: transparent;
+  }
+  .btn-subtle:hover {
+    color: var(--ink);
+    background: rgba(156, 107, 74, 0.08);
+  }
+  .btn-danger {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+  }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-icon {
+    min-height: var(--btn-height-sm);
+    width: var(--btn-height-sm);
+    padding: 0;
+    border-radius: 8px;
+    background: #fff;
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+  .btn-icon:hover { border-color: var(--gold); background: var(--surface); }
+  .btn-edit, .btn-print {
+    min-height: var(--btn-height-sm);
+    padding: 0 12px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: #fff;
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+  .btn-edit:hover, .btn-print:hover {
+    border-color: var(--gold);
+    background: rgba(156, 107, 74, 0.08);
+  }
+  .btn-edit.is-active {
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
+  }
+  .btn-edit.is-active:hover {
+    background: #27272a;
+    border-color: #27272a;
+  }
+  .page-edit-banner {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border: 1px solid rgba(156, 107, 74, 0.35);
+    border-radius: 10px;
+    background: rgba(156, 107, 74, 0.1);
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  body.is-page-editing .page-header-title::after {
+    content: "";
+  }
+
+  /* ── Phase 1: page header ── */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: var(--section-gap);
+    flex-wrap: wrap;
+  }
+  .page-header-title {
+    margin: 0;
+    font-size: var(--title-size);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .page-header-sub {
+    margin: 6px 0 0;
+    font-size: var(--sub-size);
+    color: var(--muted);
+    max-width: 42rem;
+    line-height: 1.45;
+  }
+  .page-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* ── Phase 1: nav groups ── */
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 6px;
+  }
+  .nav-group:first-of-type { margin-top: 0; }
+  .nav-group-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .nav-group-toggle:hover { color: var(--ink); background: rgba(156, 107, 74, 0.06); }
+  .nav-group-chevron {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    opacity: 0.7;
+    transition: transform 0.2s var(--ease);
+  }
+  .nav-group.is-open .nav-group-chevron { transform: rotate(180deg); }
+  .nav-group-items {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 4px;
+  }
+  .nav-group.is-open .nav-group-items { display: flex; }
+  .sidebar-nav > .tab[data-type="home"] {
+    margin-bottom: 4px;
+  }
+
+  /* ── Phase 1: home shell ── */
+  .home-page {
+    padding: 8px var(--page-pad) 40px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .home-section { margin-top: 8px; }
+  .home-section + .home-section { margin-top: var(--section-gap); }
+  .home-section-title {
+    margin: 0 0 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .home-section-muted {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    background: var(--surface);
+  }
+  .quick-access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .quick-access-card {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--card-radius);
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s, transform 0.12s;
+  }
+  .quick-access-card:hover {
+    border-color: var(--gold);
+    background: rgba(156, 107, 74, 0.06);
+    transform: translateY(-1px);
+  }
+  .quick-access-label {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .home-section-lead {
+    margin: -4px 0 12px;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .home-empty {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--card-radius);
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .today-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .today-cards-compact {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .today-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    min-height: 88px;
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--card-radius);
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.12s;
+  }
+  .today-card:hover {
+    border-color: var(--gold);
+    background: rgba(156, 107, 74, 0.06);
+    transform: translateY(-1px);
+  }
+  .today-card-kicker {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .today-card-title {
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .today-card-detail {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .away-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .away-item {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    background: #fff;
+    overflow: hidden;
+  }
+  .away-item-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 12px 14px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+  }
+  .away-item-main:hover { background: rgba(156, 107, 74, 0.05); }
+  .away-item-kicker {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .away-item-title {
+    font-size: 0.98rem;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .away-item-summary {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .away-item-ack {
+    align-self: center;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .today-strip {
+    margin: 0 0 var(--section-gap);
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    background: var(--surface);
+  }
+  .today-strip-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .today-strip-head .home-section-title { margin: 0; }
+  .weekly-board-section { margin: 8px 0 24px; }
+  .weekly-edit-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+    max-width: 720px;
+  }
+  .weekly-special-edit textarea { min-height: 64px; }
+
+  /* ── Phase 5: On Tap table + print ── */
+  .ontap-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    background: #fff;
+  }
+  .ontap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  .ontap-table th {
+    text-align: left;
+    padding: 10px 12px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--surface);
+    white-space: nowrap;
+  }
+  .ontap-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .ontap-table tr:last-child td { border-bottom: 0; }
+  .ontap-table tbody tr {
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .ontap-table tbody tr:hover { background: rgba(156, 107, 74, 0.06); }
+  .ontap-table .tap-col {
+    width: 52px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .ontap-table .name-col { font-weight: 650; color: var(--ink); }
+  .ontap-table .flavor-col { color: var(--muted); max-width: 280px; }
+  .ontap-table .meta-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .ontap-mobile-list { display: none; }
+  .ontap-row-edit {
+    margin-top: 8px;
+  }
+  .ontap-meta-edit {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .ontap-meta-edit label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .ontap-meta-edit input,
+  .ontap-meta-edit select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    font: inherit;
+  }
+  .print-chooser {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 16px;
+  }
+  .ontap-print-root {
+    display: none;
+  }
+  @media (max-width: 860px) {
+    .ontap-table-wrap { display: none; }
+    .ontap-mobile-list { display: block; }
+  }
+  @media print {
+    @page { margin: 0.45in; }
+    body.printing-ontap {
+      background: #fff !important;
+      background-image: none !important;
+    }
+    body.printing-ontap .app-shell,
+    body.printing-ontap .modal-backdrop,
+    body.printing-ontap .site-header,
+    body.printing-ontap #loginGate {
+      display: none !important;
+    }
+    body.printing-ontap .ontap-print-root {
+      display: block !important;
+      color: #111;
+    }
+    body.printing-ontap.printing-draft:not(.printing-bar) .print-bar-sheet { display: none !important; }
+    body.printing-ontap.printing-bar:not(.printing-draft) .print-draft-sheet { display: none !important; }
+    .print-sheet + .print-sheet {
+      break-before: page;
+      margin-top: 0;
+    }
+    .print-draft-sheet {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      max-width: 3.6in;
+      margin: 0 auto;
+    }
+    .print-draft-brand {
+      text-align: center;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .print-draft-cat {
+      margin: 16px 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border-bottom: 1px solid #111;
+      padding-bottom: 3px;
+    }
+    .print-draft-item { margin: 0 0 10px; }
+    .print-draft-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .print-draft-meta {
+      font-size: 11px;
+      color: #333;
+      margin-top: 1px;
+    }
+    .print-bar-sheet {
+      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+    }
+    .print-bar-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 0 10px;
+    }
+    .print-bar-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .print-bar-table th,
+    .print-bar-table td {
+      border-bottom: 1px solid #ccc;
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .print-bar-table th {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid #111;
+    }
+    .print-bar-table tr:nth-child(even) td { background: #f4f4f4; }
+    .print-bar-table .tap { width: 36px; font-weight: 700; }
+    .print-bar-table .pour { width: 64px; white-space: nowrap; }
+    .print-bar-table .gr { width: 28px; }
+    .print-bar-table .abv { width: 48px; white-space: nowrap; }
+  }
+
+  @media (max-width: 640px) {
+    .away-item { flex-direction: column; }
+    .away-item-ack { margin: 0 12px 12px; align-self: flex-start; }
+    .today-cards { grid-template-columns: 1fr; }
+  }
+
   .sidebar-user { margin-top:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background: var(--surface); }
   .sidebar-user-name { font-size:13px; font-weight:700; color:#181818; font-family: var(--font-display); }
   .sidebar-user-role { margin-top:2px; font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
@@ -3987,6 +4605,14 @@
   .mobile-account-links { display:none; }
   .sidebar-user .auth-bar { margin-top:10px; flex-direction:column; align-items:stretch; gap:8px; }
   .sidebar-user .auth-btn { width:100%; justify-content:center; }
+  .sidebar-credit {
+    margin: 10px 4px 0;
+    color: var(--muted);
+    font-size: 8px;
+    line-height: 1.45;
+    opacity: 0.58;
+  }
+  .sidebar-credit span { display: block; }
   .hub-chips-wrap {
     max-width: var(--content-max);
     margin: 0 auto;
@@ -4218,25 +4844,432 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Training dashboard (UX Phase 6) */
+  .training-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 8px var(--page-pad) 56px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .training-hero {
+    position: relative;
+    padding: 18px 20px 22px;
+    margin-bottom: 28px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--card-radius);
+    background:
+      linear-gradient(145deg, rgba(196, 165, 116, 0.14), transparent 55%),
+      #fff;
+    overflow: hidden;
+  }
+  .training-kicker {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .training-welcome {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 4vw, 1.9rem);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #181818;
+    line-height: 1.15;
+  }
+  .training-shift-line {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .training-focus-title {
+    margin: 0 0 18px;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .training-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .training-progress-track {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .training-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-bright), var(--gold-dim));
+    transition: width 0.55s var(--ease);
+  }
+  .training-progress-note {
+    margin: 8px 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .training-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 18px 0 18px;
+  }
+  .training-meta-label {
+    display: block;
+    margin-bottom: 3px;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .training-meta-grid strong {
+    font-size: 0.95rem;
+    color: var(--ink);
+    font-weight: 650;
+  }
+  .training-continue {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-height: 52px;
+    padding: 14px 20px;
+  }
+  .training-continue small {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.9;
+  }
+  .training-section {
+    margin: 0 0 28px;
+  }
+  .training-section-title {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .training-section-lead {
+    margin: 0 0 14px;
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .training-empty {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--card-radius);
+    color: var(--muted);
+  }
+  .training-roadmap {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px 8px;
+    scrollbar-width: thin;
+  }
+  .training-road-step {
+    flex: 1 0 118px;
+    min-width: 118px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    transition: border-color 0.15s, transform 0.15s, background 0.15s;
+  }
+  .training-road-step.is-current {
+    border-color: var(--gold);
+    background: rgba(156, 107, 74, 0.08);
+    transform: translateY(-2px);
+  }
+  .training-road-step.is-done {
+    border-color: rgba(156, 107, 74, 0.35);
+  }
+  .training-road-marker {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .training-road-step.is-current .training-road-marker,
+  .training-road-step.is-done .training-road-marker {
+    border-color: var(--gold);
+    color: var(--gold-dim);
+    background: rgba(156, 107, 74, 0.12);
+  }
+  .training-road-shift {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .training-road-copy strong {
+    display: block;
+    margin: 2px 0 4px;
+    font-size: 0.88rem;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .training-road-copy small {
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+  .training-focus-blurb {
+    margin: 0 0 16px;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #3a3530;
+  }
+  .training-skill-group { margin-bottom: 16px; }
+  .training-skill-group-title {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .training-skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .training-skill-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+    text-align: left;
+    padding: 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.12s, background 0.15s;
+  }
+  .training-skill-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-1px);
+    background: rgba(156, 107, 74, 0.04);
+  }
+  .training-skill-card.status-verified {
+    opacity: 0.78;
+    border-color: rgba(156, 107, 74, 0.4);
+  }
+  .training-skill-kind {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .training-skill-label {
+    font-size: 0.95rem;
+    font-weight: 650;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .training-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+  }
+  .training-status-verified {
+    color: #3f6b4a;
+    background: rgba(63, 107, 74, 0.1);
+    border-color: rgba(63, 107, 74, 0.25);
+  }
+  .training-status-learning {
+    color: var(--gold-dim);
+    background: rgba(156, 107, 74, 0.1);
+    border-color: rgba(156, 107, 74, 0.28);
+  }
+  .training-status-ready {
+    color: #5a4a2e;
+    background: rgba(196, 165, 116, 0.2);
+    border-color: rgba(156, 107, 74, 0.35);
+  }
+  .training-status-not-started,
+  .training-status-practice {
+    color: var(--muted);
+    background: var(--surface);
+    border-color: var(--line);
+  }
+  .training-tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .training-tool-chip {
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .training-tool-chip:hover {
+    border-color: var(--gold);
+    background: rgba(156, 107, 74, 0.06);
+  }
+  .training-loop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    background: var(--surface);
+  }
+  .training-loop-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  .training-loop-num {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gold-dim);
+  }
+  .training-loop-step strong {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .training-loop-arrow {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 0 2px;
+  }
+  .training-loop-reset { color: var(--gold-dim); }
+  .training-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .training-quick {
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: #181818;
+    border-radius: 10px;
+    padding: 14px 12px;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.12s;
+  }
+  .training-quick:hover {
+    border-color: var(--gold);
+    background: rgba(156, 107, 74, 0.05);
+    transform: translateY(-1px);
+  }
+  @media (max-width: 720px) {
+    .training-roadmap {
+      flex-direction: column;
+    }
+    .training-road-step {
+      flex: 1 1 auto;
+      min-width: 0;
+      flex-direction: row;
+      align-items: center;
+    }
+    .training-meta-grid { grid-template-columns: 1fr; }
+    .training-loop-arrow:not(.training-loop-reset) {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .training-page { padding-top: 4px; padding-bottom: 40px; }
+  }
+
   /* Mobile tabs / chips readable on light header */
   #mobileTabs .tab {
-    background: #fff !important;
+    background: var(--paper) !important;
     color: #3a3530 !important;
     border: 1px solid var(--line-strong) !important;
   }
   #mobileTabs .tab.active {
     background: rgba(156,107,74,0.14) !important;
-    color: #181818 !important;
+    color: var(--ink) !important;
     border-color: var(--gold) !important;
   }
   .coffee-subtab {
-    background: #fff !important;
+    background: var(--paper) !important;
     color: #3a3530 !important;
     border: 1px solid var(--line) !important;
   }
   .coffee-subtab.active {
     background: rgba(156,107,74,0.14) !important;
-    color: #181818 !important;
+    color: var(--ink) !important;
     border-color: var(--gold) !important;
   }
   .galaga-hud span, .galaga-mission { color: var(--gold-bright); }
@@ -4248,49 +5281,164 @@
     .sidebar-brand-text strong { font-size: 13px; }
   }
 
+  /* UX Phase 7 — mobile drawer + consistency */
+  .mobile-nav-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+  }
+  .mobile-nav-toggle span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 1px;
+    background: #181818;
+    transition: transform 0.2s var(--ease), opacity 0.2s var(--ease);
+  }
+  body.mobile-nav-open .mobile-nav-toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  body.mobile-nav-open .mobile-nav-toggle span:nth-child(2) { opacity: 0; }
+  body.mobile-nav-open .mobile-nav-toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  .mobile-nav-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: rgba(9, 9, 11, 0.42);
+    cursor: pointer;
+  }
+
   @media (max-width: 1024px) {
-    .app-sidebar { display:none; }
+    .app-sidebar {
+      display: flex !important;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      height: 100%;
+      height: 100dvh;
+      width: min(300px, 88vw);
+      max-width: 320px;
+      transform: translateX(-105%);
+      transition: transform 0.28s var(--ease);
+      box-shadow: none;
+      z-index: 60;
+      padding-top: max(16px, env(safe-area-inset-top, 0px));
+      padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    }
+    body.mobile-nav-open .app-sidebar {
+      transform: translateX(0);
+      box-shadow: 12px 0 40px rgba(9, 9, 11, 0.16);
+    }
+    body.mobile-nav-open .mobile-nav-scrim { display: block; }
+    body.mobile-nav-open { overflow: hidden; }
+
     .site-header {
-      display:block;
+      display: block;
       position: sticky;
       top: 0;
       z-index: 30;
     }
-    #mobileTabs.tabs {
-      display:flex !important; gap:3px; flex:1; min-width:0; overflow-x:auto; scrollbar-width:none;
-      padding:4px; background: var(--surface); border-radius: var(--radius-md);
+    .mobile-nav-toggle { display: inline-flex; }
+    #mobileTabs { display: none !important; }
+    .mobile-account-links { display: none !important; }
+    .stage-title {
+      display: block !important;
+      flex: 1;
+      min-width: 0;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
     }
-    #mobileTabs .tab {
-      padding:9px 14px; border:1px solid var(--line-strong); border-radius:8px; color:#3a3530; background:#fff;
-      font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; white-space:nowrap; cursor:pointer;
-      font-family: var(--font-display);
-    }
-    #mobileTabs .tab.active { background: rgba(156,107,74,0.14); color:#181818; border-color: var(--gold); }
-    .stage-title { display:none; }
     .toolbar { top: var(--chrome-offset, 0px); }
-    .hub-chips-wrap { padding:0 var(--page-pad) 8px; }
-    .mobile-account-links {
-      display:flex; flex-wrap:wrap; gap:4px;
-      padding:0 14px 10px;
-      border-top:1px solid var(--line);
-    }
-    .mobile-account-links .sidebar-account-link {
-      width:auto; padding:6px 10px; font-size:11px;
-      border:1px solid var(--line); border-radius:8px; background:#fff;
-    }
+    .toolbar-inner { flex-wrap: wrap; }
+    .hub-chips-wrap { padding: 0 var(--page-pad) 8px; }
     .header-inner {
       max-width: none;
-      padding: 12px var(--page-pad);
+      padding: 10px var(--page-pad);
+      gap: 10px;
+    }
+    .site-header .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+    }
+    .site-header .auth-bar {
+      flex: 0 0 auto;
+      margin-left: auto;
+    }
+    .site-header .auth-bar .auth-user { display: none; }
+    .site-header .auth-btn {
+      min-height: 40px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    .page-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .page-header-actions {
+      width: 100%;
+    }
+    .page-header-actions .btn {
+      flex: 1 1 auto;
+      justify-content: center;
+      min-height: 44px;
+    }
+    .filter-btn,
+    .coffee-subtab,
+    .inventory-filter-btn,
+    .btn,
+    .auth-btn,
+    .briefing-back,
+    .training-tool-chip,
+    .training-quick,
+    .quick-access-card {
+      min-height: 44px;
+    }
+    .sidebar-nav .tab {
+      min-height: 44px;
+      padding: 12px 12px;
+    }
+    .ontap-export-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .ontap-export-bar .btn,
+    .ontap-export-bar .game-next {
+      width: 100%;
+      justify-content: center;
+      min-height: 44px;
+    }
+    .weekly-special-edit .btn,
+    .merch-admin-panel .btn {
+      min-height: 44px;
+    }
+    .modal {
+      max-height: min(92dvh, calc(100dvh - env(safe-area-inset-top, 0px) - 8px));
     }
   }
 
   @media (max-width: 480px) {
     :root { --page-pad: 12px; }
     body { font-size: 16px; }
-    .brand-text h1 { font-size: 15px; }
+    .brand-text h1 { font-size: 13px; }
     .brand-text p { display: none; }
-    .ontap-export-bar { flex-direction: column; align-items: stretch; }
-    .ontap-export-bar .game-next { width: 100%; }
   }
 
   /* Launch Pad academy tiles */
@@ -4310,12 +5458,6 @@
     border: 1px solid var(--line-strong) !important;
     border-radius: 14px;
     position: relative;
-  }
-  .game-tile::after {
-    content: "VIEW NOW →";
-    margin-top: 18px;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
-    color: var(--gold);
   }
   .game-tile-icon {
     width: 88px; height: 88px; border-radius: 50% !important;
@@ -4423,7 +5565,7 @@
   }
   .login-actions button:hover { background: var(--gold); color: #fff; transform: translateY(-1px); }
   .login-foot {
-    color: #9a9288;
+    color: var(--muted);
     font-size: 0.68rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -4455,12 +5597,900 @@
   }
   .sidebar-brand img { display: none; }
   .sidebar-brand-mark img { display: block; }
+
+  /* ── MP dark system: Copper on void ────────────────────────────────── */
+  @media screen {
+    :root {
+      --void: #050606;
+      --bg: #090a0b;
+      --surface: #141719;
+      --surface-2: #1a1e20;
+      --ink: #f1eee7;
+      --gold: #b8835c;
+      --gold-bright: #c99570;
+      --gold-dim: #9c6b4a;
+      --gold-glow: rgba(156, 107, 74, 0.16);
+      --black: #f1eee7;
+      --charcoal: #111315;
+      --cream: #111315;
+      --paper: #191d20;
+      --muted: #999d9f;
+      --line: #292e32;
+      --line-strong: #3a4044;
+      --green: rgba(111, 168, 125, 0.14);
+      --green-text: #91c29d;
+      --accent: #9c6b4a;
+      --accent-light: rgba(156, 107, 74, 0.1);
+      --accent-glow: rgba(156, 107, 74, 0.16);
+      --sand: #c7b29d;
+      --stone: #858b8f;
+      --shadow-sm: none;
+      --shadow-md: 0 16px 36px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.38);
+      --radius-md: 9px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --card-radius: 12px;
+    }
+
+    html { color-scheme: dark; background: var(--bg); }
+    body {
+      background: var(--bg) !important;
+      background-image:
+        radial-gradient(ellipse 60% 35% at 78% -12%, rgba(156, 107, 74, 0.08), transparent 65%),
+        linear-gradient(180deg, #090a0b, #0b0d0e 42%, #090a0b) !important;
+      color: var(--ink);
+    }
+    body, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    ::selection { color: #0a0b0b; background: var(--gold-bright); }
+    * { scrollbar-color: #3a4044 #101214; }
+    a { color: var(--gold-bright); }
+
+    .app-shell { background: var(--bg); }
+    .app-stage {
+      background: #0d0f10;
+      background-image: linear-gradient(90deg, rgba(255,255,255,0.012), transparent 24%);
+    }
+    .app-main { min-height: calc(100vh - 120px); }
+
+    .app-sidebar {
+      background: #0a0c0d !important;
+      border-color: var(--line);
+      padding: 18px 12px 14px;
+    }
+    .sidebar-brand { padding: 4px 8px 18px; }
+    .sidebar-brand-mark {
+      width: 58px;
+      height: 58px;
+      border-color: rgba(156, 107, 74, 0.5);
+      background: radial-gradient(circle, rgba(156,107,74,0.1), transparent 68%);
+    }
+    .sidebar-brand-mark img,
+    .brand-mark img,
+    .login-atom img { content: url("/images/atom-bottle-white.png"); }
+    .sidebar-brand-text strong {
+      color: #f4f1e9;
+      font-size: 0.67rem;
+      letter-spacing: 0.16em;
+    }
+    .sidebar-brand-text span { color: #747a7e; letter-spacing: 0.11em; }
+    .sidebar-nav { gap: 2px; }
+    .nav-group { margin-top: 4px; }
+    .nav-group-toggle {
+      min-height: 36px;
+      color: #747a7e;
+      font-size: 0.62rem;
+      letter-spacing: 0.11em;
+    }
+    .nav-group-toggle:hover {
+      color: #c5c6c3;
+      background: rgba(255,255,255,0.025);
+    }
+    .sidebar-nav .tab {
+      min-height: 40px;
+      padding: 9px 11px;
+      border-radius: 7px;
+      color: #a1a5a7 !important;
+      font-size: 0.69rem;
+      letter-spacing: 0.06em;
+      text-transform: none;
+    }
+    .sidebar-nav .tab:hover {
+      color: #f2efe8 !important;
+      background: rgba(156,107,74,0.07) !important;
+    }
+    .sidebar-nav .tab.active {
+      color: var(--gold-bright) !important;
+      border-color: transparent !important;
+      background: rgba(156,107,74,0.1) !important;
+      box-shadow: inset 2px 0 0 var(--gold) !important;
+    }
+    .sidebar-user {
+      background: #111416;
+      border-color: var(--line);
+      border-radius: 9px;
+    }
+    .sidebar-user-name { color: #e9e6df; }
+    .sidebar-user-role { color: #777e82; }
+    .sidebar-account-links { border-color: var(--line); }
+    .sidebar-account-link { color: var(--muted); }
+    .sidebar-account-link:hover,
+    .sidebar-account-link.is-active {
+      color: var(--gold-bright);
+      background: rgba(156,107,74,0.08);
+    }
+
+    .site-header,
+    .toolbar {
+      background: rgba(13, 15, 16, 0.94);
+      border-color: var(--line);
+      box-shadow: none;
+    }
+    .toolbar-inner { padding-top: 11px; padding-bottom: 11px; }
+    .stage-title {
+      color: var(--gold);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+    }
+    .stage-title::after { background: linear-gradient(90deg, var(--gold), transparent); }
+    .brand-text h1 { color: #f4f1e9; }
+    .brand-text p { color: #777e82; }
+    .brand-mark {
+      border-color: rgba(156,107,74,0.5);
+      background: rgba(156,107,74,0.06);
+    }
+    .mobile-nav-toggle {
+      background: #141719;
+      border-color: var(--line);
+    }
+    .mobile-nav-toggle span { background: #e8e5de; }
+    .mobile-nav-scrim { background: rgba(0,0,0,0.68); }
+
+    .search-wrap input[type="text"],
+    .search-wrap input[type="text"]#search,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      color: var(--ink) !important;
+      background: #141719 !important;
+      border-color: var(--line-strong) !important;
+      box-shadow: none !important;
+    }
+    input::placeholder, textarea::placeholder,
+    .search-wrap input::placeholder { color: #70777b !important; }
+    input:focus, select:focus, textarea:focus,
+    .search-wrap input:focus {
+      color: var(--ink) !important;
+      background: #191d20 !important;
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 0 3px var(--gold-glow) !important;
+    }
+    .search-wrap svg { color: var(--gold); }
+
+    .btn-primary,
+    .game-next,
+    .auth-panel .game-next,
+    .approve-form button,
+    .inventory-row-actions button,
+    .merch-admin-actions .game-next,
+    .flash-nav button.primary,
+    button.game-next {
+      color: #12100c !important;
+      background: var(--gold) !important;
+      border-color: var(--gold) !important;
+      box-shadow: none;
+    }
+    .btn-primary:hover,
+    .game-next:hover,
+    button.game-next:hover {
+      color: #080706 !important;
+      background: var(--gold-bright) !important;
+      border-color: var(--gold-bright) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 7px 18px rgba(0,0,0,0.18);
+    }
+    .btn-secondary, .btn-icon, .btn-edit, .btn-print,
+    .auth-btn, .game-back, .flash-nav button, .approve-edit {
+      color: #d5d3cd !important;
+      background: #15181a !important;
+      border-color: var(--line-strong) !important;
+      box-shadow: none !important;
+    }
+    .btn-secondary:hover, .btn-icon:hover, .btn-edit:hover, .btn-print:hover,
+    .auth-btn:hover, .game-back:hover, .flash-nav button:hover {
+      color: #fffdf7 !important;
+      background: #1d2124 !important;
+      border-color: #596064 !important;
+    }
+    .btn-subtle {
+      color: #aaaead;
+      background: transparent;
+      border-color: transparent;
+    }
+    .btn-subtle:hover { color: var(--gold-bright); background: rgba(156,107,74,0.08); }
+    .btn-edit.is-active, .auth-btn.primary {
+      color: #100e0a !important;
+      background: var(--gold) !important;
+      border-color: var(--gold) !important;
+    }
+    .btn-danger, .approve-remove {
+      color: #efaaa4 !important;
+      background: rgba(173,65,57,0.13) !important;
+      border-color: rgba(216,101,92,0.32) !important;
+    }
+    button:active, .card[onclick]:active, .today-card:active {
+      transform: scale(0.985);
+      transition-duration: 60ms;
+    }
+
+    .page-header { margin-bottom: 22px; }
+    .page-header-text { min-width: 0; }
+    .page-header-eyebrow {
+      margin: 0 0 4px;
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .page-header-title {
+      color: #f4f1ea;
+      font-size: clamp(1.45rem, 2.5vw, 2rem);
+      letter-spacing: -0.025em;
+    }
+    .page-header-sub { color: var(--muted); }
+
+    .card, .game-card, .flash-card, .game-tile, .metric-card, .chart-card,
+    .rec-card, .speed-header, .approve-card, .progress-table, .inventory-table,
+    .modal, .auth-panel, .merch-admin-panel, .inventory-admin-panel,
+    .shift-survey-panel, .guide-block, .training-road-step, .training-skill-card,
+    .answer-review-item {
+      color: var(--ink) !important;
+      background: var(--paper) !important;
+      border-color: var(--line) !important;
+      box-shadow: none;
+    }
+    .card::before { display: none; }
+    .card:hover, .game-tile:hover, .training-skill-card:hover {
+      background: #1d2124 !important;
+      border-color: #42494d !important;
+      box-shadow: none;
+      transform: translateY(-1px);
+    }
+    .name, .coffee-intro h2, .game-tile-title, .metric-value,
+    .modal-title, .game-question, .detail-title, .training-skill-label {
+      color: #f2efe8 !important;
+    }
+    .desc, .hint, .status, .game-tile-desc, .metric-label,
+    .modal-style, .detail-text, .answer-review-row {
+      color: var(--muted) !important;
+    }
+    .status {
+      background: #121517;
+      border-color: var(--line);
+      padding: 28px 20px;
+    }
+    .status strong { color: #e8e4dc !important; }
+    .details-hint { color: #747b7f; }
+    .guide-callout, .review-sync-note, .page-edit-banner,
+    .home-section-muted, .today-strip {
+      color: #d4d1ca;
+      background: #141719 !important;
+      border-color: var(--line) !important;
+    }
+    .page-edit-banner { border-left: 3px solid var(--gold) !important; }
+
+    .filter-wrap { background: transparent; }
+    .filters, .coffee-filters, .coffee-subtabs { scrollbar-color: #3a4044 transparent; }
+    .filter-btn, .coffee-subtab, .inventory-filter-btn {
+      color: #aaaead !important;
+      background: #141719 !important;
+      border-color: var(--line) !important;
+      box-shadow: none !important;
+    }
+    .filter-btn:hover, .coffee-subtab:hover, .inventory-filter-btn:hover {
+      color: #f3f0e9 !important;
+      background: #1b1f21 !important;
+      border-color: #495054 !important;
+    }
+    .filter-btn.active, .coffee-subtab.active, .inventory-filter-btn.active {
+      color: #17130d !important;
+      background: var(--gold) !important;
+      border-color: var(--gold) !important;
+      box-shadow: none !important;
+    }
+    .tag, .coffee-tag, .game-points-badge, .training-status {
+      color: #c9a887 !important;
+      background: rgba(156,107,74,0.1) !important;
+      border-color: rgba(156,107,74,0.22) !important;
+    }
+    .tag.gf, .tag.gluten { color: #efb1a9 !important; background: rgba(180,67,58,0.12) !important; }
+
+    table { color: #dcd9d2; }
+    .progress-table, .inventory-table, .ontap-table-wrap {
+      background: #121517 !important;
+      border-color: var(--line) !important;
+    }
+    .progress-table th, .inventory-table th, .ontap-table th {
+      color: #898f92 !important;
+      background: #101315 !important;
+      border-color: var(--line) !important;
+    }
+    .progress-table td, .inventory-table td, .ontap-table td {
+      border-color: var(--line) !important;
+    }
+    .progress-table tr.clickable:hover, .inventory-table tr:hover,
+    .ontap-table tbody tr:hover { background: rgba(156,107,74,0.055) !important; }
+    .ontap-table .tap-col, .ontap-table .name-col { color: #f0ede6; }
+    .ontap-table .flavor-col { color: var(--muted); }
+
+    .modal-backdrop { background: rgba(0,0,0,0.72); }
+    .modal { background: #191d20 !important; border: 1px solid var(--line); }
+    .modal-close { color: #c8c5bf; background: #121517; border-color: var(--line); }
+    .modal-close:hover { color: #fff; background: #24282b; }
+    .modal-handle { background: #3b4145; }
+    .briefing-item {
+      color: var(--ink);
+      background: #141719 !important;
+      border-color: var(--line) !important;
+    }
+    .briefing-item:hover { background: #1b1f21 !important; border-color: #474e52 !important; }
+    .approve-form input, .approve-form select {
+      color: var(--ink) !important;
+      background: #141719 !important;
+      border-color: var(--line-strong) !important;
+    }
+
+    body[data-view="food"] .list,
+    body[data-view="checklists"] .list {
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+    body[data-view="food"] .list > .card,
+    body[data-view="checklists"] .list > .card {
+      padding: 15px 4px;
+      border: 0 !important;
+      border-bottom: 1px solid var(--line) !important;
+      border-radius: 0;
+      background: transparent !important;
+    }
+    body[data-view="food"] .list > .card:hover,
+    body[data-view="checklists"] .list > .card:hover {
+      background: rgba(156,107,74,0.04) !important;
+      transform: none;
+    }
+    .coffee-flavor-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .coffee-flavor-group { padding: 14px 16px; }
+    .coffee-flavor-group + .coffee-flavor-group { border-left: 1px solid var(--line); }
+    .coffee-flavor-group > strong {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--gold);
+      font: 600 0.63rem var(--font-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .coffee-flavor-group > div { display: flex; flex-wrap: wrap; gap: 6px; }
+    .coffee-flavor-group span {
+      padding: 5px 8px;
+      color: #d8d5ce;
+      background: #15181a;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+    }
+    .floor-inline-controls {
+      display: flex;
+      justify-content: flex-end;
+      max-width: 760px;
+      margin: 0 auto 12px;
+    }
+    .floor-inline-editor {
+      border-left: 3px solid var(--gold) !important;
+      animation: sectionReveal 0.18s var(--ease) both;
+    }
+    @keyframes sectionReveal {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .checklist-task {
+      color: #dedbd4;
+      background: #15181a;
+      border-color: var(--line);
+    }
+    .checklist-task:hover { background: #1b1f21; border-color: #454c50; }
+    .checklist-task.done {
+      opacity: 0.72;
+      background: rgba(73,122,83,0.09);
+    }
+    .checklist-task .mark { border-color: #62696d; }
+    .checklist-task.done .mark {
+      color: #101612;
+      background: #91c29d;
+      border-color: #91c29d;
+      animation: checkIn 0.2s var(--ease) both;
+    }
+    @keyframes checkIn {
+      from { transform: scale(0.65); }
+      to { transform: scale(1); }
+    }
+
+    /* Home: shift briefing, not dashboard cards. */
+    .home-page { max-width: 1080px; padding-top: 20px; }
+    .home-page > .page-header {
+      position: relative;
+      min-height: 108px;
+      align-items: flex-end;
+      padding: 17px 0 20px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    .home-page > .page-header::after {
+      content: "";
+      position: absolute;
+      right: 2%;
+      top: -58px;
+      width: 230px;
+      height: 230px;
+      pointer-events: none;
+      opacity: 0.025;
+      background: url("/images/atom-bottle-white.png") center / contain no-repeat;
+    }
+    .home-page > .page-header .page-header-title {
+      font-size: clamp(1.7rem, 3vw, 2.3rem);
+    }
+    .home-section { margin-top: 28px; }
+    .home-section + .home-section { margin-top: 30px; }
+    .home-section-title {
+      margin-bottom: 11px;
+      color: var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+    }
+    .home-empty {
+      padding: 16px 0;
+      color: #b4b5b1;
+      background: transparent;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+    }
+    .home-primary-section .today-cards {
+      grid-template-columns: minmax(0, 1.45fr) minmax(220px, 0.75fr);
+      gap: 12px;
+    }
+    .today-card {
+      color: var(--ink);
+      background: #15181a;
+      border-color: transparent;
+      border-radius: 11px;
+      box-shadow: none;
+    }
+    .home-primary-section .today-card { min-height: 108px; padding: 18px 20px; }
+    .home-primary-section .today-card.is-featured {
+      background: linear-gradient(135deg, #1b1f21, #15181a);
+      box-shadow: inset 3px 0 0 var(--gold);
+    }
+    .today-card:hover {
+      background: #1d2124;
+      border-color: var(--line);
+    }
+    .today-card-kicker, .away-item-kicker { color: var(--gold); letter-spacing: 0.1em; }
+    .today-card-title, .away-item-title, .quick-access-label { color: #f0ede6; }
+    .today-card-detail, .away-item-summary { color: var(--muted); }
+
+    .role-action-list {
+      display: block;
+      border-top: 1px solid var(--line);
+    }
+    .role-action-list .today-card {
+      display: grid;
+      grid-template-columns: minmax(110px, 145px) minmax(180px, 1fr) minmax(160px, auto) 24px;
+      align-items: center;
+      gap: 12px;
+      min-height: 58px;
+      padding: 12px 4px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+    }
+    .role-action-list .today-card:hover { background: rgba(156,107,74,0.045); }
+    .role-action-list .role-action-arrow { color: var(--gold); justify-self: end; }
+
+    .away-list { gap: 0; border-top: 1px solid var(--line); }
+    .away-item {
+      position: relative;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+    }
+    .away-item::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 23px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .away-item-main { padding: 15px 12px 15px 20px; }
+    .away-item-main:hover { background: rgba(156,107,74,0.045); }
+    .away-item-ack { color: #c8c6c0; }
+
+    .quick-access-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quick-access-card {
+      min-height: 46px;
+      padding: 8px 13px;
+      gap: 9px;
+      border-radius: 8px;
+      color: #dbd8d1;
+      background: #141719;
+      border-color: var(--line);
+    }
+    .quick-access-card:hover { color: #fff; background: #1b1f21; border-color: #454c50; }
+    .quick-access-icon {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      color: var(--gold);
+    }
+    .quick-access-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .quick-access-label { font-size: 0.67rem; letter-spacing: 0.045em; }
+
+    /* On Tap: operational board. */
+    .ontap-table-wrap { border-radius: 10px; }
+    .new-banner {
+      color: #f3f0e9;
+      background:
+        linear-gradient(120deg, rgba(156,107,74,0.12), transparent 38%),
+        #111416 !important;
+      border-color: var(--line) !important;
+      box-shadow: none;
+    }
+    .new-banner::before { opacity: 0.035; }
+    .new-banner-label, .new-banner-dot.active { color: var(--gold-bright); }
+    .new-banner-dot { background: #41474a; }
+    .new-banner-dot.active { background: var(--gold); }
+    .ontap-mobile-list .card { background: #15181a !important; }
+    .tap-number {
+      color: #11100d !important;
+      background: var(--gold) !important;
+      border-color: var(--gold) !important;
+    }
+
+    /* Training: same system, stronger progression. */
+    .training-hero {
+      background:
+        radial-gradient(ellipse 50% 80% at 100% 0%, rgba(156,107,74,0.1), transparent 62%),
+        #15181a;
+      border-color: var(--line-strong);
+    }
+    .training-welcome, .training-focus-title,
+    .training-section-title, .training-road-copy strong,
+    .training-meta-grid strong { color: #f1eee7; }
+    .training-hero-intro, .training-focus-blurb, .training-section-lead,
+    .training-progress-note, .training-road-copy small,
+    .training-empty { color: var(--muted) !important; }
+    .training-kicker, .training-road-step.is-current .training-road-shift,
+    .training-skill-kind { color: var(--gold); }
+    .training-hero-intro {
+      max-width: 44rem;
+      margin: 4px 0 16px;
+      line-height: 1.5;
+    }
+    .training-method {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 20px;
+      color: #c9c6bf;
+      font: 600 0.65rem var(--font-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .training-method i { color: #61686c; font-style: normal; }
+    #trainingTodayStrip { margin-top: 20px; }
+    .training-progress-track { background: #0e1011; border-color: var(--line); }
+    .training-progress-fill { background: linear-gradient(90deg, #7a5338, var(--gold-bright)); }
+    .training-road-step {
+      color: var(--ink);
+      background: #141719 !important;
+      border-color: var(--line) !important;
+    }
+    .training-road-step.is-current {
+      background: rgba(156,107,74,0.09) !important;
+      border-color: rgba(156,107,74,0.5) !important;
+    }
+    .training-road-marker, .training-loop-num {
+      color: #aaaead;
+      background: #0f1213;
+      border-color: var(--line-strong);
+    }
+    .training-road-step.is-current .training-road-marker,
+    .training-road-step.is-done .training-road-marker {
+      color: #16110b;
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .training-loop { background: #121517; border-color: var(--line); }
+    .training-tool-chip, .training-quick {
+      color: #d9d6cf;
+      background: #141719;
+      border-color: var(--line);
+    }
+    .training-tool-chip:hover, .training-quick:hover {
+      color: #fff;
+      background: #1c2022;
+      border-color: #4a5155;
+    }
+    .training-tools-title { margin-top: 22px; }
+    .training-before-leave {
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .training-before-leave p { margin: 0; color: var(--muted); }
+
+    /* Games retain energy without neon or glow. */
+    .game-tile {
+      background: #15181a !important;
+      border-color: var(--line) !important;
+    }
+    .game-tile-icon {
+      color: var(--gold);
+      background: #111416 !important;
+      border-color: rgba(156,107,74,0.35) !important;
+      box-shadow: none;
+    }
+    .game-tile-icon svg * { stroke: currentColor; }
+    .game-option {
+      color: #dedbd4 !important;
+      background: #141719 !important;
+      border-color: var(--line-strong) !important;
+    }
+    .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
+      color: #fff !important;
+      background: #1c2022 !important;
+      border-color: #555d61 !important;
+    }
+    .game-option.correct {
+      color: #b5ddb9 !important;
+      background: rgba(75,139,88,0.14) !important;
+      border-color: rgba(116,181,129,0.48) !important;
+    }
+    .game-option.wrong {
+      color: #efaaa4 !important;
+      background: rgba(173,65,57,0.13) !important;
+      border-color: rgba(216,101,92,0.42) !important;
+    }
+    .answer-review-item { border-left-color: #d16960 !important; }
+    .answer-review-correct strong { color: #91c29d; }
+    .scenario-card {
+      border-top: 3px solid var(--gold) !important;
+      background:
+        radial-gradient(ellipse 45% 40% at 100% 0%, rgba(156,107,74,0.07), transparent 65%),
+        #191d20 !important;
+    }
+    .scenario-eyebrow {
+      margin: 16px 0 6px;
+      color: var(--gold);
+      font: 700 0.66rem var(--font-display);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .scenario-feedback {
+      margin: 15px 0 0;
+      padding: 13px 15px;
+      color: #dcd9d2;
+      background: #111416;
+      border-left: 2px solid var(--gold);
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    /* Ask MP: one fast operational search surface. */
+    .ask-mp-page {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 8px var(--page-pad) 56px;
+    }
+    .ask-mp-search {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: #15181a;
+    }
+    .ask-mp-search:focus-within {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+    .ask-mp-search svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+    }
+    .ask-mp-search input[type="search"] {
+      width: 100%;
+      min-height: 42px;
+      padding: 0;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      font: 1rem var(--font);
+    }
+    .ask-mp-search input[type="search"]::placeholder { color: #747a7e; }
+    .ask-mp-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .ask-mp-suggestions button {
+      min-height: 40px;
+      padding: 8px 12px;
+      color: #b8bab7;
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.74rem;
+      letter-spacing: 0.02em;
+    }
+    .ask-mp-suggestions button:hover {
+      color: #fff;
+      background: rgba(156,107,74,0.07);
+      border-color: rgba(156,107,74,0.42);
+    }
+    .ask-mp-results { margin-top: 24px; border-top: 1px solid var(--line); }
+    .ask-mp-result {
+      position: relative;
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr) 24px;
+      gap: 3px 16px;
+      width: 100%;
+      padding: 16px 4px;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      cursor: pointer;
+    }
+    .ask-mp-result:hover { background: rgba(156,107,74,0.045); }
+    .ask-mp-result-type {
+      grid-row: 1 / 3;
+      color: var(--gold);
+      font: 600 0.62rem var(--font-display);
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+    .ask-mp-result strong { color: #f0ede6; line-height: 1.3; }
+    .ask-mp-result > span:not(.ask-mp-result-type) {
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 0.88rem;
+    }
+    .ask-mp-result i {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      align-self: center;
+      justify-self: end;
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    /* Login is part of the product, not a white gate. */
+    .login-gate {
+      background:
+        radial-gradient(ellipse 60% 45% at 50% 0%, rgba(156,107,74,0.1), transparent 65%),
+        #090a0b;
+    }
+    .login-card {
+      color: var(--ink);
+      background: #111416;
+      border-color: var(--line);
+      box-shadow: var(--shadow-lg);
+    }
+    .login-card h1 { color: #f4f1e9; }
+    .login-card .login-message { color: #b6b7b3; }
+    .login-card .login-atom {
+      border-color: rgba(156,107,74,0.38);
+      background: rgba(156,107,74,0.045);
+    }
+    .login-actions button {
+      color: #0d0b08;
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .login-actions button:hover { color: #080706; background: var(--gold-bright); }
+
+    .app-footer { color: #5f666a; }
+
+    @media (max-width: 1024px) {
+      .home-page > .page-header {
+        align-items: stretch;
+      }
+      .home-page > .page-header .page-header-text {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .home-page > .page-header { min-height: 90px; }
+      .home-primary-section .today-cards { grid-template-columns: 1fr; }
+      .role-action-list .today-card {
+        grid-template-columns: minmax(0, 1fr) 24px;
+        gap: 4px 10px;
+      }
+      .role-action-list .today-card-kicker,
+      .role-action-list .today-card-detail { grid-column: 1; }
+      .role-action-list .role-action-arrow { grid-column: 2; grid-row: 1 / 4; }
+      .away-item { flex-direction: row; }
+      .away-item-ack { margin: 0 8px 0 0; align-self: center; }
+      .quick-access-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .quick-access-card { justify-content: flex-start; }
+      .card-top { align-items: flex-start; }
+      .coffee-flavor-board { grid-template-columns: 1fr; }
+      .coffee-flavor-group + .coffee-flavor-group {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+      .ask-mp-search { grid-template-columns: 22px minmax(0, 1fr); }
+      .ask-mp-search .btn { grid-column: 1 / -1; width: 100%; }
+      .ask-mp-result { grid-template-columns: minmax(0, 1fr) 24px; }
+      .ask-mp-result-type { grid-row: auto; grid-column: 1; }
+      .ask-mp-result strong,
+      .ask-mp-result > span:not(.ask-mp-result-type) { grid-column: 1; }
+      .ask-mp-result i { grid-column: 2; grid-row: 1 / 4; }
+    }
+  }
 </style>
 </head>
 <body class="auth-pending">
 <div id="loginGate" class="login-gate">
   <div class="login-card">
-    <div class="login-atom" aria-hidden="true"><img src="/images/atom-bottle-gold.png" alt="" width="96" height="96"></div>
+    <div class="login-atom" aria-hidden="true"><img src="/images/atom-bottle-white.png" alt="" width="96" height="96"></div>
     <h1>MP LAUNCH PAD</h1>
     <p class="login-sub">Manhattan Project · Staff portal</p>
     <div id="loginError"></div>
@@ -4471,42 +6501,98 @@
 </div>
 <div class="app-shell">
   <aside class="app-sidebar" id="appSidebar">
-    <button type="button" class="sidebar-brand" onclick="goHome()" aria-label="Go to On Tap home">
-      <div class="sidebar-brand-mark"><img src="/images/atom-bottle-gold.png" alt="" width="60" height="60"></div>
+    <button type="button" class="sidebar-brand" onclick="goHome()" aria-label="Go to home">
+      <div class="sidebar-brand-mark"><img src="/images/atom-bottle-white.png" alt="" width="60" height="60"></div>
       <div class="sidebar-brand-text">
         <strong>MP LAUNCH PAD</strong>
         <span>Staff portal</span>
       </div>
     </button>
-    <nav class="sidebar-nav tabs" id="mainTabs">
-      <button type="button" class="tab active" data-type="menu">Menu</button>
-      <button type="button" class="tab" data-type="inventory">Inventory</button>
-      <button type="button" class="tab" data-type="floor">Floor</button>
-      <button type="button" class="tab" data-type="reviews">Reviews</button>
-      <button type="button" class="tab" data-type="games">War Games</button>
-      <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
-      <button type="button" class="tab tab-team-only" data-type="team" style="display:none;">Team</button>
+    <nav class="sidebar-nav tabs" id="mainTabs" aria-label="Main">
+      <button type="button" class="tab active" data-type="home">Home</button>
+
+      <div class="nav-group" data-group="service">
+        <button type="button" class="nav-group-toggle" aria-expanded="false">
+          <span>Service</span><span class="nav-group-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="nav-group-items">
+          <button type="button" class="tab" data-type="ontap">On Tap</button>
+          <button type="button" class="tab" data-type="beer">All Beers</button>
+          <button type="button" class="tab" data-type="food">Food</button>
+          <button type="button" class="tab" data-type="coffee">Coffee</button>
+          <button type="button" class="tab" data-type="bar">Wine + Cocktails</button>
+          <button type="button" class="tab" data-type="floor">Floor Tools</button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="ops">
+        <button type="button" class="nav-group-toggle" aria-expanded="false">
+          <span>Operations</span><span class="nav-group-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="nav-group-items">
+          <button type="button" class="tab" data-type="checklists">Checklists</button>
+          <button type="button" class="tab" data-type="sops">SOPs</button>
+          <button type="button" class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="training">
+        <button type="button" class="nav-group-toggle" aria-expanded="false">
+          <span>Training</span><span class="nav-group-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="nav-group-items">
+          <button type="button" class="tab" data-type="training">Training</button>
+          <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="team">
+        <button type="button" class="nav-group-toggle" aria-expanded="false">
+          <span>Team</span><span class="nav-group-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="nav-group-items">
+          <button type="button" class="tab tab-team-only" data-type="team" style="display:none;">Team</button>
+          <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
+          <button type="button" class="tab tab-auth-only" data-type="feedback" style="display:none;">Feedback</button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="tools">
+        <button type="button" class="nav-group-toggle" aria-expanded="false">
+          <span>Tools</span><span class="nav-group-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="nav-group-items">
+          <button type="button" class="tab" data-type="askmp">Ask MP</button>
+          <button type="button" class="tab" data-type="inventory">Inventory</button>
+          <button type="button" class="tab" data-type="merch">Merch</button>
+          <button type="button" class="tab" data-type="reviews">Reviews</button>
+          <button type="button" class="tab" data-type="games">War Games</button>
+          <button type="button" class="tab" data-type="features">App guide</button>
+        </div>
+      </div>
     </nav>
     <div class="sidebar-user" id="sidebarUser">
       <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
       <div class="sidebar-user-role" id="sidebarUserRole">Sign in to track training</div>
-      <div class="sidebar-account-links" id="sidebarAccountLinks">
-        <button type="button" class="sidebar-account-link tab-auth-only" data-type="progress" style="display:none;" onclick="activateAppTab('progress')">My Progress</button>
-        <button type="button" class="sidebar-account-link tab-auth-only" data-type="feedback" style="display:none;" onclick="activateAppTab('feedback')">Feedback</button>
-        <button type="button" class="sidebar-account-link tab-auth-only" data-type="shift-survey" style="display:none;" onclick="activateAppTab('shift-survey')">End of Shift</button>
-        <button type="button" class="sidebar-account-link" data-type="features" onclick="activateAppTab('features')">How this app works</button>
-      </div>
+      <div class="sidebar-account-links" id="sidebarAccountLinks" hidden></div>
       <div class="auth-bar" id="authBar">
         <button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>
       </div>
+    </div>
+    <div class="sidebar-credit">
+      <span>MP Launch Pad · v1.0 Created by</span>
+      <span>Meredith McCain and Tanner Ruminer</span>
     </div>
   </aside>
 
   <div class="app-stage">
 <header class="site-header">
   <div class="header-inner">
-    <button type="button" class="brand" onclick="goHome()" aria-label="Go to On Tap home">
-      <div class="brand-mark"><img src="/images/atom-bottle-gold.png" alt="" width="56" height="56"></div>
+    <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Open menu" aria-expanded="false" aria-controls="appSidebar">
+      <span></span><span></span><span></span>
+    </button>
+    <button type="button" class="brand" onclick="goHome()" aria-label="Go to home">
+      <div class="brand-mark"><img src="/images/atom-bottle-white.png" alt="" width="56" height="56"></div>
       <div class="brand-text">
         <h1>MP LAUNCH PAD</h1>
         <p>Staff portal</p>
@@ -4514,13 +6600,9 @@
     </button>
     <div class="auth-bar" id="authBarMobile"></div>
   </div>
-  <div class="mobile-account-links" id="mobileAccountLinks">
-    <button type="button" class="sidebar-account-link tab-auth-only" data-type="progress" style="display:none;" onclick="activateAppTab('progress')">My Progress</button>
-    <button type="button" class="sidebar-account-link tab-auth-only" data-type="feedback" style="display:none;" onclick="activateAppTab('feedback')">Feedback</button>
-    <button type="button" class="sidebar-account-link tab-auth-only" data-type="shift-survey" style="display:none;" onclick="activateAppTab('shift-survey')">End of Shift</button>
-    <button type="button" class="sidebar-account-link" data-type="features" onclick="activateAppTab('features')">App guide</button>
-  </div>
+  <div class="mobile-account-links" id="mobileAccountLinks" hidden></div>
 </header>
+<button type="button" class="mobile-nav-scrim" id="mobileNavScrim" aria-label="Close menu" tabindex="-1"></button>
 
 <div class="toolbar" id="toolbar">
   <div class="toolbar-inner">
@@ -4552,7 +6634,7 @@
 
 <main id="appMain" class="app-main">
 <div id="content">
-  <div class="status"><strong>Loading beer list…</strong>Please wait a moment.</div>
+  <div class="status"><strong>Loading beer list…</strong> Please wait a moment.</div>
 </div>
 </main>
 
@@ -4584,11 +6666,15 @@
   </div>
 </div>
 
+<div id="ontapPrintRoot" class="ontap-print-root" aria-hidden="true"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="roles.js"></script>
 <script src="site-features.js"></script>
 <script src="ops-content.js"></script>
 <script src="floor-tools.js"></script>
+<script src="ui.js"></script>
+<script src="training.js"></script>
 <script>
 const API_BASE = "";
 let currentUser = null;
@@ -4689,7 +6775,11 @@ let sopLoading = false;
 let reviewsData = null;
 let reviewsLoading = false;
 let reviewPlatform = "all";
-let activeType = "menu";
+let activeType = "home";
+let askMpQuery = "";
+let askMpResults = [];
+let askMpLoading = false;
+let askMpError = "";
 let menuSubView = "ontap";
 let floorHubView = "tools";
 try {
@@ -4713,9 +6803,6 @@ const FLOOR_HUB_VIEWS = [
   { id: "checklists", label: "Checklists" }
 ];
 const MENU_SUBVIEW_IDS = new Set(MENU_SUBVIEWS.map((v) => v.id));
-const TOP_LEVEL_TAB_IDS = new Set([
-  "menu", "inventory", "floor", "reviews", "games", "shift-reports", "team"
-]);
 if (!MENU_SUBVIEW_IDS.has(menuSubView)) menuSubView = "ontap";
 if (!FLOOR_HUB_VIEWS.some((v) => v.id === floorHubView)) floorHubView = "tools";
 
@@ -4727,6 +6814,40 @@ function contentType() {
     return "floor";
   }
   return activeType;
+}
+
+/** Leaf tab id that should appear active in the sidebar / mobile strip. */
+function navLeafId() {
+  return contentType();
+}
+
+function highlightNavLeaf(leaf = navLeafId()) {
+  document.querySelectorAll("#mainTabs .tab[data-type], #mobileTabs .tab[data-type]").forEach((t) => {
+    t.classList.toggle("active", t.dataset.type === leaf);
+  });
+  document.querySelectorAll("#mainTabs .nav-group").forEach((navGroup) => {
+    navGroup.classList.remove("is-open");
+    navGroup.querySelector(".nav-group-toggle")?.setAttribute("aria-expanded", "false");
+  });
+  const active = document.querySelector(`#mainTabs .tab[data-type="${leaf}"]`);
+  if (!active) return;
+  const group = active.closest(".nav-group");
+  if (!group) return;
+  group.classList.add("is-open");
+  const toggle = group.querySelector(".nav-group-toggle");
+  if (toggle) toggle.setAttribute("aria-expanded", "true");
+}
+
+function syncNavGroupVisibility() {
+  document.querySelectorAll("#mainTabs .nav-group").forEach((group) => {
+    const tabs = [...group.querySelectorAll(".tab[data-type]")];
+    if (!tabs.length) {
+      group.style.display = "";
+      return;
+    }
+    const anyShown = tabs.some((t) => t.style.display !== "none");
+    group.style.display = anyShown ? "" : "none";
+  });
 }
 
 function persistHubViews() {
@@ -4750,6 +6871,7 @@ function setMenuSubView(id) {
   updateHubChips();
   updateSearchPlaceholder();
   updateStageTitle();
+  highlightNavLeaf(id);
   render();
 }
 
@@ -4768,32 +6890,23 @@ function setFloorHubView(id) {
   updateHubChips();
   updateSearchPlaceholder();
   updateStageTitle();
+  const leaf = id === "tools" ? "floor" : id;
+  highlightNavLeaf(leaf);
   render();
 }
 
 function updateHubChips() {
+  // Phase 1: leaf nav in the sidebar replaces Menu / Floor hub chips.
   const wrap = document.getElementById("hubChipsWrap");
   const chips = document.getElementById("hubChips");
   if (!wrap || !chips) return;
-  if (activeType === "menu") {
-    wrap.hidden = false;
-    chips.innerHTML = MENU_SUBVIEWS.map((v) => `
-      <button type="button" class="coffee-subtab${menuSubView === v.id ? " active" : ""}" onclick="setMenuSubView('${v.id}')">${v.label}</button>
-    `).join("");
-  } else if (activeType === "floor") {
-    wrap.hidden = false;
-    chips.innerHTML = FLOOR_HUB_VIEWS.map((v) => `
-      <button type="button" class="coffee-subtab${floorHubView === v.id ? " active" : ""}" onclick="setFloorHubView('${v.id}')">${v.label}</button>
-    `).join("");
-  } else {
-    wrap.hidden = true;
-    chips.innerHTML = "";
-  }
+  wrap.hidden = true;
+  chips.innerHTML = "";
 }
 
 function syncAccountLinkActive() {
   document.querySelectorAll("#sidebarAccountLinks .sidebar-account-link, #mobileAccountLinks .sidebar-account-link").forEach((btn) => {
-    btn.classList.toggle("is-active", btn.dataset.type === activeType);
+    btn.classList.toggle("is-active", btn.dataset.type === activeType || btn.dataset.type === navLeafId());
   });
 }
 
@@ -4994,6 +7107,13 @@ const COFFEE_MILK_OPTIONS = [
   { name: "Oat milk", description: "Available on request for lattes, cappuccinos, and other milk drinks." }
 ];
 
+/** Current flavorings, organized for a fast bar scan. */
+const COFFEE_FLAVOR_OPTIONS = [
+  { group: "Classics", flavors: ["Caramel", "Mocha", "Vanilla", "Hazelnut", "Cinnamon", "Honey"] },
+  { group: "Fruit + citrus", flavors: ["Blueberry", "Strawberry", "Orange"] },
+  { group: "Floral", flavors: ["Lavender"] }
+];
+
 /** Caffeine bar menu — grouped like the in-house menu board. dairy: true = contains milk/dairy. Milk drinks: whole milk or oat milk on request. */
 const COFFEE_MENU_DRINKS = [
   { group: "Purists", name: "Espresso", price: "$3", description: "Straight espresso shot.", dairy: false },
@@ -5007,10 +7127,9 @@ const COFFEE_MENU_DRINKS = [
   { group: "Purists", name: "Bottomless Drip", price: "$5", description: "Batch brewed coffee — refills while dining.", dairy: false },
   { group: "Pour Over", name: "Worka Sakaro", price: "$5", description: "Viewfinder Worka Sakaro (Ethiopia) — berry cereal, boozy, hibiscus. Current pour-over bean.", dairy: false },
   { group: "Flavored", name: "Vietnamese", price: "$5.50", description: "Sweetened condensed milk + espresso over ice.", dairy: true },
-  { group: "Flavored", name: "Dutch Apple Pie", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with Dutch apple pie flavor. Whole or oat milk.", dairy: true },
   { group: "Flavored", name: "Tres Leches", price: "$5 / $6", description: "Cappuccino ($5) or latte ($6) with tres leches flavor. Whole or oat milk.", dairy: true },
   { group: "Flavored", name: "Strawberry Matcha", price: "$5.50", description: "Matcha with strawberry, vanilla, and rose.", dairy: true, tags: ["Matcha"] },
-  { group: "Flavored", name: "Seasonal", price: "$5 / $6", description: "Banana Foster Latte (seasonal) — cappuccino ($5) or latte ($6). Whole or oat milk. Full recipe under Seasonal Lattes.", dairy: true },
+  { group: "Flavored", name: "Seasonal Drinks", price: "$5 / $6", description: "See Seasonal Drinks for the current latte and matcha. Whole or oat milk.", dairy: true },
   { group: "Tea", name: "Hot Tea", price: "$2.50", description: "Earl Grey, black, English, jasmine, oolong, mint, or green.", dairy: false },
   { group: "Tea", name: "Iced Tea", price: "$2", description: "Iced brewed tea.", dairy: false },
   { group: "Tea", name: "Hibiscus Tea Lemonade", price: "$2.50", description: "Hibiscus tea with lemonade. Batch recipe under SOPs → Recipes.", dairy: false }
@@ -5136,47 +7255,43 @@ const BAR_MENU_DRINKS = [
   { group: "NA Beverages", section: "other", name: "Ginger Beer", price: "$3", description: "Lady Bird ginger beer.", dairy: false }
 ];
 
-/** Seasonal latte lineup — set isNew: true when launching. Full recipes live here (Coffee tab), not in SOPs. */
-const SEASONAL_LATTES = [
+/** Editable seasonal coffee lineup; live values load from /api/weekly-specials. */
+const DEFAULT_COFFEE_SPECIALS = [
   {
-    name: "Banana Foster Latte",
+    id: "seasonal-latte",
+    kind: "latte",
+    name: "Pumpkin Spice Latte",
     season: "Seasonal",
     available: true,
     isNew: true,
-    description: "Brown-sugar banana syrup latte with oat cold foam and vanilla wafer crumble. Cappuccino ($5) or latte ($6).",
-    build: "40 g syrup · espresso · steamed milk · cold foam · ½ scoop vanilla wafer crumble (hot: no foam, wafer sprinkle with banana syrup).",
-    training: "Flag cinnamon allergy. Cold foam is oat-based; alt milk possible. Keep a backup foam batch in the walk-in.",
-    recipe: {
-      syrup: ["Vanilla bean paste, caramel, salt, cinnamon, banana emulsion (brown sugar base)"],
-      coldFoam: [
-        "10 oz oat milk + 10 pumps vanilla syrup",
-        "Keep a backup batch in the walk-in",
-        "When iSi whipper is empty: wash, refill foam mix, recharge with nitro"
-      ],
-      buildSteps: [
-        "12 oz glass",
-        "40 g syrup",
-        "Leave space from top of logo to rim for cold foam",
-        "Cold foam is oat-milk based (alt milk possible)",
-        "Top with ½ scoop vanilla wafer crumble",
-        "Allergy: contains cinnamon"
-      ],
-      hotPresentation: [
-        "No cold foam",
-        "Sprinkle vanilla wafers with banana syrup"
-      ]
-    }
+    price: "$5 / $6",
+    description: "Seasonal pumpkin spice latte, available hot or iced with whole or oat milk.",
+    build: "",
+    training: ""
+  },
+  {
+    id: "seasonal-matcha",
+    kind: "matcha",
+    name: "Apple Pie Matcha",
+    season: "Seasonal",
+    available: true,
+    isNew: true,
+    price: "$5 / $6",
+    description: "Seasonal apple pie matcha, available hot or iced with whole or oat milk.",
+    build: "",
+    training: ""
   }
 ];
+let COFFEE_SPECIALS = DEFAULT_COFFEE_SPECIALS.map((item) => ({ ...item }));
 
 function seasonalLatteRecipeHtml(item) {
   const recipe = item.recipe;
   if (!recipe) {
     return `
-      <div class="detail-section">
+      ${item.build ? `<div class="detail-section">
         <p class="detail-label">Build</p>
         <p class="detail-text">${escapeHTML(item.build)}</p>
-      </div>
+      </div>` : ""}
       ${item.training ? `<div class="detail-section manual-callout"><p class="detail-label">Staff talking points</p><p class="detail-text">${escapeHTML(item.training)}</p></div>` : ""}
     `;
   }
@@ -5294,22 +7409,23 @@ const FOOD_MENU = [
   { id: "ice-cream", name: "Ice Cream", category: "dinner", section: "Dessert", price: "$5", description: "Scoop of cinnamon ice cream.", glutenFree: true, dairy: true, nuts: null }
 ];
 
-const WEEKLY_SPECIALS = [
+const DEFAULT_WEEKLY_SPECIALS = [
   {
     id: "monday-lunch",
     day: "monday",
     dayLabel: "Monday",
     meal: "Lunch",
     schedule: "11 am until sold out",
-    name: "This Week's Monday Lunch",
-    price: "Market price",
-    description: "Update with this week's Monday lunch dish, components, and guest-facing description.",
-    build: "Add plating, sides, and any modifications for the line.",
-    training: "Staff talking points: how to describe it, upsell pairings, and allergen reminders for this week.",
-    glutenFree: null,
-    dairy: null,
+    name: "Italian Meatball Sub",
+    price: "$19",
+    description: "Fresh homemade meatballs served in a hoagie with marinara sauce, mozzarella, fresh basil, and truffle shoestring potatoes.",
+    build: "Hoagie · homemade meatballs · marinara sauce · mozzarella · fresh basil · truffle shoestring potatoes",
+    training: "Describe it as a hearty Italian meatball sub with crisp truffle potatoes on the side.",
+    glutenFree: false,
+    dairy: true,
     nuts: null,
-    active: true
+    active: true,
+    notes: "Not gluten-free."
   },
   {
     id: "taco-tuesday",
@@ -5317,16 +7433,16 @@ const WEEKLY_SPECIALS = [
     dayLabel: "Tuesday",
     meal: "Lunch",
     schedule: "11 am until sold out",
-    name: "This Week's Taco Tuesday",
-    price: "Market price",
-    description: "Update with this week's taco filling, toppings, and salsa.",
-    build: "Tortilla · protein · toppings · salsa — confirm GF/dairy with kitchen each week.",
-    training: "How to describe the taco to guests and what's different this week.",
-    glutenFree: false,
+    name: "Pork Belly Tacos",
+    price: "",
+    description: "Pork belly tacos served with caramelized onions, grilled pineapple, BBQ sauce, lemon rice, and black beans.",
+    build: "Pork belly tacos · caramelized onions · grilled pineapple · BBQ sauce · lemon rice · black beans",
+    training: "Lead with the sweet-savory combination of pork belly, grilled pineapple, and caramelized onions.",
+    glutenFree: true,
     dairy: null,
     nuts: null,
     active: true,
-    notes: "Flour tortillas are not GF unless noted otherwise for the week."
+    notes: "Gluten-free."
   },
   {
     id: "wednesday-dinner",
@@ -5334,17 +7450,42 @@ const WEEKLY_SPECIALS = [
     dayLabel: "Wednesday",
     meal: "Dinner",
     schedule: "4 pm until sold out",
-    name: "This Week's Wednesday Dinner",
-    price: "Market price",
-    description: "Update with this week's Wednesday dinner feature.",
-    build: "Add the full plate build and any beer or coffee pairings you want staff to mention.",
-    training: "Staff talking points for tonight's dinner special.",
-    glutenFree: null,
-    dairy: null,
+    name: "Chicken Parmesan",
+    price: "$20",
+    description: "Chicken Parmesan served with fettuccine Alfredo primavera, Parmesan, and fresh basil.",
+    build: "Chicken Parmesan · fettuccine Alfredo primavera · Parmesan · fresh basil",
+    training: "A classic chicken Parmesan dinner with creamy primavera pasta.",
+    glutenFree: false,
+    dairy: true,
     nuts: null,
-    active: true
+    active: true,
+    notes: "Not gluten-free."
   }
 ];
+
+/** Live weekly specials — filled from /api/weekly-specials (falls back to defaults). */
+let WEEKLY_SPECIALS = DEFAULT_WEEKLY_SPECIALS.map((s) => ({ ...s }));
+let weeklyBoard = {
+  chefNotes: "",
+  menuChanges: "",
+  eightySixNotes: "",
+  waitNotes: "",
+  limitedItems: "",
+  serviceNotes: "",
+  allergenNotes: "",
+  contentWeekStart: "",
+  deadlineDow: 5,
+  deadlineHour: 0,
+  updatedAt: null,
+  updatedByName: null,
+  needsReview: false,
+  expectedContentWeekStart: ""
+};
+let weeklySpecialsCanEdit = false;
+let weeklySpecialsLoaded = false;
+let weeklySpecialsLoading = false;
+let weeklySpecialsError = "";
+let weeklySpecialsLoadPromise = null;
 
 const COFFEE_SECTIONS = [
   {
@@ -5773,6 +7914,12 @@ async function loadData(options = {}) {
     if (!skipRender) render();
     startNewTapRotation();
     updateSearchPlaceholder();
+    if (typeof ensureWeeklySpecials === "function") {
+      ensureWeeklySpecials().catch((err) => console.warn("Weekly specials:", err.message));
+    }
+    if (typeof ensureTapDisplayMeta === "function") {
+      ensureTapDisplayMeta().catch((err) => console.warn("Tap display meta:", err.message));
+    }
   } catch (error) {
     console.error(error);
     content.innerHTML = `
@@ -5893,12 +8040,92 @@ function shuffle(arr) {
   return a;
 }
 
+function renderAskMp(content) {
+  const suggestions = [
+    "What is gluten-reduced?",
+    "How do I close coffee?",
+    "What goes in a Michelada?",
+    "Show me IPAs on tap"
+  ];
+  content.innerHTML = `
+    <div class="ask-mp-page">
+      ${renderPageHeader({
+        title: "Ask MP",
+        subtitle: "Search the current beer list, food menu, recipes, SOPs, coffee guide, and training."
+      })}
+      <form class="ask-mp-search" onsubmit="event.preventDefault(); searchAskMp(this.elements.query.value);">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>
+        <input name="query" type="search" value="${escapeForAttribute(askMpQuery)}" placeholder="What do you need right now?" autocomplete="off" aria-label="Search MP knowledge">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+      ${!askMpQuery ? `
+        <div class="ask-mp-suggestions" aria-label="Suggested searches">
+          ${suggestions.map((suggestion) => `<button type="button" onclick="searchAskMp('${escapeForAttribute(suggestion)}')">${escapeHTML(suggestion)}</button>`).join("")}
+        </div>
+      ` : ""}
+      <div class="ask-mp-results" aria-live="polite">
+        ${askMpLoading ? `<div class="status"><strong>Searching MP knowledge…</strong></div>` : ""}
+        ${askMpError ? `<p class="auth-error">${escapeHTML(askMpError)}</p>` : ""}
+        ${!askMpLoading && askMpQuery && !askMpError && !askMpResults.length ? `<p class="home-empty">No exact match. Try a beer name, menu item, recipe, or procedure.</p>` : ""}
+        ${!askMpLoading && askMpResults.map((result) => `
+          <button type="button" class="ask-mp-result" onclick="activateAppTab('${escapeForAttribute(result.tab || "home")}')">
+            <span class="ask-mp-result-type">${escapeHTML(result.type || "MP")}</span>
+            <strong>${escapeHTML(result.title || "Result")}</strong>
+            <span>${escapeHTML(result.summary || "")}</span>
+            <i aria-hidden="true">→</i>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+async function searchAskMp(query) {
+  askMpQuery = String(query || "").trim();
+  if (!askMpQuery) {
+    askMpResults = [];
+    askMpError = "";
+    render();
+    return;
+  }
+  askMpLoading = true;
+  askMpError = "";
+  render();
+  try {
+    const data = await apiFetch(`/api/search?q=${encodeURIComponent(askMpQuery)}`);
+    const terms = askMpQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    const foodMatches = (typeof FOOD_MENU !== "undefined" ? FOOD_MENU : [])
+      .filter((item) => {
+        const text = `${item.name || ""} ${item.description || ""} ${item.section || ""}`.toLowerCase();
+        return terms.every((term) => text.includes(term));
+      })
+      .slice(0, 5)
+      .map((item) => ({
+        type: "food",
+        title: item.name,
+        summary: item.description || item.section || "",
+        tab: "food",
+        score: 20
+      }));
+    askMpResults = [...(data.results || []), ...foodMatches]
+      .sort((a, b) => Number(b.score || 0) - Number(a.score || 0))
+      .slice(0, 12);
+  } catch (err) {
+    askMpError = err.message || "Search is unavailable right now.";
+    askMpResults = [];
+  } finally {
+    askMpLoading = false;
+    if (contentType() === "askmp") render();
+  }
+}
+
 function render() {
   queueMicrotask(populateBeerSelects);
   const content = document.getElementById("content");
   const filterWrap = document.getElementById("filterWrap");
   const searchWrap = document.getElementById("searchWrap");
   const view = contentType();
+  document.body.dataset.view = view;
 
   const showFilters = view === "beer" || view === "ontap";
   const showSearch = view === "beer" || view === "food" || view === "ontap" || view === "coffee" || view === "bar" || view === "merch" || view === "inventory" || view === "sops" || view === "checklists" || view === "floor" || view === "reviews";
@@ -5908,8 +8135,13 @@ function render() {
   updateHubChips();
   syncAccountLinkActive();
   if (typeof updateStageTitle === "function") updateStageTitle();
+  if (typeof syncPageEditBodyClass === "function") syncPageEditBodyClass();
 
-  if (view === "beer" || view === "ontap") {
+  if (view === "home") {
+    destroyCharts();
+    if (typeof renderHomeShell === "function") renderHomeShell(content);
+    else content.innerHTML = `<p class="desc">Home</p>`;
+  } else if (view === "beer" || view === "ontap") {
     destroyCharts();
     renderList(content);
   } else if (view === "food") {
@@ -5936,9 +8168,15 @@ function render() {
   } else if (view === "floor") {
     destroyCharts();
     renderFloorTools(content);
+  } else if (view === "training") {
+    destroyCharts();
+    renderTrainingDashboard(content);
   } else if (view === "reviews") {
     destroyCharts();
     renderReviews(content);
+  } else if (view === "askmp") {
+    destroyCharts();
+    renderAskMp(content);
   } else if (view === "games") {
     destroyCharts();
     renderGames(content);
@@ -6014,6 +8252,15 @@ function clearSessionState() {
   currentBriefingItems = [];
   tapsState = { taps: [], canWrite: false, loaded: false, loading: false, error: "" };
   tapsLoadPromise = null;
+  if (typeof resetTrainingState === "function") resetTrainingState();
+  if (typeof resetHomeBriefingCache === "function") resetHomeBriefingCache();
+  if (typeof resetPageEditModes === "function") resetPageEditModes();
+  weeklySpecialsLoaded = false;
+  weeklySpecialsCanEdit = false;
+  weeklySpecialsError = "";
+  WEEKLY_SPECIALS = DEFAULT_WEEKLY_SPECIALS.map((s) => ({ ...s }));
+  tapDisplayMeta = {};
+  tapDisplayMetaLoaded = false;
 }
 
 function handleSessionEnded() {
@@ -6051,6 +8298,14 @@ function isMerchManager() {
 
 function canManageTaps() {
   return currentUser && (currentUser.permissions?.manageTaps || StaffRoles?.canManageTaps?.(currentUser));
+}
+
+function canManageWeeklySpecials() {
+  return currentUser && (
+    currentUser.permissions?.manageWeeklySpecials
+    || StaffRoles?.canManageWeeklySpecials?.(currentUser)
+    || StaffRoles?.hasShiftLeadCapability?.(currentUser)
+  );
 }
 
 function receivesDailyBriefing() {
@@ -6091,6 +8346,29 @@ function buildRoleOptionsHtml(selected) {
 
 let shiftLeadDutyDate = null;
 
+function closeMobileNav() {
+  document.body.classList.remove("mobile-nav-open");
+  const toggle = document.getElementById("mobileNavToggle");
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open menu");
+  }
+}
+
+function openMobileNav() {
+  document.body.classList.add("mobile-nav-open");
+  const toggle = document.getElementById("mobileNavToggle");
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", "Close menu");
+  }
+}
+
+function toggleMobileNav() {
+  if (document.body.classList.contains("mobile-nav-open")) closeMobileNav();
+  else openMobileNav();
+}
+
 function syncChromeOffset() {
   const root = document.documentElement;
   const header = document.querySelector(".site-header");
@@ -6101,6 +8379,7 @@ function syncChromeOffset() {
     if (shown) offset = Math.ceil(header.getBoundingClientRect().height);
   }
   root.style.setProperty("--chrome-offset", `${offset}px`);
+  if (!useMobileChrome) closeMobileNav();
 }
 
 let chromeOffsetObserver = null;
@@ -6135,6 +8414,7 @@ function updateAuthUI() {
   document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
     el.style.display = canSubmitShiftSurvey() ? "" : "none";
   });
+  syncNavGroupVisibility();
   syncMobileTabs();
   syncChromeOffset();
 
@@ -6155,15 +8435,9 @@ function updateAuthUI() {
     if (currentUser.on_shift_lead_duty) roleText += " · on shift lead duty";
     userRole.textContent = roleText;
   }
-  const signedHtml = `
-    <div class="auth-user">
-      <strong>${escapeHTML(currentUser.name)}</strong>
-      ${roleLabel(currentUser.role)}
-    </div>
-    <button class="auth-btn" onclick="logout()">Log out</button>
-  `;
   if (authBar) authBar.innerHTML = `<button class="auth-btn" onclick="logout()">Log out</button>`;
-  if (authBarMobile) authBarMobile.innerHTML = signedHtml;
+  // Mobile header stays quiet — account + logout live in the drawer.
+  if (authBarMobile) authBarMobile.innerHTML = "";
 }
 
 async function initAuth() {
@@ -6302,8 +8576,8 @@ async function logout() {
   menuSubView = "ontap";
   floorHubView = "tools";
   persistHubViews();
-  activeType = "menu";
-  document.querySelectorAll("#mainTabs .tab, #mobileTabs .tab").forEach(t => t.classList.toggle("active", t.dataset.type === "menu"));
+  activeType = "home";
+  highlightNavLeaf("home");
   syncAccountLinkActive();
   showLoginGate();
 }
@@ -6349,13 +8623,13 @@ function collectNewAnnouncements() {
       });
     });
 
-  SEASONAL_LATTES
+  COFFEE_SPECIALS
     .filter(l => l.available && l.isNew)
     .forEach(l => {
       items.push({
-        key: `latte:${l.name}`,
+        key: `coffee-special:${l.id || l.name}`,
         type: "latte",
-        label: "Seasonal latte",
+        label: l.kind === "matcha" ? "Seasonal matcha" : "Seasonal latte",
         title: l.name,
         summary: l.description || l.season
       });
@@ -6520,7 +8794,7 @@ function buildAnnouncementTrainingHtml(item) {
   }
 
   if (item.type === "latte") {
-    const latte = SEASONAL_LATTES.find(entry => entry.name === item.title);
+    const latte = COFFEE_SPECIALS.find(entry => entry.name === item.title);
     if (!latte) {
       return `<p class="detail-text">This seasonal drink is no longer listed. Check Coffee → Seasonal Lattes.</p>`;
     }
@@ -6841,13 +9115,14 @@ async function ensureTapsState() {
 
 function renderTapEditor(tapId, productId) {
   if (!canEditTapsUi() || !tapId) return "";
+  if (typeof isPageEditMode === "function" && !isPageEditMode("ontap")) return "";
   return `
     <div class="tap-inline-editor" onclick="event.stopPropagation()">
       <select data-selected="${escapeForAttribute(productId || "")}"
               id="tapSelect-${escapeForAttribute(tapId)}">
         <option value="">— empty —</option>
       </select>
-      <button type="button" class="game-next tap-inline-save" id="tapSaveBtn-${escapeForAttribute(tapId)}" onclick="saveTap('${escapeForAttribute(tapId)}')">Save</button>
+      <button type="button" class="btn btn-primary btn-sm tap-inline-save" id="tapSaveBtn-${escapeForAttribute(tapId)}" onclick="saveTap('${escapeForAttribute(tapId)}')">Save</button>
     </div>
   `;
 }
@@ -7102,7 +9377,7 @@ function renderRecommendationCard(rec, compact) {
 
 function renderRecommendationsList(recommendations) {
   if (!recommendations || !recommendations.length) {
-    return `<div class="status"><strong>On track.</strong>No immediate training gaps detected.</div>`;
+    return `<div class="status"><strong>On track.</strong> No immediate training gaps detected.</div>`;
   }
   return `
     <div class="coffee-intro" style="margin-bottom:0;">
@@ -7465,7 +9740,7 @@ async function renderShiftSurvey(content) {
   }
 
   if (!canSubmitShiftSurvey()) {
-    content.innerHTML = `<div class="status"><strong>Shift surveys are for floor staff.</strong>Shift leads and managers can review responses under Shift Reports.</div>`;
+    content.innerHTML = `<div class="status"><strong>Shift surveys are for floor staff.</strong> Shift leads and managers can review responses under Shift Reports.</div>`;
     return;
   }
 
@@ -7559,7 +9834,7 @@ async function renderShiftReports(content) {
   }
 
   if (!isShiftLeadManager()) {
-    content.innerHTML = `<div class="status"><strong>Shift lead duty required.</strong>Managers always see shift reports. Shift leads see them on days they are scheduled on the Team tab.</div>`;
+    content.innerHTML = `<div class="status"><strong>Shift lead duty required.</strong> Managers always see shift reports. Shift leads see them on days they are scheduled on the Team tab.</div>`;
     return;
   }
 
@@ -7609,7 +9884,7 @@ async function renderShiftReports(content) {
             `).join("")}
           </div>
           <button class="game-next" style="margin-top:20px;" onclick="markShiftDigestViewed('${escapeForAttribute(shiftReportDate)}')">${data.digestViewed ? "Mark reviewed again" : "Mark end-of-day digest as reviewed"}</button>
-        ` : `<div class="status"><strong>No surveys yet for this date.</strong>Staff submit anonymous feedback from the End of Shift tab after their shift.</div>`}
+        ` : `<div class="status"><strong>No surveys yet for this date.</strong> Staff submit anonymous feedback from the End of Shift tab after their shift.</div>`}
       </div>
     `;
   } catch (err) {
@@ -7800,16 +10075,18 @@ function formatFeedbackStatus(status) {
 function renderFeaturesTab(content) {
   const features = window.SITE_FEATURES;
   const sections = getFeatureSections();
-  const updatedLabel = formatFeaturesUpdatedLabel(features.updatedAt);
   const recentUpdates = (features.recentUpdates || []).slice(0, 3);
   const roles = features.roles || [];
 
   content.innerHTML = `
     <div class="guide-page">
-      <div class="guide-intro">
+      ${typeof renderPageHeader === "function"
+        ? renderPageHeader({
+            title: features.tabLabel || "Features"
+          })
+        : `<div class="guide-intro">
         <h2>${escapeHTML(features.tabLabel || "Features")}</h2>
-        <p>Quick reference for each tab and login role.${updatedLabel ? ` Updated ${escapeHTML(updatedLabel)}.` : ""}</p>
-      </div>
+      </div>`}
 
       ${roles.length ? `
         <div class="guide-block">
@@ -8055,7 +10332,7 @@ async function updateSiteFeedbackStatus(id) {
 
 async function renderMyProgress(content) {
   if (!currentUser) {
-    content.innerHTML = `<div class="auth-panel"><h3>Log in to view progress</h3><p class="hint">Create an account to track quiz scores, game rounds, and coffee training.</p><button class="game-next" onclick="showLoginGate()">Log in</button></div>`;
+    content.innerHTML = `<div class="auth-panel"><h3>Sign in to view progress</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
 
@@ -8127,7 +10404,7 @@ async function renderMyProgress(content) {
           `).join("")}
         </table>
       ` : `
-        <div class="status" style="margin-top:16px;"><strong>No tastings logged yet.</strong>Open any beer on the On Tap tab and use the tasting journal to check in.</div>
+        <div class="status" style="margin-top:16px;"><strong>No tastings logged yet.</strong> Open any beer on the On Tap tab and use the tasting journal to check in.</div>
       `}
       ${myProgressData.by_activity.length || myProgressData.recent.length ? renderProgressChartsHtml("my-progress") : ""}
       ${myProgressData.by_activity.length ? `
@@ -8142,7 +10419,7 @@ async function renderMyProgress(content) {
             </tr>
           `).join("")}
         </table>
-      ` : `<div class="status"><strong>No training sessions yet.</strong>Complete a game or coffee quiz while logged in to start tracking progress.</div>`}
+      ` : `<div class="status"><strong>No training sessions yet.</strong> Complete a game or coffee quiz while signed in to start tracking progress.</div>`}
       ${myProgressData.recent.length ? `
         <table class="progress-table">
           <tr><th>Recent session</th><th>Score</th><th>When</th></tr>
@@ -8203,7 +10480,7 @@ async function loadManagerDigestPanel() {
 
 async function renderTeamDashboard(content) {
   if (!isManager()) {
-    content.innerHTML = `<div class="status"><strong>Manager access required.</strong>Log in with a manager or admin account to view team progress.</div>`;
+    content.innerHTML = `<div class="status"><strong>Manager access required.</strong> Sign in with a manager or admin account to view team progress.</div>`;
     return;
   }
 
@@ -8615,6 +10892,67 @@ function getLocalDayKey() {
   return ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
 }
 
+async function ensureWeeklySpecials({ force = false } = {}) {
+  if (weeklySpecialsLoaded && !force) return WEEKLY_SPECIALS;
+  if (weeklySpecialsLoading && weeklySpecialsLoadPromise) return weeklySpecialsLoadPromise;
+
+  weeklySpecialsLoading = true;
+  weeklySpecialsError = "";
+  weeklySpecialsLoadPromise = (async () => {
+    try {
+      const data = await apiFetch("/api/weekly-specials");
+      WEEKLY_SPECIALS = (data.specials || []).length
+        ? data.specials
+        : DEFAULT_WEEKLY_SPECIALS.map((s) => ({ ...s }));
+      COFFEE_SPECIALS = (data.coffeeSpecials || []).length
+        ? data.coffeeSpecials
+        : DEFAULT_COFFEE_SPECIALS.map((item) => ({ ...item }));
+      weeklyBoard = {
+        chefNotes: "",
+        menuChanges: "",
+        eightySixNotes: "",
+        waitNotes: "",
+        limitedItems: "",
+        serviceNotes: "",
+        allergenNotes: "",
+        contentWeekStart: "",
+        deadlineDow: 5,
+        deadlineHour: 0,
+        updatedAt: null,
+        updatedByName: null,
+        needsReview: false,
+        expectedContentWeekStart: "",
+        ...(data.board || {})
+      };
+      weeklySpecialsCanEdit = Boolean(data.canEdit);
+      weeklySpecialsLoaded = true;
+      return WEEKLY_SPECIALS;
+    } catch (err) {
+      weeklySpecialsError = err.message || "Could not load weekly specials.";
+      if (!WEEKLY_SPECIALS.length) {
+        WEEKLY_SPECIALS = DEFAULT_WEEKLY_SPECIALS.map((s) => ({ ...s }));
+      }
+      if (!COFFEE_SPECIALS.length) {
+        COFFEE_SPECIALS = DEFAULT_COFFEE_SPECIALS.map((item) => ({ ...item }));
+      }
+      return WEEKLY_SPECIALS;
+    } finally {
+      weeklySpecialsLoading = false;
+      weeklySpecialsLoadPromise = null;
+    }
+  })();
+
+  return weeklySpecialsLoadPromise;
+}
+
+function formatWeeklyUpdatedLabel(iso) {
+  if (!iso) return "";
+  const raw = String(iso).includes("T") ? iso : `${iso.replace(" ", "T")}Z`;
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return String(iso);
+  return date.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
 function getTodayWeeklySpecial() {
   const today = getLocalDayKey();
   return WEEKLY_SPECIALS.find(special => special.active && special.day === today) || null;
@@ -8703,7 +11041,6 @@ function renderFood(content) {
 
   if (foodCategory === "weekly") {
     renderWeeklySpecials(content, categoryTabs, query);
-    queueMicrotask(() => maybePromptWeeklySpecial());
     return;
   }
 
@@ -8721,7 +11058,7 @@ function renderFood(content) {
 
   const introCopy = foodCategory === "brunch"
     ? `<p>Brunch is served <strong>Sunday 10 am–3 pm</strong>. Fried food is cooked in beef tallow. Flour tortillas and buns are not gluten-free.</p>`
-    : `<p>Breakfast is served Monday–Saturday until 11 am. Brunches Sunday 10 am–3 pm. Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are not gluten-free.</p>
+    : `<p>Breakfast is served Monday–Saturday until 11 am. Brunch is served Sunday 10 am–3 pm. Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are not gluten-free.</p>
       <p style="margin-top:8px;font-size:14px;">${escapeHTML(FOOD_SIDE_NOTE)}</p>`;
 
   content.innerHTML = categoryTabs + `
@@ -8744,48 +11081,268 @@ function renderFood(content) {
               </div>
               <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
               ${renderDietTags(item)}
-              <div class="details-hint">Tap for full details</div>
             </div>
           `).join("")}
         </div>
       `;
-    }).join("") : `<div class="status"><strong>No food items match.</strong>Try a different search or category.</div>`}
+    }).join("") : `<div class="status"><strong>No food items match.</strong> Try a different search or category.</div>`}
   `;
 }
 
-function renderWeeklySpecials(content, categoryTabs, query) {
+function dietSelectHtml(id, value) {
+  const v = value === true ? "yes" : value === false ? "no" : "";
+  return `
+    <select id="${id}">
+      <option value=""${v === "" ? " selected" : ""}>Unknown</option>
+      <option value="yes"${v === "yes" ? " selected" : ""}>Yes</option>
+      <option value="no"${v === "no" ? " selected" : ""}>No</option>
+    </select>
+  `;
+}
+
+function dietValueFromSelect(id) {
+  const raw = document.getElementById(id)?.value;
+  if (raw === "yes") return true;
+  if (raw === "no") return false;
+  return null;
+}
+
+function renderWeeklyBoardNotesView() {
+  const notes = [
+    { key: "chefNotes", label: "Chef notes" },
+    { key: "menuChanges", label: "Menu changes" },
+    { key: "eightySixNotes", label: "86'd items" },
+    { key: "waitNotes", label: "Wait / timing" },
+    { key: "limitedItems", label: "Limited items" },
+    { key: "serviceNotes", label: "Service notes" },
+    { key: "allergenNotes", label: "Allergen notes" }
+  ].filter((row) => String(weeklyBoard[row.key] || "").trim());
+
+  if (!notes.length) return "";
+  return `
+    <section class="weekly-board-section">
+      <h3 class="home-section-title">This week at MP</h3>
+      <div class="today-cards">
+        ${notes.map((row) => `
+          <div class="today-card" style="cursor:default;">
+            <span class="today-card-kicker">${escapeHTML(row.label)}</span>
+            <span class="today-card-detail" style="white-space:pre-wrap;">${escapeHTML(weeklyBoard[row.key])}</span>
+          </div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderWeeklyBoardEditForm() {
+  const fields = [
+    ["weeklyChefNotes", "chefNotes", "Chef notes"],
+    ["weeklyMenuChanges", "menuChanges", "Menu changes"],
+    ["weeklyEightySix", "eightySixNotes", "86'd items"],
+    ["weeklyWaitNotes", "waitNotes", "Wait / timing"],
+    ["weeklyLimited", "limitedItems", "Limited items"],
+    ["weeklyServiceNotes", "serviceNotes", "Service notes"],
+    ["weeklyAllergenNotes", "allergenNotes", "Allergen notes"]
+  ];
+  return `
+    <section class="weekly-board-section merch-admin-panel">
+      <h3>This week at MP</h3>
+      <p class="desc" style="margin:0 0 12px;">Keep these short — link staff to Food or Floor Tools for deep detail.</p>
+      <div class="inventory-admin-grid">
+        ${fields.map(([id, key, label]) => `
+          <div style="grid-column:1/-1;">
+            <label for="${id}">${escapeHTML(label)}</label>
+            <textarea id="${id}" rows="2">${escapeHTML(weeklyBoard[key] || "")}</textarea>
+          </div>
+        `).join("")}
+        <div>
+          <label for="weeklyContentWeekStart">Content week start (Monday)</label>
+          <input id="weeklyContentWeekStart" type="date" value="${escapeForAttribute(weeklyBoard.contentWeekStart || weeklyBoard.expectedContentWeekStart || "")}">
+        </div>
+        <div>
+          <label for="weeklyDeadlineHour">Friday reminder hour (0–23)</label>
+          <input id="weeklyDeadlineHour" type="number" min="0" max="23" value="${Number(weeklyBoard.deadlineHour ?? 0)}">
+        </div>
+      </div>
+      <p id="weeklyBoardError" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="saveWeeklyBoard()">Save board notes</button>
+      </div>
+    </section>
+  `;
+}
+
+function renderWeeklySpecialEditCard(special) {
+  const sid = escapeForAttribute(special.id);
+  return `
+    <div class="merch-admin-panel weekly-special-edit" id="weeklyEdit-${sid}">
+      <h3>${escapeHTML(special.dayLabel)} · ${escapeHTML(special.meal)}</h3>
+      <label for="weeklyName-${sid}">Dish name</label>
+      <input id="weeklyName-${sid}" type="text" value="${escapeForAttribute(special.name || "")}">
+      <label for="weeklyPrice-${sid}">Price</label>
+      <input id="weeklyPrice-${sid}" type="text" value="${escapeForAttribute(special.price || "")}">
+      <label for="weeklySchedule-${sid}">Schedule</label>
+      <input id="weeklySchedule-${sid}" type="text" value="${escapeForAttribute(special.schedule || "")}">
+      <label for="weeklyDesc-${sid}">Guest description</label>
+      <textarea id="weeklyDesc-${sid}" rows="3">${escapeHTML(special.description || "")}</textarea>
+      <label for="weeklyBuild-${sid}">Build / plate</label>
+      <textarea id="weeklyBuild-${sid}" rows="2">${escapeHTML(special.build || "")}</textarea>
+      <label for="weeklyTraining-${sid}">Staff talking points</label>
+      <textarea id="weeklyTraining-${sid}" rows="2">${escapeHTML(special.training || "")}</textarea>
+      <label for="weeklyNotes-${sid}">Notes</label>
+      <textarea id="weeklyNotes-${sid}" rows="2">${escapeHTML(special.notes || "")}</textarea>
+      <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="weeklyGf-${sid}">Gluten-free</label>
+          ${dietSelectHtml(`weeklyGf-${sid}`, special.glutenFree)}
+        </div>
+        <div>
+          <label for="weeklyDairy-${sid}">Dairy</label>
+          ${dietSelectHtml(`weeklyDairy-${sid}`, special.dairy)}
+        </div>
+        <div>
+          <label for="weeklyNuts-${sid}">Nuts</label>
+          ${dietSelectHtml(`weeklyNuts-${sid}`, special.nuts)}
+        </div>
+      </div>
+      <p id="weeklyError-${sid}" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="saveWeeklySpecial('${sid}')">Save ${escapeHTML(special.dayLabel)}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderWeeklySpecialsPaint(content, categoryTabs, query) {
   const todayKey = getLocalDayKey();
-  const filtered = WEEKLY_SPECIALS.filter(special => {
-    const haystack = (special.name + " " + special.dayLabel + " " + special.description + " " + special.training).toLowerCase();
+  const editing = weeklySpecialsCanEdit && typeof isPageEditMode === "function" && isPageEditMode("weekly");
+  const filtered = WEEKLY_SPECIALS.filter((special) => {
+    const haystack = (`${special.name} ${special.dayLabel} ${special.description} ${special.training}`).toLowerCase();
     return special.active && (!query || haystack.includes(query));
   });
-
   const todaySpecial = getTodayWeeklySpecial();
+  const updatedLabel = formatWeeklyUpdatedLabel(weeklyBoard.updatedAt);
+  const metaLine = updatedLabel
+    ? `Last updated ${updatedLabel}${weeklyBoard.updatedByName ? ` · ${weeklyBoard.updatedByName}` : ""}`
+    : "Not updated yet this cycle";
+
+  const header = typeof renderEditablePageHeader === "function"
+    ? renderEditablePageHeader({
+        title: "Weekly Specials",
+        subtitle: "Monday lunch, Taco Tuesday, and Wednesday dinner — plus this week’s floor notes.",
+        canEdit: weeklySpecialsCanEdit,
+        view: "weekly"
+      })
+    : `<div class="coffee-intro"><h2>Weekly Specials</h2></div>`;
+
+  const reviewBanner = weeklySpecialsCanEdit && weeklyBoard.needsReview
+    ? (typeof renderPageEditBanner === "function"
+      ? renderPageEditBanner("Weekend specials need review — update food, latte, and matcha details on Friday.")
+      : `<div class="page-edit-banner">Weekly specials need review.</div>`)
+    : "";
 
   content.innerHTML = categoryTabs + `
-    <div class="coffee-intro">
-      <h2>Weekly Specials</h2>
-      <p>Monday lunch, Taco Tuesday, and Wednesday dinner change every week. Today's special is highlighted — tap to review the current dish before your shift.</p>
-      ${todaySpecial ? `<p style="margin-top:10px;font-size:14px;color:var(--green-text);font-weight:600;">Today is ${escapeHTML(todaySpecial.dayLabel)} — tap today's special to review before your shift.</p>` : ""}
-    </div>
-    ${filtered.length ? `<div class="list coffee-list" style="padding-top:0;">${filtered.map(special => {
-      const isToday = special.day === todayKey;
-      return `
-        <div class="card coffee-card${isToday ? "" : ""}" onclick="openWeeklySpecialTraining('${escapeForAttribute(special.id)}')" style="${isToday ? "border-color:var(--accent);box-shadow:0 0 0 1px rgba(166,124,82,0.25);" : ""}">
-          <div class="card-top">
-            <div>
-              <p class="name">${escapeHTML(special.name)}</p>
-              <p class="desc">${escapeHTML(special.dayLabel)} ${escapeHTML(special.meal)} · ${escapeHTML(special.schedule)}</p>
-            </div>
-            ${isToday ? `<span class="coffee-tag">Today</span>` : `<span class="coffee-tag">${escapeHTML(special.dayLabel)}</span>`}
-          </div>
-          <p class="desc" style="margin-top:10px;">${escapeHTML(special.description)}</p>
-          ${renderDietTags(special)}
-          <div class="details-hint">Tap to learn this week's special</div>
-        </div>
-      `;
-    }).join("")}</div>` : `<div class="status"><strong>No weekly specials match.</strong>Try a different search.</div>`}
+    ${header}
+    <p class="home-section-lead">${escapeHTML(metaLine)}</p>
+    ${weeklySpecialsError ? `<p class="auth-error">${escapeHTML(weeklySpecialsError)}</p>` : ""}
+    ${reviewBanner}
+    ${editing && typeof renderPageEditBanner === "function"
+      ? renderPageEditBanner("Edit mode — update this week’s dishes and board notes, then Save.")
+      : ""}
+    ${todaySpecial && !editing
+      ? `<p class="desc" style="margin:0 0 14px;font-weight:600;color:var(--gold-dim);">Today is ${escapeHTML(todaySpecial.dayLabel)} — tap today’s special before your shift.</p>`
+      : ""}
+    ${editing ? renderWeeklyBoardEditForm() : renderWeeklyBoardNotesView()}
+    ${editing
+      ? `<div class="weekly-edit-stack">${filtered.map(renderWeeklySpecialEditCard).join("")}</div>`
+      : (filtered.length
+        ? `<div class="list coffee-list" style="padding-top:0;">${filtered.map((special) => {
+            const isToday = special.day === todayKey;
+            return `
+              <div class="card coffee-card" onclick="openWeeklySpecialTraining('${escapeForAttribute(special.id)}')" style="${isToday ? "border-color:var(--accent);box-shadow:0 0 0 1px rgba(166,124,82,0.25);" : ""}">
+                <div class="card-top">
+                  <div>
+                    <p class="name">${escapeHTML(special.name)}</p>
+                    <p class="desc">${escapeHTML(special.dayLabel)} ${escapeHTML(special.meal)} · ${escapeHTML(special.schedule)}</p>
+                  </div>
+                  ${isToday ? `<span class="coffee-tag">Today</span>` : `<span class="coffee-tag">${escapeHTML(special.dayLabel)}</span>`}
+                </div>
+                <p class="desc" style="margin-top:10px;">${escapeHTML(special.description)}</p>
+                ${renderDietTags(special)}
+              </div>
+            `;
+          }).join("")}</div>`
+        : `<div class="status"><strong>No weekly specials match.</strong> Try a different search.</div>`)}
   `;
+}
+
+async function renderWeeklySpecials(content, categoryTabs, query) {
+  content.innerHTML = categoryTabs + `<div class="status"><strong>Loading weekly specials…</strong></div>`;
+  await ensureWeeklySpecials();
+  if (typeof contentType === "function" && contentType() !== "food") return;
+  if (foodCategory !== "weekly") return;
+  renderWeeklySpecialsPaint(content, categoryTabs, query);
+  queueMicrotask(() => maybePromptWeeklySpecial());
+}
+
+async function saveWeeklySpecial(specialId) {
+  if (!canManageWeeklySpecials()) return;
+  const errorEl = document.getElementById(`weeklyError-${specialId}`);
+  if (errorEl) errorEl.textContent = "";
+  try {
+    const payload = {
+      name: document.getElementById(`weeklyName-${specialId}`)?.value.trim(),
+      price: document.getElementById(`weeklyPrice-${specialId}`)?.value.trim(),
+      schedule: document.getElementById(`weeklySchedule-${specialId}`)?.value.trim(),
+      description: document.getElementById(`weeklyDesc-${specialId}`)?.value.trim(),
+      build: document.getElementById(`weeklyBuild-${specialId}`)?.value.trim(),
+      training: document.getElementById(`weeklyTraining-${specialId}`)?.value.trim(),
+      notes: document.getElementById(`weeklyNotes-${specialId}`)?.value.trim(),
+      glutenFree: dietValueFromSelect(`weeklyGf-${specialId}`),
+      dairy: dietValueFromSelect(`weeklyDairy-${specialId}`),
+      nuts: dietValueFromSelect(`weeklyNuts-${specialId}`),
+      contentWeekStart: document.getElementById("weeklyContentWeekStart")?.value || weeklyBoard.expectedContentWeekStart
+    };
+    const data = await apiFetch(`/api/weekly-specials/${encodeURIComponent(specialId)}`, {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    });
+    await ensureWeeklySpecials({ force: true });
+    if (data.board) weeklyBoard = { ...weeklyBoard, ...data.board };
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not save special.";
+    else alert(err.message || "Could not save special.");
+  }
+}
+
+async function saveWeeklyBoard() {
+  if (!canManageWeeklySpecials()) return;
+  const errorEl = document.getElementById("weeklyBoardError");
+  if (errorEl) errorEl.textContent = "";
+  try {
+    const payload = {
+      chefNotes: document.getElementById("weeklyChefNotes")?.value || "",
+      menuChanges: document.getElementById("weeklyMenuChanges")?.value || "",
+      eightySixNotes: document.getElementById("weeklyEightySix")?.value || "",
+      waitNotes: document.getElementById("weeklyWaitNotes")?.value || "",
+      limitedItems: document.getElementById("weeklyLimited")?.value || "",
+      serviceNotes: document.getElementById("weeklyServiceNotes")?.value || "",
+      allergenNotes: document.getElementById("weeklyAllergenNotes")?.value || "",
+      contentWeekStart: document.getElementById("weeklyContentWeekStart")?.value || "",
+      deadlineHour: Number(document.getElementById("weeklyDeadlineHour")?.value),
+      deadlineDow: 5
+    };
+    await apiFetch("/api/weekly-specials/board", {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    });
+    await ensureWeeklySpecials({ force: true });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not save board notes.";
+    else alert(err.message || "Could not save board notes.");
+  }
 }
 
 function formatMerchPrice(item) {
@@ -9014,11 +11571,13 @@ async function deleteMerchItemHard(itemId) {
 }
 
 function openMerchCreate() {
+  if (typeof setPageEditMode === "function") setPageEditMode("merch", true, { skipRender: true });
   merchEditId = "new";
   render();
 }
 
 function openMerchEdit(itemId) {
+  if (typeof setPageEditMode === "function") setPageEditMode("merch", true, { skipRender: true });
   merchEditId = itemId;
   render();
 }
@@ -9286,6 +11845,7 @@ function renderMerchEditForm(item) {
 
 function renderMerchAdminIdeaForm() {
   if (!isMerchManager()) return "";
+  if (typeof isPageEditMode === "function" && !isPageEditMode("merch")) return "";
   return `
     <div class="merch-admin-panel" id="merchIdeaForm">
       <h3>Post a new merch idea</h3>
@@ -9326,12 +11886,13 @@ function filteredMerchItems(query) {
 
 function renderMerchInventoryTable(query) {
   const filtered = filteredMerchItems(query);
+  const editingMerch = isMerchManager() && typeof isPageEditMode === "function" && isPageEditMode("merch");
 
   if (!filtered.length) {
-    return `<div class="status"><strong>No merch products match.</strong>${isMerchManager() ? " Add a product or change the status filter." : " Check back soon."}</div>`;
+    return `<div class="status"><strong>No merch products match.</strong>${editingMerch ? " Add a product or change the status filter." : " Check back soon."}</div>`;
   }
 
-  if (!isMerchManager()) {
+  if (!editingMerch) {
     return `<div class="merch-grid">${filtered.map(item => `
       <div class="merch-card">
         ${item.image_url
@@ -9366,7 +11927,7 @@ function renderMerchInventoryTable(query) {
             <button type="button" class="${merchStatusFilter === value ? "active" : ""}" onclick="setMerchStatusFilter('${value}')">${value === "all" ? "All" : merchStatusLabel(value)}</button>
           `).join("")}
         </div>
-        <button class="game-next" type="button" onclick="openMerchCreate()">Add product</button>
+        <button class="btn btn-primary" type="button" onclick="openMerchCreate()">Add product</button>
       </div>
       ${renderMerchAdminStockForm()}
       ${typeof merchEditId === "number" ? (() => {
@@ -9443,7 +12004,7 @@ function renderMerchIdeaCards(query) {
           </button>
           <span class="vote-count">${idea.vote_count} vote${idea.vote_count === 1 ? "" : "s"}</span>
         </div>
-        ${isMerchManager() ? `<button class="auth-btn" style="margin-top:10px;width:100%;" type="button" onclick="archiveMerchIdea(${idea.id})">Remove idea</button>` : ""}
+        ${isMerchManager() && typeof isPageEditMode === "function" && isPageEditMode("merch") ? `<button class="auth-btn" style="margin-top:10px;width:100%;" type="button" onclick="archiveMerchIdea(${idea.id})">Remove idea</button>` : ""}
       </div>
     </div>
   `).join("")}</div>`;
@@ -9495,26 +12056,47 @@ async function renderMerch(content) {
 
   if (merchSection === "stock") {
     content.innerHTML = `
-      ${renderMerchSubtabs()}
-      ${renderMerchShopBanner()}
-      <div class="coffee-intro">
+      ${typeof renderEditablePageHeader === "function"
+        ? renderEditablePageHeader({
+            title: "Merch inventory",
+            subtitle: isMerchManager()
+              ? (isPageEditMode("merch")
+                ? "Edit mode — add products, update stock, and manage status."
+                : "What we carry in the taproom — turn on Edit to manage inventory.")
+              : "What we carry in the taproom — photos, prices, and sizes.",
+            canEdit: isMerchManager(),
+            view: "merch"
+          })
+        : `<div class="coffee-intro">
         <h2>Merch inventory</h2>
         <p>${isMerchManager()
           ? "Full product CRUD for taproom and online-store fields — SKU, pricing, shipping, status, and size inventory."
           : "What we carry in the taproom — photos, prices, and sizes."}</p>
-      </div>
+      </div>`}
+      ${renderMerchSubtabs()}
+      ${renderMerchShopBanner()}
+      ${isMerchManager() && isPageEditMode("merch") && typeof renderPageEditBanner === "function"
+        ? renderPageEditBanner("Edit mode — product forms and row actions are unlocked.")
+        : ""}
       ${renderMerchInventoryTable(query)}
     `;
     return;
   }
 
   content.innerHTML = `
-    ${renderMerchSubtabs()}
-    ${renderMerchShopBanner()}
-    <div class="coffee-intro">
+    ${typeof renderEditablePageHeader === "function"
+      ? renderEditablePageHeader({
+          title: "Up & Coming",
+          subtitle: "New merch concepts from the team — log in to vote for your favorites.",
+          canEdit: isMerchManager(),
+          view: "merch"
+        })
+      : `<div class="coffee-intro">
       <h2>Up & Coming</h2>
       <p>New merch concepts from the team — log in to vote for your favorites.</p>
-    </div>
+    </div>`}
+    ${renderMerchSubtabs()}
+    ${renderMerchShopBanner()}
     ${renderMerchAdminIdeaForm()}
     ${renderMerchIdeaCards(query)}
   `;
@@ -9746,9 +12328,9 @@ function renderOpsOrderView() {
 
   return `
     <div class="ops-inv-actions" style="max-width:1200px;margin:0 auto 16px;padding:0 24px;">
-      ${isInventoryManager() ? `<button type="button" class="game-next" onclick="submitOpsOrder()">Submit e-order</button>` : `<div class="status" style="margin:0;"><strong>Order preview</strong>Inventory admins can submit orders.</div>`}
+      ${isInventoryManager() ? `<button type="button" class="game-next" onclick="submitOpsOrder()">Submit e-order</button>` : `<div class="status" style="margin:0;"><strong>Order preview</strong> Inventory admins can submit orders.</div>`}
     </div>
-    ${blocks || `<div class="status"><strong>Nothing to order.</strong>Everything is at par.</div>`}
+    ${blocks || `<div class="status"><strong>Nothing to order.</strong> Everything is at par.</div>`}
   `;
 }
 
@@ -9912,6 +12494,7 @@ async function importSopFileIntoBody() {
 
 function renderSopAdminForm() {
   if (!isAdmin()) return "";
+  if (typeof isPageEditMode === "function" && !isPageEditMode("sops")) return "";
   const editing = sopEditId ? sopDocuments.find(doc => doc.id === sopEditId) : null;
   const categoryOptions = SOP_CATEGORIES.map(category => `
     <option value="${escapeForAttribute(category)}"${editing?.category === category ? " selected" : ""}>${escapeHTML(category)}</option>
@@ -9976,7 +12559,7 @@ function renderSopCards(query) {
   if (!filtered.length) {
     return `
       <div class="inventory-filter-row">${categoryButtons}</div>
-      <div class="status"><strong>No SOPs match.</strong>${isAdmin() ? " Upload one using the form above." : " Check back soon or ask a manager."}</div>
+      <div class="status"><strong>No SOPs match.</strong>${isAdmin() && typeof isPageEditMode === "function" && isPageEditMode("sops") ? " Upload one using the form above." : " Check back soon or ask a manager."}</div>
     `;
   }
 
@@ -9988,15 +12571,15 @@ function renderSopCards(query) {
           <div class="card-top">
             <div>
               <p class="name">${escapeHTML(doc.title)}</p>
-              <p class="desc">${escapeHTML(doc.summary || "Tap to read the full procedure.")}</p>
+              <p class="desc">${escapeHTML(doc.summary || "")}</p>
             </div>
             <span class="coffee-tag">${escapeHTML(doc.category)}</span>
           </div>
-          <div class="details-hint">${doc.attachment_name ? "Includes attachment · " : ""}Tap to read</div>
-          ${isAdmin() ? `
+          ${doc.attachment_name ? `<div class="details-hint">Attachment included</div>` : ""}
+          ${isAdmin() && typeof isPageEditMode === "function" && isPageEditMode("sops") ? `
             <div style="display:flex;gap:8px;margin-top:12px;" onclick="event.stopPropagation()">
-              <button class="auth-btn" type="button" onclick="editSopDocument(${doc.id})">Edit</button>
-              <button class="auth-btn" type="button" onclick="deleteSopDocument(${doc.id})">Remove</button>
+              <button class="btn btn-secondary btn-sm" type="button" onclick="editSopDocument(${doc.id})">Edit</button>
+              <button class="btn btn-danger btn-sm" type="button" onclick="deleteSopDocument(${doc.id})">Remove</button>
             </div>
           ` : ""}
         </div>
@@ -10026,6 +12609,7 @@ function openSopDocument(id) {
 }
 
 function editSopDocument(id) {
+  if (typeof setPageEditMode === "function") setPageEditMode("sops", true, { skipRender: true });
   sopEditId = id;
   render();
   document.getElementById("sopAdminForm")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -10218,7 +12802,7 @@ async function renderChecklists(content) {
       <div class="checklist-page">
         <div class="coffee-intro" style="padding-top:0;">
           <h2>Checklists</h2>
-          <p>Opening, closing, cut, events, and weekly detail lists from the floor. Check off tasks for today's shift.</p>
+          <p>Opening, closing, cut, events, and weekly detail lists from the floor. Check off tasks for today’s shift.</p>
         </div>
         <div class="shift-date-picker" style="margin-bottom:16px;">
           <label for="checklistDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Date</label>
@@ -10323,11 +12907,20 @@ async function renderSops(content) {
   }
 
   content.innerHTML = `
-    <div class="coffee-intro">
+    ${typeof renderEditablePageHeader === "function"
+      ? renderEditablePageHeader({
+          title: "Standard Operating Procedures",
+          subtitle: "Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Drink recipes live under Recipes; seasonal latte builds are on Coffee.",
+          canEdit: isAdmin(),
+          view: "sops"
+        })
+      : `<div class="coffee-intro">
       <h2>Standard Operating Procedures</h2>
-      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place. Search here to find procedures quickly. Drink recipes (lemonade, hibiscus lemonade, Italian cream soda, Michelada, Desert Rose, Cappelletti Spritz, Spaghett, Mimosa, Mich. Mix) live under <strong>Recipes</strong>; seasonal latte builds are on the Coffee tab.</p>
-      ${isAdmin() ? `<p style="margin-top:8px;font-size:14px;color:var(--green-text);font-weight:600;">Admin view — upload and edit procedures below.</p>` : ""}
-    </div>
+      <p>Opening, closing, bar, recipes, kitchen, and floor procedures in one place.</p>
+    </div>`}
+    ${isAdmin() && typeof isPageEditMode === "function" && isPageEditMode("sops") && typeof renderPageEditBanner === "function"
+      ? renderPageEditBanner("Edit mode — upload or update procedures below.")
+      : ""}
     ${renderSopAdminForm()}
     <div id="sopPhotoGallery" class="coffee-intro" style="margin-top:8px;"><p>Loading photo standards…</p></div>
     ${renderSopCards(query)}
@@ -10474,7 +13067,7 @@ function renderReviewCards(reviews, sources, query) {
         </div>
         <p class="review-text">${escapeHTML(review.text)}</p>
       </div>
-    `).join("")}</div>` : `<div class="status"><strong>No reviews match.</strong>Try another platform or search term.</div>`}
+    `).join("")}</div>` : `<div class="status"><strong>No reviews match.</strong> Try another platform or search term.</div>`}
   `;
 }
 
@@ -10520,7 +13113,7 @@ function updateSearchPlaceholder() {
     menu: "Search beans or menu drinks",
     roaster: "Search Viewfinder beans",
     manual: "Search coffee manual topics",
-    seasonal: "Search seasonal lattes"
+    seasonal: "Search seasonal drinks"
   };
   const barPlaceholders = {
     all: "Search wine, cocktails, or NA drinks",
@@ -10554,7 +13147,7 @@ function renderCoffeeSectionTabs() {
       <button class="coffee-subtab${coffeeSection === "menu" ? " active" : ""}" onclick="coffeeSection='menu'; render();">Menu</button>
       <button class="coffee-subtab${coffeeSection === "roaster" ? " active" : ""}" onclick="coffeeSection='roaster'; render();">Viewfinder Roaster</button>
       <button class="coffee-subtab${coffeeSection === "manual" ? " active" : ""}" onclick="coffeeSection='manual'; coffeeMode='guide'; render();">Training Manual</button>
-      <button class="coffee-subtab${coffeeSection === "seasonal" ? " active" : ""}" onclick="coffeeSection='seasonal'; render();">Seasonal Lattes</button>
+      <button class="coffee-subtab${coffeeSection === "seasonal" ? " active" : ""}" onclick="coffeeSection='seasonal'; render();">Seasonal Drinks</button>
     </div>
   `;
 }
@@ -10646,7 +13239,7 @@ function renderViewfinderRoaster(content, sectionTabs, query) {
         `).join("")}
       </div>
     ` : ""}
-    ${!current.length && !catalog.length ? `<div class="status"><strong>No roaster info matches.</strong>Try a different search.</div>` : ""}
+    ${!current.length && !catalog.length ? `<div class="status"><strong>No roaster info matches.</strong> Try a different search.</div>` : ""}
   `;
 }
 
@@ -10660,13 +13253,19 @@ function renderCoffeeMenu(content, sectionTabs, query) {
     const haystack = (item.group + " " + item.name + " " + item.price + " " + item.description).toLowerCase();
     return !query || haystack.includes(query);
   });
+  const flavorGroups = COFFEE_FLAVOR_OPTIONS
+    .map((group) => ({
+      ...group,
+      flavors: group.flavors.filter((flavor) => !query || `${group.group} ${flavor}`.toLowerCase().includes(query))
+    }))
+    .filter((group) => group.flavors.length);
 
   const drinkGroups = [];
   drinks.forEach(item => {
     if (!drinkGroups.includes(item.group)) drinkGroups.push(item.group);
   });
 
-  const empty = !beans.length && !drinks.length;
+  const empty = !beans.length && !drinks.length && !flavorGroups.length;
 
   content.innerHTML = sectionTabs + `
     <div class="coffee-intro">
@@ -10686,7 +13285,20 @@ function renderCoffeeMenu(content, sectionTabs, query) {
         </div>
       `).join("")}
     </div>
-    ${empty ? `<div class="status"><strong>No menu items match.</strong>Try a different search.</div>` : ""}
+    ${flavorGroups.length ? `
+      <div class="coffee-list coffee-flavor-list" style="padding-top:0;">
+        <p class="coffee-section-num">Flavorings</p>
+        <div class="coffee-flavor-board">
+          ${flavorGroups.map((group) => `
+            <div class="coffee-flavor-group">
+              <strong>${escapeHTML(group.group)}</strong>
+              <div>${group.flavors.map((flavor) => `<span>${escapeHTML(flavor)}</span>`).join("")}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    ` : ""}
+    ${empty ? `<div class="status"><strong>No menu items match.</strong> Try a different search.</div>` : ""}
     ${beans.length ? `
       <div class="coffee-list" style="padding-top:0;">
         <p class="coffee-section-num">On bar</p>
@@ -10781,39 +13393,111 @@ function renderBarMenu(content) {
           `).join("")}
         </div>
       `;
-    }).join("") : `<div class="status"><strong>No drinks match.</strong>Try a different search or section.</div>`}
+    }).join("") : `<div class="status"><strong>No drinks match.</strong> Try a different search or section.</div>`}
   `;
 }
 
-function renderCoffeeSeasonal(content, sectionTabs, query) {
-  const lattes = SEASONAL_LATTES.filter(item => {
+function renderCoffeeSpecialEditCard(item) {
+  const id = escapeForAttribute(item.id);
+  return `
+    <div class="merch-admin-panel weekly-special-edit" id="coffeeSpecialEdit-${id}">
+      <div class="card-top">
+        <h3>${escapeHTML(item.kind === "matcha" ? "Seasonal matcha" : "Seasonal latte")}</h3>
+        <span class="coffee-tag">${item.available ? "Available now" : "Coming soon"}</span>
+      </div>
+      <label for="coffeeSpecialKind-${id}">Drink type</label>
+      <select id="coffeeSpecialKind-${id}">
+        <option value="latte"${item.kind === "latte" ? " selected" : ""}>Latte</option>
+        <option value="matcha"${item.kind === "matcha" ? " selected" : ""}>Matcha</option>
+      </select>
+      <label for="coffeeSpecialName-${id}">Drink name</label>
+      <input id="coffeeSpecialName-${id}" type="text" value="${escapeForAttribute(item.name || "")}">
+      <label for="coffeeSpecialPrice-${id}">Price</label>
+      <input id="coffeeSpecialPrice-${id}" type="text" value="${escapeForAttribute(item.price || "")}">
+      <label for="coffeeSpecialDescription-${id}">Guest description</label>
+      <textarea id="coffeeSpecialDescription-${id}" rows="3">${escapeHTML(item.description || "")}</textarea>
+      <label for="coffeeSpecialBuild-${id}">Build / recipe</label>
+      <textarea id="coffeeSpecialBuild-${id}" rows="3">${escapeHTML(item.build || "")}</textarea>
+      <label for="coffeeSpecialTraining-${id}">Staff talking points</label>
+      <textarea id="coffeeSpecialTraining-${id}" rows="2">${escapeHTML(item.training || "")}</textarea>
+      <div class="merch-check-row">
+        <label><input id="coffeeSpecialAvailable-${id}" type="checkbox"${item.available ? " checked" : ""}> Available now</label>
+        <label><input id="coffeeSpecialNew-${id}" type="checkbox"${item.isNew ? " checked" : ""}> Mark as new</label>
+      </div>
+      <p id="coffeeSpecialError-${id}" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="saveCoffeeSpecial('${id}')">Save ${item.kind === "matcha" ? "matcha" : "latte"}</button>
+      </div>
+    </div>
+  `;
+}
+
+async function renderCoffeeSeasonal(content, sectionTabs, query) {
+  if (!weeklySpecialsLoaded) {
+    content.innerHTML = sectionTabs + `<div class="status"><strong>Loading seasonal drinks…</strong></div>`;
+    await ensureWeeklySpecials();
+    if (contentType() !== "coffee" || coffeeSection !== "seasonal") return;
+    query = document.getElementById("search").value.toLowerCase().trim();
+  }
+  const drinks = COFFEE_SPECIALS.filter(item => {
     const haystack = (item.name + " " + item.season + " " + item.description + " " + item.build).toLowerCase();
     return !query || haystack.includes(query);
   });
+  const editing = weeklySpecialsCanEdit && isPageEditMode("coffee-seasonal");
+  const header = renderEditablePageHeader({
+    title: "Seasonal Drinks",
+    subtitle: "Current latte and matcha features, with builds and guest-facing descriptions.",
+    canEdit: weeklySpecialsCanEdit,
+    view: "coffee-seasonal"
+  });
 
   content.innerHTML = sectionTabs + `
-    <div class="coffee-intro">
-      <h2>Seasonal Lattes</h2>
-      <p>Rotating specialty lattes — recipes, builds, and guest-facing descriptions.</p>
-    </div>
-    ${lattes.length ? `<div class="list coffee-list" style="padding-top:0;">${lattes.map(item => `
+    ${header}
+    ${editing ? renderPageEditBanner("Edit the seasonal latte and matcha, then save each drink.") : ""}
+    ${editing
+      ? `<div class="weekly-edit-stack">${drinks.map(renderCoffeeSpecialEditCard).join("")}</div>`
+      : (drinks.length ? `<div class="list coffee-list" style="padding-top:0;">${drinks.map(item => `
       <div class="card coffee-card" onclick="openSeasonalLatte('${escapeForAttribute(item.name)}')">
         <div class="card-top">
           <div>
             <p class="name">${escapeHTML(item.name)}</p>
-            <p class="desc">${escapeHTML(item.season)}</p>
+            <p class="desc">${escapeHTML(item.price || "")}${item.price ? " · " : ""}${escapeHTML(item.kind === "matcha" ? "Matcha" : "Latte")}</p>
           </div>
-          <span class="coffee-tag">${item.available ? "Available now" : "Coming soon"}</span>
+          <span class="coffee-tag">${item.isNew ? "New" : (item.available ? "Available now" : "Coming soon")}</span>
         </div>
         <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
-        <div class="details-hint">Tap for full build</div>
       </div>
-    `).join("")}</div>` : `<div class="status"><strong>No seasonal lattes match.</strong>Try a different search or add drinks to the seasonal list.</div>`}
+    `).join("")}</div>` : `<div class="status"><strong>No seasonal drinks match.</strong> Try a different search.</div>`)}
   `;
 }
 
+async function saveCoffeeSpecial(id) {
+  if (!canManageWeeklySpecials()) return;
+  const errorEl = document.getElementById(`coffeeSpecialError-${id}`);
+  if (errorEl) errorEl.textContent = "";
+  try {
+    await apiFetch(`/api/coffee-specials/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        kind: document.getElementById(`coffeeSpecialKind-${id}`)?.value,
+        name: document.getElementById(`coffeeSpecialName-${id}`)?.value.trim(),
+        price: document.getElementById(`coffeeSpecialPrice-${id}`)?.value.trim(),
+        description: document.getElementById(`coffeeSpecialDescription-${id}`)?.value.trim(),
+        build: document.getElementById(`coffeeSpecialBuild-${id}`)?.value.trim(),
+        training: document.getElementById(`coffeeSpecialTraining-${id}`)?.value.trim(),
+        available: Boolean(document.getElementById(`coffeeSpecialAvailable-${id}`)?.checked),
+        isNew: Boolean(document.getElementById(`coffeeSpecialNew-${id}`)?.checked)
+      })
+    });
+    await ensureWeeklySpecials({ force: true });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not save this seasonal drink.";
+  }
+}
+
 function openSeasonalLatte(name) {
-  const item = SEASONAL_LATTES.find(entry => entry.name === name);
+  const item = COFFEE_SPECIALS.find(entry => entry.name === name);
   if (!item) return;
 
   document.getElementById("modalContent").innerHTML = `
@@ -10862,9 +13546,8 @@ function renderCoffeeGuide(content, sectionTabs, query) {
           </div>
           <span class="coffee-tag">${escapeHTML(COFFEE_CATEGORY_LABELS[section.category])}</span>
         </div>
-        <div class="details-hint">Tap to read full section</div>
       </div>
-    `).join("")}</div>` : `<div class="status"><strong>No sections match.</strong>Try a different search or category.</div>`}
+    `).join("")}</div>` : `<div class="status"><strong>No sections match.</strong> Try a different search or category.</div>`}
   `;
 }
 
@@ -10890,6 +13573,7 @@ function startCoffeeQuiz() {
     queue: shuffle(COFFEE_QUIZ).slice(0, total),
     index: 0,
     right: 0,
+    mistakes: [],
     complete: false,
     recorded: false
   };
@@ -10911,7 +13595,7 @@ function prepareCoffeeQuizQuestion() {
 
 function renderCoffeeQuizInner() {
   if (!coffeeSession) {
-    return `<div class="status" style="margin:14px;"><strong>Start the quiz</strong> using the Training Quiz tab above.</div>`;
+    return `<div class="game-card"><button class="game-next" style="margin-top:0;" onclick="startCoffeeQuiz()">Start quiz</button></div>`;
   }
   if (coffeeSession.complete) {
     const total = coffeeSession.queue.length;
@@ -10922,6 +13606,7 @@ function renderCoffeeQuizInner() {
         <p style="font-size:15px;color:#555;margin:0;">You got <strong>${coffeeSession.right}</strong> out of <strong>${total}</strong> correct (${pct}%)</p>
         <button class="game-next" onclick="startCoffeeQuiz()">Play Again</button>
       </div>
+      ${renderAnswerReview(coffeeSession)}
     `;
   }
   if (!coffeeQuizItem) prepareCoffeeQuizQuestion();
@@ -10950,6 +13635,14 @@ function answerCoffeeQuiz(answer) {
   coffeeQuizItem.answered = true;
   coffeeQuizItem.selected = answer;
   const correct = answer === coffeeQuizItem.correct;
+  if (!correct) {
+    recordWrongAnswer(
+      coffeeSession,
+      coffeeQuizItem.question,
+      answer,
+      coffeeQuizItem.correct
+    );
+  }
   setTimeout(() => {
     if (correct) coffeeSession.right++;
     coffeeSession.index++;
@@ -10980,7 +13673,7 @@ function startCoffeeFlash() {
 
 function renderCoffeeFlashInner() {
   if (!coffeeSession) {
-    return `<div class="status" style="margin:14px;"><strong>Start flashcards</strong> using the Flashcards tab above.</div>`;
+    return `<div class="game-card"><button class="game-next" style="margin-top:0;" onclick="startCoffeeFlash()">Start flashcards</button></div>`;
   }
   if (coffeeSession.complete) {
     return `
@@ -10998,7 +13691,6 @@ function renderCoffeeFlashInner() {
     <div class="flash-card" onclick="coffeeFlashFlipped = !coffeeFlashFlipped; render();">
       ${!coffeeFlashFlipped ? `
         <p style="font-size:17px;font-weight:750;margin:0 0 7px;">${escapeHTML(card.front)}</p>
-        <p style="font-size:12.5px;color:#999;">Tap to reveal answer</p>
       ` : `
         <p style="font-size:14px;color:#555;line-height:1.6;margin:0;">${escapeHTML(card.back)}</p>
       `}
@@ -11042,6 +13734,7 @@ function startGame(id) {
       queue: shuffle([...pack]),
       index: 0,
       right: 0,
+      mistakes: [],
       complete: false,
       recorded: false,
       feedback: null
@@ -11150,6 +13843,7 @@ function beginRound(id, filterFn) {
     queue: shuffle(pool).slice(0, total),
     index: 0,
     right: 0,
+    mistakes: [],
     complete: false,
     recorded: false,
     streak: 0,
@@ -11224,6 +13918,39 @@ function sessionProgressLabel() {
   return `Question ${gameSession.index + 1} of ${gameSession.queue.length} · Score: ${gameSession.right} / ${gameSession.index}`;
 }
 
+function recordWrongAnswer(session, question, selected, correct, explanation = "") {
+  if (!session || !question || correct == null) return;
+  if (!Array.isArray(session.mistakes)) session.mistakes = [];
+  session.mistakes.push({
+    question: String(question),
+    selected: selected == null || selected === "" ? "No answer" : String(selected),
+    correct: String(correct),
+    explanation: explanation ? String(explanation) : ""
+  });
+}
+
+function renderAnswerReview(session) {
+  const mistakes = Array.isArray(session?.mistakes) ? session.mistakes : [];
+  if (!mistakes.length) {
+    return `<div class="answer-review"><div class="answer-review-item" style="border-left-color:#3f6b4a;"><p class="answer-review-question" style="margin:0;">Nothing to review — you got every answer right.</p></div></div>`;
+  }
+  return `
+    <section class="answer-review" aria-label="Answer review">
+      <h3>Review these answers</h3>
+      <div class="answer-review-list">
+        ${mistakes.map((item) => `
+          <article class="answer-review-item">
+            <p class="answer-review-question">${escapeHTML(item.question)}</p>
+            <p class="answer-review-row"><strong>Your answer:</strong> ${escapeHTML(item.selected)}</p>
+            <p class="answer-review-row answer-review-correct"><strong>Correct answer:</strong> ${escapeHTML(item.correct)}</p>
+            ${item.explanation ? `<p class="answer-review-note">${escapeHTML(item.explanation)}</p>` : ""}
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderRoundComplete(title) {
   const total = gameSession.queue.length;
   const attempted = Math.min(gameSession.index, total) || total;
@@ -11234,10 +13961,11 @@ function renderRoundComplete(title) {
   return `
     <div class="game-card">
       <p class="game-question" style="font-size:20px;font-weight:750;">${title}</p>
-      <p style="font-size:15px;color:var(--muted);margin:0;">You got <strong style="color:var(--gold-dim)">${gameSession.right}</strong> out of <strong style="color:#181818">${attempted}</strong> correct (${pct}%)</p>
+      <p style="font-size:15px;color:var(--muted);margin:0;">You got <strong style="color:var(--gold-dim)">${gameSession.right}</strong> out of <strong style="color:var(--ink)">${attempted}</strong> correct (${pct}%)</p>
       ${rocketStats}
       <button class="game-next" onclick="startGame('${activeGame}')">Play Again</button>
     </div>
+    ${renderAnswerReview(gameSession)}
     <div class="game-score">${sessionProgressLabel()}</div>
   `;
 }
@@ -11664,7 +14392,7 @@ function launchPadShipSvg() {
 
 function renderRocketRound(content) {
   if (!gameSession) {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Launch Pad.</strong>Add flavor, guidance, tap, ABV, or style info for at least four on-tap beers.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Launch Pad.</strong> Add flavor, guidance, tap, ABV, or style info for at least four on-tap beers.</div>');
     return;
   }
 
@@ -12086,6 +14814,12 @@ function resolveGalagaHit(enemy) {
     const correctOpt = rocketItem.options.find((o) => o.isCorrect);
     rocketItem.resultText = gameSession.lives <= 0 ? "DEPLETED" : "CONTAMINATED";
     rocketItem.debrief = correctOpt ? correctOpt.label : "";
+    recordWrongAnswer(
+      gameSession,
+      rocketItem.prompt,
+      enemy.option.label,
+      rocketItem.debrief || "Correct target"
+    );
     const cabinet = document.getElementById("galagaCabinet");
     if (cabinet) {
       cabinet.classList.remove("shake");
@@ -12239,9 +14973,7 @@ function renderGameHub(content) {
         ${renderBadgeGrid(earnedBadges, true)}
       </div>
     `
-    : currentUser
-      ? `<div class="game-badges-strip"><h3>Your badges</h3><p>Check in beers on the On Tap tab and complete training games to unlock achievements.</p></div>`
-      : "";
+    : "";
 
   content.innerHTML = `
     <div class="coffee-intro launchpad-intro">
@@ -12314,8 +15046,9 @@ function renderScenarioGame(content) {
   const item = gameSession.queue[gameSession.index];
   const fb = gameSession.feedback;
   content.innerHTML = wrapGame(`
-    <div class="game-card">
+    <div class="game-card scenario-card">
       <p style="margin:0 0 8px;font-size:13px;color:var(--muted);">Scenario ${gameSession.index + 1} of ${gameSession.queue.length}${item.level ? ` · Level ${item.level}` : ""}</p>
+      <p class="scenario-eyebrow">What would you do?</p>
       <p class="game-question">${escapeHTML(item.prompt)}</p>
       <div class="game-options">
         ${item.options.map((opt, idx) => {
@@ -12328,7 +15061,7 @@ function renderScenarioGame(content) {
           return `<button class="${cls}" ${fb ? "disabled" : `onclick="answerScenario(${idx})"`}>${escapeHTML(opt.text)}</button>`;
         }).join("")}
       </div>
-      ${fb ? `<p style="margin-top:14px;font-size:14px;">${escapeHTML(fb.tip)}</p>
+      ${fb ? `<p class="scenario-feedback">${escapeHTML(fb.tip)}</p>
         <button class="game-next" style="margin-top:12px;" onclick="nextScenario()">Next</button>` : ""}
     </div>
   `);
@@ -12339,7 +15072,12 @@ function answerScenario(idx) {
   const item = gameSession.queue[gameSession.index];
   const opt = item.options[idx];
   if (opt.good) gameSession.right += 1;
-  gameSession.feedback = { idx, tip: opt.tip || (opt.good ? "Solid." : "Not the MP preferred path.") };
+  const tip = opt.tip || (opt.good ? "Solid." : "Not the MP preferred path.");
+  if (!opt.good) {
+    const preferred = item.options.find((entry) => entry.good);
+    recordWrongAnswer(gameSession, item.prompt, opt.text, preferred?.text || "Use the preferred MP response.", tip);
+  }
+  gameSession.feedback = { idx, tip };
   render();
 }
 
@@ -12609,6 +15347,296 @@ function getOnTapBeersSorted() {
     .sort((a, b) => Number(getTapNumber(a) || 999) - Number(getTapNumber(b) || 999));
 }
 
+const PRINT_CATEGORY_ORDER = ["CORE", "LIMITED", "HOPPY", "BOLDER", "OTHER / NITRO"];
+let tapDisplayMeta = {};
+let tapDisplayMetaLoaded = false;
+let tapDisplayMetaLoading = false;
+let ontapPrintMode = "draft";
+
+function inferPrintCategory(beer) {
+  const hay = `${getStyle(beer)} ${col(beer, "Name")}`.toLowerCase();
+  if (/nitro|\bn2\b/.test(hay)) return "OTHER / NITRO";
+  if (/imperial|double ipa|triple|barleywine|barrel|old ale|strong ale/.test(hay)) return "BOLDER";
+  if (/hazy|ipa|pale ale|pils|pilsner|\bhop/.test(hay)) return "HOPPY";
+  if (/sour|fruit|saison|farmhouse|gose|berliner|limited|seasonal|collab/.test(hay)) return "LIMITED";
+  if (/stout|porter|schwarzbier/.test(hay)) return "OTHER / NITRO";
+  return "CORE";
+}
+
+function beerProductId(beer) {
+  return String(beer?.nucleus_product_id || "").trim();
+}
+
+async function ensureTapDisplayMeta({ force = false } = {}) {
+  if (tapDisplayMetaLoaded && !force) return tapDisplayMeta;
+  if (tapDisplayMetaLoading) return tapDisplayMeta;
+  tapDisplayMetaLoading = true;
+  try {
+    const data = await apiFetch("/api/tap-display-meta");
+    tapDisplayMeta = data.meta || {};
+    tapDisplayMetaLoaded = true;
+  } catch (err) {
+    console.warn("Tap display meta unavailable:", err.message);
+    if (!tapDisplayMetaLoaded) tapDisplayMeta = {};
+  } finally {
+    tapDisplayMetaLoading = false;
+  }
+  return tapDisplayMeta;
+}
+
+function getPourSize(beer) {
+  const id = beerProductId(beer);
+  const saved = id && tapDisplayMeta[id]?.pourSize;
+  return saved || "12/16 oz";
+}
+
+function getPrintCategory(beer) {
+  const id = beerProductId(beer);
+  const saved = id && tapDisplayMeta[id]?.printCategory;
+  return saved || inferPrintCategory(beer);
+}
+
+function shortFlavor(beer) {
+  const flavor = getFlavorProfile(beer) || getDescription(beer);
+  if (!flavor) return "";
+  return flavor.length > 110 ? `${flavor.slice(0, 107)}…` : flavor;
+}
+
+function renderOnTapMetaEditor(beer) {
+  const id = beerProductId(beer);
+  if (!id || !canEditTapsUi() || !isPageEditMode("ontap")) return "";
+  const pour = escapeForAttribute(getPourSize(beer));
+  const cat = getPrintCategory(beer);
+  return `
+    <div class="ontap-meta-edit" onclick="event.stopPropagation()">
+      <div>
+        <label for="pour-${escapeForAttribute(id)}">Pour size</label>
+        <input id="pour-${escapeForAttribute(id)}" type="text" value="${pour}" placeholder="12/16 oz">
+      </div>
+      <div>
+        <label for="cat-${escapeForAttribute(id)}">Print category</label>
+        <select id="cat-${escapeForAttribute(id)}">
+          ${PRINT_CATEGORY_ORDER.map((c) => `
+            <option value="${escapeForAttribute(c)}"${c === cat ? " selected" : ""}>${escapeHTML(c)}</option>
+          `).join("")}
+        </select>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" style="grid-column:1/-1;" onclick="saveTapDisplayMeta('${escapeForAttribute(id)}')">Save pour / category</button>
+    </div>
+  `;
+}
+
+async function saveTapDisplayMeta(productId) {
+  if (!canEditTapsUi() || !productId) return;
+  const pourSize = document.getElementById(`pour-${productId}`)?.value.trim() || "12/16 oz";
+  const printCategory = document.getElementById(`cat-${productId}`)?.value || "CORE";
+  try {
+    const data = await apiFetch(`/api/tap-display-meta/${encodeURIComponent(productId)}`, {
+      method: "PUT",
+      body: JSON.stringify({ pourSize, printCategory })
+    });
+    if (data.item) tapDisplayMeta[productId] = data.item;
+    else await ensureTapDisplayMeta({ force: true });
+    render();
+  } catch (err) {
+    alert(err.message || "Could not save pour size / category.");
+  }
+}
+
+function buildDraftMenuHtml(rows) {
+  const groups = new Map(PRINT_CATEGORY_ORDER.map((c) => [c, []]));
+  rows.forEach((beer) => {
+    const cat = getPrintCategory(beer);
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat).push(beer);
+  });
+  const sections = PRINT_CATEGORY_ORDER.map((cat) => {
+    const items = groups.get(cat) || [];
+    if (!items.length) return "";
+    return `
+      <div class="print-draft-cat">${escapeHTML(cat)}</div>
+      ${items.map((beer) => `
+        <div class="print-draft-item">
+          <div class="print-draft-name">${escapeHTML(col(beer, "Name"))}</div>
+          <div class="print-draft-meta">${escapeHTML([getStyle(beer), getABVText(beer), getPourSize(beer)].filter(Boolean).join(" · "))}</div>
+        </div>
+      `).join("")}
+    `;
+  }).join("");
+  return `
+    <div class="print-sheet print-draft-sheet">
+      <div class="print-draft-brand">Manhattan Project · Draft</div>
+      ${sections || `<p>No beers on tap.</p>`}
+    </div>
+  `;
+}
+
+function buildBarSheetHtml(rows) {
+  return `
+    <div class="print-sheet print-bar-sheet">
+      <h1 class="print-bar-title">Bar tap sheet · ${escapeHTML(getLocalDateKey())}</h1>
+      <table class="print-bar-table">
+        <thead>
+          <tr>
+            <th class="tap">Tap</th>
+            <th>Beer</th>
+            <th class="pour">Vol / pour</th>
+            <th class="gr">GR</th>
+            <th>Flavor</th>
+            <th>Style</th>
+            <th class="abv">ABV</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((beer) => `
+            <tr>
+              <td class="tap">${escapeHTML(getTapNumber(beer) || "—")}</td>
+              <td>${escapeHTML(col(beer, "Name"))}</td>
+              <td class="pour">${escapeHTML(getPourSize(beer))}</td>
+              <td class="gr">${isYes(beer["Gluten-Reduced"]) ? "GR" : ""}</td>
+              <td>${escapeHTML(shortFlavor(beer))}</td>
+              <td>${escapeHTML(getStyle(beer))}</td>
+              <td class="abv">${escapeHTML(getABVText(beer))}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function syncOntapPrintRoot() {
+  const root = document.getElementById("ontapPrintRoot");
+  if (!root) return;
+  const rows = getOnTapBeersSorted();
+  root.innerHTML = buildDraftMenuHtml(rows) + buildBarSheetHtml(rows);
+}
+
+function openOnTapPrintChooser() {
+  syncOntapPrintRoot();
+  const rows = getOnTapBeersSorted();
+  if (!rows.length) {
+    alert("No beers are currently on tap to print.");
+    return;
+  }
+  document.getElementById("modalContent").innerHTML = `
+    <h2 class="modal-title" id="modalTitle">Print tap sheets</h2>
+    <p class="modal-style">Same On Tap list — guest draft menu or behind-the-bar reference.</p>
+    <div class="print-chooser">
+      <button type="button" class="btn btn-primary" onclick="printOnTapSheets('draft')">Print draft menu</button>
+      <button type="button" class="btn btn-secondary" onclick="printOnTapSheets('bar')">Print bar tap sheet</button>
+      <button type="button" class="btn btn-secondary" onclick="printOnTapSheets('both')">Print both</button>
+      <button type="button" class="btn btn-subtle" onclick="downloadOnTapCsv(event)">Download CSV</button>
+    </div>
+    <div class="coffee-subtabs" style="margin-bottom:12px;">
+      <button type="button" class="coffee-subtab${ontapPrintMode === "draft" ? " active" : ""}" onclick="ontapPrintMode='draft'; openOnTapPrintChooser();">Preview draft</button>
+      <button type="button" class="coffee-subtab${ontapPrintMode === "bar" ? " active" : ""}" onclick="ontapPrintMode='bar'; openOnTapPrintChooser();">Preview bar sheet</button>
+    </div>
+    <div style="max-height:50vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;">
+      ${ontapPrintMode === "bar" ? buildBarSheetHtml(rows) : buildDraftMenuHtml(rows)}
+    </div>
+  `;
+  document.getElementById("modalBackdrop").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function printOnTapSheets(mode) {
+  syncOntapPrintRoot();
+  document.body.classList.add("printing-ontap");
+  document.body.classList.toggle("printing-draft", mode === "draft" || mode === "both");
+  document.body.classList.toggle("printing-bar", mode === "bar" || mode === "both");
+  if (mode === "both") {
+    document.body.classList.add("printing-draft", "printing-bar");
+  }
+  const cleanup = () => {
+    document.body.classList.remove("printing-ontap", "printing-draft", "printing-bar");
+    window.removeEventListener("afterprint", cleanup);
+  };
+  window.addEventListener("afterprint", cleanup);
+  window.print();
+  // Safari sometimes skips afterprint
+  setTimeout(cleanup, 1000);
+}
+
+function renderOnTapTable(rows) {
+  return `
+    <div class="ontap-table-wrap">
+      <table class="ontap-table">
+        <thead>
+          <tr>
+            <th>Tap</th>
+            <th>Beer</th>
+            <th>Style</th>
+            <th>ABV</th>
+            <th>Pour</th>
+            <th>Flavor</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((beer) => {
+            const name = col(beer, "Name");
+            const tags = [
+              isYes(beer["New Tap"]) ? `<span class="tag new">New</span>` : "",
+              isYes(beer["Gluten-Reduced"]) ? `<span class="tag gf">GR</span>` : "",
+              getBeerCheckin(name) ? `<span class="beer-tried-tag">Tried</span>` : ""
+            ].filter(Boolean).join("");
+            return `
+              <tr onclick="openBeerByName('${escapeForAttribute(name)}')">
+                <td class="tap-col">${escapeHTML(getTapNumber(beer) || "—")}</td>
+                <td class="name-col">
+                  ${escapeHTML(name)}
+                  ${tags ? `<div class="meta-tags">${tags}</div>` : ""}
+                  <div class="ontap-row-edit">${renderTapEditor(beer.nucleus_tap_id, beer.nucleus_product_id)}${renderOnTapMetaEditor(beer)}</div>
+                </td>
+                <td>${escapeHTML(getStyle(beer) || "—")}</td>
+                <td>${escapeHTML(getABVText(beer) || "—")}</td>
+                <td>${escapeHTML(getPourSize(beer))}</td>
+                <td class="flavor-col">${escapeHTML(shortFlavor(beer) || "—")}</td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderOnTapMobileCards(rows) {
+  return `
+    <div class="ontap-mobile-list list">
+      ${rows.map((beer) => {
+        const name = col(beer, "Name");
+        const flavor = shortFlavor(beer);
+        return `
+          <div class="card" onclick="openBeerByName('${escapeForAttribute(name)}')">
+            <div class="tap-layout">
+              <div class="tap-number">
+                <small>TAP</small>
+                <strong>${escapeHTML(getTapNumber(beer) || "—")}</strong>
+              </div>
+              <div>
+                <div class="card-top">
+                  <div>
+                    <p class="name">${escapeHTML(name)}</p>
+                    <p class="desc">${escapeHTML([getStyle(beer), getABVText(beer), getPourSize(beer)].filter(Boolean).join(" · "))}</p>
+                  </div>
+                </div>
+                ${flavor ? `<p class="desc" style="margin-top:8px;">${escapeHTML(flavor)}</p>` : ""}
+                <div class="tags">
+                  ${isYes(beer["New Tap"]) ? `<span class="tag new">New</span>` : ""}
+                  ${isYes(beer["Gluten-Reduced"]) ? `<span class="tag gf">Gluten-reduced</span>` : ""}
+                </div>
+                ${renderTapEditor(beer.nucleus_tap_id, beer.nucleus_product_id)}
+                ${renderOnTapMetaEditor(beer)}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
 function downloadOnTapCsv(event) {
   if (event) {
     event.preventDefault();
@@ -12669,16 +15697,6 @@ function downloadOnTapCsv(event) {
   }
 }
 
-function renderOnTapExportBar() {
-  if (!getOnTapBeersSorted().length) return "";
-  return `
-    <div class="ontap-export-bar">
-      <button type="button" class="game-next" onclick="downloadOnTapCsv(event)">Download tap list (CSV)</button>
-      <p>Opens in Excel / Sheets — tap, tasting notes, gluten-reduced, ABV, and yeast/hops. Print from there.</p>
-    </div>
-  `;
-}
-
 function renderList(content) {
   const view = contentType();
   const query = document.getElementById("search").value.toLowerCase().trim();
@@ -12689,6 +15707,12 @@ function renderList(content) {
       content.innerHTML = `<div class="status"><strong>Loading taps…</strong></div>`;
       ensureTapsState().then(() => render());
     }
+    return;
+  }
+
+  if (view === "ontap" && !tapDisplayMetaLoaded && !tapDisplayMetaLoading) {
+    content.innerHTML = `<div class="status"><strong>Loading On Tap…</strong></div>`;
+    ensureTapDisplayMeta().then(() => render());
     return;
   }
 
@@ -12722,49 +15746,76 @@ function renderList(content) {
   const adminNote = view === "ontap" && canManageTaps()
     ? (tapsState.error
       ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors unavailable.</strong> ${escapeHTML(tapsState.error)}</div>`
-      : canEditTapsUi()
-        ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors:</strong> Change what’s pouring with the dropdown on each tap, then Save. Updates Nucleus for every app.</div>
+      : canEditTapsUi() && typeof isPageEditMode === "function" && isPageEditMode("ontap")
+        ? `${typeof renderPageEditBanner === "function" ? renderPageEditBanner("Edit mode — change what’s pouring, pour size, and print category.") : ""}
            <div id="tapSaveError" class="auth-error" style="display:none;margin:0 0 12px;"></div>`
-        : `<div class="status" style="margin-bottom:12px;"><strong>Read-only taps.</strong> Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to edit what’s pouring.</div>`)
+        : canEditTapsUi()
+          ? ""
+          : `<div class="status" style="margin-bottom:12px;"><strong>Read-only taps.</strong> Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to edit what’s pouring.</div>`)
+    : "";
+
+  const pageHeader = view === "ontap" && typeof renderEditablePageHeader === "function"
+    ? renderEditablePageHeader({
+        title: "On Tap",
+        canEdit: canEditTapsUi(),
+        view: "ontap",
+        extraActionsHtml: getOnTapBeersSorted().length
+          ? `<button type="button" class="btn btn-print" onclick="openOnTapPrintChooser()">Print</button>`
+          : ""
+      })
     : "";
 
   let emptyTapCards = "";
-  if (view === "ontap" && canEditTapsUi() && !query) {
+  if (view === "ontap" && canEditTapsUi() && !query && typeof isPageEditMode === "function" && isPageEditMode("ontap")) {
     const emptyTaps = [...(tapsState.taps || [])]
       .filter((tap) => !tap.current_product_id)
       .sort((a, b) => (a.sort_order - b.sort_order) || (a.tap_number - b.tap_number));
     emptyTapCards = emptyTaps.map(renderEmptyTapCard).join("");
   }
 
-  const exportBar = view === "ontap" ? renderOnTapExportBar() : "";
-
-  if (filtered.length === 0 && !emptyTapCards) {
-    const message =
-      view === "ontap" && source.length === 0
+  if (view === "ontap") {
+    if (filtered.length === 0 && !emptyTapCards) {
+      const message = source.length === 0
         ? "No beers are currently marked as On Tap. Confirm beers are marked on tap in Nucleus."
         : "Nothing matches your search or selected filter.";
+      content.innerHTML = pageHeader + banner + adminNote + `
+        <div class="status"><strong>Nothing to show yet.</strong>${message}</div>
+      `;
+      return;
+    }
+    content.innerHTML =
+      pageHeader +
+      banner +
+      adminNote +
+      renderOnTapTable(filtered) +
+      renderOnTapMobileCards(filtered) +
+      emptyTapCards;
+    if (canEditTapsUi() && typeof isPageEditMode === "function" && isPageEditMode("ontap")) {
+      queueMicrotask(populateBeerSelects);
+    }
+    return;
+  }
 
-    content.innerHTML = banner + adminNote + `
+  if (filtered.length === 0 && !emptyTapCards) {
+    const message = "Nothing matches your search or selected filter.";
+
+    content.innerHTML = pageHeader + banner + adminNote + `
       <div class="status">
         <strong>Nothing to show yet.</strong>
         ${message}
       </div>
-    ` + exportBar;
+    `;
     return;
   }
 
   content.innerHTML =
+    pageHeader +
     banner +
     adminNote +
     '<div class="list">' +
     filtered.map(item => renderBeerCard(item)).join("") +
     emptyTapCards +
-    "</div>" +
-    exportBar;
-
-  if (view === "ontap" && canEditTapsUi()) {
-    queueMicrotask(populateBeerSelects);
-  }
+    "</div>";
 }
 
 function renderBeerCard(item) {
@@ -12798,7 +15849,6 @@ function renderBeerCard(item) {
       ${gf ? `<span class="tag gf">Gluten-reduced</span>` : ""}
     </div>
 
-    <div class="details-hint">Tap to view sheet details</div>
     ${tapEditor}
   `;
 
@@ -12909,7 +15959,7 @@ function escapeForAttribute(value) {
 
 function renderFlash(content) {
   if (!gameSession || gameSession.id !== "flash") {
-    content.innerHTML = wrapGame('<div class="status"><strong>No flashcard deck ready.</strong>Need at least one on-tap beer with flavor, style, or description in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>No flashcard deck ready.</strong> Need at least one on-tap beer with flavor, style, or description in Nucleus.</div>');
     return;
   }
 
@@ -12941,7 +15991,6 @@ function renderFlash(content) {
     <div class="flash-card" onclick="flashFlipped = !flashFlipped; render();">
       ${!flashFlipped ? `
         <p style="font-size:19px;font-weight:750;margin:0 0 7px;">${escapeHTML(col(b, "Name"))}</p>
-        <p style="font-size:12.5px;color:#999;">Tap to reveal sheet details</p>
       ` : `
         <p style="font-size:17px;font-weight:750;margin:0 0 7px;">${escapeHTML(col(b, "Name"))}</p>
         <p style="font-size:12.5px;color:#555;line-height:1.55;text-align:left;">${backLines || "No extra details in the sheet for this beer."}</p>
@@ -12959,7 +16008,7 @@ function renderFlash(content) {
 
 function renderQuiz(content) {
   if (!gameSession || gameSession.id !== "quiz") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Need at least four on-tap beers with Flavor Profile in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong> Need at least four on-tap beers with Flavor Profile in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -12982,6 +16031,14 @@ function answerQuiz(name) {
   quizItem.answered = true;
   quizItem.selected = name;
   const correct = name === quizItem.correct.Name;
+  if (!correct) {
+    recordWrongAnswer(
+      gameSession,
+      `Which beer matches “${getFlavorProfile(quizItem.correct)}”?`,
+      name,
+      quizItem.correct.Name
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
@@ -12995,7 +16052,7 @@ function answerQuiz(name) {
 // beer rather than a comparison a bartender chose ("like Guinness but sweeter").
 function renderPractice(content) {
   if (!gameSession || gameSession.id !== "practice") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong>Need at least four on-tap beers with Flavor Profile in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough data.</strong> Need at least four on-tap beers with Flavor Profile in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -13018,13 +16075,21 @@ function answerPractice(name) {
   practiceItem.answered = true;
   practiceItem.selected = name;
   const correct = name === practiceItem.correct.Name;
+  if (!correct) {
+    recordWrongAnswer(
+      gameSession,
+      `Which beer would you recommend for “${getFlavorProfile(practiceItem.correct)}”?`,
+      name,
+      practiceItem.correct.Name
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
 function renderTapMatch(content) {
   if (!gameSession || gameSession.id !== "tap") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Need on-tap data.</strong>Need at least four on-tap beers with tap numbers in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Need on-tap data.</strong> Need at least four on-tap beers with tap numbers in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -13047,13 +16112,21 @@ function answerTap(name) {
   tapItem.answered = true;
   tapItem.selected = name;
   const correct = name === tapItem.correct.Name;
+  if (!correct) {
+    recordWrongAnswer(
+      gameSession,
+      `What beer is on Tap ${getTapNumber(tapItem.correct)}?`,
+      name,
+      tapItem.correct.Name
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
 function renderABVChallenge(content) {
   if (!gameSession || gameSession.id !== "abv") {
-    content.innerHTML = wrapGame('<div class="status"><strong>ABV data needed.</strong>Need at least four on-tap beers with ABV (three different values) in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>ABV data needed.</strong> Need at least four on-tap beers with ABV (three different values) in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -13091,13 +16164,21 @@ function answerABV(value) {
   abvItem.answered = true;
   abvItem.selected = value;
   const correct = value === abvItem.correctAbv;
+  if (!correct) {
+    recordWrongAnswer(
+      gameSession,
+      `What is the ABV of ${col(abvItem.correct, "Name")}?`,
+      `${value}%`,
+      getABVText(abvItem.correct)
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
 function renderStyleMatch(content) {
   if (!gameSession || gameSession.id !== "style") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Style data needed.</strong>Need at least four on-tap beers with Style (three different styles) in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Style data needed.</strong> Need at least four on-tap beers with Style (three different styles) in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -13130,13 +16211,22 @@ function answerStyle(index) {
   styleItem.answered = true;
   styleItem.selected = index;
   const correct = styleItem.options[index].isCorrect;
+  if (!correct) {
+    const correctOption = styleItem.options.find((option) => option.isCorrect);
+    recordWrongAnswer(
+      gameSession,
+      `What style is ${col(styleItem.correct, "Name")}?`,
+      styleItem.options[index].label,
+      correctOption?.label || getStyle(styleItem.correct)
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
 function renderReverseQuiz(content) {
   if (!gameSession || gameSession.id !== "reverse") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough flavor profiles.</strong>Need at least four on-tap beers with unique Flavor Profile values in Nucleus.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough flavor profiles.</strong> Need at least four on-tap beers with unique Flavor Profile values in Nucleus.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -13173,13 +16263,22 @@ function answerReverse(index) {
   reverseItem.answered = true;
   reverseItem.selected = index;
   const correct = reverseItem.options[index].isCorrect;
+  if (!correct) {
+    const correctOption = reverseItem.options.find((option) => option.isCorrect);
+    recordWrongAnswer(
+      gameSession,
+      `Which flavor profile matches ${col(reverseItem.correct, "Name")}?`,
+      reverseItem.options[index].text,
+      correctOption?.text || getFlavorProfile(reverseItem.correct)
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
 
 function renderSpeedRound(content) {
   if (!gameSession || gameSession.id !== "speed") {
-    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong>Add flavor, tap, ABV, or style info for at least four on-tap beers.</div>');
+    content.innerHTML = wrapGame('<div class="status"><strong>Not enough on-tap data for Speed Round.</strong> Add flavor, tap, ABV, or style info for at least four on-tap beers.</div>');
     return;
   }
   if (gameSession.complete) {
@@ -13246,6 +16345,12 @@ function answerSpeedName(name) {
   speedItem.answered = true;
   speedItem.selected = name;
   const correct = name === speedItem.correct.Name;
+  if (!correct) {
+    const question = speedItem.type === "tap"
+      ? `What beer is on ${speedItem.question}?`
+      : `Which beer matches “${speedItem.question}”?`;
+    recordWrongAnswer(gameSession, question, name, speedItem.correct.Name);
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
@@ -13255,6 +16360,14 @@ function answerSpeedABV(value) {
   speedItem.answered = true;
   speedItem.selected = value;
   const correct = value === speedItem.correctAbv;
+  if (!correct) {
+    recordWrongAnswer(
+      gameSession,
+      `What is the ABV of ${col(speedItem.correct, "Name")}?`,
+      `${value}%`,
+      getABVText(speedItem.correct)
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
@@ -13264,6 +16377,15 @@ function answerSpeedStyle(index) {
   speedItem.answered = true;
   speedItem.selected = index;
   const correct = speedItem.options[index].isCorrect;
+  if (!correct) {
+    const correctOption = speedItem.options.find((option) => option.isCorrect);
+    recordWrongAnswer(
+      gameSession,
+      `What style is ${speedItem.question}?`,
+      speedItem.options[index].label,
+      correctOption?.label || getStyle(speedItem.correct)
+    );
+  }
   setTimeout(() => { advanceRound(correct); render(); }, 450);
   render();
 }
@@ -13276,12 +16398,27 @@ function updateStageTitle() {
   const view = contentType();
   const menuLabel = MENU_SUBVIEWS.find((v) => v.id === view)?.label;
   const floorLabel = FLOOR_HUB_VIEWS.find((v) => v.id === floorHubView)?.label;
-  const accountLabels = {
-    features: "How this app works",
+  const leafLabels = {
+    home: "Home",
+    askmp: "Ask MP",
+    features: "App guide",
     feedback: "Feedback",
     progress: "My Progress",
-    "shift-survey": "End of Shift"
+    "shift-survey": "End of Shift",
+    training: "Training",
+    inventory: "Inventory",
+    reviews: "Reviews",
+    games: "War Games",
+    team: "Team",
+    "shift-reports": "Shift Reports",
+    sops: "SOPs",
+    checklists: "Checklists",
+    floor: "Floor Tools"
   };
+  if (view === "home") {
+    el.textContent = "Home";
+    return;
+  }
   if (activeType === "menu" && menuLabel) {
     el.textContent = menuLabel;
     return;
@@ -13290,8 +16427,8 @@ function updateStageTitle() {
     el.textContent = floorLabel;
     return;
   }
-  if (accountLabels[activeType]) {
-    el.textContent = accountLabels[activeType];
+  if (leafLabels[view]) {
+    el.textContent = leafLabels[view];
     return;
   }
   const active = document.querySelector("#mainTabs .tab.active");
@@ -13302,35 +16439,38 @@ function syncMobileTabs() {
   const main = document.getElementById("mainTabs");
   const mobile = document.getElementById("mobileTabs");
   if (!main || !mobile) return;
-  if (!mobile.dataset.ready) {
-    mobile.innerHTML = main.innerHTML;
-    mobile.dataset.ready = "1";
-  }
-  mobile.querySelectorAll(".tab").forEach((dst) => {
-    if (!main.querySelector(`.tab[data-type="${dst.dataset.type}"]`)) dst.remove();
-  });
-  main.querySelectorAll(".tab").forEach((src) => {
-    let dst = mobile.querySelector(`.tab[data-type="${src.dataset.type}"]`);
-    if (!dst) {
-      dst = src.cloneNode(true);
-      mobile.appendChild(dst);
-    }
+  const sources = [...main.querySelectorAll(".tab[data-type]")];
+  mobile.innerHTML = "";
+  sources.forEach((src) => {
+    const dst = document.createElement("button");
+    dst.type = "button";
+    dst.className = "tab";
+    dst.dataset.type = src.dataset.type;
+    dst.textContent = src.textContent.trim();
     dst.classList.toggle("active", src.classList.contains("active"));
     dst.style.display = src.style.display;
-    dst.textContent = src.textContent;
+    ["tab-auth-only", "tab-team-only", "tab-shift-lead-only"].forEach((c) => {
+      if (src.classList.contains(c)) dst.classList.add(c);
+    });
+    mobile.appendChild(dst);
   });
+  mobile.dataset.ready = "1";
 }
 
 function goHome() {
-  // Atom / brand mark — always return to the default floor landing tab.
+  // Atom / brand mark — trainees → Training; everyone else → Home.
   if (typeof closeModal === "function") {
     try { closeModal(); } catch (_) {}
   }
-  activateAppTab("ontap");
+  const home = typeof defaultHomeTabForUser === "function"
+    ? defaultHomeTabForUser(currentUser)
+    : "home";
+  activateAppTab(home);
 }
 
 function activateAppTab(type) {
   if (!type) return;
+  closeMobileNav();
 
   let nextActive = type;
   if (MENU_SUBVIEW_IDS.has(type)) {
@@ -13351,13 +16491,10 @@ function activateAppTab(type) {
 
   persistHubViews();
 
-  const tabHighlight = TOP_LEVEL_TAB_IDS.has(nextActive) ? nextActive : null;
-  document.querySelectorAll("#mainTabs .tab, #mobileTabs .tab").forEach((t) => {
-    t.classList.toggle("active", tabHighlight != null && t.dataset.type === tabHighlight);
-  });
-
   activeType = nextActive;
   const view = contentType();
+  highlightNavLeaf(view);
+  if (typeof clearOtherPageEditModes === "function") clearOtherPageEditModes(view);
 
   if (view !== "games") {
     activeGame = null;
@@ -13390,9 +16527,35 @@ function activateAppTab(type) {
 }
 
 document.addEventListener("click", (event) => {
+  const toggle = event.target.closest("#mainTabs .nav-group-toggle");
+  if (toggle) {
+    event.preventDefault();
+    const group = toggle.closest(".nav-group");
+    if (!group) return;
+    const open = !group.classList.contains("is-open");
+    document.querySelectorAll("#mainTabs .nav-group").forEach((other) => {
+      if (other === group) return;
+      other.classList.remove("is-open");
+      other.querySelector(".nav-group-toggle")?.setAttribute("aria-expanded", "false");
+    });
+    group.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    return;
+  }
   const tab = event.target.closest("#mainTabs .tab[data-type], #mobileTabs .tab[data-type]");
   if (!tab) return;
   activateAppTab(tab.dataset.type);
+});
+
+document.getElementById("mobileNavToggle")?.addEventListener("click", (event) => {
+  event.preventDefault();
+  toggleMobileNav();
+});
+document.getElementById("mobileNavScrim")?.addEventListener("click", () => closeMobileNav());
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && document.body.classList.contains("mobile-nav-open")) {
+    closeMobileNav();
+  }
 });
 
 syncMobileTabs();
@@ -13450,9 +16613,17 @@ async function bootstrap() {
   await initAuth();
   if (!currentUser) return;
 
-  await loadData();
+  await loadData({ skipRender: true });
   await loadBeerCheckins();
   loadSopsData(true).catch(() => {});
+
+  // Trainees land on Training; others keep Menu → On Tap.
+  if (typeof isTraineeUser === "function" && isTraineeUser(currentUser)) {
+    activateAppTab("training");
+  } else {
+    render();
+  }
+
   await maybeShowDailyBriefing();
   await maybePromptClosingChecklist();
   await maybePromptShiftSurvey();

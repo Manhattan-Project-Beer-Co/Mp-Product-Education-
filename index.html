@@ -13593,16 +13593,6 @@ async function renderChecklists(content) {
 
       const doneCount = (data.completedTaskIds || []).length;
       const total = (list.tasks || []).length;
-      let photosByTask = {};
-      if (currentUser) {
-        try {
-          const photoData = await apiFetch(`/api/checklists/${encodeURIComponent(list.id)}/photos?date=${encodeURIComponent(checklistDate)}`);
-          for (const p of photoData.photos || []) {
-            if (!photosByTask[p.task_id]) photosByTask[p.task_id] = [];
-            photosByTask[p.task_id].push(p);
-          }
-        } catch (_) {}
-      }
       let lastSection = null;
       const taskHtml = [];
       for (const task of tasks) {
@@ -13611,26 +13601,13 @@ async function renderChecklists(content) {
           taskHtml.push(`<p class="checklist-section-head">${escapeHTML(task.section)}</p>`);
         }
         const isDone = completed.has(task.id);
-        const taskPhotos = photosByTask[String(task.id)] || [];
         taskHtml.push(`
-          <div class="checklist-task-wrap" style="margin-bottom:8px;">
-            <button type="button" class="checklist-task${isDone ? " done" : ""}" onclick="toggleChecklistTask('${escapeForAttribute(list.id)}', ${task.id})">
-              <span class="mark" aria-hidden="true">${isDone ? "✓" : ""}</span>
-              <span class="body">
-                <span class="title">${escapeHTML(task.title)}</span>
-              </span>
-            </button>
-            ${currentUser ? `
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 0 36px;">
-                <label class="auth-btn" style="cursor:pointer;margin:0;">
-                  Before/after photo
-                  <input type="file" accept="image/*" style="display:none;" onchange="uploadChecklistTaskPhoto('${escapeForAttribute(list.id)}', ${task.id}, this)">
-                </label>
-                ${taskPhotos.length ? `<span class="desc">${taskPhotos.length} photo${taskPhotos.length === 1 ? "" : "s"}</span>` : ""}
-              </div>
-              ${taskPhotos.map(p => `<img src="${escapeForAttribute(p.photo_url)}" alt="" style="max-width:220px;margin:6px 0 0 36px;border-radius:8px;">`).join("")}
-            ` : ""}
-          </div>
+          <button type="button" class="checklist-task${isDone ? " done" : ""}" onclick="toggleChecklistTask('${escapeForAttribute(list.id)}', ${task.id})">
+            <span class="mark" aria-hidden="true">${isDone ? "✓" : ""}</span>
+            <span class="body">
+              <span class="title">${escapeHTML(task.title)}</span>
+            </span>
+          </button>
         `);
       }
 
@@ -13727,33 +13704,6 @@ async function toggleChecklistTask(id, taskId) {
     render();
   } catch (err) {
     alert(err.message);
-  }
-}
-
-async function uploadChecklistTaskPhoto(checklistId, taskId, input) {
-  if (!currentUser || !input?.files?.[0]) return;
-  try {
-    const file = input.files[0];
-    const reader = new FileReader();
-    const photoUrl = await new Promise((resolve, reject) => {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Could not read photo."));
-      reader.readAsDataURL(file);
-    });
-    await apiFetch(`/api/checklists/${encodeURIComponent(checklistId)}/photos`, {
-      method: "POST",
-      body: JSON.stringify({
-        taskId: String(taskId),
-        shiftDate: checklistDate || getLocalDateKey(),
-        photoUrl
-      })
-    });
-    checklistDetail = null;
-    render();
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    input.value = "";
   }
 }
 

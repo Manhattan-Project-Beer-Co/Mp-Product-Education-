@@ -50,7 +50,7 @@ const SITE_FEATURES = {
     { id: "inventory", title: "Inventory", summary: "Ops counts, weekly order, dashboard (Tools group)." },
     { id: "floortools", title: "Floor Tools", summary: "86 board, handoff, huddle, Sell This, photo standards, shout-outs, team challenges, tap change + menu packages, recommenders, allergy, maintenance, First 5, skills, secrets/streaks (Service group)." },
     { id: "sops", title: "SOPs", summary: "Procedures, Recipes, Emergency, photo standards gallery (Ops group)." },
-    { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with before/after task photos and streaks (Ops group)." },
+    { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with streaks (Ops group)." },
     { id: "launchpad", title: "War Games", summary: "Arcade drills, Staff Favorites, Guest Scenarios, Complaint Recovery, leaderboard, badges, and missed-answer review (Tools group)." },
     { id: "progress", title: "My Progress", summary: "Scores, tasting journal, achievements (Training group)." },
     { id: "shift", title: "End of Shift / Reports", summary: "Anonymous surveys (Ops) + digests for leads (Team · Shift Reports)." },

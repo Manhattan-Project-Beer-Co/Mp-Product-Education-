@@ -3971,6 +3971,64 @@
   .sidebar-user { margin-top:12px; padding:12px; border:1px solid var(--line); border-radius:12px; background: var(--surface); }
   .sidebar-user-name { font-size:13px; font-weight:700; color:#181818; font-family: var(--font-display); }
   .sidebar-user-role { margin-top:2px; font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+  .shift-status {
+    display: none;
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.55);
+    line-height: 1.35;
+  }
+  .shift-status.is-visible { display: block; }
+  .shift-status.is-clickable {
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .shift-status.is-clickable:hover {
+    border-color: rgba(156,107,74,0.55);
+    background: rgba(156,107,74,0.14);
+  }
+  .shift-status__action {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--gold-dim);
+  }
+  .shift-status[data-state="on"] {
+    border-color: rgba(156,107,74,0.42);
+    background: rgba(156,107,74,0.1);
+  }
+  .shift-status[data-state="lead"] {
+    border-color: rgba(156,107,74,0.55);
+    background: rgba(156,107,74,0.16);
+  }
+  .shift-status[data-state="soon"] {
+    border-color: rgba(156,107,74,0.28);
+    background: rgba(196,165,116,0.12);
+  }
+  .shift-status[data-state="off"] {
+    border-color: var(--line);
+    background: rgba(255,255,255,0.4);
+  }
+  .shift-status__label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #181818;
+  }
+  .shift-status__detail {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .mobile-shift-status {
+    display: none;
+    margin: 0 var(--page-pad) 10px;
+  }
   .sidebar-account-links {
     display:flex; flex-direction:column; gap:2px;
     margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
@@ -3984,6 +4042,291 @@
   }
   .sidebar-account-link:hover { color:#181818; background: rgba(156,107,74,0.08); }
   .sidebar-account-link.is-active { color: var(--gold-dim); background: rgba(156,107,74,0.12); }
+  .sidebar-account-link.shift-cue {
+    color: var(--gold-dim);
+    background: rgba(156,107,74,0.14);
+  }
+  .today-floor {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .today-floor__intro {
+    margin-bottom: 18px;
+  }
+  .today-floor__admin {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(156,107,74,0.35);
+    border-radius: 12px;
+    background: rgba(156,107,74,0.08);
+    font-size: 13px;
+    color: #3a3530;
+  }
+  .today-floor__admin-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .today-floor__admin p {
+    margin: 6px 0 0;
+    color: var(--muted);
+  }
+  .today-floor__email {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--muted);
+    word-break: break-word;
+  }
+  .today-floor__badge.is-warn {
+    border-color: rgba(156,107,74,0.55);
+    background: rgba(196,165,116,0.2);
+    color: #6b4f2e;
+  }
+  .today-floor__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+  .today-floor__alerts {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .today-floor__alert {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13px;
+    color: #3a3530;
+  }
+  .today-floor__alert.is-warn {
+    border-color: rgba(156,107,74,0.45);
+    background: rgba(156,107,74,0.1);
+  }
+  .today-floor__alert strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .today-floor__assign {
+    margin-top: 6px;
+  }
+  .today-floor__assign label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+  }
+  .today-floor__assign-label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .today-floor__assign select {
+    width: 100%;
+    max-width: 220px;
+    padding: 6px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+    color: #181818;
+  }
+  .today-floor__assign-panel {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.85);
+  }
+  .today-floor__assign-panel h3 {
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .today-floor__assign-panel > p {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .today-floor__assign-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .today-floor__assign-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(140px, 200px);
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+  }
+  .today-floor__assign-row:first-child { border-top: 0; padding-top: 0; }
+  .today-floor__assign-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .today-floor__assign-name strong {
+    font-size: 14px;
+    color: #181818;
+  }
+  .today-floor__assign-name span {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .today-floor__assign-row .today-floor__assign {
+    margin: 0;
+  }
+  .today-floor__assign-row .today-floor__assign select {
+    max-width: none;
+  }
+  @media (max-width: 640px) {
+    .today-floor__assign-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+  .today-floor__stations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin: 0 0 18px;
+  }
+  .today-floor__station {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.7);
+    padding: 10px 12px;
+  }
+  .today-floor__station h4 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .today-floor__station ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .today-floor__station li {
+    font-size: 13px;
+    padding: 4px 0;
+    border-top: 1px solid var(--line);
+    color: #3a3530;
+  }
+  .today-floor__station li:first-child { border-top: 0; }
+  .today-floor__station .empty {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .today-floor__intro h2 {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .today-floor__intro p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .today-floor__section {
+    margin-top: 18px;
+  }
+  .today-floor__section h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .today-floor__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .today-floor__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto;
+    gap: 10px 16px;
+    align-items: baseline;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--line);
+  }
+  .today-floor__name {
+    font-weight: 700;
+    color: #181818;
+  }
+  .today-floor__meta {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .today-floor__hours {
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: #3a3530;
+    white-space: nowrap;
+  }
+  .today-floor__badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .today-floor__badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(156,107,74,0.35);
+    background: rgba(156,107,74,0.1);
+    color: var(--gold-dim);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .today-floor__row.is-you .today-floor__name {
+    color: var(--gold-dim);
+  }
+  .today-floor__row.is-done {
+    opacity: 0.62;
+  }
+  @media (max-width: 640px) {
+    .today-floor__row {
+      grid-template-columns: 1fr auto;
+    }
+    .today-floor__meta {
+      grid-column: 1 / -1;
+    }
+  }
   .mobile-account-links { display:none; }
   .sidebar-user .auth-bar { margin-top:10px; flex-direction:column; align-items:stretch; gap:8px; }
   .sidebar-user .auth-btn { width:100%; justify-content:center; }
@@ -4278,6 +4621,10 @@
       width:auto; padding:6px 10px; font-size:11px;
       border:1px solid var(--line); border-radius:8px; background:#fff;
     }
+    .mobile-shift-status {
+      display: block;
+      margin: 0 14px 10px;
+    }
     .header-inner {
       max-width: none;
       padding: 12px var(--page-pad);
@@ -4480,8 +4827,8 @@
     </button>
     <nav class="sidebar-nav tabs" id="mainTabs">
       <button type="button" class="tab active" data-type="menu">Menu</button>
-      <button type="button" class="tab" data-type="inventory">Inventory</button>
       <button type="button" class="tab" data-type="floor">Floor</button>
+      <button type="button" class="tab" data-type="inventory">Inventory</button>
       <button type="button" class="tab" data-type="reviews">Reviews</button>
       <button type="button" class="tab" data-type="games">War Games</button>
       <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
@@ -4490,6 +4837,7 @@
     <div class="sidebar-user" id="sidebarUser">
       <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
       <div class="sidebar-user-role" id="sidebarUserRole">Sign in to track training</div>
+      <div class="shift-status" id="sidebarShiftStatus" hidden></div>
       <div class="sidebar-account-links" id="sidebarAccountLinks">
         <button type="button" class="sidebar-account-link tab-auth-only" data-type="progress" style="display:none;" onclick="activateAppTab('progress')">My Progress</button>
         <button type="button" class="sidebar-account-link tab-auth-only" data-type="feedback" style="display:none;" onclick="activateAppTab('feedback')">Feedback</button>
@@ -4514,6 +4862,7 @@
     </button>
     <div class="auth-bar" id="authBarMobile"></div>
   </div>
+  <div class="shift-status mobile-shift-status" id="mobileShiftStatus" hidden></div>
   <div class="mobile-account-links" id="mobileAccountLinks">
     <button type="button" class="sidebar-account-link tab-auth-only" data-type="progress" style="display:none;" onclick="activateAppTab('progress')">My Progress</button>
     <button type="button" class="sidebar-account-link tab-auth-only" data-type="feedback" style="display:none;" onclick="activateAppTab('feedback')">Feedback</button>
@@ -4691,7 +5040,9 @@ let reviewsLoading = false;
 let reviewPlatform = "all";
 let activeType = "menu";
 let menuSubView = "ontap";
-let floorHubView = "tools";
+let floorHubView = "today";
+let todayFloorDay = "today";
+let todayFloorRole = "all";
 try {
   const savedMenu = sessionStorage.getItem("mpMenuSubView");
   const savedFloor = sessionStorage.getItem("mpFloorHubView");
@@ -4708,22 +5059,24 @@ const MENU_SUBVIEWS = [
   { id: "merch", label: "Merch" }
 ];
 const FLOOR_HUB_VIEWS = [
+  { id: "today", label: "Today's Floor" },
   { id: "tools", label: "Floor Tools" },
   { id: "sops", label: "SOPs" },
   { id: "checklists", label: "Checklists" }
 ];
 const MENU_SUBVIEW_IDS = new Set(MENU_SUBVIEWS.map((v) => v.id));
 const TOP_LEVEL_TAB_IDS = new Set([
-  "menu", "inventory", "floor", "reviews", "games", "shift-reports", "team"
+  "menu", "inventory", "floor", "reviews", "game", "shift-reports", "team"
 ]);
 if (!MENU_SUBVIEW_IDS.has(menuSubView)) menuSubView = "ontap";
-if (!FLOOR_HUB_VIEWS.some((v) => v.id === floorHubView)) floorHubView = "tools";
+if (!FLOOR_HUB_VIEWS.some((v) => v.id === floorHubView)) floorHubView = "today";
 
 function contentType() {
   if (activeType === "menu") return menuSubView;
   if (activeType === "floor") {
     if (floorHubView === "sops") return "sops";
     if (floorHubView === "checklists") return "checklists";
+    if (floorHubView === "today") return "today-floor";
     return "floor";
   }
   return activeType;
@@ -5933,6 +6286,9 @@ function render() {
   } else if (view === "checklists") {
     destroyCharts();
     renderChecklists(content);
+  } else if (view === "today-floor") {
+    destroyCharts();
+    renderTodayFloorBoard(content);
   } else if (view === "floor") {
     destroyCharts();
     renderFloorTools(content);
@@ -6146,6 +6502,7 @@ function updateAuthUI() {
       : `<button class="auth-btn" onclick="showLoginGate()">Sign in</button>`;
     if (authBar) authBar.innerHTML = guestHtml;
     if (authBarMobile) authBarMobile.innerHTML = guestHtml;
+    renderShiftStatusUI();
     return;
   }
 
@@ -6164,6 +6521,130 @@ function updateAuthUI() {
   `;
   if (authBar) authBar.innerHTML = `<button class="auth-btn" onclick="logout()">Log out</button>`;
   if (authBarMobile) authBarMobile.innerHTML = signedHtml;
+  renderShiftStatusUI();
+}
+
+function formatShiftClock(iso) {
+  if (!iso) return "";
+  const ms = Date.parse(iso);
+  if (!Number.isFinite(ms)) return "";
+  return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function formatMinutesLeft(mins) {
+  if (mins == null || !Number.isFinite(mins)) return "";
+  if (mins > 0) return `ends in ~${mins} min`;
+  if (mins === 0) return "ending now";
+  return `ended ${Math.abs(mins)} min ago`;
+}
+
+function describeShiftStatus(shift) {
+  if (!currentUser) {
+    return { state: "off", label: "", detail: "", visible: false };
+  }
+  if (!shift) {
+    return {
+      state: "off",
+      label: "Schedule",
+      detail: "Shift status unavailable",
+      visible: true
+    };
+  }
+  if (!shift.synced || shift.source === "none") {
+    return {
+      state: "off",
+      label: "Off schedule sync",
+      detail: "7shifts is not linked yet",
+      visible: true
+    };
+  }
+
+  const current = shift.currentShift;
+  const roleBits = [current?.roleName, current?.stationName].filter(Boolean).join(" · ");
+  const windowText = current
+    ? `${formatShiftClock(current.startAt)}–${formatShiftClock(current.endAt)}`
+    : "";
+  const minsText = formatMinutesLeft(shift.minutesToEnd);
+
+  if (shift.onShift || shift.isShiftLeadNow) {
+    const lead = shift.isShiftLeadNow || currentUser.on_shift_lead_duty;
+    return {
+      state: lead ? "lead" : "on",
+      label: lead ? "On shift · Lead" : "On shift",
+      detail: [roleBits || "Taproom", windowText, minsText].filter(Boolean).join(" · "),
+      visible: true
+    };
+  }
+
+  if (shift.todayShifts?.length) {
+    const next = shift.todayShifts.find(s => Date.parse(s.startAt) > Date.now()) || shift.todayShifts[0];
+    const nextBits = [next.roleName, next.stationName].filter(Boolean).join(" · ");
+    const nextWindow = `${formatShiftClock(next.startAt)}–${formatShiftClock(next.endAt)}`;
+    const upcoming = Date.parse(next.startAt) > Date.now();
+    return {
+      state: upcoming ? "soon" : "off",
+      label: upcoming ? "Scheduled today" : "Shift done",
+      detail: [nextBits, nextWindow].filter(Boolean).join(" · "),
+      visible: true
+    };
+  }
+
+  return {
+    state: "off",
+    label: "Off shift",
+    detail: "No 7shifts block mapped to you today",
+    visible: true
+  };
+}
+
+function renderShiftStatusUI() {
+  const targets = [
+    document.getElementById("sidebarShiftStatus"),
+    document.getElementById("mobileShiftStatus")
+  ].filter(Boolean);
+  const desc = describeShiftStatus(getShiftContext());
+
+  for (const el of targets) {
+    if (!desc.visible) {
+      el.hidden = true;
+      el.classList.remove("is-visible", "is-clickable");
+      el.innerHTML = "";
+      el.removeAttribute("data-state");
+      el.onclick = null;
+      el.removeAttribute("role");
+      el.removeAttribute("tabindex");
+      continue;
+    }
+    el.hidden = false;
+    el.classList.add("is-visible", "is-clickable");
+    el.dataset.state = desc.state;
+    el.setAttribute("role", "button");
+    el.tabIndex = 0;
+    el.innerHTML = `
+      <div class="shift-status__label">${escapeHTML(desc.label)}</div>
+      <div class="shift-status__detail">${escapeHTML(desc.detail)}</div>
+      <div class="shift-status__action">Open today’s floor →</div>
+    `;
+    el.onclick = () => activateAppTab("today-floor");
+    el.onkeydown = (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        activateAppTab("today-floor");
+      }
+    };
+  }
+
+  const cue = Boolean(getShiftContext()?.promptEndOfShift) && canSubmitShiftSurvey();
+  document.querySelectorAll('[data-type="shift-survey"]').forEach(el => {
+    el.classList.toggle("shift-cue", cue);
+    if (cue && !el.dataset.shiftCueLabel) {
+      el.dataset.shiftCueLabel = el.textContent;
+      el.textContent = "End of Shift · due";
+    } else if (!cue && el.dataset.shiftCueLabel) {
+      el.textContent = el.dataset.shiftCueLabel;
+      delete el.dataset.shiftCueLabel;
+    }
+  });
 }
 
 async function initAuth() {
@@ -6300,7 +6781,7 @@ async function logout() {
   // Back to the sign-in screen. Returning to a browsable shell would be
   // misleading now that every endpoint behind it requires a session.
   menuSubView = "ontap";
-  floorHubView = "tools";
+  floorHubView = "today";
   persistHubViews();
   activeType = "menu";
   document.querySelectorAll("#mainTabs .tab, #mobileTabs .tab").forEach(t => t.classList.toggle("active", t.dataset.type === "menu"));
@@ -7633,6 +8114,345 @@ function getShiftContext() {
   return currentUser?.shift || null;
 }
 
+async function saveFloorStationAssignment(personKey, stationKey, displayName) {
+  try {
+    await apiFetch("/api/shifts/assignments", {
+      method: "PUT",
+      body: JSON.stringify({
+        shiftDate: getTodayFloorDateKey(),
+        personKey,
+        stationKey: stationKey || null,
+        displayName: displayName || ""
+      })
+    });
+    await renderTodayFloorBoard(document.getElementById("content"));
+  } catch (err) {
+    alert(err.message || "Could not save station assignment.");
+  }
+}
+
+function renderTodayFloorStationBoard(stationBoard, options = {}) {
+  const opts = options && typeof options === "object" && !Array.isArray(options)
+    ? options
+    : { canAssign: Boolean(options) };
+  const canAssign = Boolean(opts.canAssign);
+  const stations = Array.isArray(opts.stations) ? opts.stations : [];
+  const staff = Array.isArray(opts.staff) ? opts.staff : [];
+  const board = Array.isArray(stationBoard) && stationBoard.length
+    ? stationBoard
+    : (stations.length ? stations.map(s => ({ key: s.key, label: s.label, people: [] })) : []);
+  if (!board.length && !(canAssign && staff.length)) return "";
+
+  const uniqueStaff = [];
+  const seen = new Set();
+  for (const row of staff) {
+    const key = row.personKey || `${row.name}:${row.startAt}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    uniqueStaff.push(row);
+  }
+
+  const assignPanel = canAssign && uniqueStaff.length ? `
+    <div class="today-floor__assign-panel">
+      <h3>Assign stations</h3>
+      <p>Pick Run / Bus, Coffee / Bar, Event, or Bar for each person. Saves immediately.</p>
+      <ul class="today-floor__assign-list">
+        ${uniqueStaff.map(row => `
+          <li class="today-floor__assign-row">
+            <div class="today-floor__assign-name">
+              <strong>${escapeHTML(row.name)}</strong>
+              ${row.roleName ? `<span>${escapeHTML(row.roleName)}</span>` : ""}
+            </div>
+            ${renderTodayFloorAssignControl(row, stations, true)}
+          </li>
+        `).join("")}
+      </ul>
+    </div>
+  ` : "";
+
+  return `
+    <section class="today-floor__section">
+      ${assignPanel}
+      <h3>Floor stations</h3>
+      <div class="today-floor__stations">
+        ${board.map(station => `
+          <div class="today-floor__station">
+            <h4>${escapeHTML(station.label)}</h4>
+            ${station.people?.length ? `
+              <ul>
+                ${station.people.map(person => `
+                  <li>${escapeHTML(person.name)}${person.roleName ? ` · ${escapeHTML(person.roleName)}` : ""}</li>
+                `).join("")}
+              </ul>
+            ` : `<div class="empty">Unassigned</div>`}
+          </div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderTodayFloorAssignControl(row, stations, canAssign) {
+  if (!row.personKey) return "";
+  if (!canAssign) {
+    return row.floorStationLabel
+      ? `<div class="today-floor__email">Station: ${escapeHTML(row.floorStationLabel)}</div>`
+      : "";
+  }
+  const options = [
+    `<option value="">Unassigned</option>`,
+    ...(stations || []).map(station => `
+      <option value="${escapeForAttribute(station.key)}"${row.floorStation === station.key ? " selected" : ""}>${escapeHTML(station.label)}</option>
+    `)
+  ].join("");
+  return `
+    <div class="today-floor__assign">
+      <label>
+        <span class="today-floor__assign-label">Station</span>
+        <select aria-label="Floor station for ${escapeForAttribute(row.name)}" onchange="saveFloorStationAssignment('${escapeForAttribute(row.personKey)}', this.value, '${escapeForAttribute(row.name)}')">
+          ${options}
+        </select>
+      </label>
+    </div>
+  `;
+}
+
+async function syncSevenShiftsFromBoard() {
+  const btn = document.getElementById("todayFloorSyncBtn");
+  const note = document.getElementById("todayFloorSyncNote");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Syncing…";
+  }
+  try {
+    const result = await apiFetch("/api/shifts/sync", { method: "POST", body: "{}" });
+    if (note) {
+      note.textContent = `Synced ${result.kept || 0} shifts · ${result.users || 0} users`;
+    }
+    await renderTodayFloorBoard(document.getElementById("content"));
+  } catch (err) {
+    if (note) note.textContent = err.message || "Sync failed";
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Sync now";
+    }
+  }
+}
+
+function addDaysToDateKey(dateKey, days) {
+  const parts = String(dateKey || "").split("-").map(Number);
+  if (parts.length !== 3 || parts.some(n => !Number.isFinite(n))) return getLocalDateKey();
+  const dt = new Date(parts[0], parts[1] - 1, parts[2] + Number(days || 0));
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, "0");
+  const d = String(dt.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function getTodayFloorDateKey() {
+  const today = getLocalDateKey();
+  return todayFloorDay === "tomorrow" ? addDaysToDateKey(today, 1) : today;
+}
+
+function setTodayFloorDay(day) {
+  todayFloorDay = day === "tomorrow" ? "tomorrow" : "today";
+  renderTodayFloorBoard(document.getElementById("content"));
+}
+
+function setTodayFloorRole(role) {
+  todayFloorRole = role || "all";
+  renderTodayFloorBoard(document.getElementById("content"));
+}
+
+async function renderTodayFloorBoard(content) {
+  if (!content) return;
+  content.innerHTML = `<div class="today-floor"><div class="status"><strong>Loading floor board…</strong></div></div>`;
+  try {
+    const dateKey = getTodayFloorDateKey();
+    const data = await apiFetch(`/api/shifts/today?date=${encodeURIComponent(dateKey)}`);
+    const staffAll = Array.isArray(data.staff) ? data.staff : [];
+    const roles = Array.isArray(data.roles) && data.roles.length
+      ? data.roles
+      : [...new Set(staffAll.map(s => s.roleName).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    if (todayFloorRole !== "all" && !roles.includes(todayFloorRole)) todayFloorRole = "all";
+    const staff = todayFloorRole === "all"
+      ? staffAll
+      : staffAll.filter(s => s.roleName === todayFloorRole);
+    const dateLabel = formatShiftDateLabel(data.shiftDate || dateKey);
+    const privileged = Boolean(data.privileged);
+    const canSync = Boolean(data.canSync);
+    const canAssign = Boolean(data.canAssignStations || data.privileged);
+    const stations = Array.isArray(data.stations) ? data.stations : [];
+    const isToday = data.isToday !== false && todayFloorDay === "today";
+    const dayControls = `
+      <div class="today-floor__controls coffee-subtabs" style="margin-bottom:12px;">
+        <button type="button" class="coffee-subtab${todayFloorDay === "today" ? " active" : ""}" onclick="setTodayFloorDay('today')">Today</button>
+        <button type="button" class="coffee-subtab${todayFloorDay === "tomorrow" ? " active" : ""}" onclick="setTodayFloorDay('tomorrow')">Tomorrow</button>
+      </div>
+    `;
+    const roleControls = roles.length ? `
+      <div class="today-floor__controls coffee-subtabs">
+        <button type="button" class="coffee-subtab${todayFloorRole === "all" ? " active" : ""}" onclick="setTodayFloorRole('all')">All roles</button>
+        ${roles.map(role => `
+          <button type="button" class="coffee-subtab${todayFloorRole === role ? " active" : ""}" onclick="setTodayFloorRole('${escapeForAttribute(role)}')">${escapeHTML(role)}</button>
+        `).join("")}
+      </div>
+    ` : "";
+
+    if (!data.synced || data.source === "none") {
+      content.innerHTML = `
+        <div class="today-floor">
+          <div class="today-floor__intro">
+            <h2>Today’s Floor</h2>
+            <p>Schedule sync is offline — check 7shifts directly for who’s working.</p>
+          </div>
+          ${dayControls}
+          ${canSync ? `
+            <div class="today-floor__admin">
+              <div class="today-floor__admin-row">
+                <span>7shifts is configured in env but no shifts are loaded yet.</span>
+                <button type="button" class="auth-btn" id="todayFloorSyncBtn" onclick="syncSevenShiftsFromBoard()">Sync now</button>
+              </div>
+              <p id="todayFloorSyncNote"></p>
+            </div>
+          ` : ""}
+        </div>
+      `;
+      return;
+    }
+
+    const summary = isToday
+      ? `${escapeHTML(dateLabel)} · ${data.onNowCount || 0} on now · ${staffAll.length} scheduled`
+      : `${escapeHTML(dateLabel)} · ${staffAll.length} scheduled`;
+
+    if (!staffAll.length) {
+      content.innerHTML = `
+        <div class="today-floor">
+          <div class="today-floor__intro">
+            <h2>Today’s Floor</h2>
+            <p>No published shifts for ${escapeHTML(dateLabel)}.</p>
+          </div>
+          ${dayControls}
+          ${privileged ? renderTodayFloorAdminBar(data, canSync) : ""}
+          ${privileged ? renderTodayFloorCoverageAlerts(data.coverageAlerts) : ""}
+          ${renderTodayFloorStationBoard(data.stationBoard, { canAssign, stations, staff: staffAll })}
+        </div>
+      `;
+      return;
+    }
+
+    let sections;
+    if (isToday) {
+      sections = [
+        { id: "now", title: "On now", rows: staff.filter(s => s.status === "now") },
+        { id: "upcoming", title: "Later today", rows: staff.filter(s => s.status === "upcoming") },
+        { id: "done", title: "Already finished", rows: staff.filter(s => s.status === "done") }
+      ].filter(section => section.rows.length);
+    } else {
+      sections = [
+        { id: "scheduled", title: "Scheduled", rows: staff }
+      ].filter(section => section.rows.length);
+    }
+
+    content.innerHTML = `
+      <div class="today-floor">
+        <div class="today-floor__intro">
+          <h2>Today’s Floor</h2>
+          <p>${summary}${todayFloorRole !== "all" ? ` · showing ${escapeHTML(todayFloorRole)}` : ""}</p>
+        </div>
+        ${dayControls}
+        ${roleControls}
+        ${privileged ? renderTodayFloorAdminBar(data, canSync) : ""}
+        ${privileged ? renderTodayFloorCoverageAlerts(data.coverageAlerts) : ""}
+        ${renderTodayFloorStationBoard(data.stationBoard, { canAssign, stations, staff: staffAll })}
+        ${sections.length ? sections.map(section => `
+          <section class="today-floor__section">
+            <h3>${escapeHTML(section.title)}</h3>
+            <ul class="today-floor__list">
+              ${section.rows.map(row => {
+                const roleBits = [row.roleName, row.stationName].filter(Boolean).join(" · ");
+                const hours = `${formatShiftClock(row.startAt)}–${formatShiftClock(row.endAt)}`;
+                const badges = [
+                  row.isYou ? "You" : null,
+                  row.isShiftLead ? "Lead" : null,
+                  isToday && row.status === "now" ? "On now" : null,
+                  row.floorStationLabel || null,
+                  privileged && row.mapped === false ? "Not in portal" : null
+                ].filter(Boolean);
+                return `
+                  <li class="today-floor__row${row.isYou ? " is-you" : ""}${row.status === "done" ? " is-done" : ""}">
+                    <div>
+                      <span class="today-floor__name">${escapeHTML(row.name)}</span>
+                      ${badges.length ? `<span class="today-floor__badges">${badges.map(b => `<span class="today-floor__badge${b === "Not in portal" ? " is-warn" : ""}">${escapeHTML(b)}</span>`).join("")}</span>` : ""}
+                      ${privileged && row.email ? `<a class="today-floor__email" href="mailto:${escapeForAttribute(row.email)}">${escapeHTML(row.email)}</a>` : ""}
+                      ${renderTodayFloorAssignControl(row, stations, canAssign)}
+                    </div>
+                    <div class="today-floor__meta">${escapeHTML(roleBits || "Taproom")}</div>
+                    <div class="today-floor__hours">${escapeHTML(hours)}</div>
+                  </li>
+                `;
+              }).join("")}
+            </ul>
+          </section>
+        `).join("") : `<div class="status"><strong>No one in this role for ${escapeHTML(dateLabel)}.</strong></div>`}
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `
+      <div class="today-floor">
+        <div class="today-floor__intro">
+          <h2>Today’s Floor</h2>
+          <p>${escapeHTML(err.message || "Could not load today’s schedule.")}</p>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderTodayFloorCoverageAlerts(alerts) {
+  if (!Array.isArray(alerts) || !alerts.length) return "";
+  return `
+    <ul class="today-floor__alerts">
+      ${alerts.map(alert => {
+        const next = alert.nextAt ? ` · next ${formatShiftClock(alert.nextAt)}` : "";
+        return `
+          <li class="today-floor__alert${alert.level === "warn" ? " is-warn" : ""}">
+            <strong>Coverage</strong>
+            ${escapeHTML(alert.message || "")}${escapeHTML(next)}
+          </li>
+        `;
+      }).join("")}
+    </ul>
+  `;
+}
+
+function renderTodayFloorAdminBar(data, canSync) {
+  const syncedLabel = data.lastSyncedAt
+    ? `Last sync ${escapeHTML(formatSurveyTimestamp(data.lastSyncedAt))}`
+    : "Not synced yet";
+  const leads = Array.isArray(data.leadsNow) ? data.leadsNow : [];
+  const leadCount = (data.staff || []).filter(s => s.isShiftLead).length;
+  const leadLine = data.isToday === false
+    ? `${leadCount} shift lead(s) on the day`
+    : (leads.length
+      ? `Leads on now: ${leads.map(escapeHTML).join(", ")}`
+      : "No shift lead marked on now");
+  const unmapped = Number(data.unmappedCount) || 0;
+  return `
+    <div class="today-floor__admin">
+      <div class="today-floor__admin-row">
+        <div>
+          <strong>Lead / admin view</strong>
+          <div>${syncedLabel} · ${unmapped} not linked to portal</div>
+        </div>
+        ${canSync ? `<button type="button" class="auth-btn" id="todayFloorSyncBtn" onclick="syncSevenShiftsFromBoard()">Sync now</button>` : ""}
+      </div>
+      <p>${leadLine}</p>
+      <p id="todayFloorSyncNote"></p>
+    </div>
+  `;
+}
+
 function shouldPromptFromSchedule(flagName, hourFallback) {
   const shift = getShiftContext();
   if (shift?.synced) return Boolean(shift[flagName]);
@@ -7644,10 +8464,25 @@ async function refreshShiftContext() {
   try {
     const data = await apiFetch("/api/shifts/me");
     currentUser.shift = data.shift;
-    if (data.shift?.isShiftLeadNow) currentUser.on_shift_lead_duty = true;
+    if (data.shift?.isShiftLeadNow) {
+      currentUser.on_shift_lead_duty = true;
+      if (typeof StaffRoles?.buildPermissions === "function") {
+        currentUser.permissions = StaffRoles.buildPermissions(currentUser, true);
+      } else if (currentUser.permissions) {
+        currentUser.permissions.viewShiftReports = true;
+        currentUser.permissions.onShiftLeadDuty = true;
+      }
+    }
+    renderShiftStatusUI();
+    // Keep shift-lead-only tabs in sync when duty flips mid-session.
+    document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
+      el.style.display = currentUser && currentUser.permissions?.viewShiftReports ? "" : "none";
+    });
+    syncMobileTabs();
     return data.shift;
   } catch (err) {
     console.warn("Shift context unavailable:", err.message);
+    renderShiftStatusUI();
     return currentUser.shift || null;
   }
 }
@@ -13305,6 +14140,13 @@ function syncMobileTabs() {
   if (!mobile.dataset.ready) {
     mobile.innerHTML = main.innerHTML;
     mobile.dataset.ready = "1";
+  } else {
+    // Keep mobile tab order matched to the sidebar (Floor sits next to Menu).
+    const order = [...main.querySelectorAll(".tab")].map((t) => t.dataset.type);
+    order.forEach((type) => {
+      const dst = mobile.querySelector(`.tab[data-type="${type}"]`);
+      if (dst) mobile.appendChild(dst);
+    });
   }
   mobile.querySelectorAll(".tab").forEach((dst) => {
     if (!main.querySelector(`.tab[data-type="${dst.dataset.type}"]`)) dst.remove();
@@ -13344,8 +14186,11 @@ function activateAppTab(type) {
   } else if (type === "checklists") {
     floorHubView = "checklists";
     nextActive = "floor";
+  } else if (type === "today-floor" || type === "today") {
+    floorHubView = "today";
+    nextActive = "floor";
   } else if (type === "floor") {
-    floorHubView = "tools";
+    floorHubView = "today";
     nextActive = "floor";
   }
 
@@ -13453,10 +14298,18 @@ async function bootstrap() {
   await loadData();
   await loadBeerCheckins();
   loadSopsData(true).catch(() => {});
+  await refreshShiftContext();
+  updateAuthUI();
   await maybeShowDailyBriefing();
   await maybePromptClosingChecklist();
   await maybePromptShiftSurvey();
   await maybeShowShiftDigest();
+
+  // Keep on-shift / lead status fresh without a full reload.
+  setInterval(() => {
+    if (!currentUser) return;
+    refreshShiftContext().catch(() => {});
+  }, 5 * 60 * 1000);
 }
 
 bootstrap();

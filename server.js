@@ -31,6 +31,10 @@ const {
   syncSevenShifts,
   getUserShiftContext,
   getWorkingStaff,
+  getTodayFloorBoard,
+  setFloorStationAssignment,
+  clearFloorStationAssignment,
+  FLOOR_STATION_KEYS,
   localDateKey
 } = require("./seven-shifts-sync");
 const {
@@ -1929,13 +1933,98 @@ app.get("/api/shifts/me", authRequired, (req, res) => {
   res.json({ shift: getUserShiftContext(db, req.user.id) });
 });
 
+// Staff-safe floor board — names/roles/hours for everyone.
+// Admins, managers, and on-duty shift leads also get emails + sync health.
+app.get("/api/shifts/today", authRequired, (req, res) => {
+  const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
+  const authUser = loadAuthedUser(req);
+  const privileged = Boolean(
+    authUser && (
+      canManageTeam(authUser) ||
+      canViewShiftReports(authUser, authUser.on_shift_lead_duty)
+    )
+  );
+  const board = getTodayFloorBoard(db, {
+    shiftDate,
+    viewerUserId: req.user.id,
+    privileged
+  });
+  res.json({
+    ...board,
+    source: sevenShifts.isConfigured() ? "7shifts" : "none",
+    canSync: Boolean(authUser && canManageTeam(authUser)),
+    canAssignStations: privileged
+  });
+});
+
+app.put("/api/shifts/assignments", authRequired, (req, res) => {
+  const authUser = loadAuthedUser(req);
+  const canAssign = Boolean(
+    authUser && (
+      canManageTeam(authUser) ||
+      canViewShiftReports(authUser, authUser.on_shift_lead_duty)
+    )
+  );
+  if (!canAssign) {
+    return res.status(403).json({ error: "Shift lead duty or manager access required." });
+  }
+
+  const shiftDate = isValidShiftDate(req.body.shiftDate) ? req.body.shiftDate : todayDate();
+  const personKey = String(req.body.personKey || "").trim();
+  const stationKey = req.body.stationKey == null || req.body.stationKey === ""
+    ? null
+    : String(req.body.stationKey).trim();
+  const displayName = String(req.body.displayName || "").trim();
+
+  try {
+    if (!stationKey) {
+      clearFloorStationAssignment(db, { shiftDate, personKey });
+      return res.json({
+        ok: true,
+        cleared: true,
+        shiftDate,
+        personKey,
+        board: getTodayFloorBoard(db, {
+          shiftDate,
+          viewerUserId: req.user.id,
+          privileged: true
+        })
+      });
+    }
+
+    if (!FLOOR_STATION_KEYS.has(stationKey)) {
+      return res.status(400).json({ error: "Station must be run/bus, coffee/bar, event, or bar." });
+    }
+
+    const assignment = setFloorStationAssignment(db, {
+      shiftDate,
+      personKey,
+      stationKey,
+      displayName,
+      assignedBy: authUser.id
+    });
+
+    res.json({
+      ok: true,
+      assignment,
+      board: getTodayFloorBoard(db, {
+        shiftDate,
+        viewerUserId: req.user.id,
+        privileged: true
+      })
+    });
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message || "Could not save assignment." });
+  }
+});
+
 app.get("/api/shifts/working", authRequired, managerOrAdminRequired, (req, res) => {
   const shiftDate = isValidShiftDate(req.query.date) ? req.query.date : todayDate();
   const staff = getWorkingStaff(db, shiftDate).map(row => ({
     sevenShiftId: row.seven_shift_id,
     sevenUserId: row.seven_user_id,
     userId: row.user_id,
-    name: row.portal_name || null,
+    name: row.portal_name || row.seven_name || null,
     email: row.portal_email || null,
     roleName: row.role_name,
     stationName: row.station_name,

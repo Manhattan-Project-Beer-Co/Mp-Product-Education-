@@ -4506,6 +4506,60 @@
     width: 100%;
     box-sizing: border-box;
   }
+  .home-shift {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--card-radius);
+    background: #fff;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .home-shift-kicker {
+    flex: 0 0 auto;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .home-shift-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+  .home-shift-label {
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .home-shift-detail {
+    font-size: 0.86rem;
+    color: var(--muted);
+  }
+  .home-shift-action {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .home-shift:hover { border-color: var(--gold); }
+  .home-shift[data-state="on"],
+  .home-shift[data-state="lead"] {
+    border-color: rgba(156,107,74,0.4);
+    background: rgba(156,107,74,0.08);
+  }
   .home-section { margin-top: 8px; }
   .home-section + .home-section { margin-top: var(--section-gap); }
   .home-section-title {
@@ -6441,6 +6495,26 @@
     .home-page > .page-header .page-header-title {
       font-size: clamp(1.7rem, 3vw, 2.3rem);
     }
+    .home-shift {
+      margin-top: 18px;
+      padding: 13px 16px;
+      background: #15181a;
+      border-color: transparent;
+      border-radius: 11px;
+    }
+    .home-shift:hover {
+      background: #1d2124;
+      border-color: var(--line);
+    }
+    .home-shift[data-state="on"],
+    .home-shift[data-state="lead"] {
+      background: linear-gradient(135deg, #1b1f21, #15181a);
+      box-shadow: inset 3px 0 0 var(--gold);
+      border-color: transparent;
+    }
+    .home-shift-kicker,
+    .home-shift-action { color: var(--gold); }
+    .home-shift-label { color: #f0ede6; }
     .home-section { margin-top: 28px; }
     .home-section + .home-section { margin-top: 30px; }
     .home-section-title {
@@ -6846,6 +6920,8 @@
 
     @media (max-width: 720px) {
       .home-page > .page-header { min-height: 90px; }
+      .home-shift { flex-wrap: wrap; }
+      .home-shift-action { width: 100%; }
       .home-primary-section .today-cards { grid-template-columns: 1fr; }
       .role-action-list .today-card {
         grid-template-columns: minmax(0, 1fr) 24px;
@@ -10794,6 +10870,7 @@ async function refreshShiftContext() {
       }
     }
     renderShiftStatusUI();
+    if (typeof refreshHomeIfVisible === "function") refreshHomeIfVisible();
     // Keep shift-lead-only tabs in sync when duty flips mid-session.
     document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
       el.style.display = currentUser && currentUser.permissions?.viewShiftReports ? "" : "none";

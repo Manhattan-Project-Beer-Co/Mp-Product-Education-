@@ -570,6 +570,25 @@ function refreshHomeIfVisible() {
   }
 }
 
+function renderHomeShiftHtml() {
+  if (!currentUser) return "";
+  const shift = typeof getShiftContext === "function" ? getShiftContext() : currentUser.shift;
+  const desc = typeof describeShiftStatus === "function"
+    ? describeShiftStatus(shift)
+    : null;
+  if (!desc?.visible) return "";
+  return `
+    <button type="button" class="home-shift" data-state="${escapeForAttribute(desc.state)}" onclick="activateAppTab('today-floor')">
+      <span class="home-shift-kicker">Your shift</span>
+      <span class="home-shift-copy">
+        <span class="home-shift-label">${escapeHTML(desc.label)}</span>
+        <span class="home-shift-detail">${escapeHTML(desc.detail)}</span>
+      </span>
+      <span class="home-shift-action">Today’s Floor</span>
+    </button>
+  `;
+}
+
 /**
  * Employee Home — daily briefing dashboard.
  */
@@ -623,6 +642,11 @@ async function renderHomeShell(content, { skipFetch = false } = {}) {
   const hour = new Date().getHours();
   const serviceLabel = hour < 11 ? "Opening" : hour < 16 ? "Lunch service" : hour < 22 ? "Evening service" : "Close";
 
+  if (!skipFetch && typeof refreshShiftContext === "function") {
+    try { await refreshShiftContext(); } catch (_) {}
+    if (typeof contentType === "function" && contentType() !== "home") return;
+  }
+
   content.innerHTML = `
     <div class="home-page">
       ${renderPageHeader({
@@ -630,6 +654,7 @@ async function renderHomeShell(content, { skipFetch = false } = {}) {
         subtitle: "Here’s what you need to know for your shift today.",
         eyebrow: `${dateLabel} · ${serviceLabel}`
       })}
+      ${renderHomeShiftHtml()}
 
       <section class="home-section home-primary-section">
         <h3 class="home-section-title">Today at MP</h3>

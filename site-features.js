@@ -3,13 +3,23 @@
  */
 
 const SITE_FEATURES = {
-  tabLabel: "How this app works",
-  updatedAt: "2026-08-31",
+  tabLabel: "App guide",
+  updatedAt: "2026-09-07",
   recentUpdates: [
-    { date: "2026-08-31", text: "Sidebar consolidated — Menu + Floor hubs; Ask MP chat removed" },
+    { date: "2026-09-07", text: "Specials update — current weekly food features, organized coffee flavorings, editable latte + matcha seasonals, and Friday shift-lead reminders" },
+    { date: "2026-09-07", text: "Dark redesign — four-level charcoal system, Taproom Amber priority states, compact Home briefing, and streamlined accordion navigation" },
+    { date: "2026-09-07", text: "Ask MP — fast search across the live beer list, food menu, coffee guide, SOPs, recipes, and training" },
+    { date: "2026-09-07", text: "Quiz review — completed rounds show missed questions, your answers, and correct answers; redundant card instructions removed" },
+    { date: "2026-09-04", text: "UX Phase 7 — mobile nav drawer (same grouped menu as desktop), page title bar, touch targets, modal fit" },
+    { date: "2026-09-04", text: "UX Phase 6 — Training dashboard visual redesign (roadmap, status cards, service loop)" },
+    { date: "2026-09-04", text: "UX Phase 5 — On Tap table/cards + Print draft menu / bar tap sheet from the live list" },
+    { date: "2026-09-04", text: "UX Phase 4 — editable Weekly Specials + This Week at MP board" },
+    { date: "2026-09-04", text: "UX Phase 3 — same-page ✎ Edit mode for On Tap, Merch, and SOPs (staff view by default)" },
+    { date: "2026-09-04", text: "UX Phase 2 — Employee Home daily briefing (Today at MP, While you were away, role cards) + trainee Today strip" },
+    { date: "2026-09-04", text: "UX Phase 1 — grouped sidebar (Home, Service, Ops, Training, Team, Tools) + shared page headers / buttons" },
+    { date: "2026-09-04", text: "Training tab — trainee home dashboard with deep-links into Service, Ops, War Games, and Progress" },
     { date: "2026-08-11", text: "Photo standards gallery, checklist before/after photos, shout-outs, team challenges, secret streaks" },
-    { date: "2026-08-11", text: "Tap Change + New Menu Package generators; weekly training pack + deeper Team analytics" },
-    { date: "2026-08-11", text: "Floor Tools pack (86s, handoff, huddle, recommenders, allergy, maintenance, First 5, skills)" }
+    { date: "2026-08-11", text: "Tap Change + New Menu Package generators; weekly training pack + deeper Team analytics" }
   ],
   roles: [
     { name: "Admin", blurb: "Full access — emails, SOPs, Team, merch, inventory, feedback" },
@@ -19,31 +29,34 @@ const SITE_FEATURES = {
     { name: "Shift lead", blurb: "Shift reports & digest when scheduled on duty" },
     { name: "Event lead", blurb: "Menus + training for private events" },
     { name: "Bartender", blurb: "Training, briefing, Floor Tools, End of Shift, Feedback" },
-    { name: "Trainee", blurb: "First 5 Shifts path + same floor tools while learning" }
+    { name: "Trainee", blurb: "Lands on Training after login — five-shift path + same floor tools while learning" }
   ],
   feedbackTabOptions: [
-    "Menu · On Tap", "Menu · All Beers", "Menu · Food", "Menu · Coffee", "Menu · Wine + Cocktails", "Menu · Merch",
-    "Inventory", "Floor · Floor Tools", "Floor · SOPs", "Floor · Checklists", "Reviews", "War Games",
-    "My Progress", "End of Shift", "Shift Reports", "Team", "How this app works", "Feedback", "General / not sure"
+    "Home", "Service · On Tap", "Service · All Beers", "Service · Food", "Service · Coffee", "Service · Wine + Cocktails", "Service · Merch", "Service · Floor Tools",
+    "Ops · Checklists", "Ops · SOPs", "Ops · End of Shift",
+    "Training", "My Progress", "Team", "Shift Reports", "Feedback",
+    "Tools · Ask MP", "Tools · Inventory", "Tools · Reviews", "Tools · War Games", "Tools · App guide",
+    "General / not sure"
   ],
   sections: [
-    { id: "menu", title: "Menu", summary: "Hub for On Tap, All Beers, Food, Coffee, Wine + Cocktails, and Merch — switch with chips under the title." },
-    { id: "ontap", title: "On Tap & All Beers", summary: "Live tap list, details, filters, tasting check-ins (under Menu). Admins, managers, and shift leads can change what’s pouring from each On Tap card." },
-    { id: "food", title: "Food", summary: "Breakfast, brunch, lunch, dinner, weekly specials, allergens (under Menu)." },
-    { id: "coffee", title: "Coffee", summary: "Menu, Viewfinder beans, seasonal latte recipes, training manual (under Menu)." },
-    { id: "bar", title: "Wine + Cocktails", summary: "Wine, house cocktails, and NA drinks (under Menu)." },
-    { id: "merch", title: "Merch", summary: "In-stock counts, Up & Coming votes, Shopify link (under Menu)." },
-    { id: "inventory", title: "Inventory", summary: "Ops counts, weekly order, dashboard." },
-    { id: "floor", title: "Floor", summary: "Hub for Floor Tools, SOPs, and Checklists — switch with chips under the title." },
-    { id: "floortools", title: "Floor Tools", summary: "86 board, handoff, huddle, Sell This, photo standards, shout-outs, team challenges, tap change + menu packages, recommenders, allergy, maintenance, First 5, skills, secrets/streaks." },
-    { id: "sops", title: "SOPs", summary: "Procedures, Recipes, Emergency, photo standards gallery (under Floor)." },
-    { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with before/after task photos and streaks (under Floor)." },
-    { id: "launchpad", title: "War Games", summary: "Arcade drills, Staff Favorites, Guest Scenarios, Complaint Recovery, leaderboard, badges." },
-    { id: "progress", title: "My Progress", summary: "Scores, tasting journal, achievements — under your name in the sidebar." },
-    { id: "shift", title: "End of Shift / Reports", summary: "Anonymous surveys (account links) + digests for leads (Shift Reports tab)." },
-    { id: "team", title: "Team", summary: "Morning digest, AI weekly training pack, deep analytics, shift lead duty." },
-    { id: "briefing", title: "Daily briefing", summary: "New taps, specials, seasonal drinks." },
-    { id: "feedback", title: "Feedback", summary: "Ideas/bugs with Submitted → Reviewing → Planned → Built pipeline — under your name in the sidebar." }
+    { id: "home", title: "Home", summary: "Daily dashboard: Today at MP (specials, 86s, tap changes, shift notes), While you were away, role cards, and quick access. Mobile uses the same grouped menu drawer as desktop." },
+    { id: "askmp", title: "Ask MP", summary: "Fast operational search across current beer, food, coffee, SOP, recipe, and training content (Tools group)." },
+    { id: "training", title: "Training", summary: "Trainee dashboard with five-shift roadmap, status-coded skill cards, service loop, Continue Training, and deep-links into Launch Pad (no duplicated menus)." },
+    { id: "ontap", title: "On Tap & All Beers", summary: "Live tap list as a scannable table (mobile cards). Print guest draft menu or bar tap sheet from the same data. Editors set pour size + print category; tap changes still go to Nucleus." },
+    { id: "food", title: "Food", summary: "Breakfast, brunch, lunch, dinner, weekly specials, allergens (Service group). Shift leads/managers edit Weekly Specials + This Week at MP notes inline, with a Friday reminder." },
+    { id: "coffee", title: "Coffee", summary: "Menu, organized flavorings, Viewfinder beans, editable seasonal latte and matcha features, and training manual (Service group)." },
+    { id: "bar", title: "Wine + Cocktails", summary: "Wine, house cocktails, and NA drinks (Service group)." },
+    { id: "merch", title: "Merch", summary: "In-stock counts, Up & Coming votes, Shopify link (Tools group)." },
+    { id: "inventory", title: "Inventory", summary: "Ops counts, weekly order, dashboard (Tools group)." },
+    { id: "floortools", title: "Floor Tools", summary: "86 board, handoff, huddle, Sell This, photo standards, shout-outs, team challenges, tap change + menu packages, recommenders, allergy, maintenance, First 5, skills, secrets/streaks (Service group)." },
+    { id: "sops", title: "SOPs", summary: "Procedures, Recipes, Emergency, photo standards gallery (Ops group)." },
+    { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with streaks (Ops group)." },
+    { id: "launchpad", title: "War Games", summary: "Arcade drills, Staff Favorites, Guest Scenarios, Complaint Recovery, leaderboard, badges, and missed-answer review (Tools group)." },
+    { id: "progress", title: "My Progress", summary: "Scores, tasting journal, achievements (Training group)." },
+    { id: "shift", title: "End of Shift / Reports", summary: "Anonymous surveys (Ops) + digests for leads (Team · Shift Reports)." },
+    { id: "team", title: "Team", summary: "Morning digest, AI weekly training pack, deep analytics, shift lead duty (Team group)." },
+    { id: "briefing", title: "Daily briefing", summary: "Lives on Home (and Today at MP on Training). Pulls specials, 86s, handoffs, Sell This, unread announcements; shift leads see Friday food and coffee specials reminders." },
+    { id: "feedback", title: "Feedback", summary: "Ideas/bugs with Submitted → Reviewing → Planned → Built pipeline (Team group)." }
   ]
 };
 
@@ -57,7 +70,7 @@ function buildSiteOverviewText() {
     "Staff roles:",
     roles.join("\n"),
     "",
-    `Open “${SITE_FEATURES.tabLabel}” under your name in the sidebar (updated ${SITE_FEATURES.updatedAt}).`
+    `Open “${SITE_FEATURES.tabLabel}” under Tools in the sidebar (updated ${SITE_FEATURES.updatedAt}).`
   ].join("\n");
 }
 

@@ -9,7 +9,7 @@
  * - shift_lead: shift reports & digest when scheduled on duty; can update taps (+ extra role on merch staff)
  * - event_lead: private events — all reference tabs, training, briefing, feedback
  * - bartender: floor staff — menus, training, end-of-shift survey
- * - trainee: same floor access as bartender while learning
+ * - trainee: same floor access as bartender while learning; lands on Training after login
  */
 
 const ROLES = {
@@ -120,6 +120,11 @@ function canManageTaps(user) {
   return hasShiftLeadCapability(user);
 }
 
+/** Who can update weekly food specials / This Week at MP board. */
+function canManageWeeklySpecials(user) {
+  return hasShiftLeadCapability(user);
+}
+
 function canSubmitShiftSurvey(user) {
   return hasRole(
     user,
@@ -161,6 +166,7 @@ function buildPermissions(user, onShiftLeadDuty = false) {
     manageMerch: canManageMerch(user),
     manageOpsInventory: canManageOpsInventory(user),
     manageTaps: canManageTaps(user),
+    manageWeeklySpecials: canManageWeeklySpecials(user),
     viewShiftReports: canViewShiftReports(user, onShiftLeadDuty),
     submitShiftSurvey: canSubmitShiftSurvey(user),
     manageSops: canManageSops(user),
@@ -189,6 +195,7 @@ const api = {
   canManageMerch,
   canManageOpsInventory,
   canManageTaps,
+  canManageWeeklySpecials,
   canViewShiftReports,
   canSubmitShiftSurvey,
   receivesDailyBriefing,

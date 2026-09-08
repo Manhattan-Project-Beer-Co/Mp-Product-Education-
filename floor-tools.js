@@ -78,6 +78,8 @@ function renderFloorTools(content) {
   (map[floorSection] || renderEightySixBoard)(body);
 }
 
+let availabilityEditorOpen = false;
+
 async function renderEightySixBoard(el) {
   el.innerHTML = `<div class="status"><strong>Loading 86 board…</strong></div>`;
   try {
@@ -88,7 +90,10 @@ async function renderEightySixBoard(el) {
         <strong>Check this before approaching a table.</strong> 86 = do not sell · Out = gone · Low = running short.
       </div>
       ${currentUser ? `
-        <div class="auth-panel" style="max-width:760px;margin:0 auto 16px;">
+        <div class="floor-inline-controls">
+          <button type="button" class="btn btn-edit${availabilityEditorOpen ? " is-active" : ""}" onclick="availabilityEditorOpen=!availabilityEditorOpen; render();">${availabilityEditorOpen ? "Close" : "＋ Add item"}</button>
+        </div>
+        ${availabilityEditorOpen ? `<div class="auth-panel floor-inline-editor" style="max-width:760px;margin:0 auto 16px;">
           <label>Add item</label>
           <input id="availName" placeholder="Item name (e.g. Skirt steak, Dark Room syrup)" maxlength="120">
           <label style="margin-top:8px;">Category</label>
@@ -100,8 +105,8 @@ async function renderEightySixBoard(el) {
           <label style="margin-top:8px;">Notes</label>
           <input id="availNotes" placeholder="Optional note" maxlength="500">
           <button class="game-next" style="margin-top:12px;" onclick="addAvailabilityItem()">Post to board</button>
-        </div>
-      ` : `<p class="hint" style="text-align:center;">Log in to update the board.</p>`}
+        </div>` : ""}
+      ` : `<p class="hint" style="text-align:center;">Sign in to update the board.</p>`}
       <div class="list" style="max-width:760px;margin:0 auto;">
         ${items.length ? items.map(item => `
           <div class="card" style="border-left:4px solid ${item.status === "low" ? "#c9a227" : "#c44"}">
@@ -113,7 +118,7 @@ async function renderEightySixBoard(el) {
               ${currentUser ? `<button class="auth-btn" onclick="clearAvailabilityItem(${item.id})">Clear</button>` : ""}
             </div>
           </div>
-        `).join("") : `<div class="status"><strong>Board is clear.</strong>Nothing marked 86 / low / out.</div>`}
+        `).join("") : `<div class="status"><strong>Board is clear.</strong> Nothing marked 86 / low / out.</div>`}
       </div>
     `;
   } catch (err) {
@@ -132,6 +137,7 @@ async function addAvailabilityItem() {
         notes: document.getElementById("availNotes")?.value
       })
     });
+    availabilityEditorOpen = false;
     render();
   } catch (err) {
     alert(err.message);
@@ -150,7 +156,7 @@ async function clearAvailabilityItem(id) {
 async function renderHandoffBoard(el) {
   el.innerHTML = `<div class="status"><strong>Loading handoff…</strong></div>`;
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in to view shift handoff</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in to view shift handoff</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   try {
@@ -196,7 +202,7 @@ async function dismissHandoff(id) {
 
 async function renderHuddleBoard(el) {
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in for pre-shift huddle</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in for pre-shift huddle</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   el.innerHTML = `<div class="status"><strong>Building 60-second huddle…</strong></div>`;
@@ -228,6 +234,12 @@ async function renderSellThisBoard(el) {
     const data = await apiFetch("/api/sell-this-today");
     const c = data.challenge;
     const done = new Set((data.myCompletions || []).map(x => x.action));
+    const suggestions = [
+      ...(typeof beers !== "undefined" ? beers.map((beer) => beer.Name).filter(Boolean) : []),
+      ...(typeof FOOD_MENU !== "undefined" ? FOOD_MENU.map((item) => item.name).filter(Boolean) : []),
+      ...(typeof WEEKLY_SPECIALS !== "undefined" ? WEEKLY_SPECIALS.map((item) => item.name).filter(Boolean) : []),
+      ...(typeof COFFEE_SPECIALS !== "undefined" ? COFFEE_SPECIALS.map((item) => item.name).filter(Boolean) : [])
+    ];
     el.innerHTML = `
       <div class="coffee-intro" style="padding-top:0;">
         <h2>Sell This Today</h2>
@@ -236,7 +248,8 @@ async function renderSellThisBoard(el) {
       ${isManager() ? `
         <div class="auth-panel" style="max-width:760px;margin:0 auto 16px;">
           <label>Item to push</label>
-          <input id="sellItemName" placeholder="Beer / food / coffee item" maxlength="120">
+          <input id="sellItemName" list="sellItemSuggestions" placeholder="Beer / food / coffee item" maxlength="120">
+          <datalist id="sellItemSuggestions">${[...new Set(suggestions)].map((name) => `<option value="${escapeForAttribute(name)}"></option>`).join("")}</datalist>
           <label style="margin-top:8px;">Type</label>
           <select id="sellItemType"><option>beer</option><option>food</option><option>coffee</option></select>
           <label style="margin-top:8px;">Talking points</label>
@@ -254,10 +267,11 @@ async function renderSellThisBoard(el) {
               <button class="game-next" ${done.has("learn") ? "disabled" : ""} onclick="completeSellThis('learn')">Learn (+10)</button>
               <button class="game-next" ${done.has("quiz") ? "disabled" : ""} onclick="completeSellThis('quiz')">Quiz (+25)</button>
               <button class="game-next" ${done.has("tasting") ? "disabled" : ""} onclick="completeSellThis('tasting')">Tasting (+20)</button>
+              ${isManager() ? `<button class="btn btn-danger" onclick="clearSellThisToday()">Clear feature</button>` : ""}
             </div>
-          ` : `<p class="hint">Log in to earn bonus points.</p>`}
+          ` : `<p class="hint">Sign in to earn bonus points.</p>`}
         </div>
-      ` : `<div class="status"><strong>No active challenge.</strong>Managers can set one above.</div>`}
+      ` : `<div class="status"><strong>No active challenge.</strong> Managers can set one above.</div>`}
     `;
   } catch (err) {
     el.innerHTML = `<div class="status"><strong>${escapeHTML(err.message)}</strong></div>`;
@@ -274,6 +288,17 @@ async function setSellThisToday() {
         talkingPoints: document.getElementById("sellTalk")?.value
       })
     });
+    if (typeof resetHomeBriefingCache === "function") resetHomeBriefingCache();
+    render();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function clearSellThisToday() {
+  try {
+    await apiFetch("/api/sell-this-today", { method: "DELETE" });
+    if (typeof resetHomeBriefingCache === "function") resetHomeBriefingCache();
     render();
   } catch (err) {
     alert(err.message);
@@ -339,7 +364,7 @@ function paintSellThemResults() {
     const name = String(b.Name || b.name || "");
     const abv = parseFloat(String(b.ABV || b.abv || "").replace("%", "")) || 0;
     let score = 0;
-    if (sellThemTags.has("light") && /light|crisp|lager|pils|blonde|kolsch|köalsch/.test(flavor + style)) score += 3;
+    if (sellThemTags.has("light") && /light|crisp|lager|pils|blonde|kolsch|kölsch/.test(flavor + style)) score += 3;
     if (sellThemTags.has("hoppy") && /ipa|hop|bitter|pine|citrus/.test(flavor + style)) score += 3;
     if (sellThemTags.has("fruity") && /fruit|berry|tropical|wheat|wit/.test(flavor + style)) score += 3;
     if (sellThemTags.has("dark") && /stout|porter|dark|roast|chocolate|coffee/.test(flavor + style)) score += 3;
@@ -351,7 +376,7 @@ function paintSellThemResults() {
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
 
   if (!scored.length) {
-    el.innerHTML = `<div class="status"><strong>No strong on-tap matches.</strong>Ask what they normally drink and bridge from there.</div>`;
+    el.innerHTML = `<div class="status"><strong>No strong on-tap matches.</strong> Ask what they normally drink and bridge from there.</div>`;
     return;
   }
 
@@ -406,7 +431,7 @@ function renderAllergyBoard(el) {
         <button class="filter-btn${allergyFilters[key] ? " active" : ""}" onclick="allergyFilters.${key}=!allergyFilters.${key}; render();">Avoid ${key}</button>
       `).join("")}
     </div>
-    <p class="desc" style="text-align:center;margin-bottom:12px;">${active.length ? `Filtering to avoid: ${active.join(", ")}` : "Select allergens to filter the food menu."}</p>
+    ${active.length ? `<p class="desc" style="text-align:center;margin-bottom:12px;">Filtering to avoid: ${active.join(", ")}</p>` : ""}
     <div class="list" style="max-width:760px;margin:0 auto;">
       ${filtered.slice(0, 40).map(item => `
         <div class="card">
@@ -414,14 +439,14 @@ function renderAllergyBoard(el) {
           <p class="desc">${escapeHTML(item.description || "")}</p>
           <p class="desc" style="margin-top:6px;">GF: ${item.glutenFree === true ? "yes" : item.glutenFree === false ? "no" : "ask"} · Dairy: ${item.dairy === true ? "yes" : item.dairy === false ? "no" : "ask"} · Nuts: ${item.nuts === true ? "yes" : item.nuts === false ? "no" : "ask"}</p>
         </div>
-      `).join("") || `<div class="status"><strong>No items match.</strong>Confirm with kitchen for safe options.</div>`}
+      `).join("") || `<div class="status"><strong>No items match.</strong> Confirm with kitchen for safe options.</div>`}
     </div>
   `;
 }
 
 async function renderMaintenanceBoard(el) {
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in to report maintenance</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in to report maintenance</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   el.innerHTML = `<div class="status"><strong>Loading…</strong></div>`;
@@ -582,7 +607,7 @@ function renderEmergencyBoard(el) {
 
 async function renderFirstFiveBoard(el) {
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in for First 5 Shifts</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in for First 5 Shifts</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   el.innerHTML = `<div class="status"><strong>Loading…</strong></div>`;
@@ -636,7 +661,7 @@ async function signFirstFive(shiftNumber, skillKey) {
 
 async function renderSkillsBoard(el) {
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in to view skills</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in to view skills</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   el.innerHTML = `<div class="status"><strong>Loading skill matrix…</strong></div>`;
@@ -790,7 +815,7 @@ async function deletePhotoStandard(id) {
 
 async function renderShoutoutsBoard(el) {
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in to shout out teammates</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in to shout out teammates</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   el.innerHTML = `<div class="status"><strong>Loading shout-outs…</strong></div>`;
@@ -1055,7 +1080,7 @@ async function submitMenuPackage() {
 
 async function renderAchievementsBoard(el) {
   if (!currentUser) {
-    el.innerHTML = `<div class="auth-panel"><h3>Log in for clearance dossier</h3><button class="game-next" onclick="openAuthModal('login')">Log in</button></div>`;
+    el.innerHTML = `<div class="auth-panel"><h3>Sign in for clearance dossier</h3><button class="game-next" onclick="showLoginGate()">Sign in</button></div>`;
     return;
   }
   el.innerHTML = `<div class="status"><strong>Decrypting clearance file…</strong></div>`;
@@ -1090,7 +1115,7 @@ async function renderAchievementsBoard(el) {
               <p class="name">${escapeHTML(formatStreakKey(s.streak_key))}</p>
               <p class="desc">Current ${s.count} · Best ${s.best}${s.last_date ? ` · Last ${escapeHTML(s.last_date)}` : ""}</p>
             </div>
-          `).join("") : `<div class="status"><strong>No streaks logged.</strong>Finish opening/closing checklists or hit a 5-answer War Games streak.</div>`}
+          `).join("") : `<div class="status"><strong>No streaks logged.</strong> Finish opening/closing checklists or hit a 5-answer War Games streak.</div>`}
         </div>
       </div>
     `;

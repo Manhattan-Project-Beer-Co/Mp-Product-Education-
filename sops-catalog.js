@@ -419,7 +419,7 @@ ${bullets([
 /** Titles moved out of SOPs (e.g. drink recipes that live on the Coffee tab). */
 const SOPS_RETIRED_TITLES = [
   "Banana Foster Latte (Seasonal)",
-  "Cappalletti Spritz"
+  "Cappelletti Spritz"
 ];
 
 if (typeof module !== "undefined" && module.exports) {

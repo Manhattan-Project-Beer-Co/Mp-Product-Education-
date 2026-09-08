@@ -133,6 +133,9 @@ function ensureFloorOpsTables(db) {
     );
   `);
 
+  // Remove an old development fixture that should never appear as a live floor push.
+  db.prepare("UPDATE sell_this_today SET active = 0 WHERE item_name = 'Test New IPA'").run();
+
   const fbCols = new Set(db.prepare("PRAGMA table_info(site_feedback)").all().map(c => c.name));
   if (!fbCols.has("pipeline_status")) {
     db.exec(`ALTER TABLE site_feedback ADD COLUMN pipeline_status TEXT NOT NULL DEFAULT 'submitted'`);
@@ -330,6 +333,11 @@ function registerFloorOpsApi(app, {
       ok: true,
       challenge: db.prepare("SELECT * FROM sell_this_today WHERE id = ?").get(result.lastInsertRowid)
     });
+  });
+
+  app.delete("/api/sell-this-today", authRequired, managerOrAdminRequired, (req, res) => {
+    db.prepare("UPDATE sell_this_today SET active = 0 WHERE active = 1").run();
+    res.json({ ok: true, challenge: null });
   });
 
   app.post("/api/sell-this-today/complete", authRequired, (req, res) => {

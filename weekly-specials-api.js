@@ -89,6 +89,27 @@ const DEFAULT_COFFEE_SPECIALS = [
   }
 ];
 
+const COFFEE_SPECIAL_KINDS = ["latte", "matcha", "cocktail", "other"];
+const WEEKDAY_LABELS = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
+  other: "Special"
+};
+
+function slugId(prefix, value) {
+  const base = String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+  return `${prefix}-${base || Date.now()}`;
+}
+
 function mondayOf(date) {
   const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const day = d.getDay();
@@ -113,6 +134,46 @@ function parseDateKey(key) {
   return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
 }
 
+function parseStamp(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return new Date(`${raw}T00:00:00`);
+  const normalized = raw.includes("T") ? raw : raw.replace(" ", "T");
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function stampToStorage(value) {
+  const date = parseStamp(value);
+  if (!date) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function contentStatus(row, { now = new Date() } = {}) {
+  if (row.archived === 1 || row.archived === true || row.active === 0 || row.active === false) {
+    return "archived";
+  }
+  const start = parseStamp(row.publish_at || row.publishAt);
+  const end = parseStamp(row.expire_at || row.expireAt);
+  if (start && now < start) return "scheduled";
+  if (end && now >= end) return "expired";
+  return "live";
+}
+
+function isContentLive(row, opts) {
+  return contentStatus(row, opts) === "live";
+}
+
+function tableColumns(db, table) {
+  return new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((col) => col.name));
+}
+
+function ensureColumn(db, table, column, ddl) {
+  if (tableColumns(db, table).has(column)) return;
+  db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+}
+
 function triStateFromDb(value) {
   if (value === null || value === undefined) return null;
   return Boolean(value);
@@ -124,8 +185,9 @@ function triStateToDb(value) {
   return null;
 }
 
-function mapSpecialRow(row) {
+function mapSpecialRow(row, { now = new Date() } = {}) {
   if (!row) return null;
+  const status = contentStatus(row, { now });
   return {
     id: row.id,
     day: row.day,
@@ -142,16 +204,21 @@ function mapSpecialRow(row) {
     dairy: triStateFromDb(row.dairy),
     nuts: triStateFromDb(row.nuts),
     active: Boolean(row.active),
+    publishAt: row.publish_at || "",
+    expireAt: row.expire_at || "",
     sortOrder: row.sort_order,
-    updatedAt: row.updated_at || null
+    updatedAt: row.updated_at || null,
+    status
   };
 }
 
-function mapCoffeeSpecialRow(row) {
+function mapCoffeeSpecialRow(row, { now = new Date() } = {}) {
   if (!row) return null;
+  const status = contentStatus(row, { now });
   return {
     id: row.id,
     kind: row.kind,
+    menu: row.menu || "coffee",
     season: row.season,
     name: row.name,
     price: row.price,
@@ -159,9 +226,13 @@ function mapCoffeeSpecialRow(row) {
     build: row.build || "",
     training: row.training || "",
     available: Boolean(row.available),
+    archived: Boolean(row.archived),
     isNew: Boolean(row.is_new),
+    publishAt: row.publish_at || "",
+    expireAt: row.expire_at || "",
     sortOrder: row.sort_order,
-    updatedAt: row.updated_at || null
+    updatedAt: row.updated_at || null,
+    status
   };
 }
 
@@ -224,6 +295,13 @@ function ensureWeeklySpecialsTables(db) {
       value TEXT NOT NULL
     );
   `);
+
+  ensureColumn(db, "weekly_specials", "publish_at", "publish_at TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "weekly_specials", "expire_at", "expire_at TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "coffee_specials", "menu", "menu TEXT NOT NULL DEFAULT 'coffee'");
+  ensureColumn(db, "coffee_specials", "archived", "archived INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "coffee_specials", "publish_at", "publish_at TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "coffee_specials", "expire_at", "expire_at TEXT NOT NULL DEFAULT ''");
 
   const count = db.prepare("SELECT COUNT(*) AS c FROM weekly_specials").get().c;
   if (!count) {
@@ -412,7 +490,8 @@ function registerWeeklySpecialsApi(app, {
   app.get("/api/weekly-specials", optionalAuth, (req, res) => {
     const user = req.user?.id && typeof loadAuthedUser === "function" ? loadAuthedUser(req) : null;
     const canEdit = Boolean(user && canManageWeeklySpecials?.(user));
-    const rows = db.prepare(`
+    const now = new Date();
+    const specialRows = db.prepare(`
       SELECT * FROM weekly_specials
       ORDER BY sort_order ASC, day ASC
     `).all();
@@ -420,10 +499,16 @@ function registerWeeklySpecialsApi(app, {
       SELECT * FROM coffee_specials
       ORDER BY sort_order ASC, name ASC
     `).all();
+    const specials = specialRows
+      .map((row) => mapSpecialRow(row, { now }))
+      .filter((row) => canEdit || row.status === "live");
+    const coffeeSpecials = coffeeRows
+      .map((row) => mapCoffeeSpecialRow(row, { now }))
+      .filter((row) => canEdit || row.status === "live");
     const board = getBoardRow(db);
     res.json({
-      specials: rows.map(mapSpecialRow),
-      coffeeSpecials: coffeeRows.map(mapCoffeeSpecialRow),
+      specials,
+      coffeeSpecials,
       board: mapBoard(board, { canEdit }),
       canEdit
     });
@@ -507,21 +592,26 @@ function registerWeeklySpecialsApi(app, {
       notes: String(body.notes ?? existing.notes).trim().slice(0, 2000),
       schedule: String(body.schedule ?? existing.schedule).trim().slice(0, 120),
       meal: String(body.meal ?? existing.meal).trim().slice(0, 80),
+      day: String(body.day ?? existing.day).trim().toLowerCase().slice(0, 20) || existing.day,
+      day_label: String(body.dayLabel ?? existing.day_label).trim().slice(0, 40) || existing.day_label,
       gluten_free: body.glutenFree !== undefined ? triStateToDb(body.glutenFree) : existing.gluten_free,
       dairy: body.dairy !== undefined ? triStateToDb(body.dairy) : existing.dairy,
       nuts: body.nuts !== undefined ? triStateToDb(body.nuts) : existing.nuts,
-      active: body.active !== undefined ? (body.active ? 1 : 0) : existing.active
+      active: body.active !== undefined ? (body.active ? 1 : 0) : existing.active,
+      publish_at: body.publishAt !== undefined ? stampToStorage(body.publishAt) : (existing.publish_at || ""),
+      expire_at: body.expireAt !== undefined ? stampToStorage(body.expireAt) : (existing.expire_at || "")
     };
 
     db.prepare(`
       UPDATE weekly_specials
       SET name = ?, price = ?, description = ?, build = ?, training = ?, notes = ?,
-          schedule = ?, meal = ?, gluten_free = ?, dairy = ?, nuts = ?, active = ?,
-          updated_at = datetime('now')
+          schedule = ?, meal = ?, day = ?, day_label = ?, gluten_free = ?, dairy = ?, nuts = ?, active = ?,
+          publish_at = ?, expire_at = ?, updated_at = datetime('now')
       WHERE id = ?
     `).run(
       next.name, next.price, next.description, next.build, next.training, next.notes,
-      next.schedule, next.meal, next.gluten_free, next.dairy, next.nuts, next.active, id
+      next.schedule, next.meal, next.day, next.day_label, next.gluten_free, next.dairy, next.nuts, next.active,
+      next.publish_at, next.expire_at, id
     );
 
     const markWeek = body.markWeekUpdated !== false;
@@ -547,17 +637,22 @@ function registerWeeklySpecialsApi(app, {
     const name = String(body.name ?? existing.name).trim().slice(0, 160);
     if (!name) return res.status(400).json({ error: "Name is required." });
     const kind = String(body.kind ?? existing.kind).trim().toLowerCase();
-    if (!["latte", "matcha"].includes(kind)) {
-      return res.status(400).json({ error: "Coffee special kind must be latte or matcha." });
+    if (!COFFEE_SPECIAL_KINDS.includes(kind)) {
+      return res.status(400).json({ error: "Drink type must be latte, matcha, cocktail, or other." });
+    }
+    const menu = String(body.menu ?? existing.menu ?? "coffee").trim().toLowerCase();
+    if (!["coffee", "bar"].includes(menu)) {
+      return res.status(400).json({ error: "Menu must be coffee or bar." });
     }
 
     db.prepare(`
       UPDATE coffee_specials
-      SET kind = ?, season = ?, name = ?, price = ?, description = ?, build = ?, training = ?,
-          available = ?, is_new = ?, updated_at = datetime('now')
+      SET kind = ?, menu = ?, season = ?, name = ?, price = ?, description = ?, build = ?, training = ?,
+          available = ?, is_new = ?, archived = ?, publish_at = ?, expire_at = ?, updated_at = datetime('now')
       WHERE id = ?
     `).run(
       kind,
+      menu,
       String(body.season ?? existing.season).trim().slice(0, 80),
       name,
       String(body.price ?? existing.price).trim().slice(0, 80),
@@ -566,9 +661,95 @@ function registerWeeklySpecialsApi(app, {
       String(body.training ?? existing.training).trim().slice(0, 2000),
       body.available !== undefined ? (body.available ? 1 : 0) : existing.available,
       body.isNew !== undefined ? (body.isNew ? 1 : 0) : existing.is_new,
+      body.archived !== undefined ? (body.archived ? 1 : 0) : (existing.archived || 0),
+      body.publishAt !== undefined ? stampToStorage(body.publishAt) : (existing.publish_at || ""),
+      body.expireAt !== undefined ? stampToStorage(body.expireAt) : (existing.expire_at || ""),
       id
     );
 
+    const row = db.prepare("SELECT * FROM coffee_specials WHERE id = ?").get(id);
+    res.json({ coffeeSpecial: mapCoffeeSpecialRow(row), canEdit: true });
+  });
+
+  app.post("/api/weekly-specials", authRequired, weeklySpecialsManagerRequired, (req, res) => {
+    const body = req.body || {};
+    const name = String(body.name || "").trim().slice(0, 160);
+    if (!name) return res.status(400).json({ error: "Name is required." });
+    const day = String(body.day || "other").trim().toLowerCase();
+    if (!WEEKDAY_LABELS[day]) return res.status(400).json({ error: "Choose a valid day." });
+    const id = slugId("special", `${day}-${name}`);
+    if (db.prepare("SELECT id FROM weekly_specials WHERE id = ?").get(id)) {
+      return res.status(409).json({ error: "A special with that name already exists." });
+    }
+    const maxSort = db.prepare("SELECT COALESCE(MAX(sort_order), 0) AS n FROM weekly_specials").get().n;
+    db.prepare(`
+      INSERT INTO weekly_specials (
+        id, day, day_label, meal, schedule, name, price, description, build, training, notes,
+        gluten_free, dairy, nuts, active, publish_at, expire_at, sort_order
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      id,
+      day,
+      body.dayLabel || WEEKDAY_LABELS[day],
+      String(body.meal || "").trim().slice(0, 80),
+      String(body.schedule || "").trim().slice(0, 120),
+      name,
+      String(body.price || "").trim().slice(0, 80),
+      String(body.description || "").trim().slice(0, 2000),
+      String(body.build || "").trim().slice(0, 2000),
+      String(body.training || "").trim().slice(0, 2000),
+      String(body.notes || "").trim().slice(0, 2000),
+      triStateToDb(body.glutenFree),
+      triStateToDb(body.dairy),
+      triStateToDb(body.nuts),
+      body.active === false ? 0 : 1,
+      stampToStorage(body.publishAt),
+      stampToStorage(body.expireAt),
+      maxSort + 1
+    );
+    const row = db.prepare("SELECT * FROM weekly_specials WHERE id = ?").get(id);
+    res.json({ special: mapSpecialRow(row) });
+  });
+
+  app.post("/api/coffee-specials", authRequired, weeklySpecialsManagerRequired, (req, res) => {
+    const body = req.body || {};
+    const name = String(body.name || "").trim().slice(0, 160);
+    if (!name) return res.status(400).json({ error: "Name is required." });
+    const kind = String(body.kind || "latte").trim().toLowerCase();
+    if (!COFFEE_SPECIAL_KINDS.includes(kind)) {
+      return res.status(400).json({ error: "Drink type must be latte, matcha, cocktail, or other." });
+    }
+    const menu = String(body.menu || (kind === "cocktail" ? "bar" : "coffee")).trim().toLowerCase();
+    if (!["coffee", "bar"].includes(menu)) {
+      return res.status(400).json({ error: "Menu must be coffee or bar." });
+    }
+    const id = slugId("drink", name);
+    if (db.prepare("SELECT id FROM coffee_specials WHERE id = ?").get(id)) {
+      return res.status(409).json({ error: "A drink with that name already exists." });
+    }
+    const maxSort = db.prepare("SELECT COALESCE(MAX(sort_order), 0) AS n FROM coffee_specials").get().n;
+    db.prepare(`
+      INSERT INTO coffee_specials (
+        id, kind, menu, season, name, price, description, build, training,
+        available, is_new, archived, publish_at, expire_at, sort_order
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      id,
+      kind,
+      menu,
+      String(body.season || "Seasonal").trim().slice(0, 80),
+      name,
+      String(body.price || "").trim().slice(0, 80),
+      String(body.description || "").trim().slice(0, 2000),
+      String(body.build || "").trim().slice(0, 2000),
+      String(body.training || "").trim().slice(0, 2000),
+      body.available === false ? 0 : 1,
+      body.isNew ? 1 : 0,
+      0,
+      stampToStorage(body.publishAt),
+      stampToStorage(body.expireAt),
+      maxSort + 1
+    );
     const row = db.prepare("SELECT * FROM coffee_specials WHERE id = ?").get(id);
     res.json({ coffeeSpecial: mapCoffeeSpecialRow(row), canEdit: true });
   });
@@ -580,5 +761,9 @@ module.exports = {
   DEFAULT_SPECIALS,
   DEFAULT_COFFEE_SPECIALS,
   expectedContentWeekStart,
-  boardNeedsReview
+  boardNeedsReview,
+  contentStatus,
+  isContentLive,
+  parseStamp,
+  stampToStorage
 };

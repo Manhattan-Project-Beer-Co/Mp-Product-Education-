@@ -1,8 +1,14 @@
 /**
- * Floor Tools UI — 86 board, handoff, huddle, recommenders, allergy, maintenance, etc.
+ * Shift Tools UI — 86 board, handoff, huddle, recommenders, allergy, maintenance.
  * Expects apiFetch, escapeHTML, escapeForAttribute, currentUser, isManager, activateAppTab,
  * beers, FOOD_MENU, FloorContent, StaffRoles from the page.
  */
+
+const SHIFT_TOOL_TAB_IDS = ["board", "handoff", "huddle", "sell", "recommend", "allergy", "maintenance", "shortcuts"];
+const REMOVED_FLOOR_SECTION_IDS = [
+  "achievements", "kegs", "recipes", "tapchange", "menupkg",
+  "challenges", "shoutouts", "firstfive", "skills", "emergency", "troubleshoot"
+];
 
 let floorSection = "board";
 let allergyFilters = { gluten: false, dairy: false, nuts: false, egg: false };
@@ -13,7 +19,29 @@ let kegPercent = 50;
 let kegSize = "1/2 bbl";
 let photoStandardsArea = "all";
 
+function applyFloorSectionRedirect() {
+  if (floorSection === "emergency" || floorSection === "troubleshoot") {
+    floorSection = "board";
+    activateAppTab("safety");
+    return true;
+  }
+  if (floorSection === "firstfive" || floorSection === "skills") {
+    floorSection = "board";
+    activateAppTab("training");
+    return true;
+  }
+  if (REMOVED_FLOOR_SECTION_IDS.includes(floorSection) && floorSection !== "emergency" && floorSection !== "troubleshoot") {
+    floorSection = "shortcuts";
+  }
+  if (!SHIFT_TOOL_TAB_IDS.includes(floorSection) && floorSection !== "photos") {
+    floorSection = "board";
+  }
+  return false;
+}
+
 function renderFloorTools(content) {
+  if (applyFloorSectionRedirect()) return;
+
   const tabs = [
     { id: "board", label: "86 Board" },
     { id: "handoff", label: "Handoff" },
@@ -21,35 +49,31 @@ function renderFloorTools(content) {
     { id: "sell", label: "Sell This" },
     { id: "recommend", label: "Recommend" },
     { id: "allergy", label: "Allergy Check" },
-    { id: "photos", label: "Photo Standards" },
-    { id: "shoutouts", label: "Shout-outs" },
-    { id: "challenges", label: "Team Challenges" },
-    { id: "tapchange", label: "Tap Change" },
-    { id: "menupkg", label: "Menu Package" },
-    { id: "achievements", label: "Clearance" },
     { id: "maintenance", label: "Maintenance" },
-    { id: "troubleshoot", label: "Fix It" },
-    { id: "recipes", label: "Recipe Scale" },
-    { id: "kegs", label: "Keg Estimate" },
-    { id: "emergency", label: "Emergency" },
-    { id: "firstfive", label: "First 5" },
-    { id: "skills", label: "Skills" }
+    { id: "shortcuts", label: "Shortcuts" }
   ];
 
   const nav = `
     <div class="coffee-subtabs">
       ${tabs.map(t => `
-        <button class="coffee-subtab${floorSection === t.id ? " active" : ""}" onclick="floorSection='${t.id}'; render();">${t.label}</button>
+        <button type="button" class="coffee-subtab${floorSection === t.id ? " active" : ""}" onclick="floorSection='${t.id}'; render();">${t.label}</button>
       `).join("")}
     </div>
   `;
 
   content.innerHTML = `
-    <div class="coffee-intro">
-      <h2>Floor Tools</h2>
-      <p>Live boards, recommenders, allergy check, maintenance, and training rails — use before you hit a table.</p>
-    </div>
-    ${nav}
+    ${typeof renderPageHeader === "function"
+      ? renderPageHeader({
+          title: floorSection === "photos" ? "Photo Standards" : "Shift Tools",
+          subtitle: floorSection === "photos"
+            ? "Station and glassware examples — match the floor to what good looks like."
+            : "Live boards and service helpers for the floor. Safety + Emergency is always in the sidebar.",
+          back: floorSection === "photos" ? { label: "SOPs", tab: "sops" } : null
+        })
+      : `<div class="coffee-intro">
+      <h2>${floorSection === "photos" ? "Photo Standards" : "Shift Tools"}</h2>
+    </div>`}
+    ${floorSection === "photos" ? "" : nav}
     <div id="floorToolsBody"><div class="status"><strong>Loading…</strong></div></div>
   `;
 
@@ -73,9 +97,37 @@ function renderFloorTools(content) {
     kegs: renderKegBoard,
     emergency: renderEmergencyBoard,
     firstfive: renderFirstFiveBoard,
-    skills: renderSkillsBoard
+    skills: renderSkillsBoard,
+    shortcuts: renderShiftShortcuts
   };
   (map[floorSection] || renderEightySixBoard)(body);
+}
+
+function renderShiftShortcuts(el) {
+  const links = [
+    { label: "Opening checklist", run: "checklistId='opening'; activateAppTab('checklists')" },
+    { label: "Closing checklist", run: "checklistId='closing'; activateAppTab('checklists')" },
+    { label: "Afternoon cut", run: "checklistId='afternoon-cut'; activateAppTab('checklists')" },
+    { label: "Guest allergy SOP", run: "sopCategory='Floor'; activateAppTab('sops')" },
+    { label: "In-service standards", run: "sopCategory='Floor'; activateAppTab('sops')" },
+    { label: "Safety + Emergency", run: "activateAppTab('safety')" }
+  ];
+  if (typeof isManager === "function" && isManager()) {
+    links.push({ label: "Photo standards", run: "floorSection='photos'; render();" });
+  }
+  el.innerHTML = `
+    <div class="guide-callout" style="max-width:760px;margin:0 auto 16px;">
+      <strong>Service shortcuts.</strong> These open the live checklist or SOP — they are not a second copy of the procedure.
+    </div>
+    <div class="search-directory" style="max-width:760px;margin:0 auto;">
+      ${links.map((item) => `
+        <button type="button" class="search-directory-card" onclick="${item.run}">
+          <strong>${item.label}</strong>
+          <span>Open destination</span>
+        </button>
+      `).join("")}
+    </div>
+  `;
 }
 
 let availabilityEditorOpen = false;

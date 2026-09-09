@@ -3,6 +3,10 @@
  * shout-outs, skills, first-5, team challenges, feedback pipeline extras.
  */
 
+const { hasShiftLeadCapability } = require("./roles");
+
+const TRAINING_STATUSES = ["not_introduced", "learning", "can_do", "verified", "needs_practice"];
+
 function ensureFloorOpsTables(db) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS availability_board (
@@ -146,6 +150,31 @@ function ensureFloorOpsTables(db) {
   if (!fbCols.has("implemented_note")) {
     db.exec(`ALTER TABLE site_feedback ADD COLUMN implemented_note TEXT NOT NULL DEFAULT ''`);
   }
+
+  const fiveCols = new Set(db.prepare("PRAGMA table_info(first_five_progress)").all().map((c) => c.name));
+  if (!fiveCols.has("status")) {
+    db.exec(`ALTER TABLE first_five_progress ADD COLUMN status TEXT NOT NULL DEFAULT ''`);
+  }
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS training_handoffs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trainee_id INTEGER NOT NULL,
+      shift_number INTEGER NOT NULL CHECK(shift_number BETWEEN 1 AND 5),
+      strength TEXT NOT NULL DEFAULT '',
+      needs_practice TEXT NOT NULL DEFAULT '',
+      next_focus TEXT NOT NULL DEFAULT '',
+      note TEXT NOT NULL DEFAULT '',
+      created_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (trainee_id) REFERENCES users(id),
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    );
+  `);
+  db.prepare(`
+    UPDATE first_five_progress
+    SET status = 'verified'
+    WHERE demonstrated = 1 AND (status IS NULL OR status = '')
+  `).run();
 }
 
 const SKILL_KEYS = [
@@ -164,35 +193,123 @@ const SKILL_KEYS = [
 const FIRST_FIVE = [
   {
     shift: 1,
-    title: "Shift 1 — Survive & orient",
-    focus: "Tour, login, On Tap, allergy disclaimer, one tasting.",
+    title: "Shift 1 — Foundations + Flow",
+    goal: "Understand how MP operates.",
+    focus: "Learn the room, Launch Pad, how we talk about beer, and when to stop and ask about allergens.",
+    mission: "Get oriented so you can work a shift without getting lost.",
     skills: ["login_portal", "find_on_tap", "ask_mp", "allergy_confirm", "taste_one_beer"]
   },
   {
     shift: 2,
-    title: "Shift 2 — Service basics",
-    focus: "Guest greet, beer styles, coffee menu, End of Shift survey.",
+    title: "Shift 2 — Floor + Bar Readiness",
+    goal: "Prepare yourself and your area for service.",
+    focus: "Guest greet, beer styles, coffee menu, and how we close the day.",
+    mission: "Show up ready — greet, know the menus, leave a clean handoff.",
     skills: ["guest_greet", "style_basics", "coffee_menu", "end_of_shift"]
   },
   {
     shift: 3,
-    title: "Shift 3 — Floor standards",
-    focus: "Opening or closing checklist with trainer, SOPs, 86 board.",
+    title: "Shift 3 — Service Systems",
+    goal: "Understand how service moves and how to support it.",
+    focus: "Checklists, SOPs, and the 86 board — the systems that keep the floor honest.",
+    mission: "Run service confidently without waiting to be told what to do.",
     skills: ["checklist_run", "sop_lookup", "86_board"]
   },
   {
     shift: 4,
-    title: "Shift 4 — Upsell & recovery",
-    focus: "Sell This Today, pairing talk, complaint recovery scenarios.",
+    title: "Shift 4 — Bar + Order Execution",
+    goal: "Perform key service tasks confidently.",
+    focus: "Sell This Today, pairing talk, and recovering when a guest is unhappy.",
+    mission: "Take the order, recommend with confidence, and recover cleanly.",
     skills: ["sell_this", "pairing_talk", "recovery_scenario"]
   },
   {
     shift: 5,
-    title: "Shift 5 — Independence",
-    focus: "Lead a small section of service, events awareness, trainer sign-off.",
+    title: "Shift 5 — Ownership + Checkout",
+    goal: "Begin operating independently.",
+    focus: "Own a slice of service, know what’s on the books, and get trainer sign-off.",
+    mission: "Work your section like it’s yours — then check out clean.",
     skills: ["independent_service", "events_awareness", "trainer_signoff"]
   }
 ];
+
+const FIRST_FIVE_SKILL_SET = new Set(FIRST_FIVE.flatMap((block) => block.skills));
+
+function trainerUser(db, req) {
+  if (!req.user?.id) return null;
+  return db.prepare("SELECT id, name, email, role, extra_roles FROM users WHERE id = ?").get(req.user.id);
+}
+
+function isTrainer(db, req) {
+  return hasShiftLeadCapability(trainerUser(db, req));
+}
+
+function progressStatus(row) {
+  if (!row) return "not_introduced";
+  const status = String(row.status || "").trim();
+  if (TRAINING_STATUSES.includes(status)) return status;
+  return row.demonstrated ? "verified" : "learning";
+}
+
+function mapProgressRow(row) {
+  const status = progressStatus(row);
+  return {
+    user_id: row.user_id,
+    shift_number: row.shift_number,
+    skill_key: row.skill_key,
+    demonstrated: status === "verified" || Boolean(row.demonstrated),
+    status,
+    signed_off_by: row.signed_off_by || null,
+    signed_off_at: row.signed_off_at || null
+  };
+}
+
+function latestHandoff(db, traineeId) {
+  return db.prepare(`
+    SELECT h.*, u.name AS trainer_name
+    FROM training_handoffs h
+    LEFT JOIN users u ON u.id = h.created_by
+    WHERE h.trainee_id = ?
+    ORDER BY h.created_at DESC, h.id DESC
+    LIMIT 1
+  `).get(traineeId) || null;
+}
+
+function mapHandoff(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    traineeId: row.trainee_id,
+    shiftNumber: row.shift_number,
+    strength: row.strength || "",
+    needsPractice: row.needs_practice || "",
+    nextFocus: row.next_focus || "",
+    note: row.note || "",
+    trainerName: row.trainer_name || "",
+    createdAt: row.created_at
+  };
+}
+
+function computeUnlockFromRows(rows) {
+  const done = new Set(
+    (rows || [])
+      .map(mapProgressRow)
+      .filter((row) => row.status === "verified")
+      .map((row) => `${row.shift_number}:${row.skill_key}`)
+  );
+  let unlocked = 1;
+  for (let shift = 1; shift <= 5; shift += 1) {
+    const block = FIRST_FIVE.find((item) => item.shift === shift);
+    if (!block) break;
+    const complete = block.skills.every((sk) => done.has(`${shift}:${sk}`));
+    if (complete) unlocked = Math.min(5, shift + 1);
+    else {
+      unlocked = shift;
+      break;
+    }
+  }
+  return { done, unlockedShift: unlocked };
+}
 
 function expireHandoffs(db) {
   db.prepare(`
@@ -510,27 +627,110 @@ function registerFloorOpsApi(app, {
     const rows = db.prepare(`
       SELECT * FROM first_five_progress WHERE user_id = ?
     `).all(req.user.id);
-    res.json({ curriculum: FIRST_FIVE, progress: rows });
+    res.json({
+      curriculum: FIRST_FIVE,
+      progress: rows.map(mapProgressRow),
+      handoff: mapHandoff(latestHandoff(db, req.user.id)),
+      canTrain: isTrainer(db, req)
+    });
   });
+
+  app.get("/api/first-five/roster", authRequired, (req, res) => {
+    if (!isTrainer(db, req)) {
+      return res.status(403).json({ error: "Trainer, shift lead, or manager access required." });
+    }
+    const people = db.prepare(`
+      SELECT id, name, role FROM users
+      WHERE role IN ('trainee', 'employee')
+      ORDER BY name COLLATE NOCASE ASC
+    `).all();
+    const trainees = people.map((person) => {
+      const rows = db.prepare("SELECT * FROM first_five_progress WHERE user_id = ?").all(person.id);
+      const mapped = rows.map(mapProgressRow);
+      const { unlockedShift } = computeUnlockFromRows(rows);
+      const block = FIRST_FIVE.find((item) => item.shift === unlockedShift) || FIRST_FIVE[0];
+      const skills = (block?.skills || []).map((skillKey) => {
+        const row = mapped.find((item) => item.shift_number === unlockedShift && item.skill_key === skillKey);
+        return { skillKey, status: row?.status || "not_introduced" };
+      });
+      return {
+        id: person.id,
+        name: person.name,
+        role: person.role,
+        unlockedShift,
+        shiftTitle: block?.title || `Shift ${unlockedShift}`,
+        skills,
+        handoff: mapHandoff(latestHandoff(db, person.id))
+      };
+    });
+    res.json({ trainees, curriculum: FIRST_FIVE, canTrain: true });
+  });
+
+  function upsertProgress(db, { userId, shiftNumber, skillKey, status, signedOffBy }) {
+    const demonstrated = status === "verified" ? 1 : 0;
+    const stamp = status === "verified" || status === "needs_practice" ? 1 : 0;
+    db.prepare(`
+      INSERT INTO first_five_progress (user_id, shift_number, skill_key, demonstrated, status, signed_off_by, signed_off_at)
+      VALUES (?, ?, ?, ?, ?, ?, CASE WHEN ? = 1 THEN datetime('now') ELSE NULL END)
+      ON CONFLICT(user_id, shift_number, skill_key) DO UPDATE SET
+        demonstrated = excluded.demonstrated,
+        status = excluded.status,
+        signed_off_by = excluded.signed_off_by,
+        signed_off_at = CASE WHEN ? = 1 THEN datetime('now') ELSE first_five_progress.signed_off_at END
+    `).run(userId, shiftNumber, skillKey, demonstrated, status, signedOffBy, stamp, stamp);
+  }
 
   app.post("/api/first-five/signoff", authRequired, (req, res) => {
     const targetUserId = Number(req.body.userId || req.user.id);
     const shiftNumber = Number(req.body.shiftNumber);
     const skillKey = String(req.body.skillKey || "").trim();
-    if (!shiftNumber || !skillKey) return res.status(400).json({ error: "shiftNumber and skillKey required." });
-    const isManager = ["admin", "manager", "shift_lead"].includes(req.user.role);
-    if (targetUserId !== req.user.id && !isManager) {
-      return res.status(403).json({ error: "Only trainers/managers can sign off others." });
+    const requested = String(req.body.status || "verified").trim();
+    const status = TRAINING_STATUSES.includes(requested) ? requested : "verified";
+    if (!shiftNumber || !FIRST_FIVE_SKILL_SET.has(skillKey)) {
+      return res.status(400).json({ error: "shiftNumber and a known skillKey are required." });
     }
+    const trainer = isTrainer(db, req);
+    if (targetUserId !== req.user.id && !trainer) {
+      return res.status(403).json({ error: "Only trainers can update another person's training." });
+    }
+    if ((status === "verified" || status === "needs_practice") && !trainer) {
+      return res.status(403).json({ error: "Ask your trainer to verify or mark needs practice." });
+    }
+    if (!trainer && !["learning", "can_do"].includes(status)) {
+      return res.status(403).json({ error: "You can mark a skill learning or can-do. Your trainer verifies." });
+    }
+    upsertProgress(db, {
+      userId: targetUserId,
+      shiftNumber,
+      skillKey,
+      status,
+      signedOffBy: req.user.id
+    });
+    res.json({ ok: true, status });
+  });
+
+  app.post("/api/first-five/handoff", authRequired, (req, res) => {
+    if (!isTrainer(db, req)) {
+      return res.status(403).json({ error: "Trainer, shift lead, or manager access required." });
+    }
+    const traineeId = Number(req.body.traineeId);
+    const shiftNumber = Number(req.body.shiftNumber) || 1;
+    if (!traineeId) return res.status(400).json({ error: "traineeId required." });
+    const trainee = db.prepare("SELECT id FROM users WHERE id = ?").get(traineeId);
+    if (!trainee) return res.status(404).json({ error: "Trainee not found." });
     db.prepare(`
-      INSERT INTO first_five_progress (user_id, shift_number, skill_key, demonstrated, signed_off_by, signed_off_at)
-      VALUES (?, ?, ?, 1, ?, datetime('now'))
-      ON CONFLICT(user_id, shift_number, skill_key) DO UPDATE SET
-        demonstrated = 1,
-        signed_off_by = excluded.signed_off_by,
-        signed_off_at = excluded.signed_off_at
-    `).run(targetUserId, shiftNumber, skillKey, req.user.id);
-    res.json({ ok: true });
+      INSERT INTO training_handoffs (trainee_id, shift_number, strength, needs_practice, next_focus, note, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      traineeId,
+      Math.max(1, Math.min(5, shiftNumber)),
+      String(req.body.strength || "").trim().slice(0, 400),
+      String(req.body.needsPractice || "").trim().slice(0, 400),
+      String(req.body.nextFocus || "").trim().slice(0, 400),
+      String(req.body.note || "").trim().slice(0, 400),
+      req.user.id
+    );
+    res.json({ ok: true, handoff: mapHandoff(latestHandoff(db, traineeId)) });
   });
 
   // ── Team challenges ──

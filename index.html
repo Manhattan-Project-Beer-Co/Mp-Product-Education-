@@ -10,6 +10,37 @@
 <style>
   * { box-sizing: border-box; }
 
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .skip-link {
+    position: absolute;
+    left: 12px;
+    top: -48px;
+    z-index: 400;
+    padding: 8px 12px;
+    background: var(--gold);
+    color: #fff;
+    font: 700 13px var(--font);
+    border-radius: 6px;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
   :root {
     /* MP LAUNCH PAD — public-site B/W + warm earth accents (no green) */
     --void: #000000;
@@ -733,14 +764,105 @@
     transition: border-color 0.15s, background 0.15s, transform 0.15s;
   }
 
-  .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
+  .game-option:hover:not(.correct):not(.ok):not(.wrong):not(.disabled) {
     border-color: rgba(9, 9, 11, 0.18);
     background: var(--surface-2);
     transform: translateX(4px);
   }
 
   .game-option.correct { background: var(--green); border-color: var(--green-text); color: var(--green-text); }
+  .game-option.ok { background: rgba(156,107,74,0.12); border-color: var(--gold); color: var(--gold-dim); }
   .game-option.wrong { background: #fef2f2; border-color: #ef4444; color: #dc2626; }
+
+  .wg-scene {
+    margin: 0 0 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    text-align: left;
+  }
+  .wg-progress {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wg-coaching { text-align: left; }
+  .wg-coaching-block {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--gold);
+    background: var(--surface-2);
+    border-radius: 0 8px 8px 0;
+  }
+  .wg-coaching-block.is-strong { border-left-color: var(--green-text, #3f6b4a); }
+  .wg-coaching-block.is-work { border-left-color: var(--gold); }
+  .wg-coaching-block h3 {
+    margin: 0 0 6px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .wg-coaching-block ul { margin: 0; padding-left: 18px; }
+  .wg-coaching-block li { margin: 0 0 6px; line-height: 1.5; }
+  .wg-note { font-size: 14px; color: var(--muted); line-height: 1.55; }
+  .wg-train-label {
+    margin: 18px 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wg-train-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wg-train-btn { margin-top: 0 !important; }
+  .flight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    text-align: left;
+    margin: 8px 0 16px;
+  }
+  .flight-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+  .flight-chip strong { font-size: 14px; }
+  .flight-chip span { font-size: 12px; color: var(--muted); }
+  .flight-chip.is-on {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold);
+    background: rgba(156,107,74,0.08);
+  }
+  .flight-flavor { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .wg-also {
+    max-width: 1032px;
+    margin: 8px auto 28px;
+    padding: 0 24px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .wg-also-btn {
+    border: 0;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 700;
+    color: var(--gold-dim);
+    cursor: pointer;
+    text-decoration: underline;
+  }
 
   .game-next,
   .auth-panel .game-next {
@@ -756,6 +878,7 @@
   }
 
   .game-next:active { transform: scale(0.98); }
+  .game-next:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
   .game-score, .flash-count {
     text-align: center;
@@ -858,6 +981,9 @@
     max-width: 1080px;
   }
 
+  .game-session > .page-back {
+    margin: 16px 24px 8px;
+  }
   .game-hub {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -892,6 +1018,9 @@
   .game-tile:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
+  }
+  .game-tile:active {
+    transform: translateY(-1px);
   }
 
   .game-tile:hover::before { opacity: 1; }
@@ -3906,7 +4035,7 @@
   }
 
   @media (min-width: 768px) {
-    .game-hub { grid-template-columns: repeat(4, 1fr); }
+    .game-hub { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
     .chart-grid { grid-template-columns: 1fr 1fr; }
     .chart-card.wide { grid-column: 1 / -1; }
     .modal-backdrop { align-items: center; padding: 24px; }
@@ -4450,6 +4579,112 @@
     gap: 8px;
     align-items: center;
   }
+  .page-back,
+  .stage-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 10px;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .page-back:hover,
+  .stage-back:hover { color: var(--ink); }
+  .stage-back {
+    margin: 0 10px 0 0;
+    flex: 0 0 auto;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .stage-back[hidden] { display: none !important; }
+  .sidebar-nav .tab.tab-safety {
+    margin-top: 10px;
+    color: #9a4334 !important;
+    border: 1px solid rgba(154, 67, 52, 0.28) !important;
+    letter-spacing: 0.08em;
+  }
+  .sidebar-nav .tab.tab-safety:hover {
+    color: #7a3024 !important;
+    background: rgba(154, 67, 52, 0.08) !important;
+  }
+  .sidebar-nav .tab.tab-safety.active {
+    color: #9a4334 !important;
+    background: rgba(154, 67, 52, 0.12) !important;
+    box-shadow: inset 2px 0 0 #9a4334 !important;
+  }
+  .search-directory {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 10px;
+    margin: 8px 0 20px;
+  }
+  .search-directory-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--card-radius);
+    background: var(--paper);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .search-directory-card strong { font-size: 0.95rem; }
+  .search-directory-card span { font-size: 12px; color: var(--muted); }
+  .search-directory-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .search-pin {
+    align-self: flex-start;
+    border: 0;
+    background: none;
+    padding: 0 2px;
+    font: 700 11px var(--font);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .search-pin.is-on { color: var(--gold-dim); }
+  .ask-mp-result-source {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold-dim);
+  }
+  .away-item.is-new { box-shadow: inset 3px 0 0 var(--gold); }
+  .away-item.is-important { box-shadow: inset 3px 0 0 #9a4334; }
+  .name-col, .today-card-title, .away-item-title, .flight-chip strong, .ontap-mobile-list .card .name,
+  .game-tile-title, .ask-mp-result strong {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .game-tile {
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .game-back, .wg-also-btn, .search-pin, .stage-back, .modal-close, .filter-btn, .tab {
+    min-height: 40px;
+  }
+  .gated-manage {
+    max-width: 36rem;
+    margin: 0 auto;
+  }
 
   /* ── Phase 1: nav groups ── */
   .nav-group {
@@ -4576,10 +4811,24 @@
     border-radius: var(--card-radius);
     background: var(--surface);
   }
+  .quick-access-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .quick-access-head .home-section-title { margin: 0; }
   .quick-access-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 10px;
+  }
+  .quick-access-item { display: flex; flex-direction: column; gap: 6px; }
+  .quick-access-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
   }
   .quick-access-card {
     display: flex;
@@ -4817,23 +5066,189 @@
     gap: 8px;
     margin: 12px 0 16px;
   }
-  .ontap-print-root {
-    display: none;
+  .ontap-print-menu {
+    position: relative;
   }
+  .ontap-print-menu > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  .ontap-print-menu > summary::-webkit-details-marker { display: none; }
+  .ontap-print-menu-list {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 50;
+    min-width: 228px;
+    padding: 6px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.32);
+  }
+  .ontap-print-menu-list button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+  .ontap-print-menu-list button:hover {
+    background: rgba(156, 107, 74, 0.14);
+  }
+  .ontap-print-root { display: none; }
+  .print-preview-stage {
+    background: #1a1d1f;
+    padding: 18px 12px 24px;
+    border-radius: 12px;
+    overflow: auto;
+    max-height: 58vh;
+  }
+  .print-preview-stage .print-sheet { margin: 0 auto 22px; }
+  .print-preview-caption {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .print-draft-sheet {
+    width: 3.75in;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 18px 16px 20px;
+    background: #fff;
+    color: #111;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+  }
+  .print-draft-logo {
+    display: block;
+    width: 2.35in;
+    max-width: 88%;
+    height: auto;
+    margin: 0 auto 10px;
+  }
+  .print-draft-heading {
+    margin: 0 0 16px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+  .print-draft-cat {
+    margin: 14px 0 8px;
+    padding-bottom: 3px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #111;
+  }
+  .print-draft-item {
+    margin: 0 0 9px;
+    text-align: center;
+  }
+  .print-draft-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .print-draft-meta {
+    margin-top: 1px;
+    font-size: 10.5px;
+    font-style: italic;
+    color: #333;
+  }
+  .print-draft-updated,
+  .print-bar-updated {
+    margin: 16px 0 0;
+    text-align: center;
+    font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #666;
+  }
+  .print-bar-sheet {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 14px 16px 18px;
+    background: #fff;
+    color: #111;
+    font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-bar-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 8px;
+  }
+  .print-bar-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .print-bar-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .print-bar-table th,
+  .print-bar-table td {
+    border-bottom: 1px solid #cfcfcf;
+    padding: 5px 6px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .print-bar-table th {
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 1.5px solid #111;
+  }
+  .print-bar-table tbody tr:nth-child(even) td { background: #f3f3f3; }
+  .print-bar-table .tap { width: 36px; font-weight: 700; }
+  .print-bar-table .vol { width: 58px; white-space: nowrap; }
+  .print-bar-table .gr { width: 28px; }
+  .print-bar-table .abv { width: 44px; white-space: nowrap; }
+  .print-bar-table .notes { width: 88px; }
   @media (max-width: 860px) {
     .ontap-table-wrap { display: none; }
     .ontap-mobile-list { display: block; }
   }
   @media print {
-    @page { margin: 0.45in; }
     body.printing-ontap {
       background: #fff !important;
       background-image: none !important;
+      color: #111 !important;
     }
     body.printing-ontap .app-shell,
     body.printing-ontap .modal-backdrop,
     body.printing-ontap .site-header,
-    body.printing-ontap #loginGate {
+    body.printing-ontap #loginGate,
+    body.printing-ontap .page-header-actions,
+    body.printing-ontap .btn-edit,
+    body.printing-ontap .btn-print {
       display: none !important;
     }
     body.printing-ontap .ontap-print-root {
@@ -4844,75 +5259,23 @@
     body.printing-ontap.printing-bar:not(.printing-draft) .print-draft-sheet { display: none !important; }
     .print-sheet + .print-sheet {
       break-before: page;
+      page-break-before: always;
       margin-top: 0;
+      box-shadow: none;
+    }
+    .print-draft-sheet,
+    .print-bar-sheet {
+      box-shadow: none;
+      max-width: none;
     }
     .print-draft-sheet {
-      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-      max-width: 3.6in;
-      margin: 0 auto;
-    }
-    .print-draft-brand {
-      text-align: center;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-    .print-draft-cat {
-      margin: 16px 0 8px;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 700;
-      border-bottom: 1px solid #111;
-      padding-bottom: 3px;
-    }
-    .print-draft-item { margin: 0 0 10px; }
-    .print-draft-name {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    .print-draft-meta {
-      font-size: 11px;
-      color: #333;
-      margin-top: 1px;
+      width: auto;
+      padding: 0;
     }
     .print-bar-sheet {
-      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
-      font-size: 11px;
-    }
-    .print-bar-title {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin: 0 0 10px;
-    }
-    .print-bar-table {
       width: 100%;
-      border-collapse: collapse;
+      padding: 0;
     }
-    .print-bar-table th,
-    .print-bar-table td {
-      border-bottom: 1px solid #ccc;
-      padding: 8px 6px;
-      text-align: left;
-      vertical-align: top;
-    }
-    .print-bar-table th {
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      border-bottom: 1.5px solid #111;
-    }
-    .print-bar-table tr:nth-child(even) td { background: #f4f4f4; }
-    .print-bar-table .tap { width: 36px; font-weight: 700; }
-    .print-bar-table .pour { width: 64px; white-space: nowrap; }
-    .print-bar-table .gr { width: 28px; }
-    .print-bar-table .abv { width: 48px; white-space: nowrap; }
   }
 
   @media (max-width: 640px) {
@@ -5159,7 +5522,7 @@
     color: var(--ink) !important;
     border-color: var(--line-strong) !important;
   }
-  .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
+  .game-option:hover:not(.correct):not(.ok):not(.wrong):not(.disabled) {
     background: rgba(156,107,74,0.1) !important;
     border-color: var(--gold) !important;
   }
@@ -5605,6 +5968,184 @@
     padding: 0 2px;
   }
   .training-loop-reset { color: var(--gold-dim); }
+  .training-loop-examples {
+    margin: 12px 0 0;
+    display: grid;
+    gap: 6px;
+  }
+  .training-loop-examples p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .training-why {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--gold);
+    background: rgba(156, 107, 74, 0.08);
+    border-radius: 0 10px 10px 0;
+  }
+  .training-why-kicker {
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .training-why p { margin: 0; font-size: 0.92rem; line-height: 1.45; }
+  .training-can-do {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .training-can-do-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .training-can-do-btn:hover { border-color: var(--gold); }
+  .training-day { display: grid; gap: 8px; }
+  .training-day-step {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 0 12px 10px;
+  }
+  .training-day-step summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 12px 0 8px;
+    font-weight: 700;
+    list-style: none;
+  }
+  .training-day-step summary::-webkit-details-marker { display: none; }
+  .training-day-index {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--void);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .training-day-step ul { margin: 0; padding: 0 0 4px 34px; color: var(--muted); }
+  .training-lesson-block {
+    margin: 18px 0;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    line-height: 1.65;
+  }
+  .training-lesson-block p { max-width: 62ch; }
+  .training-lesson-block h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .training-lesson-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .training-ref-note {
+    margin: 16px 0 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .training-status-can_do {
+    color: #3f6b4a;
+    background: rgba(63, 107, 74, 0.12);
+    border-color: rgba(63, 107, 74, 0.28);
+  }
+  .training-status-needs_practice {
+    color: #8a5a2a;
+    background: rgba(156, 107, 74, 0.14);
+    border-color: rgba(156, 107, 74, 0.3);
+  }
+  .training-status-not_introduced {
+    color: var(--muted);
+    background: var(--surface);
+    border-color: var(--line);
+  }
+  .training-trainer-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 18px;
+  }
+  .training-trainer-card {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: inherit;
+    border-radius: 12px;
+    padding: 12px 14px;
+    min-width: 140px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .training-trainer-card strong { display: block; }
+  .training-trainer-card span { font-size: 0.8rem; color: var(--muted); }
+  .training-trainer-card.is-selected {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+  .training-trainer-skills {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+  }
+  .training-trainer-skills li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .training-trainer-skills li > span:first-child { flex: 1; font-weight: 650; }
+  .training-trainer-actions { display: flex; gap: 6px; }
+  .training-handoff {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .training-handoff h4 { margin: 0 0 4px; }
+  .training-handoff input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--bg);
+    color: inherit;
+    font: inherit;
+  }
   .training-quick-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -6106,6 +6647,16 @@
       background: rgba(156,107,74,0.1) !important;
       box-shadow: inset 2px 0 0 var(--gold) !important;
     }
+    .sidebar-nav .tab.tab-safety {
+      color: #e8b4aa !important;
+      border-color: rgba(232, 180, 170, 0.28) !important;
+    }
+    .sidebar-nav .tab.tab-safety:hover,
+    .sidebar-nav .tab.tab-safety.active {
+      color: #f3d0c9 !important;
+      background: rgba(196, 92, 72, 0.14) !important;
+      box-shadow: inset 2px 0 0 #c45c48 !important;
+    }
     .sidebar-user {
       background: #111416;
       border-color: var(--line);
@@ -6290,6 +6841,29 @@
       letter-spacing: -0.025em;
     }
     .page-header-sub { color: var(--muted); }
+    .page-back,
+    .stage-back { color: #9aa0a4; }
+    .page-back:hover,
+    .stage-back:hover { color: #f4f1ea; }
+    .search-directory-card {
+      background: #16191b;
+      border-color: var(--line);
+      color: #e9e6df;
+    }
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .status-chip.is-live { color: #d7c4a3; background: rgba(156,107,74,0.18); }
+    .status-chip.is-scheduled { color: #c9d4de; background: rgba(120,140,160,0.18); }
+    .status-chip.is-expired,
+    .status-chip.is-archived { color: #9aa0a4; background: rgba(255,255,255,0.06); }
 
     .card, .game-card, .flash-card, .game-tile, .metric-card, .chart-card,
     .rec-card, .speed-header, .approve-card, .progress-table, .inventory-table,
@@ -6707,6 +7281,12 @@
       border-color: var(--gold);
     }
     .training-loop { background: #121517; border-color: var(--line); }
+    .training-why, .training-lesson-block, .training-day-step, .training-handoff, .training-can-do-btn, .training-trainer-card {
+      background: #15181a;
+      border-color: var(--line);
+    }
+    .training-day-index { background: #000; }
+    .training-handoff input { background: #121517; color: #f1eee7; border-color: var(--line-strong); }
     .training-tool-chip, .training-quick {
       color: #d9d6cf;
       background: #141719;
@@ -6742,7 +7322,7 @@
       background: #141719 !important;
       border-color: var(--line-strong) !important;
     }
-    .game-option:hover:not(.correct):not(.wrong):not(.disabled) {
+    .game-option:hover:not(.correct):not(.ok):not(.wrong):not(.disabled) {
       color: #fff !important;
       background: #1c2022 !important;
       border-color: #555d61 !important;
@@ -6752,10 +7332,26 @@
       background: rgba(75,139,88,0.14) !important;
       border-color: rgba(116,181,129,0.48) !important;
     }
+    .game-option.ok {
+      color: #e6c49a !important;
+      background: rgba(156,107,74,0.16) !important;
+      border-color: rgba(196,165,116,0.5) !important;
+    }
     .game-option.wrong {
       color: #efaaa4 !important;
       background: rgba(173,65,57,0.13) !important;
       border-color: rgba(216,101,92,0.42) !important;
+    }
+    .wg-scene { color: #dedbd4; }
+    .wg-coaching-block { background: #111416; }
+    .flight-chip {
+      background: #141719 !important;
+      border-color: var(--line-strong) !important;
+      color: #dedbd4;
+    }
+    .flight-chip.is-on {
+      border-color: var(--gold) !important;
+      background: rgba(156,107,74,0.14) !important;
     }
     .answer-review-item { border-left-color: #d16960 !important; }
     .answer-review-correct strong { color: #91c29d; }
@@ -6848,7 +7444,7 @@
     .ask-mp-result {
       position: relative;
       display: grid;
-      grid-template-columns: 100px minmax(0, 1fr) 24px;
+      grid-template-columns: 120px minmax(0, 1fr);
       gap: 3px 16px;
       width: 100%;
       padding: 16px 4px;
@@ -6868,11 +7464,12 @@
       text-transform: uppercase;
     }
     .ask-mp-result strong { color: #f0ede6; line-height: 1.3; }
-    .ask-mp-result > span:not(.ask-mp-result-type) {
+    .ask-mp-result > span:not(.ask-mp-result-type):not(.ask-mp-result-source) {
       color: var(--muted);
       line-height: 1.4;
       font-size: 0.88rem;
     }
+    .ask-mp-result-source { color: var(--gold); grid-column: 2; }
     .ask-mp-result i {
       grid-column: 3;
       grid-row: 1 / 3;
@@ -6920,6 +7517,10 @@
 
     @media (max-width: 720px) {
       .home-page > .page-header { min-height: 90px; }
+      .btn, .game-next, .game-option, .filter-btn, .tab, .search-pin,
+      .stage-back, .modal-close, .quick-access-card, .game-tile, .checklist-card {
+        min-height: 44px;
+      }
       .home-shift { flex-wrap: wrap; }
       .home-shift-action { width: 100%; }
       .home-primary-section .today-cards { grid-template-columns: 1fr; }
@@ -6945,11 +7546,10 @@
       }
       .ask-mp-search { grid-template-columns: 22px minmax(0, 1fr); }
       .ask-mp-search .btn { grid-column: 1 / -1; width: 100%; }
-      .ask-mp-result { grid-template-columns: minmax(0, 1fr) 24px; }
+      .ask-mp-result { grid-template-columns: minmax(0, 1fr); }
       .ask-mp-result-type { grid-row: auto; grid-column: 1; }
       .ask-mp-result strong,
       .ask-mp-result > span:not(.ask-mp-result-type) { grid-column: 1; }
-      .ask-mp-result i { grid-column: 2; grid-row: 1 / 4; }
     }
   }
 </style>
@@ -6966,6 +7566,7 @@
     <p class="login-foot">Internal use only</p>
   </div>
 </div>
+<a class="skip-link" href="#appMain">Skip to content</a>
 <div class="app-shell">
   <aside class="app-sidebar" id="appSidebar">
     <button type="button" class="sidebar-brand" onclick="goHome()" aria-label="Go to home">
@@ -6984,33 +7585,33 @@
         </button>
         <div class="nav-group-items">
           <button type="button" class="tab" data-type="ontap">On Tap</button>
-          <button type="button" class="tab" data-type="beer">All Beers</button>
-          <button type="button" class="tab" data-type="food">Food</button>
-          <button type="button" class="tab" data-type="coffee">Coffee</button>
-          <button type="button" class="tab" data-type="bar">Wine + Cocktails</button>
+          <button type="button" class="tab" data-type="food">Food + Specials</button>
+          <button type="button" class="tab" data-type="drinks">Drinks</button>
           <button type="button" class="tab" data-type="today-floor">Today's Floor</button>
-          <button type="button" class="tab" data-type="floor">Floor Tools</button>
+          <button type="button" class="tab" data-type="floor">Shift Tools</button>
         </div>
       </div>
 
-      <div class="nav-group" data-group="ops">
+      <div class="nav-group" data-group="myshift">
         <button type="button" class="nav-group-toggle" aria-expanded="false">
-          <span>Operations</span><span class="nav-group-chevron" aria-hidden="true"></span>
+          <span>My Shift</span><span class="nav-group-chevron" aria-hidden="true"></span>
         </button>
         <div class="nav-group-items">
           <button type="button" class="tab" data-type="checklists">Checklists</button>
-          <button type="button" class="tab" data-type="sops">SOPs</button>
+          <button type="button" class="tab" data-type="events">Events</button>
           <button type="button" class="tab tab-auth-only" data-type="shift-survey" style="display:none;">End of Shift</button>
         </div>
       </div>
 
-      <div class="nav-group" data-group="training">
+      <div class="nav-group" data-group="learn">
         <button type="button" class="nav-group-toggle" aria-expanded="false">
-          <span>Training</span><span class="nav-group-chevron" aria-hidden="true"></span>
+          <span>Learn</span><span class="nav-group-chevron" aria-hidden="true"></span>
         </button>
         <div class="nav-group-items">
           <button type="button" class="tab" data-type="training">Training</button>
+          <button type="button" class="tab" data-type="sops">SOPs</button>
           <button type="button" class="tab tab-auth-only" data-type="progress" style="display:none;">My Progress</button>
+          <button type="button" class="tab" data-type="games">War Games</button>
         </div>
       </div>
 
@@ -7019,8 +7620,7 @@
           <span>Team</span><span class="nav-group-chevron" aria-hidden="true"></span>
         </button>
         <div class="nav-group-items">
-          <button type="button" class="tab tab-team-only" data-type="team" style="display:none;">Team</button>
-          <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
+          <button type="button" class="tab tab-auth-only" data-type="team" style="display:none;">Team</button>
           <button type="button" class="tab tab-auth-only" data-type="feedback" style="display:none;">Feedback</button>
         </div>
       </div>
@@ -7031,13 +7631,24 @@
         </button>
         <div class="nav-group-items">
           <button type="button" class="tab" data-type="askmp">Ask MP</button>
-          <button type="button" class="tab" data-type="inventory">Inventory</button>
+          <button type="button" class="tab" data-type="search">Search Launch Pad</button>
           <button type="button" class="tab" data-type="merch">Merch</button>
-          <button type="button" class="tab" data-type="reviews">Reviews</button>
-          <button type="button" class="tab" data-type="games">War Games</button>
-          <button type="button" class="tab" data-type="features">App guide</button>
         </div>
       </div>
+
+      <div class="nav-group" data-group="manage">
+        <button type="button" class="nav-group-toggle" aria-expanded="false">
+          <span>Manage</span><span class="nav-group-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="nav-group-items">
+          <button type="button" class="tab tab-inventory-only" data-type="inventory" style="display:none;">Inventory</button>
+          <button type="button" class="tab tab-manage-only" data-type="reviews" style="display:none;">Reviews</button>
+          <button type="button" class="tab tab-manage-only" data-type="features" style="display:none;">App guide</button>
+          <button type="button" class="tab tab-shift-lead-only" data-type="shift-reports" style="display:none;">Shift Reports</button>
+        </div>
+      </div>
+
+      <button type="button" class="tab tab-safety" data-type="safety">Safety + Emergency</button>
     </nav>
     <div class="sidebar-user" id="sidebarUser">
       <div class="sidebar-user-name" id="sidebarUserName">Guest</div>
@@ -7076,13 +7687,14 @@
 
 <div class="toolbar" id="toolbar">
   <div class="toolbar-inner">
+    <button type="button" class="stage-back" id="stageBack" hidden aria-label="Back"><span aria-hidden="true">←</span><span class="visually-hidden">Back</span></button>
     <h2 class="stage-title" id="stageTitle">On Tap</h2>
     <div class="tabs" id="mobileTabs"></div>
     <div class="search-wrap" id="searchWrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
       </svg>
-      <input type="text" id="search" placeholder="Search beer, style, or flavor">
+      <input type="text" id="search" placeholder="Search beer, style, or flavor" aria-label="Filter this page">
     </div>
   </div>
 
@@ -7102,7 +7714,7 @@
   </div>
 </div>
 
-<main id="appMain" class="app-main">
+<main id="appMain" class="app-main" tabindex="-1">
 <div id="content">
   <div class="status"><strong>Loading beer list…</strong> Please wait a moment.</div>
 </div>
@@ -7145,6 +7757,7 @@
 <script src="floor-tools.js"></script>
 <script src="ui.js"></script>
 <script src="training.js"></script>
+<script src="war-games.js"></script>
 <script>
 const API_BASE = "";
 let currentUser = null;
@@ -7254,6 +7867,12 @@ let menuSubView = "ontap";
 let floorHubView = "tools";
 let todayFloorDay = "today";
 let todayFloorRole = "all";
+let ontapView = "board";
+let drinksSection = "coffee";
+let launchPadQuery = "";
+let launchPadResults = [];
+let launchPadLoading = false;
+let launchPadError = "";
 try {
   const savedMenu = sessionStorage.getItem("mpMenuSubView");
   const savedFloor = sessionStorage.getItem("mpFloorHubView");
@@ -7261,26 +7880,72 @@ try {
   if (savedFloor) floorHubView = savedFloor;
 } catch (_) {}
 
+const PHASE1_NAV = {
+  employeeTabs: [
+    "home", "ontap", "food", "drinks", "today-floor", "floor",
+    "checklists", "events", "shift-survey",
+    "training", "sops", "progress", "games",
+    "team", "feedback",
+    "askmp", "search", "merch",
+    "safety"
+  ],
+  manageTabs: ["inventory", "reviews", "features", "shift-reports"],
+  forbiddenNavTypes: ["beer", "coffee", "bar", "emergency", "troubleshoot"],
+  aliases: {
+    beer: "ontap",
+    catalog: "ontap",
+    coffee: "drinks",
+    bar: "drinks",
+    emergency: "safety",
+    troubleshoot: "safety",
+    today: "today-floor",
+    menu: "ontap",
+    game: "games"
+  },
+  hiddenSearchTabs: ["inventory", "reviews", "features", "shift-reports"],
+  removedFloorSections: [
+    "achievements", "kegs", "recipes", "tapchange", "menupkg",
+    "challenges", "shoutouts", "firstfive", "skills"
+  ]
+};
+
 const MENU_SUBVIEWS = [
   { id: "ontap", label: "On Tap" },
-  { id: "beer", label: "All Beers" },
-  { id: "food", label: "Food" },
-  { id: "coffee", label: "Coffee" },
-  { id: "bar", label: "Wine + Cocktails" },
+  { id: "food", label: "Food + Specials" },
   { id: "merch", label: "Merch" }
 ];
 const FLOOR_HUB_VIEWS = [
   { id: "today", label: "Today's Floor" },
-  { id: "tools", label: "Floor Tools" },
-  { id: "sops", label: "SOPs" },
-  { id: "checklists", label: "Checklists" }
+  { id: "tools", label: "Shift Tools" }
 ];
 const MENU_SUBVIEW_IDS = new Set(MENU_SUBVIEWS.map((v) => v.id));
-if (!MENU_SUBVIEW_IDS.has(menuSubView)) menuSubView = "ontap";
+if (menuSubView === "beer") {
+  menuSubView = "ontap";
+  ontapView = "catalog";
+} else if (menuSubView === "coffee" || menuSubView === "bar") {
+  drinksSection = menuSubView === "bar" ? "bar" : "coffee";
+  menuSubView = "ontap";
+} else if (!MENU_SUBVIEW_IDS.has(menuSubView)) {
+  menuSubView = "ontap";
+}
 if (!FLOOR_HUB_VIEWS.some((v) => v.id === floorHubView)) floorHubView = "tools";
 
+function resolveAppTab(type) {
+  const key = String(type || "").trim();
+  if (!key) return "";
+  if (PHASE1_NAV.aliases[key]) return PHASE1_NAV.aliases[key];
+  return key;
+}
+
 function contentType() {
-  if (activeType === "menu") return menuSubView;
+  if (activeType === "menu") {
+    if (menuSubView === "beer") return "ontap";
+    if (menuSubView === "coffee" || menuSubView === "bar") return "drinks";
+    return menuSubView;
+  }
+  if (activeType === "beer") return "ontap";
+  if (activeType === "coffee" || activeType === "bar") return "drinks";
+  if (activeType === "emergency" || activeType === "troubleshoot") return "safety";
   if (activeType === "floor") {
     if (floorHubView === "sops") return "sops";
     if (floorHubView === "checklists") return "checklists";
@@ -7288,6 +7953,47 @@ function contentType() {
     return "floor";
   }
   return activeType;
+}
+
+function canViewManageTools() {
+  return Boolean(currentUser && (isManager() || StaffRoles?.canViewAllSite?.(currentUser)));
+}
+
+function canOpenTab(type) {
+  const tab = resolveAppTab(type);
+  if (tab === "inventory") return typeof isInventoryManager === "function" && isInventoryManager();
+  if (tab === "reviews") return canViewManageTools();
+  if (tab === "shift-reports") return typeof isShiftLeadManager === "function" && isShiftLeadManager();
+  if (tab === "team" || tab === "progress" || tab === "feedback") return Boolean(currentUser);
+  if (tab === "shift-survey") return typeof canSubmitShiftSurvey === "function" && canSubmitShiftSurvey();
+  return true;
+}
+
+function canSearchTab(type) {
+  const tab = resolveAppTab(type);
+  if (tab === "features") return canViewManageTools();
+  return canOpenTab(tab);
+}
+
+function filterSearchResults(results) {
+  const hidden = new Set(PHASE1_NAV.hiddenSearchTabs);
+  const removed = new Set(PHASE1_NAV.removedFloorSections);
+  return (results || [])
+    .map((result) => {
+      const next = { ...result };
+      next.tab = resolveAppTab(next.tab || "home");
+      return next;
+    })
+    .filter((result) => {
+      if (hidden.has(result.tab) && !canSearchTab(result.tab)) return false;
+      const section = String(result.floorSection || result.section || "").toLowerCase();
+      if (removed.has(section)) return false;
+      const blob = `${result.title || ""} ${result.summary || ""}`.toLowerCase();
+      if (/\b(keg estimate|recipe scale|team challenges|shout-?outs|clearance|first 5 shifts)\b/.test(blob)) {
+        return false;
+      }
+      return true;
+    });
 }
 
 /** Leaf tab id that should appear active in the sidebar / mobile strip. */
@@ -8275,23 +8981,14 @@ const GAME_POINT_VALUES = {
   fav_beer: 25,
   sell_this: 20,
   guestscene: 12,
-  recovery: 15
+  recovery: 15,
+  rush: 15,
+  flight: 15,
+  readguest: 15,
+  saturday: 15
 };
 
-const GAMES = [
-  { id: "favbeer", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M38 58c0-12 8-22 12-28 4 6 12 16 12 28a12 12 0 0 1-24 0z" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="50" cy="58" r="3" fill="#9c6b4a"/></svg>`, title: "Staff Favorites", desc: "Guess teammates’ favorite beers — unlock them on the board for bonus points" },
-  { id: "guestscene", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="28" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M35 55c5 8 25 8 30 0" fill="none" stroke="#9c6b4a" stroke-width="3"/></svg>`, title: "Guest Scenarios", desc: "What would you recommend? Blue Moon fans, parties, allergies, and more" },
-  { id: "recovery", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 60 L50 30 L70 60 Z" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="50" cy="52" r="3" fill="#9c6b4a"/></svg>`, title: "Complaint Recovery", desc: "MP preferred service recovery — increasingly tough guests" },
-  { id: "rocket", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="54" rx="40" ry="15" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(55 50 54)"/><rect x="44" y="28" width="12" height="36" rx="2" fill="#9c6b4a"/><rect x="47" y="18" width="6" height="12" fill="#9c6b4a"/><path d="M38 68 L44 58 L56 58 L62 68 Z" fill="#8b6b3c"/></svg>`, title: "Launch Pad", desc: "Gold rocket trainer — blast the correct tap answer" },
-  { id: "speed", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M56 22 L38 52h14l-8 26 28-36H56z" fill="#9c6b4a"/></svg>`, title: "Speed Round", desc: "12 mixed questions from current taps" },
-  { id: "tap", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M50 28c8 10 14 18 14 28a14 14 0 0 1-28 0c0-10 6-18 14-28z" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M50 40v28M42 52h16" stroke="#9c6b4a" stroke-width="2"/></svg>`, title: "Tap Match", desc: "Match tap numbers to beers" },
-  { id: "quiz", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Flavor Quiz", desc: "Match on-tap flavor profiles" },
-  { id: "practice", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Guest Match", desc: "A guest describes what they want — recommend a tap" },
-  { id: "abv", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "ABV Challenge", desc: "Pick ABV from current taps" },
-  { id: "style", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Style Match", desc: "Pick the style of on-tap beers" },
-  { id: "reverse", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(120 50 50)"/><circle cx="50" cy="50" r="7" fill="#9c6b4a"/></svg>`, title: "Pick the Profile", desc: "Match on-tap flavor profiles" },
-  { id: "flash", icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><rect x="34" y="30" width="32" height="42" rx="4" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M42 44h16M42 54h12" stroke="#9c6b4a" stroke-width="2"/></svg>`, title: "Flashcards", desc: "15 cards — current tap list only" }
-];
+const GAMES = typeof WAR_GAMES !== "undefined" ? WAR_GAMES : [];
 
 function parseCSV(text) {
   const rows = [];
@@ -8514,6 +9211,92 @@ function shuffle(arr) {
   return a;
 }
 
+function searchResultSource(result) {
+  if (result?.source) return result.source;
+  const type = String(result?.type || "").toLowerCase();
+  if (type === "beer") return "On Tap";
+  if (type === "food") return "Food + Specials";
+  if (type === "sop") return result.category ? `SOP · ${result.category}` : "SOPs";
+  if (type === "coffee") return "Drinks · Coffee";
+  if (type === "training") return "War Games";
+  return result?.tab ? String(result.tab) : "Launch Pad";
+}
+
+function renderSearchResultButton(result, bucket, index) {
+  return `
+    <button type="button" class="ask-mp-result" onclick="openSearchResultAt('${bucket}', ${index})">
+      <span class="ask-mp-result-type">${escapeHTML(searchResultSource(result))}</span>
+      <strong>${escapeHTML(result.title || "Result")}</strong>
+      <span>${escapeHTML(result.summary || "")}</span>
+      <span class="ask-mp-result-source">Open source →</span>
+    </button>
+  `;
+}
+
+function openSearchResultAt(bucket, index) {
+  const list = bucket === "search" ? launchPadResults : askMpResults;
+  openSearchResult(list[Number(index)]);
+}
+
+function openSearchResult(result) {
+  if (!result) return;
+  const type = String(result.type || "").toLowerCase();
+
+  if (type === "beer" || result.beer) {
+    const name = result.beer || result.title;
+    activateAppTab("ontap");
+    queueMicrotask(() => {
+      if (typeof openBeerByName === "function") openBeerByName(name);
+    });
+    return;
+  }
+
+  if (type === "food" || result.food) {
+    const menu = typeof FOOD_MENU !== "undefined" ? FOOD_MENU : [];
+    const item = menu.find((entry) => entry.id === result.food || entry.name === result.title || entry.name === result.food);
+    activateAppTab("food");
+    if (item && typeof openFoodItem === "function") {
+      queueMicrotask(() => openFoodItem(item.id));
+    }
+    return;
+  }
+
+  if (type === "sop" || result.sopTitle) {
+    const title = result.sopTitle || result.title;
+    activateAppTab("sops");
+    const open = () => {
+      const docs = typeof sopDocuments !== "undefined" ? sopDocuments : [];
+      const doc = docs.find((entry) => entry.title === title);
+      if (doc && typeof openSopDocument === "function") openSopDocument(doc.id);
+    };
+    if (typeof loadSopsData === "function") {
+      loadSopsData(false).then(open).catch(open);
+    } else {
+      queueMicrotask(open);
+    }
+    return;
+  }
+
+  if (type === "coffee") {
+    if (typeof drinksSection !== "undefined") drinksSection = "coffee";
+    activateAppTab("drinks");
+    return;
+  }
+
+  if (type === "training" || result.game) {
+    const name = result.game || result.title;
+    const game = (typeof WAR_GAMES !== "undefined" ? WAR_GAMES : [])
+      .find((entry) => entry.title === name);
+    activateAppTab("games");
+    if (game && typeof startGame === "function") {
+      queueMicrotask(() => startGame(game.id));
+    }
+    return;
+  }
+
+  activateAppTab(result.tab || "home");
+}
+
 function renderAskMp(content) {
   const suggestions = [
     "What is gluten-reduced?",
@@ -8525,7 +9308,7 @@ function renderAskMp(content) {
     <div class="ask-mp-page">
       ${renderPageHeader({
         title: "Ask MP",
-        subtitle: "Search the current beer list, food menu, recipes, SOPs, coffee guide, and training."
+        subtitle: "Ask a question in plain language. Results open the source — beer, dish, SOP, or drill — not just a tab."
       })}
       <form class="ask-mp-search" onsubmit="event.preventDefault(); searchAskMp(this.elements.query.value);">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>
@@ -8540,15 +9323,8 @@ function renderAskMp(content) {
       <div class="ask-mp-results" aria-live="polite">
         ${askMpLoading ? `<div class="status"><strong>Searching MP knowledge…</strong></div>` : ""}
         ${askMpError ? `<p class="auth-error">${escapeHTML(askMpError)}</p>` : ""}
-        ${!askMpLoading && askMpQuery && !askMpError && !askMpResults.length ? `<p class="home-empty">No exact match. Try a beer name, menu item, recipe, or procedure.</p>` : ""}
-        ${!askMpLoading && askMpResults.map((result) => `
-          <button type="button" class="ask-mp-result" onclick="activateAppTab('${escapeForAttribute(result.tab || "home")}')">
-            <span class="ask-mp-result-type">${escapeHTML(result.type || "MP")}</span>
-            <strong>${escapeHTML(result.title || "Result")}</strong>
-            <span>${escapeHTML(result.summary || "")}</span>
-            <i aria-hidden="true">→</i>
-          </button>
-        `).join("")}
+        ${!askMpLoading && askMpQuery && !askMpError && !askMpResults.length ? `<p class="home-empty">Nothing in the book for that. Try a beer name, a dish, an SOP title, or “How do I close coffee?”</p>` : ""}
+        ${!askMpLoading ? askMpResults.map((result, index) => renderSearchResultButton(result, "askmp", index)).join("") : ""}
       </div>
     </div>
   `;
@@ -8579,9 +9355,11 @@ async function searchAskMp(query) {
         title: item.name,
         summary: item.description || item.section || "",
         tab: "food",
+        source: "Food + Specials",
+        food: item.id,
         score: 20
       }));
-    askMpResults = [...(data.results || []), ...foodMatches]
+    askMpResults = filterSearchResults([...(data.results || []), ...foodMatches])
       .sort((a, b) => Number(b.score || 0) - Number(a.score || 0))
       .slice(0, 12);
   } catch (err) {
@@ -8593,6 +9371,469 @@ async function searchAskMp(query) {
   }
 }
 
+function getLogicalBack() {
+  const view = typeof contentType === "function" ? contentType() : "";
+  if (view === "checklists" && checklistId) {
+    return { label: "All checklists", run: () => { checklistId = null; checklistDetail = null; render(); } };
+  }
+  if (view === "games" && activeGame) {
+    return {
+      label: "War Games",
+      run: () => {
+        stopRocketLoop();
+        activeGame = null;
+        gameSession = null;
+        rocketItem = null;
+        render();
+      }
+    };
+  }
+  if (view === "team" && teamDetailId) {
+    return { label: "Team", run: () => { teamDetailId = null; render(); } };
+  }
+  if (view === "floor" && typeof floorSection !== "undefined" && floorSection === "photos") {
+    return { label: "SOPs", tab: "sops" };
+  }
+  if ((view === "inventory" || view === "reviews" || view === "features" || view === "shift-reports") && !canOpenTab(view)) {
+    return { label: "Home", tab: "home" };
+  }
+  return null;
+}
+
+function syncLogicalBackChrome() {
+  const btn = document.getElementById("stageBack");
+  if (!btn) return;
+  const back = getLogicalBack();
+  if (!back) {
+    btn.hidden = true;
+    btn.onclick = null;
+    return;
+  }
+  btn.hidden = false;
+  btn.setAttribute("aria-label", `Back to ${back.label}`);
+  btn.onclick = () => {
+    if (back.tab) activateAppTab(back.tab);
+    else if (typeof back.run === "function") back.run();
+  };
+}
+
+function renderGatedManagePage(content, view) {
+  const labels = {
+    inventory: "Inventory",
+    reviews: "Reviews",
+    features: "App guide",
+    "shift-reports": "Shift Reports"
+  };
+  content.innerHTML = `
+    <div class="gated-manage">
+      ${renderPageHeader({
+        title: labels[view] || "Manage",
+        subtitle: "This destination is limited to authorized staff.",
+        back: { label: "Home", tab: "home" }
+      })}
+      <div class="status"><strong>You don’t have access to this tool.</strong> Ask a manager if you need it for your shift.</div>
+    </div>
+  `;
+}
+
+function renderDrinksParentTabs() {
+  const section = drinksSection === "bar" ? "bar" : "coffee";
+  return `
+    <div class="coffee-subtabs drinks-parent-tabs">
+      <button type="button" class="coffee-subtab${section === "coffee" ? " active" : ""}" onclick="drinksSection='coffee'; render();">Coffee</button>
+      <button type="button" class="coffee-subtab${section === "bar" ? " active" : ""}" onclick="drinksSection='bar'; render();">Wine + Cocktails</button>
+    </div>
+  `;
+}
+
+function renderDrinks(content) {
+  if (drinksSection === "bar") renderBarMenu(content);
+  else renderCoffee(content);
+}
+
+function renderOnTapViewTabs() {
+  const catalog = ontapView === "catalog";
+  return `
+    <div class="coffee-subtabs">
+      <button type="button" class="coffee-subtab${!catalog ? " active" : ""}" onclick="ontapView='board'; render();">On Tap</button>
+      <button type="button" class="coffee-subtab${catalog ? " active" : ""}" onclick="ontapView='catalog'; render();">Beer Catalog</button>
+    </div>
+  `;
+}
+
+function openChecklistFromEvents(id) {
+  checklistId = id;
+  checklistDetail = null;
+  activateAppTab("checklists");
+}
+
+function openSopCategory(category) {
+  sopCategory = category;
+  activateAppTab("sops");
+}
+
+async function renderEvents(content) {
+  updateSearchPlaceholder();
+  content.innerHTML = `<div class="status"><strong>Loading events…</strong></div>`;
+  try {
+    if (!checklistDate) checklistDate = getLocalDateKey();
+    const [listData, eventsPayload] = await Promise.all([
+      apiFetch(`/api/checklists?date=${encodeURIComponent(checklistDate)}`),
+      apiFetch("/api/events").catch(() => ({ events: [], canEdit: false }))
+    ]);
+    const eventLists = (listData.checklists || []).filter((list) => String(list.category || "").toLowerCase() === "events");
+    try { await loadSopsData(false); } catch (_) {}
+    const eventSops = (typeof sopDocuments !== "undefined" ? sopDocuments : [])
+      .filter((doc) => String(doc.category || "").toLowerCase() === "events");
+    const canEdit = Boolean(eventsPayload.canEdit) && canEditEvents();
+    const editing = canEdit && typeof isPageEditMode === "function" && isPageEditMode("events");
+    const records = eventsPayload.events || [];
+    const liveRecords = records.filter((event) => event.published && event.status !== "expired");
+
+    content.innerHTML = `
+      ${canEdit
+        ? renderEditablePageHeader({
+            title: "Events",
+            subtitle: "Private events on the books, plus day-of checklists and SOPs.",
+            canEdit,
+            view: "events"
+          })
+        : renderPageHeader({
+            title: "Events",
+            subtitle: "Private events and day-of setup."
+          })}
+      ${editing ? renderPageEditBanner("Edit mode — publish an event with start and end so it appears for the floor.") : ""}
+      ${editing
+        ? `<div class="weekly-edit-stack" style="max-width:760px;margin:0 auto 18px;">
+            ${records.map(renderPublishedEventEditCard).join("")}
+            ${renderNewPublishedEventForm()}
+          </div>`
+        : (liveRecords.length
+          ? `<div class="list coffee-list" style="max-width:760px;margin:0 auto 18px;">${liveRecords.map((event) => `
+              <div class="card coffee-card">
+                <div class="card-top">
+                  <div>
+                    <p class="name">${escapeHTML(event.title)}</p>
+                    <p class="desc">${escapeHTML(formatSpecialWindow(event) || "Date TBA")}${event.location ? ` · ${escapeHTML(event.location)}` : ""}</p>
+                  </div>
+                  <span class="status-chip is-${escapeForAttribute(event.status || "live")}">${escapeHTML(specialStatusLabel(event))}</span>
+                </div>
+                ${event.summary ? `<p class="desc" style="margin-top:10px;">${escapeHTML(event.summary)}</p>` : ""}
+              </div>
+            `).join("")}</div>`
+          : `<div class="card" style="max-width:760px;margin:0 auto 18px;">
+              <p class="name">This week’s events</p>
+              <p class="desc">No published events this week.</p>
+            </div>`)}
+      <p class="checklist-section-head">Event checklists</p>
+      ${eventLists.length ? eventLists.map((list) => `
+        <button type="button" class="checklist-card" onclick="openChecklistFromEvents('${escapeForAttribute(list.id)}')">
+          <div class="checklist-card-top">
+            <strong>${escapeHTML(list.name)}</strong>
+            <span class="meta">${escapeHTML(list.dueLabel || "")}</span>
+          </div>
+          <p class="summary">${escapeHTML(list.summary || "")}</p>
+          <p class="checklist-progress">${list.completedCount || 0} / ${list.taskCount} completed</p>
+        </button>
+      `).join("") : `<div class="status"><strong>No event checklists yet.</strong></div>`}
+      <p class="checklist-section-head">Event SOPs</p>
+      <div class="list coffee-list" style="max-width:760px;margin:0 auto;">
+        ${eventSops.length ? eventSops.map((doc) => `
+          <div class="card coffee-card" onclick="openSopDocument(${doc.id})">
+            <div class="card-top">
+              <div>
+                <p class="name">${escapeHTML(doc.title)}</p>
+                <p class="desc">${escapeHTML(doc.summary || "")}</p>
+              </div>
+              <span class="coffee-tag">Events</span>
+            </div>
+          </div>
+        `).join("") : `<div class="status"><strong>No event SOPs yet.</strong> Open SOPs and look under Events.</div>`}
+      </div>
+      <div style="max-width:760px;margin:16px auto 0;display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-secondary" onclick="openSopCategory('Events')">All event SOPs</button>
+        <button type="button" class="btn btn-secondary" onclick="activateAppTab('checklists')">All checklists</button>
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<div class="status"><strong>Events could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+  }
+}
+
+function renderPublishedEventEditCard(event) {
+  const id = event.id;
+  return `
+    <div class="merch-admin-panel weekly-special-edit" id="eventEdit-${id}">
+      <div class="card-top">
+        <h3>${escapeHTML(event.title || "Event")}</h3>
+        <span class="status-chip is-${escapeForAttribute(event.status || "live")}">${escapeHTML(specialStatusLabel(event))}</span>
+      </div>
+      <label for="eventTitle-${id}">Title</label>
+      <input id="eventTitle-${id}" type="text" value="${escapeForAttribute(event.title || "")}">
+      <label for="eventSummary-${id}">Summary</label>
+      <textarea id="eventSummary-${id}" rows="2">${escapeHTML(event.summary || "")}</textarea>
+      <label for="eventLocation-${id}">Location</label>
+      <input id="eventLocation-${id}" type="text" value="${escapeForAttribute(event.location || "")}">
+      <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="eventStart-${id}">Starts</label>
+          <input id="eventStart-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(event.startsAt))}">
+        </div>
+        <div>
+          <label for="eventEnd-${id}">Ends</label>
+          <input id="eventEnd-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(event.endsAt))}">
+        </div>
+      </div>
+      <label for="eventNotes-${id}">Staff notes</label>
+      <textarea id="eventNotes-${id}" rows="2">${escapeHTML(event.notes || "")}</textarea>
+      <label><input id="eventPublished-${id}" type="checkbox"${event.published ? " checked" : ""}> Published</label>
+      <p id="eventError-${id}" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="savePublishedEvent(${id})">Save</button>
+        <button type="button" class="btn btn-danger" onclick="deletePublishedEvent(${id})">Remove</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderNewPublishedEventForm() {
+  return `
+    <div class="merch-admin-panel weekly-special-edit" id="eventEdit-new">
+      <h3>Publish an event</h3>
+      <label for="eventTitle-new">Title</label>
+      <input id="eventTitle-new" type="text" placeholder="Private dining / beer club / etc.">
+      <label for="eventSummary-new">Summary</label>
+      <textarea id="eventSummary-new" rows="2"></textarea>
+      <label for="eventLocation-new">Location</label>
+      <input id="eventLocation-new" type="text" placeholder="Production space">
+      <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="eventStart-new">Starts</label>
+          <input id="eventStart-new" type="datetime-local">
+        </div>
+        <div>
+          <label for="eventEnd-new">Ends</label>
+          <input id="eventEnd-new" type="datetime-local">
+        </div>
+      </div>
+      <p id="eventError-new" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="createPublishedEvent()">Publish</button>
+      </div>
+    </div>
+  `;
+}
+
+async function savePublishedEvent(id) {
+  if (!canEditEvents()) return;
+  const errorEl = document.getElementById(`eventError-${id}`);
+  if (errorEl) errorEl.textContent = "";
+  try {
+    await apiFetch(`/api/events/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        title: document.getElementById(`eventTitle-${id}`)?.value.trim(),
+        summary: document.getElementById(`eventSummary-${id}`)?.value.trim(),
+        location: document.getElementById(`eventLocation-${id}`)?.value.trim(),
+        startsAt: document.getElementById(`eventStart-${id}`)?.value || "",
+        endsAt: document.getElementById(`eventEnd-${id}`)?.value || "",
+        notes: document.getElementById(`eventNotes-${id}`)?.value.trim(),
+        published: Boolean(document.getElementById(`eventPublished-${id}`)?.checked)
+      })
+    });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not save event.";
+  }
+}
+
+async function createPublishedEvent() {
+  if (!canEditEvents()) return;
+  const errorEl = document.getElementById("eventError-new");
+  if (errorEl) errorEl.textContent = "";
+  try {
+    await apiFetch("/api/events", {
+      method: "POST",
+      body: JSON.stringify({
+        title: document.getElementById("eventTitle-new")?.value.trim(),
+        summary: document.getElementById("eventSummary-new")?.value.trim(),
+        location: document.getElementById("eventLocation-new")?.value.trim(),
+        startsAt: document.getElementById("eventStart-new")?.value || "",
+        endsAt: document.getElementById("eventEnd-new")?.value || "",
+        published: true
+      })
+    });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not publish event.";
+  }
+}
+
+async function deletePublishedEvent(id) {
+  if (!canEditEvents()) return;
+  if (!confirm("Remove this event record?")) return;
+  try {
+    await apiFetch(`/api/events/${id}`, { method: "DELETE" });
+    render();
+  } catch (err) {
+    alert(err.message || "Could not remove event.");
+  }
+}
+
+function searchDirectoryItems() {
+  return [
+    { tab: "ontap", label: "On Tap", group: "Service" },
+    { tab: "food", label: "Food + Specials", group: "Service" },
+    { tab: "drinks", label: "Drinks", group: "Service" },
+    { tab: "today-floor", label: "Today's Floor", group: "Service" },
+    { tab: "floor", label: "Shift Tools", group: "Service" },
+    { tab: "checklists", label: "Checklists", group: "My Shift" },
+    { tab: "events", label: "Events", group: "My Shift" },
+    { tab: "training", label: "Training", group: "Learn" },
+    { tab: "sops", label: "SOPs", group: "Learn" },
+    { tab: "games", label: "War Games", group: "Learn" },
+    { tab: "team", label: "Team", group: "Team" },
+    { tab: "askmp", label: "Ask MP", group: "Tools" },
+    { tab: "merch", label: "Merch", group: "Tools" },
+    { tab: "safety", label: "Safety + Emergency", group: "Safety" },
+    { tab: "inventory", label: "Inventory", group: "Manage" },
+    { tab: "reviews", label: "Reviews", group: "Manage" },
+    { tab: "features", label: "App guide", group: "Manage" },
+    { tab: "shift-reports", label: "Shift Reports", group: "Manage" }
+  ].filter((item) => canSearchTab(item.tab));
+}
+
+function renderSearchLaunchPad(content) {
+  const suggestions = ["IPA", "opening checklist", "allergy", "Michelada", "merch"];
+  content.innerHTML = `
+    <div class="ask-mp-page">
+      ${renderPageHeader({
+        title: "Search Launch Pad",
+        subtitle: "Directory of destinations plus content. Results open the source. Ask MP is the question layer on the same index."
+      })}
+      <form class="ask-mp-search" onsubmit="event.preventDefault(); searchLaunchPad(this.elements.query.value);">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>
+        <input name="query" type="search" value="${escapeForAttribute(launchPadQuery)}" placeholder="Search Launch Pad" autocomplete="off" aria-label="Search Launch Pad">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+      ${!launchPadQuery ? `
+        <div class="ask-mp-suggestions" aria-label="Suggested searches">
+          ${suggestions.map((suggestion) => `<button type="button" onclick="searchLaunchPad('${escapeForAttribute(suggestion)}')">${escapeHTML(suggestion)}</button>`).join("")}
+        </div>
+        <p class="checklist-section-head">Browse</p>
+        <div class="search-directory">
+          ${searchDirectoryItems().map((item) => {
+            const pinned = typeof isQuickAccessPinned === "function" && isQuickAccessPinned(item.tab);
+            return `
+            <div class="search-directory-row">
+              <button type="button" class="search-directory-card" onclick="activateAppTab('${escapeForAttribute(item.tab)}')">
+                <span>${escapeHTML(item.group)}</span>
+                <strong>${escapeHTML(item.label)}</strong>
+              </button>
+              <button type="button" class="search-pin${pinned ? " is-on" : ""}" onclick="toggleQuickAccessPin('${escapeForAttribute(item.tab)}')" aria-pressed="${pinned ? "true" : "false"}" aria-label="${pinned ? "Unpin from Home" : "Pin to Home"}">${pinned ? "Pinned" : "Pin"}</button>
+            </div>`;
+          }).join("")}
+        </div>
+      ` : ""}
+      <div class="ask-mp-results" aria-live="polite">
+        ${launchPadLoading ? `<div class="status"><strong>Searching Launch Pad…</strong></div>` : ""}
+        ${launchPadError ? `<p class="auth-error">${escapeHTML(launchPadError)}</p>` : ""}
+        ${!launchPadLoading && launchPadQuery && !launchPadError && !launchPadResults.length ? `<p class="home-empty">No destinations or content match. Browse below, or ask it in plain language on Ask MP.</p>` : ""}
+        ${!launchPadLoading ? launchPadResults.map((result, index) => renderSearchResultButton(result, "search", index)).join("") : ""}
+      </div>
+    </div>
+  `;
+}
+
+async function searchLaunchPad(query) {
+  launchPadQuery = String(query || "").trim();
+  if (!launchPadQuery) {
+    launchPadResults = [];
+    launchPadError = "";
+    render();
+    return;
+  }
+  launchPadLoading = true;
+  launchPadError = "";
+  render();
+  try {
+    const data = await apiFetch(`/api/search?q=${encodeURIComponent(launchPadQuery)}`);
+    const terms = launchPadQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    const destMatches = searchDirectoryItems()
+      .filter((item) => `${item.label} ${item.group} ${item.tab}`.toLowerCase().includes(launchPadQuery.toLowerCase()))
+      .map((item) => ({
+        type: item.group,
+        title: item.label,
+        summary: `Open ${item.label}`,
+        tab: item.tab,
+        source: item.group,
+        score: 30
+      }));
+    const foodMatches = (typeof FOOD_MENU !== "undefined" ? FOOD_MENU : [])
+      .filter((item) => {
+        const text = `${item.name || ""} ${item.description || ""} ${item.section || ""}`.toLowerCase();
+        return terms.every((term) => text.includes(term));
+      })
+      .slice(0, 5)
+      .map((item) => ({
+        type: "food",
+        title: item.name,
+        summary: item.description || item.section || "",
+        tab: "food",
+        source: "Food + Specials",
+        food: item.id,
+        score: 20
+      }));
+    launchPadResults = filterSearchResults([...(data.results || []), ...destMatches, ...foodMatches])
+      .sort((a, b) => Number(b.score || 0) - Number(a.score || 0))
+      .slice(0, 16);
+  } catch (err) {
+    launchPadError = err.message || "Search is unavailable right now.";
+    launchPadResults = [];
+  } finally {
+    launchPadLoading = false;
+    if (contentType() === "search") render();
+  }
+}
+
+function renderSafety(content) {
+  const list = window.FloorContent?.TROUBLESHOOTING || [];
+  content.innerHTML = `
+    ${renderPageHeader({
+      title: "Safety + Emergency",
+      subtitle: "Life safety first. Get a lead and call 911 when someone is at risk."
+    })}
+    <div class="guide-callout" style="max-width:760px;margin:0 auto 16px;">
+      <strong>Manager-approved emergencies only.</strong> These cards are separated from everyday SOPs. When in doubt: get a lead.
+    </div>
+    <div class="list" style="max-width:760px;margin:0 auto;">
+      ${[
+        ["Injury", "Call 911 if serious. First aid kit location per lead. Document and notify manager."],
+        ["Power outage", "Keep guests calm, secure open tabs if possible, follow lead for evacuation or hold."],
+        ["Severe weather", "Move patio guests inside; follow lead for shelter-in-place."],
+        ["Fire", "Pull alarm / 911, evacuate, do not re-enter."],
+        ["Intoxicated guest", "Refuse service as needed, loop lead, prioritize safety."],
+        ["Harassment / safety", "Remove staff/guest from harm, get manager, document — do not investigate alone."],
+        ["POS outage", "See Fix It below; lead decides backup payment flow."]
+      ].map(([t, b]) => `<div class="card"><p class="name">${escapeHTML(t)}</p><p class="desc">${escapeHTML(b)}</p></div>`).join("")}
+      <button class="game-next" type="button" onclick="openSopCategory('Emergency')">Open Emergency SOPs</button>
+    </div>
+    <div class="coffee-intro" style="max-width:760px;">
+      <h2>Fix It</h2>
+      <p>Common floor failures and when to stop and escalate.</p>
+    </div>
+    <div class="list" style="max-width:760px;margin:0 auto;">
+      ${list.length ? list.map((item) => `
+        <div class="card">
+          <p class="name">${escapeHTML(item.title)}</p>
+          <ol class="desc">${(item.steps || []).map((s) => `<li>${escapeHTML(s)}</li>`).join("")}</ol>
+          <div class="guide-callout" style="margin-top:10px;"><strong>Stop & escalate:</strong> ${escapeHTML(item.stopEscalate || "")}</div>
+        </div>
+      `).join("") : `<div class="status"><strong>Fix It guide is empty.</strong></div>`}
+    </div>
+  `;
+}
+
 function render() {
   queueMicrotask(populateBeerSelects);
   const content = document.getElementById("content");
@@ -8602,7 +9843,7 @@ function render() {
   document.body.dataset.view = view;
 
   const showFilters = view === "beer" || view === "ontap";
-  const showSearch = view === "beer" || view === "food" || view === "ontap" || view === "coffee" || view === "bar" || view === "merch" || view === "inventory" || view === "sops" || view === "checklists" || view === "floor" || view === "reviews";
+  const showSearch = view === "beer" || view === "food" || view === "ontap" || view === "drinks" || view === "coffee" || view === "bar" || view === "merch" || view === "inventory" || view === "sops" || view === "checklists" || view === "floor" || view === "reviews" || view === "events";
 
   filterWrap.style.display = showFilters ? "block" : "none";
   if (searchWrap) searchWrap.style.display = showSearch ? "" : "none";
@@ -8610,6 +9851,14 @@ function render() {
   syncAccountLinkActive();
   if (typeof updateStageTitle === "function") updateStageTitle();
   if (typeof syncPageEditBodyClass === "function") syncPageEditBodyClass();
+
+  if ((view === "inventory" || view === "reviews" || view === "features" || view === "shift-reports") && !canOpenTab(view)) {
+    destroyCharts();
+    renderGatedManagePage(content, view);
+    content.classList.remove("is-entering");
+    requestAnimationFrame(() => content.classList.add("is-entering"));
+    return;
+  }
 
   if (view === "home") {
     destroyCharts();
@@ -8621,12 +9870,9 @@ function render() {
   } else if (view === "food") {
     destroyCharts();
     renderFood(content);
-  } else if (view === "coffee") {
+  } else if (view === "drinks" || view === "coffee" || view === "bar") {
     destroyCharts();
-    renderCoffee(content);
-  } else if (view === "bar") {
-    destroyCharts();
-    renderBarMenu(content);
+    renderDrinks(content);
   } else if (view === "merch") {
     destroyCharts();
     renderMerch(content);
@@ -8654,6 +9900,15 @@ function render() {
   } else if (view === "askmp") {
     destroyCharts();
     renderAskMp(content);
+  } else if (view === "search") {
+    destroyCharts();
+    renderSearchLaunchPad(content);
+  } else if (view === "events") {
+    destroyCharts();
+    renderEvents(content);
+  } else if (view === "safety") {
+    destroyCharts();
+    renderSafety(content);
   } else if (view === "games") {
     destroyCharts();
     renderGames(content);
@@ -8694,6 +9949,10 @@ const ACTIVITY_LABELS = {
   fav_beer: "Staff Favorites",
   guestscene: "Guest Scenarios",
   recovery: "Complaint Recovery",
+  rush: "The Rush",
+  flight: "Build the Flight",
+  readguest: "Read the Guest",
+  saturday: "Saturday Night",
   sell_this: "Sell This Today"
 };
 
@@ -8766,11 +10025,21 @@ function canSubmitShiftSurvey() {
 }
 
 function isInventoryManager() {
-  return currentUser && (currentUser.permissions?.manageOpsInventory || StaffRoles?.canManageOpsInventory(currentUser));
+  return currentUser && (
+    currentUser.permissions?.editInventory
+    || currentUser.permissions?.manageOpsInventory
+    || StaffRoles?.canEditInventory?.(currentUser)
+    || StaffRoles?.canManageOpsInventory(currentUser)
+  );
 }
 
 function isMerchManager() {
-  return currentUser && (currentUser.permissions?.manageMerch || StaffRoles?.canManageMerch(currentUser));
+  return currentUser && (
+    currentUser.permissions?.editMerch
+    || currentUser.permissions?.manageMerch
+    || StaffRoles?.canEditMerch?.(currentUser)
+    || StaffRoles?.canManageMerch(currentUser)
+  );
 }
 
 function canManageTaps() {
@@ -8779,9 +10048,19 @@ function canManageTaps() {
 
 function canManageWeeklySpecials() {
   return currentUser && (
-    currentUser.permissions?.manageWeeklySpecials
+    currentUser.permissions?.editSpecials
+    || currentUser.permissions?.editDrinks
+    || currentUser.permissions?.manageWeeklySpecials
+    || StaffRoles?.canEditSpecials?.(currentUser)
     || StaffRoles?.canManageWeeklySpecials?.(currentUser)
     || StaffRoles?.hasShiftLeadCapability?.(currentUser)
+  );
+}
+
+function canEditEvents() {
+  return currentUser && (
+    currentUser.permissions?.editEvents
+    || StaffRoles?.canEditEvents?.(currentUser)
   );
 }
 
@@ -8881,9 +10160,14 @@ function updateAuthUI() {
   document.querySelectorAll(".tab-auth-only").forEach(el => {
     el.style.display = currentUser ? "" : "none";
   });
-  // Changing a tap writes to Nucleus; editors live on the On Tap list for admins.
   document.querySelectorAll(".tab-team-only").forEach(el => {
-    el.style.display = currentUser && currentUser.permissions?.manageTeam ? "" : "none";
+    el.style.display = currentUser ? "" : "none";
+  });
+  document.querySelectorAll(".tab-manage-only").forEach(el => {
+    el.style.display = canViewManageTools() ? "" : "none";
+  });
+  document.querySelectorAll(".tab-inventory-only").forEach(el => {
+    el.style.display = isInventoryManager() ? "" : "none";
   });
   document.querySelectorAll(".tab-shift-lead-only").forEach(el => {
     el.style.display = currentUser && currentUser.permissions?.viewShiftReports ? "" : "none";
@@ -9326,15 +10610,17 @@ function renderBriefingModal() {
   `;
 }
 
-async function openBriefingItem(itemKey) {
+async function openBriefingItem(itemKey, options = {}) {
   const item = currentBriefingItems.find(entry => entry.key === itemKey);
   if (!item) return;
 
+  const markViewed = options.markViewed !== false;
   briefingActiveItem = item;
   briefingView = "detail";
-  briefingViewedKeys.add(itemKey);
+  if (markViewed) briefingViewedKeys.add(itemKey);
   renderBriefingModal();
 
+  if (!markViewed) return;
   try {
     await apiFetch("/api/announcements/view", {
       method: "POST",
@@ -10698,10 +11984,10 @@ async function renderTodayFloorBoard(content) {
     if (!data.synced || data.source === "none") {
       content.innerHTML = `
         <div class="today-floor">
-          <div class="today-floor__intro">
-            <h2>Today’s Floor</h2>
-            <p>Schedule sync is offline — check 7shifts directly for who’s working.</p>
-          </div>
+          ${renderPageHeader({
+            title: "Today’s Floor",
+            subtitle: "Schedule sync is offline — check 7shifts for who’s working."
+          })}
           ${dayControls}
           ${canSync ? `
             <div class="today-floor__admin">
@@ -10724,10 +12010,10 @@ async function renderTodayFloorBoard(content) {
     if (!staffAll.length) {
       content.innerHTML = `
         <div class="today-floor">
-          <div class="today-floor__intro">
-            <h2>Today’s Floor</h2>
-            <p>No published shifts for ${escapeHTML(dateLabel)}.</p>
-          </div>
+          ${renderPageHeader({
+            title: "Today’s Floor",
+            subtitle: `No published shifts for ${dateLabel}.`
+          })}
           ${dayControls}
           ${privileged ? renderTodayFloorAdminBar(data, canSync) : ""}
           ${privileged ? renderTodayFloorCoverageAlerts(data.coverageAlerts) : ""}
@@ -10752,10 +12038,10 @@ async function renderTodayFloorBoard(content) {
 
     content.innerHTML = `
       <div class="today-floor">
-        <div class="today-floor__intro">
-          <h2>Today’s Floor</h2>
-          <p>${summary}${todayFloorRole !== "all" ? ` · showing ${escapeHTML(todayFloorRole)}` : ""}</p>
-        </div>
+        ${renderPageHeader({
+          title: "Today’s Floor",
+          subtitle: `${dateLabel}${todayFloorRole !== "all" ? ` · ${todayFloorRole}` : ""} · ${isToday ? `${data.onNowCount || 0} on now · ` : ""}${staffAll.length} scheduled`
+        })}
         ${dayControls}
         ${roleControls}
         ${privileged ? renderTodayFloorAdminBar(data, canSync) : ""}
@@ -10796,10 +12082,10 @@ async function renderTodayFloorBoard(content) {
   } catch (err) {
     content.innerHTML = `
       <div class="today-floor">
-        <div class="today-floor__intro">
-          <h2>Today’s Floor</h2>
-          <p>${escapeHTML(err.message || "Could not load today’s schedule.")}</p>
-        </div>
+        ${renderPageHeader({
+          title: "Today’s Floor",
+          subtitle: err.message || "Could not load today’s schedule."
+        })}
       </div>
     `;
   }
@@ -11306,10 +12592,10 @@ async function renderMyProgress(content) {
     const untried = tasting.untriedOnTap || [];
 
     content.innerHTML = `
-      <div class="coffee-intro">
-        <h2>My Progress</h2>
-        <p>Hi ${escapeHTML(currentUser.name)} — training scores, tasting journal, and badges in one place.</p>
-      </div>
+      ${renderPageHeader({
+        title: "My Progress",
+        subtitle: `Hi ${currentUser.name} — scores, tastings, and badges.`
+      })}
       <div class="metrics-grid">
         <div class="metric-card">
           <p class="metric-label">Sessions</p>
@@ -11436,8 +12722,39 @@ async function loadManagerDigestPanel() {
 }
 
 async function renderTeamDashboard(content) {
+  if (!currentUser) {
+    content.innerHTML = `
+      ${renderPageHeader({ title: "Team", subtitle: "Sign in to see who works here." })}
+      <div class="status"><strong>Sign in required.</strong></div>
+    `;
+    return;
+  }
+
   if (!isManager()) {
-    content.innerHTML = `<div class="status"><strong>Manager access required.</strong> Sign in with a manager or admin account to view team progress.</div>`;
+    content.innerHTML = `<div class="status"><strong>Loading team directory…</strong></div>`;
+    try {
+      const data = await apiFetch("/api/team/directory");
+      const people = data.people || [];
+      content.innerHTML = `
+        ${renderPageHeader({
+          title: "Team",
+          subtitle: "Staff directory. Training stats and scheduling stay with managers."
+        })}
+        ${people.length ? `
+          <table class="progress-table">
+            <tr><th>Name</th><th>Role</th></tr>
+            ${people.map((person) => `
+              <tr>
+                <td><strong>${escapeHTML(person.name)}</strong></td>
+                <td>${escapeHTML(person.role_label || roleLabel(person.role))}</td>
+              </tr>
+            `).join("")}
+          </table>
+        ` : `<div class="status"><strong>No teammates listed yet.</strong></div>`}
+      `;
+    } catch (err) {
+      content.innerHTML = `<div class="status"><strong>Could not load the team directory.</strong>${escapeHTML(err.message)}</div>`;
+    }
     return;
   }
 
@@ -11912,7 +13229,47 @@ function formatWeeklyUpdatedLabel(iso) {
 
 function getTodayWeeklySpecial() {
   const today = getLocalDayKey();
-  return WEEKLY_SPECIALS.find(special => special.active && special.day === today) || null;
+  return WEEKLY_SPECIALS.find((special) => isLiveSpecial(special) && special.day === today) || null;
+}
+
+function isLiveSpecial(item) {
+  if (!item) return false;
+  const status = item.status || "live";
+  return status === "live" && item.active !== false && !item.archived;
+}
+
+function specialStatusLabel(item) {
+  const status = item?.status || (isLiveSpecial(item) ? "live" : "archived");
+  if (status === "scheduled") return "Scheduled";
+  if (status === "expired") return "Expired";
+  if (status === "archived") return "Archived";
+  return "Live";
+}
+
+function toDateTimeLocalValue(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw)) return raw.slice(0, 16);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return `${raw}T00:00`;
+  const date = new Date(raw.includes("T") ? raw : raw.replace(" ", "T"));
+  if (Number.isNaN(date.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function formatSpecialWindow(item) {
+  const start = item.publishAt || item.startsAt;
+  const end = item.expireAt || item.endsAt;
+  if (!start && !end) return "";
+  const fmt = (value) => {
+    const local = toDateTimeLocalValue(value);
+    if (!local) return "";
+    const date = new Date(local);
+    return date.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  };
+  if (start && end) return `${fmt(start)} – ${fmt(end)}`;
+  if (start) return `From ${fmt(start)}`;
+  return `Until ${fmt(end)}`;
 }
 
 function getWeeklySpecialViewKey(special) {
@@ -11959,7 +13316,7 @@ async function maybePromptWeeklySpecial() {
   if (foodCategory !== "weekly" || !receivesDailyBriefing()) return;
 
   const special = getTodayWeeklySpecial();
-  if (!special || !special.active) return;
+  if (!special || (typeof isLiveSpecial === "function" && !isLiveSpecial(special))) return;
 
   const viewKey = getWeeklySpecialViewKey(special);
   try {
@@ -11987,12 +13344,12 @@ function renderFood(content) {
 
   const categoryTabs = `
     <div class="coffee-subtabs">
-      <button class="coffee-subtab${foodCategory === "all" ? " active" : ""}" onclick="foodCategory='all'; render();">All</button>
-      <button class="coffee-subtab${foodCategory === "breakfast" ? " active" : ""}" onclick="foodCategory='breakfast'; render();">Breakfast</button>
-      <button class="coffee-subtab${foodCategory === "brunch" ? " active" : ""}" onclick="foodCategory='brunch'; render();">Brunch</button>
-      <button class="coffee-subtab${foodCategory === "lunch" ? " active" : ""}" onclick="foodCategory='lunch'; render();">Lunch</button>
-      <button class="coffee-subtab${foodCategory === "dinner" ? " active" : ""}" onclick="foodCategory='dinner'; render();">Dinner</button>
-      <button class="coffee-subtab${foodCategory === "weekly" ? " active" : ""}" onclick="foodCategory='weekly'; render();">Weekly Specials</button>
+      <button type="button" class="coffee-subtab${foodCategory === "all" ? " active" : ""}" onclick="foodCategory='all'; render();">All</button>
+      <button type="button" class="coffee-subtab${foodCategory === "breakfast" ? " active" : ""}" onclick="foodCategory='breakfast'; render();">Breakfast</button>
+      <button type="button" class="coffee-subtab${foodCategory === "brunch" ? " active" : ""}" onclick="foodCategory='brunch'; render();">Brunch</button>
+      <button type="button" class="coffee-subtab${foodCategory === "lunch" ? " active" : ""}" onclick="foodCategory='lunch'; render();">Lunch</button>
+      <button type="button" class="coffee-subtab${foodCategory === "dinner" ? " active" : ""}" onclick="foodCategory='dinner'; render();">Dinner</button>
+      <button type="button" class="coffee-subtab${foodCategory === "weekly" ? " active" : ""}" onclick="foodCategory='weekly'; render();">Weekly Specials</button>
     </div>
   `;
 
@@ -12013,16 +13370,17 @@ function renderFood(content) {
     if (!sections.includes(item.section)) sections.push(item.section);
   });
 
-  const introCopy = foodCategory === "brunch"
-    ? `<p>Brunch is served <strong>Sunday 10 am–3 pm</strong>. Fried food is cooked in beef tallow. Flour tortillas and buns are not gluten-free.</p>`
-    : `<p>Breakfast is served Monday–Saturday until 11 am. Brunch is served Sunday 10 am–3 pm. Fried foods are cooked in beef tallow — most fried items are GF. Flour tortillas and buns are not gluten-free.</p>
-      <p style="margin-top:8px;font-size:14px;">${escapeHTML(FOOD_SIDE_NOTE)}</p>`;
+  const foodSubtitle = foodCategory === "brunch"
+    ? "Sunday 10 am–3 pm. Fried food is cooked in beef tallow. Flour tortillas and buns are not gluten-free."
+    : "Breakfast Monday–Saturday until 11 am. Brunch Sunday 10 am–3 pm. Fried foods in beef tallow — most fried items are GF.";
 
-  content.innerHTML = categoryTabs + `
-    <div class="coffee-intro">
-      <h2>${foodCategory === "brunch" ? "Brunch Menu" : "Food Menu"}</h2>
-      ${introCopy}
-    </div>
+  content.innerHTML = `
+    ${renderPageHeader({
+      title: foodCategory === "brunch" ? "Brunch Menu" : "Food",
+      subtitle: foodSubtitle
+    })}
+    ${categoryTabs}
+    ${foodCategory !== "brunch" ? `<p class="home-section-lead">${escapeHTML(FOOD_SIDE_NOTE)}</p>` : ""}
     ${filtered.length ? sections.map(section => {
       const sectionItems = filtered.filter(item => item.section === section);
       return `
@@ -12104,7 +13462,7 @@ function renderWeeklyBoardEditForm() {
   return `
     <section class="weekly-board-section merch-admin-panel">
       <h3>This week at MP</h3>
-      <p class="desc" style="margin:0 0 12px;">Keep these short — link staff to Food or Floor Tools for deep detail.</p>
+      <p class="desc" style="margin:0 0 12px;">Keep these short — link staff to Food or Shift Tools for deep detail.</p>
       <div class="inventory-admin-grid">
         ${fields.map(([id, key, label]) => `
           <div style="grid-column:1/-1;">
@@ -12131,24 +13489,44 @@ function renderWeeklyBoardEditForm() {
 
 function renderWeeklySpecialEditCard(special) {
   const sid = escapeForAttribute(special.id);
+  const status = special.status || "live";
   return `
     <div class="merch-admin-panel weekly-special-edit" id="weeklyEdit-${sid}">
-      <h3>${escapeHTML(special.dayLabel)} · ${escapeHTML(special.meal)}</h3>
+      <div class="card-top">
+        <h3>${escapeHTML(special.dayLabel)} · ${escapeHTML(special.meal || "Special")}</h3>
+        <span class="status-chip is-${escapeForAttribute(status)}">${escapeHTML(specialStatusLabel(special))}</span>
+      </div>
+      <label for="weeklyDay-${sid}">Day</label>
+      <select id="weeklyDay-${sid}">
+        ${["monday","tuesday","wednesday","thursday","friday","saturday","sunday","other"].map((day) => `
+          <option value="${day}"${special.day === day ? " selected" : ""}>${day[0].toUpperCase()}${day.slice(1)}</option>
+        `).join("")}
+      </select>
       <label for="weeklyName-${sid}">Dish name</label>
       <input id="weeklyName-${sid}" type="text" value="${escapeForAttribute(special.name || "")}">
       <label for="weeklyPrice-${sid}">Price</label>
       <input id="weeklyPrice-${sid}" type="text" value="${escapeForAttribute(special.price || "")}">
-      <label for="weeklySchedule-${sid}">Schedule</label>
-      <input id="weeklySchedule-${sid}" type="text" value="${escapeForAttribute(special.schedule || "")}">
+      <label for="weeklySchedule-${sid}">Service window</label>
+      <input id="weeklySchedule-${sid}" type="text" value="${escapeForAttribute(special.schedule || "")}" placeholder="11 am until sold out">
+      <label for="weeklyMeal-${sid}">Meal</label>
+      <input id="weeklyMeal-${sid}" type="text" value="${escapeForAttribute(special.meal || "")}" placeholder="Lunch">
       <label for="weeklyDesc-${sid}">Guest description</label>
       <textarea id="weeklyDesc-${sid}" rows="3">${escapeHTML(special.description || "")}</textarea>
-      <label for="weeklyBuild-${sid}">Build / plate</label>
+      <label for="weeklyBuild-${sid}">Build / ingredients</label>
       <textarea id="weeklyBuild-${sid}" rows="2">${escapeHTML(special.build || "")}</textarea>
       <label for="weeklyTraining-${sid}">Staff talking points</label>
       <textarea id="weeklyTraining-${sid}" rows="2">${escapeHTML(special.training || "")}</textarea>
-      <label for="weeklyNotes-${sid}">Notes</label>
+      <label for="weeklyNotes-${sid}">Chef / allergen notes</label>
       <textarea id="weeklyNotes-${sid}" rows="2">${escapeHTML(special.notes || "")}</textarea>
       <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="weeklyPublish-${sid}">Publish</label>
+          <input id="weeklyPublish-${sid}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(special.publishAt))}">
+        </div>
+        <div>
+          <label for="weeklyExpire-${sid}">Expire</label>
+          <input id="weeklyExpire-${sid}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(special.expireAt))}">
+        </div>
         <div>
           <label for="weeklyGf-${sid}">Gluten-free</label>
           ${dietSelectHtml(`weeklyGf-${sid}`, special.glutenFree)}
@@ -12164,7 +13542,45 @@ function renderWeeklySpecialEditCard(special) {
       </div>
       <p id="weeklyError-${sid}" class="auth-error" style="margin-top:10px;"></p>
       <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="saveWeeklySpecial('${sid}')">Save ${escapeHTML(special.dayLabel)}</button>
+        <button type="button" class="btn btn-primary" onclick="saveWeeklySpecial('${sid}')">Save</button>
+        <button type="button" class="btn btn-secondary" onclick="archiveWeeklySpecial('${sid}', ${special.active === false ? "false" : "true"})">${special.active === false ? "Restore" : "Archive"}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderNewWeeklySpecialForm() {
+  return `
+    <div class="merch-admin-panel weekly-special-edit" id="weeklyEdit-new">
+      <h3>Prepare a future special</h3>
+      <p class="desc">Set publish and expire so it goes live without a midnight swap.</p>
+      <label for="weeklyDay-new">Day</label>
+      <select id="weeklyDay-new">
+        ${["monday","tuesday","wednesday","thursday","friday","saturday","sunday","other"].map((day) => `<option value="${day}">${day[0].toUpperCase()}${day.slice(1)}</option>`).join("")}
+      </select>
+      <label for="weeklyName-new">Dish name</label>
+      <input id="weeklyName-new" type="text" placeholder="Next week’s dish">
+      <label for="weeklyPrice-new">Price</label>
+      <input id="weeklyPrice-new" type="text">
+      <label for="weeklySchedule-new">Service window</label>
+      <input id="weeklySchedule-new" type="text" placeholder="11 am until sold out">
+      <label for="weeklyMeal-new">Meal</label>
+      <input id="weeklyMeal-new" type="text" placeholder="Lunch">
+      <label for="weeklyDesc-new">Guest description</label>
+      <textarea id="weeklyDesc-new" rows="3"></textarea>
+      <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="weeklyPublish-new">Publish</label>
+          <input id="weeklyPublish-new" type="datetime-local">
+        </div>
+        <div>
+          <label for="weeklyExpire-new">Expire</label>
+          <input id="weeklyExpire-new" type="datetime-local">
+        </div>
+      </div>
+      <p id="weeklyError-new" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="createWeeklySpecial()">Save as scheduled</button>
       </div>
     </div>
   `;
@@ -12175,7 +13591,8 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
   const editing = weeklySpecialsCanEdit && typeof isPageEditMode === "function" && isPageEditMode("weekly");
   const filtered = WEEKLY_SPECIALS.filter((special) => {
     const haystack = (`${special.name} ${special.dayLabel} ${special.description} ${special.training}`).toLowerCase();
-    return special.active && (!query || haystack.includes(query));
+    if (query && !haystack.includes(query)) return false;
+    return editing || isLiveSpecial(special);
   });
   const todaySpecial = getTodayWeeklySpecial();
   const updatedLabel = formatWeeklyUpdatedLabel(weeklyBoard.updatedAt);
@@ -12186,7 +13603,7 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
   const header = typeof renderEditablePageHeader === "function"
     ? renderEditablePageHeader({
         title: "Weekly Specials",
-        subtitle: "Monday lunch, Taco Tuesday, and Wednesday dinner — plus this week’s floor notes.",
+        subtitle: "Monday lunch, Taco Tuesday, and Wednesday dinner — plus this week’s floor notes. Future dishes can be scheduled to publish and expire on their own.",
         canEdit: weeklySpecialsCanEdit,
         view: "weekly"
       })
@@ -12198,8 +13615,9 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
       : `<div class="page-edit-banner">Weekly specials need review.</div>`)
     : "";
 
-  content.innerHTML = categoryTabs + `
+  content.innerHTML = `
     ${header}
+    ${categoryTabs}
     <p class="home-section-lead">${escapeHTML(metaLine)}</p>
     ${weeklySpecialsError ? `<p class="auth-error">${escapeHTML(weeklySpecialsError)}</p>` : ""}
     ${reviewBanner}
@@ -12211,16 +13629,18 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
       : ""}
     ${editing ? renderWeeklyBoardEditForm() : renderWeeklyBoardNotesView()}
     ${editing
-      ? `<div class="weekly-edit-stack">${filtered.map(renderWeeklySpecialEditCard).join("")}</div>`
+      ? `<div class="weekly-edit-stack">${filtered.map(renderWeeklySpecialEditCard).join("")}${renderNewWeeklySpecialForm()}</div>`
       : (filtered.length
         ? `<div class="list coffee-list" style="padding-top:0;">${filtered.map((special) => {
             const isToday = special.day === todayKey;
+            const windowLabel = formatSpecialWindow(special);
             return `
               <div class="card coffee-card" onclick="openWeeklySpecialTraining('${escapeForAttribute(special.id)}')" style="${isToday ? "border-color:var(--accent);box-shadow:0 0 0 1px rgba(166,124,82,0.25);" : ""}">
                 <div class="card-top">
                   <div>
                     <p class="name">${escapeHTML(special.name)}</p>
                     <p class="desc">${escapeHTML(special.dayLabel)} ${escapeHTML(special.meal)} · ${escapeHTML(special.schedule)}</p>
+                    ${windowLabel ? `<p class="desc">${escapeHTML(windowLabel)}</p>` : ""}
                   </div>
                   ${isToday ? `<span class="coffee-tag">Today</span>` : `<span class="coffee-tag">${escapeHTML(special.dayLabel)}</span>`}
                 </div>
@@ -12229,7 +13649,7 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
               </div>
             `;
           }).join("")}</div>`
-        : `<div class="status"><strong>No weekly specials match.</strong> Try a different search.</div>`)}
+        : `<div class="status"><strong>No weekly specials are live right now.</strong></div>`)}
   `;
 }
 
@@ -12251,6 +13671,8 @@ async function saveWeeklySpecial(specialId) {
       name: document.getElementById(`weeklyName-${specialId}`)?.value.trim(),
       price: document.getElementById(`weeklyPrice-${specialId}`)?.value.trim(),
       schedule: document.getElementById(`weeklySchedule-${specialId}`)?.value.trim(),
+      meal: document.getElementById(`weeklyMeal-${specialId}`)?.value.trim(),
+      day: document.getElementById(`weeklyDay-${specialId}`)?.value,
       description: document.getElementById(`weeklyDesc-${specialId}`)?.value.trim(),
       build: document.getElementById(`weeklyBuild-${specialId}`)?.value.trim(),
       training: document.getElementById(`weeklyTraining-${specialId}`)?.value.trim(),
@@ -12258,8 +13680,12 @@ async function saveWeeklySpecial(specialId) {
       glutenFree: dietValueFromSelect(`weeklyGf-${specialId}`),
       dairy: dietValueFromSelect(`weeklyDairy-${specialId}`),
       nuts: dietValueFromSelect(`weeklyNuts-${specialId}`),
+      publishAt: document.getElementById(`weeklyPublish-${specialId}`)?.value || "",
+      expireAt: document.getElementById(`weeklyExpire-${specialId}`)?.value || "",
       contentWeekStart: document.getElementById("weeklyContentWeekStart")?.value || weeklyBoard.expectedContentWeekStart
     };
+    const day = payload.day;
+    if (day) payload.dayLabel = day[0].toUpperCase() + day.slice(1);
     const data = await apiFetch(`/api/weekly-specials/${encodeURIComponent(specialId)}`, {
       method: "PUT",
       body: JSON.stringify(payload)
@@ -12270,6 +13696,47 @@ async function saveWeeklySpecial(specialId) {
   } catch (err) {
     if (errorEl) errorEl.textContent = err.message || "Could not save special.";
     else alert(err.message || "Could not save special.");
+  }
+}
+
+async function createWeeklySpecial() {
+  if (!canManageWeeklySpecials()) return;
+  const errorEl = document.getElementById("weeklyError-new");
+  if (errorEl) errorEl.textContent = "";
+  try {
+    const day = document.getElementById("weeklyDay-new")?.value || "other";
+    await apiFetch("/api/weekly-specials", {
+      method: "POST",
+      body: JSON.stringify({
+        day,
+        dayLabel: day[0].toUpperCase() + day.slice(1),
+        name: document.getElementById("weeklyName-new")?.value.trim(),
+        price: document.getElementById("weeklyPrice-new")?.value.trim(),
+        schedule: document.getElementById("weeklySchedule-new")?.value.trim(),
+        meal: document.getElementById("weeklyMeal-new")?.value.trim(),
+        description: document.getElementById("weeklyDesc-new")?.value.trim(),
+        publishAt: document.getElementById("weeklyPublish-new")?.value || "",
+        expireAt: document.getElementById("weeklyExpire-new")?.value || ""
+      })
+    });
+    await ensureWeeklySpecials({ force: true });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not create special.";
+  }
+}
+
+async function archiveWeeklySpecial(specialId, archive) {
+  if (!canManageWeeklySpecials()) return;
+  try {
+    await apiFetch(`/api/weekly-specials/${encodeURIComponent(specialId)}`, {
+      method: "PUT",
+      body: JSON.stringify({ active: !archive })
+    });
+    await ensureWeeklySpecials({ force: true });
+    render();
+  } catch (err) {
+    alert(err.message || "Could not update special.");
   }
 }
 
@@ -12972,7 +14439,7 @@ const MERCH_SHOP_URL = "https://shop.manhattanproject.beer/";
 function renderMerchSubtabs() {
   return `
     <div class="coffee-subtabs">
-      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; merchEditId=null; render();">Inventory</button>
+      <button class="coffee-subtab${merchSection === "stock" ? " active" : ""}" onclick="merchSection='stock'; merchEditId=null; render();">${isMerchManager() ? "Inventory" : "In stock"}</button>
       <button class="coffee-subtab${merchSection === "ideas" ? " active" : ""}" onclick="merchSection='ideas'; merchEditId=null; render();">Up & Coming</button>
     </div>
   `;
@@ -13015,12 +14482,12 @@ async function renderMerch(content) {
     content.innerHTML = `
       ${typeof renderEditablePageHeader === "function"
         ? renderEditablePageHeader({
-            title: "Merch inventory",
+            title: isMerchManager() ? "Merch inventory" : "Merch",
             subtitle: isMerchManager()
               ? (isPageEditMode("merch")
                 ? "Edit mode — add products, update stock, and manage status."
                 : "What we carry in the taproom — turn on Edit to manage inventory.")
-              : "What we carry in the taproom — photos, prices, and sizes.",
+              : "What we sell in the taproom — photos, prices, and sizes.",
             canEdit: isMerchManager(),
             view: "merch"
           })
@@ -13325,7 +14792,7 @@ async function renderInventory(content) {
   try {
     await loadOpsInventory(false);
   } catch (err) {
-    content.innerHTML = `<div class="status"><strong>Ops inventory could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+    content.innerHTML = `${renderPageHeader({ title: "Ops Inventory", subtitle: "Could not load inventory." })}<div class="status"><strong>${escapeHTML(err.message)}</strong></div>`;
     return;
   }
 
@@ -13348,11 +14815,12 @@ async function renderInventory(content) {
         </div>`;
 
   content.innerHTML = `
-    <div class="coffee-intro launchpad-intro">
-      <h2>Ops Inventory</h2>
-      <p>Manhattan catalog with Wayward par math — count stock, mark sections ready, and build the distributor order.</p>
-      ${!currentUser ? `<p style="margin-top:8px;font-size:14px;color:var(--muted);">Sign in to update counts and mark sections ready.</p>` : ""}
-    </div>
+    ${renderPageHeader({
+      title: "Ops Inventory",
+      subtitle: currentUser
+        ? "Manhattan catalog with Wayward par math — count stock, mark sections ready, and build the distributor order."
+        : "Sign in to update counts and mark sections ready."
+    })}
     <div class="ops-inv-subtabs coffee-subtabs" style="padding:0 24px;max-width:1200px;margin:0 auto 8px;">
       <button class="coffee-subtab${opsInventoryView === "count" ? " active" : ""}" onclick="opsInventoryView='count'; render();">Count</button>
       <button class="coffee-subtab${opsInventoryView === "order" ? " active" : ""}" onclick="opsInventoryView='order'; render();">Order</button>
@@ -13690,14 +15158,12 @@ async function renderChecklists(content) {
 
       content.innerHTML = `
         <div class="checklist-page">
-          <div style="padding-bottom:12px;">
-            <button class="game-back" type="button" onclick="checklistId=null; checklistDetail=null; render();">← All checklists</button>
-          </div>
-          <div class="coffee-intro" style="padding-top:0;">
-            <h2>${escapeHTML(list.name)}</h2>
-            <p>${escapeHTML(list.summary || "")}</p>
-            <p style="margin-top:8px;font-size:13px;color:var(--muted);">${escapeHTML(list.dueLabel || "")} · ${doneCount} / ${total} completed · ${escapeHTML(formatShiftDateLabel(checklistDate))}</p>
-          </div>
+          ${renderPageHeader({
+            title: list.name,
+            subtitle: list.summary || "",
+            back: { label: "All checklists", onclick: "checklistId=null; checklistDetail=null; render();" }
+          })}
+          <p style="margin:0 0 12px;font-size:13px;color:var(--muted);">${escapeHTML(list.dueLabel || "")} · ${doneCount} / ${total} completed · ${escapeHTML(formatShiftDateLabel(checklistDate))}</p>
           <div class="shift-date-picker" style="margin-bottom:14px;">
             <label for="checklistDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Date</label>
             <input type="date" id="checklistDateInput" value="${escapeForAttribute(checklistDate)}" onchange="checklistDate=this.value; checklistDetail=null; render();">
@@ -13734,10 +15200,10 @@ async function renderChecklists(content) {
 
     content.innerHTML = `
       <div class="checklist-page">
-        <div class="coffee-intro" style="padding-top:0;">
-          <h2>Checklists</h2>
-          <p>Opening, closing, cut, events, and weekly detail lists from the floor. Check off tasks for today’s shift.</p>
-        </div>
+        ${renderPageHeader({
+          title: "Checklists",
+          subtitle: "Opening, closing, cut, events, and weekly detail — check off today’s shift."
+        })}
         <div class="shift-date-picker" style="margin-bottom:16px;">
           <label for="checklistDateInput" style="font-size:13px;font-weight:600;color:var(--muted);">Date</label>
           <input type="date" id="checklistDateInput" value="${escapeForAttribute(checklistDate)}" onchange="checklistDate=this.value; checklistCache=null; render();">
@@ -13844,14 +15310,14 @@ async function loadSopPhotoGallery() {
     if (!photos.length) {
       el.innerHTML = `
         <h2>What GOOD looks like</h2>
-        <p>Photo standards live in Floor → Floor Tools → Photo Standards. Managers can upload station and glassware examples there.</p>
+        <p>Photo standards live with SOPs. Managers can upload station and glassware examples from Shift Tools → Shortcuts.</p>
         <button class="game-next" type="button" onclick="floorSection='photos'; activateAppTab('floor');">Open Photo Standards</button>
       `;
       return;
     }
     el.innerHTML = `
       <h2>What GOOD looks like</h2>
-      <p>Match the floor to these station standards. Full gallery in Floor Tools.</p>
+      <p>Match the floor to these station standards. Full gallery is in Shift Tools → Shortcuts for managers.</p>
       <div class="list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px;">
         ${photos.map(p => `
           <div class="card" style="padding:8px;">
@@ -13992,18 +15458,20 @@ async function renderReviews(content) {
       : `<div class="review-sync-note" style="background:#ecfdf5;border-color:#a7f3d0;color:#065f46;"><strong>Live sync enabled:</strong> ${[live.google ? "Google" : null, live.yelp ? "Yelp" : null].filter(Boolean).join(" + ")} reviews refresh every 6 hours${live.aiSummary ? " with AI summary" : ""}.</div>`;
 
     content.innerHTML = `
-      <div class="coffee-intro">
-        <h2>Guest Reviews</h2>
-        <p>What people are saying on Google, Yelp, and other platforms — plus a staff-friendly summary of positives and negatives.</p>
-        ${canRefreshReviews() ? `<button class="game-next" style="margin-top:12px;" type="button" onclick="refreshReviewsFromServer()">Refresh live reviews</button>` : ""}
-      </div>
+      ${renderPageHeader({
+        title: "Guest Reviews",
+        subtitle: "What people are saying on Google, Yelp, and other platforms — plus a staff-friendly summary.",
+        actionsHtml: canRefreshReviews()
+          ? `<button class="btn btn-secondary" type="button" onclick="refreshReviewsFromServer()">Refresh live reviews</button>`
+          : ""
+      })}
       ${syncNote}
       ${renderReviewPlatformCards(data.sources || [])}
       ${renderReviewSummary(data.summary)}
       ${renderReviewCards(data.reviews || [], data.sources || [], query)}
     `;
   } catch (err) {
-    content.innerHTML = `<div class="status"><strong>Reviews could not be loaded.</strong>${escapeHTML(err.message)}</div>`;
+    content.innerHTML = `${renderPageHeader({ title: "Guest Reviews", subtitle: "Could not load reviews." })}<div class="status"><strong>${escapeHTML(err.message)}</strong></div>`;
   }
 }
 
@@ -14037,8 +15505,10 @@ function updateSearchPlaceholder() {
     inventory: "Search inventory items or sections",
     sops: "Search SOPs, procedures, or categories",
     checklists: "Search checklists",
-    floor: "Search floor tools",
+    events: "Search event checklists or SOPs",
+    floor: "Search shift tools",
     reviews: "Search reviews or platforms",
+    drinks: drinksSection === "bar" ? (barPlaceholders[barSection] || "Search drinks") : (coffeePlaceholders[coffeeSection] || "Search coffee"),
     coffee: coffeePlaceholders[coffeeSection] || "Search coffee",
     bar: barPlaceholders[barSection] || "Search drinks",
     games: "Search beer, style, or flavor",
@@ -14050,6 +15520,7 @@ function updateSearchPlaceholder() {
 
 function renderCoffeeSectionTabs() {
   return `
+    ${typeof renderDrinksParentTabs === "function" ? renderDrinksParentTabs() : ""}
     <div class="coffee-subtabs">
       <button class="coffee-subtab${coffeeSection === "menu" ? " active" : ""}" onclick="coffeeSection='menu'; render();">Menu</button>
       <button class="coffee-subtab${coffeeSection === "roaster" ? " active" : ""}" onclick="coffeeSection='roaster'; render();">Viewfinder Roaster</button>
@@ -14174,11 +15645,12 @@ function renderCoffeeMenu(content, sectionTabs, query) {
 
   const empty = !beans.length && !drinks.length && !flavorGroups.length;
 
-  content.innerHTML = sectionTabs + `
-    <div class="coffee-intro">
-      <h2>Caffeine Bar</h2>
-      <p>Manhattan Project coffee menu — beans from <a href="https://www.viewfindercoffee.com/" target="_blank" rel="noopener noreferrer">Viewfinder Coffee Roasters</a>. Dark Room for espresso · Worka for pour overs.</p>
-    </div>
+  content.innerHTML = `
+    ${renderPageHeader({
+      title: "Coffee",
+      subtitle: "Viewfinder beans. Dark Room for espresso · Worka for pour overs."
+    })}
+    ${sectionTabs}
     <div class="coffee-list" style="padding-top:0;">
       <p class="coffee-section-num">Milk options</p>
       ${COFFEE_MILK_OPTIONS.map(option => `
@@ -14249,6 +15721,7 @@ function renderCoffeeMenu(content, sectionTabs, query) {
 
 function renderBarSectionTabs() {
   return `
+    ${typeof renderDrinksParentTabs === "function" ? renderDrinksParentTabs() : ""}
     <div class="coffee-subtabs">
       <button class="coffee-subtab${barSection === "all" ? " active" : ""}" onclick="barSection='all'; render();">All</button>
       <button class="coffee-subtab${barSection === "wine" ? " active" : ""}" onclick="barSection='wine'; render();">Wine</button>
@@ -14258,7 +15731,51 @@ function renderBarSectionTabs() {
   `;
 }
 
+function liveBarSeasonals() {
+  return (COFFEE_SPECIALS || []).filter((item) => (item.menu || "coffee") === "bar" && isLiveSpecial({ ...item, active: !item.archived }));
+}
+
+function renderBarSeasonalBlock() {
+  const editing = weeklySpecialsCanEdit && typeof isPageEditMode === "function" && isPageEditMode("bar-seasonal");
+  const drinks = (COFFEE_SPECIALS || []).filter((item) => {
+    if ((item.menu || "coffee") !== "bar") return false;
+    return editing || isLiveSpecial({ ...item, active: !item.archived });
+  });
+  const header = weeklySpecialsCanEdit
+    ? renderEditablePageHeader({
+        title: "Seasonal cocktails",
+        subtitle: "Rotating features. House wine and cocktail recipes stay on this page below.",
+        canEdit: weeklySpecialsCanEdit,
+        view: "bar-seasonal"
+      })
+    : `<div class="coffee-intro" style="padding-bottom:0;"><h2>Seasonal cocktails</h2></div>`;
+  if (!editing && !drinks.length) return "";
+  return `
+    ${header}
+    ${editing ? renderPageEditBanner("Edit seasonal cocktails here. Core wine and house cocktails stay as the printed list.") : ""}
+    ${editing
+      ? `<div class="weekly-edit-stack">${drinks.map(renderCoffeeSpecialEditCard).join("")}${renderNewCoffeeSpecialForm("bar")}</div>`
+      : `<div class="list coffee-list" style="padding-top:0;">${drinks.map((item) => `
+          <div class="card coffee-card" onclick="openSeasonalLatte('${escapeForAttribute(item.name)}')">
+            <div class="card-top">
+              <div>
+                <p class="name">${escapeHTML(item.name)}</p>
+                <p class="desc">${escapeHTML(item.price || "")}${item.price ? " · " : ""}${escapeHTML(item.kind === "cocktail" ? "Cocktail" : "Seasonal")}</p>
+              </div>
+              <span class="coffee-tag">${item.isNew ? "New" : "Seasonal"}</span>
+            </div>
+            <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
+          </div>
+        `).join("")}</div>`}
+  `;
+}
+
 function renderBarMenu(content) {
+  if (!weeklySpecialsLoaded && !weeklySpecialsLoading) {
+    ensureWeeklySpecials().then(() => {
+      if (contentType() === "drinks" && drinksSection === "bar") render();
+    });
+  }
   updateSearchPlaceholder();
   const query = document.getElementById("search").value.toLowerCase().trim();
   const sectionTabs = renderBarSectionTabs();
@@ -14274,12 +15791,17 @@ function renderBarMenu(content) {
     if (!drinkGroups.includes(item.group)) drinkGroups.push(item.group);
   });
 
-  content.innerHTML = sectionTabs + `
-    <div class="coffee-intro">
-      <h2>Wine + Cocktails</h2>
-      <p>Wine by the glass or bottle, house cocktails, and non-alcoholic beverages from the taproom drink menu.</p>
-      <p style="margin-top:8px;font-size:14px;color:var(--muted);">Wine prices shown as glass / bottle (fine wine is bottle only). Cocktail and batch builds are under <strong>SOPs → Recipes</strong>.</p>
-    </div>
+  const seasonalHtml = (!query || liveBarSeasonals().some((item) => `${item.name} ${item.description}`.toLowerCase().includes(query)))
+    ? renderBarSeasonalBlock()
+    : "";
+
+  content.innerHTML = `
+    ${renderPageHeader({
+      title: "Wine + Cocktails",
+      subtitle: "Wine by the glass or bottle, house cocktails, and NA drinks. Builds live under SOPs → Recipes."
+    })}
+    ${sectionTabs}
+    ${seasonalHtml}
     ${drinks.length ? drinkGroups.map(group => {
       const groupDrinks = drinks.filter(item => item.group === group);
       return `
@@ -14306,16 +15828,24 @@ function renderBarMenu(content) {
 
 function renderCoffeeSpecialEditCard(item) {
   const id = escapeForAttribute(item.id);
+  const status = item.status || "live";
   return `
     <div class="merch-admin-panel weekly-special-edit" id="coffeeSpecialEdit-${id}">
       <div class="card-top">
-        <h3>${escapeHTML(item.kind === "matcha" ? "Seasonal matcha" : "Seasonal latte")}</h3>
-        <span class="coffee-tag">${item.available ? "Available now" : "Coming soon"}</span>
+        <h3>${escapeHTML(item.name || "Seasonal drink")}</h3>
+        <span class="status-chip is-${escapeForAttribute(status)}">${escapeHTML(specialStatusLabel(item))}</span>
       </div>
+      <label for="coffeeSpecialMenu-${id}">Menu</label>
+      <select id="coffeeSpecialMenu-${id}">
+        <option value="coffee"${(item.menu || "coffee") === "coffee" ? " selected" : ""}>Coffee</option>
+        <option value="bar"${item.menu === "bar" ? " selected" : ""}>Wine + Cocktails</option>
+      </select>
       <label for="coffeeSpecialKind-${id}">Drink type</label>
       <select id="coffeeSpecialKind-${id}">
         <option value="latte"${item.kind === "latte" ? " selected" : ""}>Latte</option>
         <option value="matcha"${item.kind === "matcha" ? " selected" : ""}>Matcha</option>
+        <option value="cocktail"${item.kind === "cocktail" ? " selected" : ""}>Cocktail</option>
+        <option value="other"${item.kind === "other" ? " selected" : ""}>Other</option>
       </select>
       <label for="coffeeSpecialName-${id}">Drink name</label>
       <input id="coffeeSpecialName-${id}" type="text" value="${escapeForAttribute(item.name || "")}">
@@ -14323,17 +15853,70 @@ function renderCoffeeSpecialEditCard(item) {
       <input id="coffeeSpecialPrice-${id}" type="text" value="${escapeForAttribute(item.price || "")}">
       <label for="coffeeSpecialDescription-${id}">Guest description</label>
       <textarea id="coffeeSpecialDescription-${id}" rows="3">${escapeHTML(item.description || "")}</textarea>
-      <label for="coffeeSpecialBuild-${id}">Build / recipe</label>
+      <label for="coffeeSpecialBuild-${id}">Build / ingredients</label>
       <textarea id="coffeeSpecialBuild-${id}" rows="3">${escapeHTML(item.build || "")}</textarea>
       <label for="coffeeSpecialTraining-${id}">Staff talking points</label>
       <textarea id="coffeeSpecialTraining-${id}" rows="2">${escapeHTML(item.training || "")}</textarea>
+      <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="coffeeSpecialPublish-${id}">Publish</label>
+          <input id="coffeeSpecialPublish-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(item.publishAt))}">
+        </div>
+        <div>
+          <label for="coffeeSpecialExpire-${id}">Expire</label>
+          <input id="coffeeSpecialExpire-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(item.expireAt))}">
+        </div>
+      </div>
       <div class="merch-check-row">
         <label><input id="coffeeSpecialAvailable-${id}" type="checkbox"${item.available ? " checked" : ""}> Available now</label>
         <label><input id="coffeeSpecialNew-${id}" type="checkbox"${item.isNew ? " checked" : ""}> Mark as new</label>
       </div>
       <p id="coffeeSpecialError-${id}" class="auth-error" style="margin-top:10px;"></p>
       <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="saveCoffeeSpecial('${id}')">Save ${item.kind === "matcha" ? "matcha" : "latte"}</button>
+        <button type="button" class="btn btn-primary" onclick="saveCoffeeSpecial('${id}')">Save</button>
+        <button type="button" class="btn btn-secondary" onclick="archiveCoffeeSpecial('${id}', ${item.archived ? "false" : "true"})">${item.archived ? "Restore" : "Archive"}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderNewCoffeeSpecialForm(menu) {
+  return `
+    <div class="merch-admin-panel weekly-special-edit" id="coffeeSpecialEdit-new">
+      <h3>Add a seasonal drink</h3>
+      <label for="coffeeSpecialMenu-new">Menu</label>
+      <select id="coffeeSpecialMenu-new">
+        <option value="coffee"${menu !== "bar" ? " selected" : ""}>Coffee</option>
+        <option value="bar"${menu === "bar" ? " selected" : ""}>Wine + Cocktails</option>
+      </select>
+      <label for="coffeeSpecialKind-new">Drink type</label>
+      <select id="coffeeSpecialKind-new">
+        <option value="latte"${menu !== "bar" ? " selected" : ""}>Latte</option>
+        <option value="matcha">Matcha</option>
+        <option value="cocktail"${menu === "bar" ? " selected" : ""}>Cocktail</option>
+        <option value="other">Other</option>
+      </select>
+      <label for="coffeeSpecialName-new">Drink name</label>
+      <input id="coffeeSpecialName-new" type="text">
+      <label for="coffeeSpecialPrice-new">Price</label>
+      <input id="coffeeSpecialPrice-new" type="text">
+      <label for="coffeeSpecialDescription-new">Guest description</label>
+      <textarea id="coffeeSpecialDescription-new" rows="3"></textarea>
+      <label for="coffeeSpecialBuild-new">Build / ingredients</label>
+      <textarea id="coffeeSpecialBuild-new" rows="2"></textarea>
+      <div class="inventory-admin-grid" style="margin-top:8px;">
+        <div>
+          <label for="coffeeSpecialPublish-new">Publish</label>
+          <input id="coffeeSpecialPublish-new" type="datetime-local">
+        </div>
+        <div>
+          <label for="coffeeSpecialExpire-new">Expire</label>
+          <input id="coffeeSpecialExpire-new" type="datetime-local">
+        </div>
+      </div>
+      <p id="coffeeSpecialError-new" class="auth-error" style="margin-top:10px;"></p>
+      <div class="merch-admin-actions">
+        <button type="button" class="btn btn-primary" onclick="createCoffeeSpecial()">Save drink</button>
       </div>
     </div>
   `;
@@ -14343,26 +15926,28 @@ async function renderCoffeeSeasonal(content, sectionTabs, query) {
   if (!weeklySpecialsLoaded) {
     content.innerHTML = sectionTabs + `<div class="status"><strong>Loading seasonal drinks…</strong></div>`;
     await ensureWeeklySpecials();
-    if (contentType() !== "coffee" || coffeeSection !== "seasonal") return;
+    if ((contentType() !== "drinks" && contentType() !== "coffee") || coffeeSection !== "seasonal") return;
     query = document.getElementById("search").value.toLowerCase().trim();
   }
-  const drinks = COFFEE_SPECIALS.filter(item => {
-    const haystack = (item.name + " " + item.season + " " + item.description + " " + item.build).toLowerCase();
-    return !query || haystack.includes(query);
-  });
   const editing = weeklySpecialsCanEdit && isPageEditMode("coffee-seasonal");
+  const drinks = COFFEE_SPECIALS.filter(item => {
+    if ((item.menu || "coffee") === "bar") return false;
+    const haystack = (item.name + " " + item.season + " " + item.description + " " + item.build).toLowerCase();
+    if (query && !haystack.includes(query)) return false;
+    return editing || isLiveSpecial({ ...item, active: !item.archived });
+  });
   const header = renderEditablePageHeader({
     title: "Seasonal Drinks",
-    subtitle: "Current latte and matcha features, with builds and guest-facing descriptions.",
+    subtitle: "Add, schedule, and archive seasonal lattes, matchas, and coffee features. Staff only see what’s live.",
     canEdit: weeklySpecialsCanEdit,
     view: "coffee-seasonal"
   });
 
   content.innerHTML = sectionTabs + `
     ${header}
-    ${editing ? renderPageEditBanner("Edit the seasonal latte and matcha, then save each drink.") : ""}
+    ${editing ? renderPageEditBanner("Edit mode — save each drink, or add a new seasonal. Scheduled drinks stay hidden until publish.") : ""}
     ${editing
-      ? `<div class="weekly-edit-stack">${drinks.map(renderCoffeeSpecialEditCard).join("")}</div>`
+      ? `<div class="weekly-edit-stack">${drinks.map(renderCoffeeSpecialEditCard).join("")}${renderNewCoffeeSpecialForm("coffee")}</div>`
       : (drinks.length ? `<div class="list coffee-list" style="padding-top:0;">${drinks.map(item => `
       <div class="card coffee-card" onclick="openSeasonalLatte('${escapeForAttribute(item.name)}')">
         <div class="card-top">
@@ -14393,13 +15978,56 @@ async function saveCoffeeSpecial(id) {
         build: document.getElementById(`coffeeSpecialBuild-${id}`)?.value.trim(),
         training: document.getElementById(`coffeeSpecialTraining-${id}`)?.value.trim(),
         available: Boolean(document.getElementById(`coffeeSpecialAvailable-${id}`)?.checked),
-        isNew: Boolean(document.getElementById(`coffeeSpecialNew-${id}`)?.checked)
+        isNew: Boolean(document.getElementById(`coffeeSpecialNew-${id}`)?.checked),
+        publishAt: document.getElementById(`coffeeSpecialPublish-${id}`)?.value || "",
+        expireAt: document.getElementById(`coffeeSpecialExpire-${id}`)?.value || "",
+        menu: document.getElementById(`coffeeSpecialMenu-${id}`)?.value || "coffee"
       })
     });
     await ensureWeeklySpecials({ force: true });
     render();
   } catch (err) {
     if (errorEl) errorEl.textContent = err.message || "Could not save this seasonal drink.";
+  }
+}
+
+async function createCoffeeSpecial() {
+  if (!canManageWeeklySpecials()) return;
+  const errorEl = document.getElementById("coffeeSpecialError-new");
+  if (errorEl) errorEl.textContent = "";
+  try {
+    await apiFetch("/api/coffee-specials", {
+      method: "POST",
+      body: JSON.stringify({
+        menu: document.getElementById("coffeeSpecialMenu-new")?.value || "coffee",
+        kind: document.getElementById("coffeeSpecialKind-new")?.value || "latte",
+        name: document.getElementById("coffeeSpecialName-new")?.value.trim(),
+        price: document.getElementById("coffeeSpecialPrice-new")?.value.trim(),
+        description: document.getElementById("coffeeSpecialDescription-new")?.value.trim(),
+        build: document.getElementById("coffeeSpecialBuild-new")?.value.trim(),
+        publishAt: document.getElementById("coffeeSpecialPublish-new")?.value || "",
+        expireAt: document.getElementById("coffeeSpecialExpire-new")?.value || "",
+        available: true
+      })
+    });
+    await ensureWeeklySpecials({ force: true });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not add this drink.";
+  }
+}
+
+async function archiveCoffeeSpecial(id, archive) {
+  if (!canManageWeeklySpecials()) return;
+  try {
+    await apiFetch(`/api/coffee-specials/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify({ archived: Boolean(archive) })
+    });
+    await ensureWeeklySpecials({ force: true });
+    render();
+  } catch (err) {
+    alert(err.message || "Could not update drink.");
   }
 }
 
@@ -14631,6 +16259,11 @@ function startGame(id) {
   quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = rocketItem = null;
   flashFlipped = false;
   stopRocketLoop();
+
+  if (typeof startJudgmentGame === "function" && startJudgmentGame(id)) {
+    render();
+    return;
+  }
 
   if (id === "guestscene" || id === "recovery") {
     const pack = id === "guestscene"
@@ -15864,10 +17497,10 @@ function prepareSpeedQuestion() {
 }
 
 function wrapGame(html) {
-  return `
-    <button class="game-back" onclick="stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();">← War Games</button>
-    ${html}
-  `;
+  const back = typeof renderLogicalBackHtml === "function"
+    ? renderLogicalBackHtml({ label: "War Games", onclick: "stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();" })
+    : `<button type="button" class="page-back" onclick="stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();">← War Games</button>`;
+  return `<div class="game-session">${back}${html}</div>`;
 }
 
 function renderGameHub(content) {
@@ -15883,22 +17516,23 @@ function renderGameHub(content) {
     : "";
 
   content.innerHTML = `
-    <div class="coffee-intro launchpad-intro">
-      <h2>War Games</h2>
-      <p>Floor drills for tap knowledge — plus Staff Favorites: guess teammates’ beers for bonus points and unlock them on the leaderboard.</p>
-    </div>
-    ${badgesStrip}
-    ${renderFavoriteBeerPrompt()}
-    ${renderLeaderboardSection()}
+    ${typeof renderPageHeader === "function" ? renderPageHeader({
+      title: "War Games",
+      subtitle: "Judgment drills for the floor — not trivia."
+    }) : `<div class="coffee-intro launchpad-intro"><h2>War Games</h2></div>`}
     <div class="game-hub">
       ${GAMES.map(g => `
-        <div class="game-tile" onclick="startGame('${g.id}')">
+        <button type="button" class="game-tile" onclick="startGame('${g.id}')">
           <div class="game-tile-icon">${g.icon}</div>
           <p class="game-tile-title">${g.title}</p>
           <p class="game-tile-desc">${g.desc}</p>
-        </div>
+        </button>
       `).join("")}
     </div>
+    <p class="wg-also">Trainer assign: <button type="button" class="wg-also-btn" onclick="startGame('recovery')">Complaint Recovery</button> — still here if they want the old service-recovery set.</p>
+    ${renderFavoriteBeerPrompt()}
+    ${renderLeaderboardSection()}
+    ${badgesStrip}
   `;
 
   if (!leaderboardData) {
@@ -15931,6 +17565,13 @@ function renderGames(content) {
     case "speed": renderSpeedRound(content); break;
     case "rocket": renderRocketRound(content); break;
     case "favbeer": renderFavoriteBeerGame(content); break;
+    case "rush":
+    case "flight":
+    case "readguest":
+    case "saturday":
+      if (typeof renderJudgmentGame === "function") renderJudgmentGame(content);
+      else renderGameHub(content);
+      break;
     case "guestscene":
     case "recovery": renderScenarioGame(content); break;
     default: renderGameHub(content);
@@ -16255,6 +17896,7 @@ function getOnTapBeersSorted() {
 }
 
 const PRINT_CATEGORY_ORDER = ["CORE", "LIMITED", "HOPPY", "BOLDER", "OTHER / NITRO"];
+const GUEST_PRINT_CATEGORIES = ["CORE", "LIMITED", "HOPPY", "BOLDER"];
 let tapDisplayMeta = {};
 let tapDisplayMetaLoaded = false;
 let tapDisplayMetaLoading = false;
@@ -16301,6 +17943,37 @@ function getPrintCategory(beer) {
   const id = beerProductId(beer);
   const saved = id && tapDisplayMeta[id]?.printCategory;
   return saved || inferPrintCategory(beer);
+}
+
+function guestPrintCategory(beer) {
+  const cat = getPrintCategory(beer);
+  return GUEST_PRINT_CATEGORIES.includes(cat) ? cat : "BOLDER";
+}
+
+function formatPrintStyle(beer) {
+  return getStyle(beer).trim().toLowerCase();
+}
+
+function formatPrintAbv(beer) {
+  const raw = String(col(beer, "abv") || col(beer, "ABV") || "").replace(/%/g, "").trim();
+  if (!raw) return "";
+  const number = Number(raw);
+  if (!Number.isFinite(number)) return raw.includes("%") ? raw : `${raw}%`;
+  return `${Number(number.toFixed(2))}%`;
+}
+
+function formatPrintBeerLine(beer) {
+  return [formatPrintStyle(beer), formatPrintAbv(beer), getPourSize(beer)].filter(Boolean).join(" · ");
+}
+
+function getOnTapPrintUpdatedLabel() {
+  const stamps = Object.values(tapDisplayMeta || {})
+    .map((row) => row?.updatedAt)
+    .filter(Boolean)
+    .map((value) => Date.parse(value))
+    .filter((value) => Number.isFinite(value));
+  const when = stamps.length ? new Date(Math.max(...stamps)) : new Date();
+  return when.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
 function shortFlavor(beer) {
@@ -16351,13 +18024,13 @@ async function saveTapDisplayMeta(productId) {
 }
 
 function buildDraftMenuHtml(rows) {
-  const groups = new Map(PRINT_CATEGORY_ORDER.map((c) => [c, []]));
+  const groups = new Map(GUEST_PRINT_CATEGORIES.map((cat) => [cat, []]));
   rows.forEach((beer) => {
-    const cat = getPrintCategory(beer);
-    if (!groups.has(cat)) groups.set(cat, []);
+    const cat = guestPrintCategory(beer);
     groups.get(cat).push(beer);
   });
-  const sections = PRINT_CATEGORY_ORDER.map((cat) => {
+  const updated = getOnTapPrintUpdatedLabel();
+  const sections = GUEST_PRINT_CATEGORIES.map((cat) => {
     const items = groups.get(cat) || [];
     if (!items.length) return "";
     return `
@@ -16365,33 +18038,40 @@ function buildDraftMenuHtml(rows) {
       ${items.map((beer) => `
         <div class="print-draft-item">
           <div class="print-draft-name">${escapeHTML(col(beer, "Name"))}</div>
-          <div class="print-draft-meta">${escapeHTML([getStyle(beer), getABVText(beer), getPourSize(beer)].filter(Boolean).join(" · "))}</div>
+          <div class="print-draft-meta">${escapeHTML(formatPrintBeerLine(beer))}</div>
         </div>
       `).join("")}
     `;
   }).join("");
   return `
     <div class="print-sheet print-draft-sheet">
-      <div class="print-draft-brand">Manhattan Project · Draft</div>
-      ${sections || `<p>No beers on tap.</p>`}
+      <img class="print-draft-logo" src="/images/mpbc-logo.png" alt="Manhattan Project Beer Company">
+      <h1 class="print-draft-heading">Draft Beer</h1>
+      ${sections || `<p class="print-draft-meta">No beers on tap.</p>`}
+      <p class="print-draft-updated">Updated ${escapeHTML(updated)}</p>
     </div>
   `;
 }
 
 function buildBarSheetHtml(rows) {
+  const updated = getOnTapPrintUpdatedLabel();
   return `
     <div class="print-sheet print-bar-sheet">
-      <h1 class="print-bar-title">Bar tap sheet · ${escapeHTML(getLocalDateKey())}</h1>
+      <div class="print-bar-head">
+        <h1 class="print-bar-title">Bar tap sheet</h1>
+        <p class="print-bar-updated">${escapeHTML(getLocalDateKey())} · Updated ${escapeHTML(updated)}</p>
+      </div>
       <table class="print-bar-table">
         <thead>
           <tr>
             <th class="tap">Tap</th>
             <th>Beer</th>
-            <th class="pour">Vol / pour</th>
+            <th class="vol">Vol</th>
             <th class="gr">GR</th>
             <th>Flavor</th>
             <th>Style</th>
             <th class="abv">ABV</th>
+            <th class="notes">Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -16399,11 +18079,12 @@ function buildBarSheetHtml(rows) {
             <tr>
               <td class="tap">${escapeHTML(getTapNumber(beer) || "—")}</td>
               <td>${escapeHTML(col(beer, "Name"))}</td>
-              <td class="pour">${escapeHTML(getPourSize(beer))}</td>
+              <td class="vol">${escapeHTML(getPourSize(beer))}</td>
               <td class="gr">${isYes(beer["Gluten-Reduced"]) ? "GR" : ""}</td>
               <td>${escapeHTML(shortFlavor(beer))}</td>
               <td>${escapeHTML(getStyle(beer))}</td>
-              <td class="abv">${escapeHTML(getABVText(beer))}</td>
+              <td class="abv">${escapeHTML(formatPrintAbv(beer))}</td>
+              <td class="notes"></td>
             </tr>
           `).join("")}
         </tbody>
@@ -16419,49 +18100,85 @@ function syncOntapPrintRoot() {
   root.innerHTML = buildDraftMenuHtml(rows) + buildBarSheetHtml(rows);
 }
 
-function openOnTapPrintChooser() {
+function renderOnTapPrintMenu() {
+  if (!getOnTapBeersSorted().length) return "";
+  return `
+    <details class="ontap-print-menu">
+      <summary class="btn btn-print" aria-haspopup="menu">Print ▾</summary>
+      <div class="ontap-print-menu-list" role="menu">
+        <button type="button" role="menuitem" onclick="openOnTapPrintChooser('draft')">Guest Draft Menu</button>
+        <button type="button" role="menuitem" onclick="openOnTapPrintChooser('bar')">Bar Tap Sheet</button>
+        <button type="button" role="menuitem" onclick="openOnTapPrintChooser('both')">Print Both</button>
+      </div>
+    </details>
+  `;
+}
+
+function openOnTapPrintChooser(mode) {
+  document.querySelectorAll(".ontap-print-menu").forEach((el) => { el.open = false; });
   syncOntapPrintRoot();
   const rows = getOnTapBeersSorted();
   if (!rows.length) {
     alert("No beers are currently on tap to print.");
     return;
   }
+  if (mode === "draft" || mode === "bar" || mode === "both") ontapPrintMode = mode;
+  const previewHtml = ontapPrintMode === "both"
+    ? buildDraftMenuHtml(rows) + buildBarSheetHtml(rows)
+    : ontapPrintMode === "bar"
+      ? buildBarSheetHtml(rows)
+      : buildDraftMenuHtml(rows);
+  const csvLink = (typeof canEditTapsUi === "function" && canEditTapsUi())
+    ? `<button type="button" class="btn btn-subtle" onclick="downloadOnTapCsv(event)">Download CSV</button>`
+    : "";
   document.getElementById("modalContent").innerHTML = `
-    <h2 class="modal-title" id="modalTitle">Print tap sheets</h2>
-    <p class="modal-style">Same On Tap list — guest draft menu or behind-the-bar reference.</p>
+    <h2 class="modal-title" id="modalTitle">Print</h2>
+    <p class="modal-style">Physical templates from the live On Tap list — guest holder menu or bar reference.</p>
     <div class="print-chooser">
-      <button type="button" class="btn btn-primary" onclick="printOnTapSheets('draft')">Print draft menu</button>
-      <button type="button" class="btn btn-secondary" onclick="printOnTapSheets('bar')">Print bar tap sheet</button>
-      <button type="button" class="btn btn-secondary" onclick="printOnTapSheets('both')">Print both</button>
-      <button type="button" class="btn btn-subtle" onclick="downloadOnTapCsv(event)">Download CSV</button>
+      <button type="button" class="btn ${ontapPrintMode === "draft" ? "btn-primary" : "btn-secondary"}" onclick="openOnTapPrintChooser('draft')">Guest Draft Menu</button>
+      <button type="button" class="btn ${ontapPrintMode === "bar" ? "btn-primary" : "btn-secondary"}" onclick="openOnTapPrintChooser('bar')">Bar Tap Sheet</button>
+      <button type="button" class="btn ${ontapPrintMode === "both" ? "btn-primary" : "btn-secondary"}" onclick="openOnTapPrintChooser('both')">Print Both</button>
+      <button type="button" class="btn btn-primary" onclick="printOnTapSheets(ontapPrintMode)">Print</button>
+      ${csvLink}
     </div>
-    <div class="coffee-subtabs" style="margin-bottom:12px;">
-      <button type="button" class="coffee-subtab${ontapPrintMode === "draft" ? " active" : ""}" onclick="ontapPrintMode='draft'; openOnTapPrintChooser();">Preview draft</button>
-      <button type="button" class="coffee-subtab${ontapPrintMode === "bar" ? " active" : ""}" onclick="ontapPrintMode='bar'; openOnTapPrintChooser();">Preview bar sheet</button>
-    </div>
-    <div style="max-height:50vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;">
-      ${ontapPrintMode === "bar" ? buildBarSheetHtml(rows) : buildDraftMenuHtml(rows)}
-    </div>
+    <p class="print-preview-caption">Preview of the physical document. Print opens the browser dialog.</p>
+    <div class="print-preview-stage">${previewHtml}</div>
   `;
   document.getElementById("modalBackdrop").classList.add("show");
   document.body.style.overflow = "hidden";
 }
 
-function printOnTapSheets(mode) {
-  syncOntapPrintRoot();
-  document.body.classList.add("printing-ontap");
-  document.body.classList.toggle("printing-draft", mode === "draft" || mode === "both");
-  document.body.classList.toggle("printing-bar", mode === "bar" || mode === "both");
-  if (mode === "both") {
-    document.body.classList.add("printing-draft", "printing-bar");
+function applyOntapPrintPageStyle(mode) {
+  let el = document.getElementById("ontapPrintPageStyle");
+  if (!el) {
+    el = document.createElement("style");
+    el.id = "ontapPrintPageStyle";
+    document.head.appendChild(el);
   }
+  if (mode === "draft") {
+    el.textContent = "@page { size: 4.25in 11in; margin: 0.38in 0.42in; }";
+  } else if (mode === "bar") {
+    el.textContent = "@page { size: letter landscape; margin: 0.32in 0.38in; }";
+  } else {
+    el.textContent = "@page { size: letter; margin: 0.4in; }";
+  }
+}
+
+function printOnTapSheets(mode) {
+  const next = mode || ontapPrintMode || "draft";
+  syncOntapPrintRoot();
+  applyOntapPrintPageStyle(next);
+  document.body.classList.add("printing-ontap");
+  document.body.classList.toggle("printing-draft", next === "draft" || next === "both");
+  document.body.classList.toggle("printing-bar", next === "bar" || next === "both");
   const cleanup = () => {
     document.body.classList.remove("printing-ontap", "printing-draft", "printing-bar");
+    const style = document.getElementById("ontapPrintPageStyle");
+    if (style) style.textContent = "";
     window.removeEventListener("afterprint", cleanup);
   };
   window.addEventListener("afterprint", cleanup);
   window.print();
-  // Safari sometimes skips afterprint
   setTimeout(cleanup, 1000);
 }
 
@@ -16488,7 +18205,7 @@ function renderOnTapTable(rows) {
               getBeerCheckin(name) ? `<span class="beer-tried-tag">Tried</span>` : ""
             ].filter(Boolean).join("");
             return `
-              <tr onclick="openBeerByName('${escapeForAttribute(name)}')">
+              <tr tabindex="0" role="button" aria-label="${escapeForAttribute(name)}" onclick="openBeerByName('${escapeForAttribute(name)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBeerByName('${escapeForAttribute(name)}');}">
                 <td class="tap-col">${escapeHTML(getTapNumber(beer) || "—")}</td>
                 <td class="name-col">
                   ${escapeHTML(name)}
@@ -16515,7 +18232,7 @@ function renderOnTapMobileCards(rows) {
         const name = col(beer, "Name");
         const flavor = shortFlavor(beer);
         return `
-          <div class="card" onclick="openBeerByName('${escapeForAttribute(name)}')">
+          <div class="card" role="button" tabindex="0" aria-label="${escapeForAttribute(name)}" onclick="openBeerByName('${escapeForAttribute(name)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBeerByName('${escapeForAttribute(name)}');}">
             <div class="tap-layout">
               <div class="tap-number">
                 <small>TAP</small>
@@ -16607,9 +18324,11 @@ function downloadOnTapCsv(event) {
 function renderList(content) {
   const view = contentType();
   const query = document.getElementById("search").value.toLowerCase().trim();
+  const isCatalog = view === "ontap" && ontapView === "catalog";
+  const isBoard = view === "ontap" && !isCatalog;
   let source = view === "food" ? foods : beers;
 
-  if (view === "ontap" && canManageTaps() && !tapsState.loaded) {
+  if (isBoard && canManageTaps() && !tapsState.loaded) {
     if (!tapsState.loading) {
       content.innerHTML = `<div class="status"><strong>Loading taps…</strong></div>`;
       ensureTapsState().then(() => render());
@@ -16617,13 +18336,13 @@ function renderList(content) {
     return;
   }
 
-  if (view === "ontap" && !tapDisplayMetaLoaded && !tapDisplayMetaLoading) {
+  if (isBoard && !tapDisplayMetaLoaded && !tapDisplayMetaLoading) {
     content.innerHTML = `<div class="status"><strong>Loading On Tap…</strong></div>`;
     ensureTapDisplayMeta().then(() => render());
     return;
   }
 
-  if (view === "ontap") {
+  if (isBoard) {
     source = source
       .filter(isOnTap)
       .sort((a, b) => {
@@ -16631,6 +18350,8 @@ function renderList(content) {
         const tapB = Number(getTapNumber(b) || 999);
         return tapA - tapB;
       });
+  } else if (isCatalog) {
+    source = [...(beers || [])].sort((a, b) => String(col(a, "Name") || "").localeCompare(String(col(b, "Name") || "")));
   }
 
   const filtered = source.filter(item => {
@@ -16645,12 +18366,9 @@ function renderList(content) {
     return matchesSearch && matchesActiveFilter;
   });
 
-  const banner =
-    view === "ontap"
-      ? renderNewTapBanner()
-      : "";
+  const banner = isBoard ? renderNewTapBanner() : "";
 
-  const adminNote = view === "ontap" && canManageTaps()
+  const adminNote = isBoard && canManageTaps()
     ? (tapsState.error
       ? `<div class="status" style="margin-bottom:12px;"><strong>Tap editors unavailable.</strong> ${escapeHTML(tapsState.error)}</div>`
       : canEditTapsUi() && typeof isPageEditMode === "function" && isPageEditMode("ontap")
@@ -16661,26 +18379,34 @@ function renderList(content) {
           : `<div class="status" style="margin-bottom:12px;"><strong>Read-only taps.</strong> Set <code>NUCLEUS_API_KEY_PATRON_WRITE</code> to edit what’s pouring.</div>`)
     : "";
 
-  const pageHeader = view === "ontap" && typeof renderEditablePageHeader === "function"
-    ? renderEditablePageHeader({
+  const viewTabs = view === "ontap" ? renderOnTapViewTabs() : "";
+  let pageHeader = "";
+  if (view === "ontap") {
+    if (isCatalog) {
+      pageHeader = renderPageHeader({
+        title: "Beer Catalog",
+        subtitle: "Full beer library — not just what’s pouring."
+      });
+    } else if (typeof renderEditablePageHeader === "function") {
+      pageHeader = renderEditablePageHeader({
         title: "On Tap",
         canEdit: canEditTapsUi(),
         view: "ontap",
-        extraActionsHtml: getOnTapBeersSorted().length
-          ? `<button type="button" class="btn btn-print" onclick="openOnTapPrintChooser()">Print</button>`
-          : ""
-      })
-    : "";
+        extraActionsHtml: renderOnTapPrintMenu()
+      });
+    }
+    pageHeader += viewTabs;
+  }
 
   let emptyTapCards = "";
-  if (view === "ontap" && canEditTapsUi() && !query && typeof isPageEditMode === "function" && isPageEditMode("ontap")) {
+  if (isBoard && canEditTapsUi() && !query && typeof isPageEditMode === "function" && isPageEditMode("ontap")) {
     const emptyTaps = [...(tapsState.taps || [])]
       .filter((tap) => !tap.current_product_id)
       .sort((a, b) => (a.sort_order - b.sort_order) || (a.tap_number - b.tap_number));
     emptyTapCards = emptyTaps.map(renderEmptyTapCard).join("");
   }
 
-  if (view === "ontap") {
+  if (isBoard) {
     if (filtered.length === 0 && !emptyTapCards) {
       const message = source.length === 0
         ? "No beers are currently marked as On Tap. Confirm beers are marked on tap in Nucleus."
@@ -17303,11 +19029,10 @@ function updateStageTitle() {
   const el = document.getElementById("stageTitle");
   if (!el) return;
   const view = contentType();
-  const menuLabel = MENU_SUBVIEWS.find((v) => v.id === view)?.label;
-  const floorLabel = FLOOR_HUB_VIEWS.find((v) => v.id === floorHubView)?.label;
   const leafLabels = {
     home: "Home",
     askmp: "Ask MP",
+    search: "Search Launch Pad",
     features: "App guide",
     feedback: "Feedback",
     progress: "My Progress",
@@ -17320,27 +19045,22 @@ function updateStageTitle() {
     "shift-reports": "Shift Reports",
     sops: "SOPs",
     checklists: "Checklists",
-    floor: "Floor Tools",
-    "today-floor": "Today's Floor"
+    floor: "Shift Tools",
+    "today-floor": "Today's Floor",
+    drinks: drinksSection === "bar" ? "Wine + Cocktails" : "Coffee",
+    ontap: ontapView === "catalog" ? "Beer Catalog" : "On Tap",
+    food: "Food + Specials",
+    merch: "Merch",
+    events: "Events",
+    safety: "Safety + Emergency"
   };
-  if (view === "home") {
-    el.textContent = "Home";
-    return;
-  }
-  if (activeType === "menu" && menuLabel) {
-    el.textContent = menuLabel;
-    return;
-  }
-  if (activeType === "floor" && floorLabel) {
-    el.textContent = floorLabel;
-    return;
-  }
   if (leafLabels[view]) {
     el.textContent = leafLabels[view];
-    return;
+  } else {
+    const active = document.querySelector("#mainTabs .tab.active");
+    el.textContent = active ? active.textContent.trim() : "Manhattan Project";
   }
-  const active = document.querySelector("#mainTabs .tab.active");
-  el.textContent = active ? active.textContent.trim() : "Manhattan Project";
+  if (typeof syncLogicalBackChrome === "function") syncLogicalBackChrome();
 }
 
 function syncMobileTabs() {
@@ -17357,7 +19077,7 @@ function syncMobileTabs() {
     dst.textContent = src.textContent.trim();
     dst.classList.toggle("active", src.classList.contains("active"));
     dst.style.display = src.style.display;
-    ["tab-auth-only", "tab-team-only", "tab-shift-lead-only"].forEach((c) => {
+    ["tab-auth-only", "tab-team-only", "tab-shift-lead-only", "tab-manage-only", "tab-inventory-only", "tab-safety"].forEach((c) => {
       if (src.classList.contains(c)) dst.classList.add(c);
     });
     mobile.appendChild(dst);
@@ -17381,17 +19101,38 @@ function activateAppTab(type) {
   closeMobileNav();
 
   let nextActive = type;
-  if (MENU_SUBVIEW_IDS.has(type)) {
+  if (type === "beer" || type === "catalog") {
+    ontapView = "catalog";
+    menuSubView = "ontap";
+    nextActive = "ontap";
+  } else if (type === "ontap") {
+    ontapView = "board";
+    menuSubView = "ontap";
+    nextActive = "ontap";
+  } else if (type === "coffee") {
+    drinksSection = "coffee";
+    coffeeSection = "menu";
+    coffeeMode = "guide";
+    nextActive = "drinks";
+  } else if (type === "bar") {
+    drinksSection = "bar";
+    nextActive = "drinks";
+  } else if (type === "drinks") {
+    nextActive = "drinks";
+  } else if (type === "emergency" || type === "troubleshoot") {
+    nextActive = "safety";
+  } else if (MENU_SUBVIEW_IDS.has(type)) {
     menuSubView = type;
-    nextActive = "menu";
+    nextActive = type === "merch" || type === "food" ? type : "ontap";
+    if (type === "ontap") ontapView = "board";
   } else if (type === "menu") {
-    nextActive = "menu";
+    nextActive = "ontap";
   } else if (type === "sops") {
-    floorHubView = "sops";
-    nextActive = "floor";
+    floorHubView = "tools";
+    nextActive = "sops";
   } else if (type === "checklists") {
-    floorHubView = "checklists";
-    nextActive = "floor";
+    floorHubView = "tools";
+    nextActive = "checklists";
   } else if (type === "today-floor" || type === "today") {
     floorHubView = "today";
     nextActive = "today-floor";
@@ -17413,11 +19154,13 @@ function activateAppTab(type) {
     rocketItem = null;
     stopRocketLoop();
   }
-  if (view !== "coffee") {
+  if (view !== "drinks") {
     coffeeSection = "menu";
     coffeeMode = "guide";
+    barSection = "all";
     if (view !== "progress" && activeType !== "team") coffeeSession = null;
   }
+  if (view !== "ontap") ontapView = "board";
   if (view !== "food") foodCategory = "all";
   if (view !== "merch") merchSection = "stock";
   if (view !== "sops") {
@@ -17428,7 +19171,6 @@ function activateAppTab(type) {
     checklistId = null;
     checklistDetail = null;
   }
-  if (view !== "bar") barSection = "all";
   if (activeType === "team") teamDetailId = null;
   if (activeType !== "shift-reports") shiftReportDate = getLocalDateKey();
   updateSearchPlaceholder();

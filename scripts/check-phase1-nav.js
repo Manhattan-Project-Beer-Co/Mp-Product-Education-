@@ -159,7 +159,8 @@ if (activateFn) {
     ["coffee", "drinks"],
     ["bar", "drinks"],
     ["emergency", "safety"],
-    ["today-floor", "today-floor"]
+    ["today-floor", "today-floor"],
+    ["feedback", "features"]
   ];
   for (const [from, to] of aliases) {
     if (!activateFn.includes(`type === "${from}"`) && !activateFn.includes(`"${from}"`)) {

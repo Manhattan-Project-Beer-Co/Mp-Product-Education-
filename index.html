@@ -847,6 +847,268 @@
     box-shadow: 0 0 0 1px var(--gold);
     background: rgba(156,107,74,0.08);
   }
+  .flight-chip-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .flight-family { text-transform: uppercase; letter-spacing: 0.08em; font-size: 10px !important; }
+  .flight-board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px 4px;
+    width: 100%;
+    max-width: 100%;
+    margin: 4px 0 8px;
+    padding: 36px 10px 10px;
+    overflow: visible;
+    border-radius: 3px 3px 4px 4px;
+    background:
+      repeating-linear-gradient(90deg, rgba(62, 34, 16, 0.16) 0 1px, transparent 1px 13px),
+      linear-gradient(180deg, #b07a48 0%, #8d5a30 42%, #6f4322 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 226, 186, 0.28),
+      inset 0 -10px 14px rgba(40, 20, 8, 0.35),
+      0 8px 16px rgba(0, 0, 0, 0.28);
+  }
+  .flight-slot {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #f3e6d0;
+    text-align: center;
+  }
+  .flight-name {
+    min-height: 2.2em;
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .flight-slot.is-empty .flight-name { opacity: 0.35; }
+  .flight-glass {
+    width: min(78px, 22vw);
+    height: min(108px, 30vw);
+    margin-top: -40px;
+    display: flex;
+    justify-content: center;
+    filter: drop-shadow(0 6px 4px rgba(40, 20, 8, 0.35));
+  }
+  .flight-glass-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    display: block;
+  }
+  .flight-liquid {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    transform: scaleY(0);
+  }
+  .flight-foam {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    opacity: 0;
+  }
+  .flight-glass.is-filled .flight-liquid { transform: scaleY(0.78); }
+  .flight-glass.is-filled .flight-foam { opacity: 1; }
+  .flight-glass.is-pouring .flight-liquid {
+    animation: flightPour 0.5s ease forwards;
+  }
+  .flight-glass.is-pouring .flight-foam {
+    animation: flightFoam 0.45s ease 0.18s forwards;
+  }
+  .flight-glass.is-hazy .flight-liquid { opacity: 0.88; }
+  @keyframes flightPour {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(0.78); }
+  }
+  @keyframes flightFoam {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .flight-color-note {
+    margin: 0 0 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .wg-flight .game-question { margin-bottom: 10px; }
+  .wg-flight .wg-scene { margin: 0 0 8px; }
+  .wg-flight .wg-progress { margin: 0 0 6px; }
+  .wg-group-lead {
+    max-width: 1080px;
+    margin: 0 auto 0;
+    padding: 2px 24px 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .game-hub.academy-hub {
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+    gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 8px;
+  }
+  .game-tile.academy-tile {
+    min-height: 0;
+    align-items: flex-start;
+    text-align: left;
+    padding: 14px 14px 12px;
+  }
+  .game-tile.academy-tile .game-tile-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 8px;
+  }
+  .game-tile.academy-tile .game-tile-icon svg { width: 22px; height: 22px; }
+  .game-tile.academy-tile .game-tile-title { font-size: 11px; }
+  .game-tile.academy-tile .game-tile-desc { font-size: 12px; margin-top: 4px; max-width: none; }
+  .academy-disclaimer {
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .brew-placed {
+    margin: 0 0 12px;
+    padding-left: 18px;
+    color: var(--ink);
+  }
+  .brew-placed .is-next { color: var(--muted); list-style: none; margin-left: -18px; }
+  .wg-fun-board {
+    max-width: 1080px;
+    margin: 8px auto 24px;
+    padding: 0 24px 12px;
+  }
+  .wg-fun-board-card {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 16px;
+    padding: 14px 16px 12px;
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    background:
+      radial-gradient(ellipse 50% 80% at 0% 0%, rgba(156,107,74,0.14), transparent 55%),
+      var(--paper);
+  }
+  .wg-fun-kicker {
+    grid-column: 1 / -1;
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .wg-fun-note {
+    grid-column: 1 / -1;
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .wg-fun-col h3 {
+    margin: 0 0 8px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .wg-brains-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .wg-brains-list li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .wg-brains-list li.me-row { font-weight: 700; color: var(--ink); }
+  .wg-brains-list .wg-rank {
+    flex: 0 0 1.6em;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .wg-brains-list .wg-pts { margin-left: auto; font-weight: 700; }
+  .wg-fun-tabs { display: flex; gap: 6px; margin: 0 0 8px; }
+  .wg-fun-tabs button {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .wg-fun-tabs button.active {
+    border-color: var(--gold);
+    color: var(--ink);
+  }
+  .wg-fun-col .arcade-top-scores {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+  }
+  .arcade-top-scores {
+    max-width: 1080px;
+    margin: 8px auto 20px;
+    padding: 12px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--paper);
+  }
+  .arcade-top-scores ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 22px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .arcade-top-note { margin: 0; font-size: 12px; color: var(--muted); }
+  .space-map { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 0; }
+  .space-map-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .space-zone {
+    padding: 12px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 10px;
+    background: rgba(156,107,74,0.06);
+  }
+  .space-zone span { display: block; font-weight: 700; }
+  .space-zone em { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); font-style: normal; }
+  .ticket-sample {
+    margin: 10px 0;
+    padding: 12px 14px;
+    background: #f4f1ea;
+    color: #1a1814;
+    border-left: 3px solid var(--gold);
+    font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: pre-wrap;
+  }
+  .ticket-quiz { margin-top: 16px; }
+  .ticket-quiz-kicker {
+    margin: 0 0 4px;
+    font: 700 0.66rem var(--font-display);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .runner-check { margin: 10px 0 0; padding-left: 1.2em; }
+  .role-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin: 6px 0;
+  }
+  .role-check { display: flex; align-items: center; gap: 6px; font-size: 13px; }
   .flight-flavor { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .wg-also {
     max-width: 1032px;
@@ -4660,14 +4922,14 @@
     align-self: flex-start;
     border: 0;
     background: none;
-    padding: 0 2px;
-    font: 700 11px var(--font);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    padding: 2px 4px;
+    font-size: 16px;
+    line-height: 1;
     color: var(--muted);
     cursor: pointer;
+    opacity: 0.55;
   }
-  .search-pin.is-on { color: var(--gold-dim); }
+  .search-pin.is-on { color: var(--gold); opacity: 1; }
   .ask-mp-result-source {
     display: block;
     margin-top: 2px;
@@ -5212,9 +5474,15 @@
     line-height: 1.55;
   }
   .app-credit + .app-credit { margin-top: 0; }
-  .guide-report {
-    margin: 18px 0 0;
+  .event-facts {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0 0;
+    font-size: 13px;
   }
+  .event-facts div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 8px; }
+  .event-facts dt { color: var(--muted); font-weight: 600; }
+  .event-facts dd { margin: 0; }
   .guide-report p {
     margin: 0 0 8px;
     font-size: 0.92rem;
@@ -5464,8 +5732,10 @@
     text-transform: uppercase;
   }
   .print-draft-cat {
-    margin: 14px 0 8px;
+    margin: 14px auto 8px;
     padding-bottom: 3px;
+    width: max-content;
+    max-width: 46%;
     text-align: center;
     font-size: 10px;
     font-weight: 700;
@@ -5534,23 +5804,25 @@
   .print-bar-table th,
   .print-bar-table td {
     border-bottom: 1px solid #cfcfcf;
-    padding: 5px 6px;
+    padding: 3px 5px;
     text-align: left;
     vertical-align: top;
+    font-size: 10px;
   }
   .print-bar-table th {
-    font-size: 8.5px;
+    font-size: 8px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-weight: 700;
     border-bottom: 1.5px solid #111;
+    background: #e8e8e8;
   }
-  .print-bar-table tbody tr:nth-child(even) td { background: #f3f3f3; }
+  .print-bar-table tbody tr:nth-child(even) td { background: #ececec; }
+  .print-bar-table tbody tr:nth-child(odd) td { background: #f7f7f7; }
   .print-bar-table .tap { width: 36px; font-weight: 700; }
   .print-bar-table .vol { width: 58px; white-space: nowrap; }
   .print-bar-table .gr { width: 28px; }
   .print-bar-table .abv { width: 44px; white-space: nowrap; }
-  .print-bar-table .notes { width: 88px; }
   @media (max-width: 860px) {
     .ontap-table-wrap { display: none; }
     .ontap-mobile-list { display: block; }
@@ -6722,6 +6994,52 @@
     body { font-size: 16px; }
     .brand-text h1 { font-size: 13px; }
     .brand-text p { display: none; }
+    .wg-flight .flight-grid { grid-template-columns: 1fr; gap: 6px; }
+    .wg-flight .flight-chip { padding: 8px 10px; }
+    .flight-name { font-size: 10px; }
+    table.progress-table,
+    table.game-leaderboard-table {
+      display: block;
+      border: 0;
+      overflow: visible;
+    }
+    table.progress-table thead,
+    table.game-leaderboard-table thead { display: none; }
+    table.progress-table tr,
+    table.game-leaderboard-table tr {
+      display: block;
+      margin: 0 0 10px;
+      padding: 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--paper);
+    }
+    table.progress-table td,
+    table.game-leaderboard-table td {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border: 0;
+      padding: 4px 0;
+    }
+  }
+
+  @media (max-width: 390px) {
+    .game-hub { grid-template-columns: 1fr; }
+    .page-header-title { font-size: 1.35rem; }
+    .coffee-subtab { padding: 10px 14px; min-height: 44px; }
+  }
+
+  @media (max-width: 640px) {
+    .wg-flight { overflow-x: hidden; }
+    .flight-board { padding: 28px 6px 8px; gap: 4px 2px; }
+    .flight-glass {
+      width: min(64px, 20vw);
+      height: min(88px, 26vw);
+      margin-top: -32px;
+    }
+    .wg-fun-board-card { grid-template-columns: 1fr; }
+    .game-hub.academy-hub { grid-template-columns: 1fr 1fr; gap: 8px; }
   }
 
   /* Launch Pad academy tiles */
@@ -7707,9 +8025,16 @@
       border-color: var(--line-strong) !important;
       color: #dedbd4;
     }
-    .flight-chip.is-on {
-      border-color: var(--gold) !important;
-      background: rgba(156,107,74,0.14) !important;
+    .wg-fun-board-card {
+      background:
+        radial-gradient(ellipse 50% 80% at 0% 0%, rgba(156,107,74,0.16), transparent 55%),
+        #15181a;
+    }
+    .wg-fun-tabs button.active { color: #dedbd4; }
+    .ticket-sample {
+      background: #111416;
+      color: #dedbd4;
+      border-left-color: var(--gold);
     }
     .answer-review-item { border-left-color: #d16960 !important; }
     .answer-review-correct strong { color: #91c29d; }
@@ -7979,7 +8304,6 @@
         </button>
         <div class="nav-group-items">
           <button type="button" class="tab tab-auth-only" data-type="team" style="display:none;">Team</button>
-          <button type="button" class="tab tab-auth-only" data-type="feedback" style="display:none;">Feedback</button>
         </div>
       </div>
 
@@ -8244,7 +8568,7 @@ const PHASE1_NAV = {
     "home", "ontap", "food", "drinks", "today-floor", "floor",
     "checklists", "events", "shift-survey",
     "training", "sops", "progress", "games",
-    "team", "feedback",
+    "team",
     "askmp", "search", "merch",
     "safety"
   ],
@@ -8259,7 +8583,8 @@ const PHASE1_NAV = {
     troubleshoot: "safety",
     today: "today-floor",
     menu: "ontap",
-    game: "games"
+    game: "games",
+    feedback: "features"
   },
   hiddenSearchTabs: ["inventory", "reviews", "features", "shift-reports"],
   removedFloorSections: [
@@ -8323,7 +8648,7 @@ function canOpenTab(type) {
   if (tab === "inventory") return typeof isInventoryManager === "function" && isInventoryManager();
   if (tab === "reviews") return canViewManageTools();
   if (tab === "shift-reports") return typeof isShiftLeadManager === "function" && isShiftLeadManager();
-  if (tab === "team" || tab === "progress" || tab === "feedback") return Boolean(currentUser);
+  if (tab === "team" || tab === "progress" || tab === "features") return Boolean(currentUser);
   if (tab === "shift-survey") return typeof canSubmitShiftSurvey === "function" && canSubmitShiftSurvey();
   return true;
 }
@@ -9344,7 +9669,13 @@ const GAME_POINT_VALUES = {
   rush: 15,
   flight: 15,
   readguest: 15,
-  saturday: 15
+  saturday: 15,
+  academy_style: 10,
+  academy_flavor: 10,
+  academy_pair: 10,
+  academy_brew: 10,
+  academy_cicerone: 10,
+  academy_pour: 10
 };
 
 function hubServiceDrills() {
@@ -9356,6 +9687,12 @@ function hubServiceDrills() {
 function hubArcadeGames() {
   const list = (typeof window !== "undefined" && window.ARCADE_GAMES)
     || (typeof ARCADE_GAMES !== "undefined" ? ARCADE_GAMES : null);
+  return Array.isArray(list) ? list : [];
+}
+
+function hubBeerAcademyGames() {
+  const list = (typeof window !== "undefined" && window.BEER_ACADEMY_GAMES)
+    || (typeof BEER_ACADEMY_GAMES !== "undefined" ? BEER_ACADEMY_GAMES : null);
   return Array.isArray(list) ? list : [];
 }
 
@@ -9862,7 +10199,8 @@ async function renderEvents(content) {
     try { await loadSopsData(false); } catch (_) {}
     const eventSops = (typeof sopDocuments !== "undefined" ? sopDocuments : [])
       .filter((doc) => String(doc.category || "").toLowerCase() === "events");
-    const canEdit = Boolean(eventsPayload.canEdit) && canEditEvents();
+    const canEdit = canEditEvents();
+    const foodOnly = !canEdit && canEditEventFood();
     const editing = canEdit && typeof isPageEditMode === "function" && isPageEditMode("events");
     const records = eventsPayload.events || [];
     const liveRecords = records.filter((event) => event.published && event.status !== "expired");
@@ -9896,6 +10234,7 @@ async function renderEvents(content) {
                   <span class="status-chip is-${escapeForAttribute(event.status || "live")}">${escapeHTML(specialStatusLabel(event))}</span>
                 </div>
                 ${event.summary ? `<p class="desc" style="margin-top:10px;">${escapeHTML(event.summary)}</p>` : ""}
+                ${renderPublishedEventStaffFacts(event)}
               </div>
             `).join("")}</div>`
           : `${typeof renderAppState === "function" ? renderAppState({ title: "Nothing scheduled this week.", detail: "No published events this week." }) : `<p class="app-state-title">Nothing scheduled this week.</p>`}`)}
@@ -9934,6 +10273,38 @@ async function renderEvents(content) {
   }
 }
 
+function eventFactRows(event) {
+  return [
+    ["Type", event.eventType],
+    ["Guests", event.guestCount],
+    ["Taproom", event.taproomImpact],
+    ["Production", event.productionSpace],
+    ["Patio", event.patioUsage],
+    ["Food", event.foodNotes],
+    ["Bar", event.barNotes],
+    ["Setup", event.setupNotes],
+    ["Lead", event.eventLead],
+    ["Staffing", event.staffingNotes],
+    ["Guest notes", event.guestNotes]
+  ].filter(([, value]) => String(value || "").trim());
+}
+
+function renderPublishedEventStaffFacts(event) {
+  const rows = eventFactRows(event);
+  const foodOnly = !canEditEvents() && canEditEventFood();
+  return `
+    ${rows.length ? `<dl class="event-facts">${rows.map(([label, value]) => `<div><dt>${escapeHTML(label)}</dt><dd>${escapeHTML(value)}</dd></div>`).join("")}</dl>` : ""}
+    ${foodOnly ? `
+      <div class="edit-form-field is-span" style="margin-top:12px;">
+        <label for="eventFoodNotes-${event.id}">Food notes</label>
+        <textarea id="eventFoodNotes-${event.id}" rows="2">${escapeHTML(event.foodNotes || "")}</textarea>
+        <button type="button" class="btn btn-secondary" style="margin-top:8px;" onclick="savePublishedEventFood(${event.id})">Save food notes</button>
+        <p id="eventError-${event.id}" class="auth-error"></p>
+      </div>
+    ` : ""}
+  `;
+}
+
 function renderPublishedEventEditCard(event) {
   const id = event.id;
   return `
@@ -9965,6 +10336,50 @@ function renderPublishedEventEditCard(event) {
           <div class="edit-form-field is-span">
             <label for="eventNotes-${id}">Staff notes</label>
             <textarea id="eventNotes-${id}" rows="2">${escapeHTML(event.notes || "")}</textarea>
+          </div>
+          <div class="edit-form-field">
+            <label for="eventType-${id}">Event type</label>
+            <input id="eventType-${id}" type="text" value="${escapeForAttribute(event.eventType || "")}">
+          </div>
+          <div class="edit-form-field">
+            <label for="eventGuests-${id}">Guest count</label>
+            <input id="eventGuests-${id}" type="text" value="${escapeForAttribute(event.guestCount || "")}">
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventTaproom-${id}">Taproom impact</label>
+            <textarea id="eventTaproom-${id}" rows="2">${escapeHTML(event.taproomImpact || "")}</textarea>
+          </div>
+          <div class="edit-form-field">
+            <label for="eventProduction-${id}">Production / back</label>
+            <textarea id="eventProduction-${id}" rows="2">${escapeHTML(event.productionSpace || "")}</textarea>
+          </div>
+          <div class="edit-form-field">
+            <label for="eventPatio-${id}">Patio</label>
+            <textarea id="eventPatio-${id}" rows="2">${escapeHTML(event.patioUsage || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventFoodNotes-${id}">Food notes</label>
+            <textarea id="eventFoodNotes-${id}" rows="2">${escapeHTML(event.foodNotes || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventBarNotes-${id}">Bar notes</label>
+            <textarea id="eventBarNotes-${id}" rows="2">${escapeHTML(event.barNotes || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventSetupNotes-${id}">Setup notes</label>
+            <textarea id="eventSetupNotes-${id}" rows="2">${escapeHTML(event.setupNotes || "")}</textarea>
+          </div>
+          <div class="edit-form-field">
+            <label for="eventLead-${id}">Event lead</label>
+            <input id="eventLead-${id}" type="text" value="${escapeForAttribute(event.eventLead || "")}">
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventStaffing-${id}">Staffing notes</label>
+            <textarea id="eventStaffing-${id}" rows="2">${escapeHTML(event.staffingNotes || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventGuestNotes-${id}">Guest-facing notes</label>
+            <textarea id="eventGuestNotes-${id}" rows="2">${escapeHTML(event.guestNotes || "")}</textarea>
           </div>
         </div>
       </section>
@@ -10024,6 +10439,31 @@ function renderNewPublishedEventForm() {
   `;
 }
 
+function publishedEventFieldsFromForm(id) {
+  return {
+    title: document.getElementById(`eventTitle-${id}`)?.value.trim(),
+    summary: document.getElementById(`eventSummary-${id}`)?.value.trim(),
+    location: document.getElementById(`eventLocation-${id}`)?.value.trim(),
+    startsAt: document.getElementById(`eventStart-${id}`)?.value || "",
+    endsAt: document.getElementById(`eventEnd-${id}`)?.value || "",
+    notes: document.getElementById(`eventNotes-${id}`)?.value.trim(),
+    published: document.getElementById(`eventPublished-${id}`)
+      ? Boolean(document.getElementById(`eventPublished-${id}`).checked)
+      : true,
+    eventType: document.getElementById(`eventType-${id}`)?.value.trim(),
+    guestCount: document.getElementById(`eventGuests-${id}`)?.value.trim(),
+    taproomImpact: document.getElementById(`eventTaproom-${id}`)?.value.trim(),
+    productionSpace: document.getElementById(`eventProduction-${id}`)?.value.trim(),
+    patioUsage: document.getElementById(`eventPatio-${id}`)?.value.trim(),
+    foodNotes: document.getElementById(`eventFoodNotes-${id}`)?.value.trim(),
+    barNotes: document.getElementById(`eventBarNotes-${id}`)?.value.trim(),
+    setupNotes: document.getElementById(`eventSetupNotes-${id}`)?.value.trim(),
+    eventLead: document.getElementById(`eventLead-${id}`)?.value.trim(),
+    staffingNotes: document.getElementById(`eventStaffing-${id}`)?.value.trim(),
+    guestNotes: document.getElementById(`eventGuestNotes-${id}`)?.value.trim()
+  };
+}
+
 async function savePublishedEvent(id) {
   if (!canEditEvents()) return;
   const errorEl = document.getElementById(`eventError-${id}`);
@@ -10031,19 +10471,26 @@ async function savePublishedEvent(id) {
   try {
     await apiFetch(`/api/events/${id}`, {
       method: "PUT",
-      body: JSON.stringify({
-        title: document.getElementById(`eventTitle-${id}`)?.value.trim(),
-        summary: document.getElementById(`eventSummary-${id}`)?.value.trim(),
-        location: document.getElementById(`eventLocation-${id}`)?.value.trim(),
-        startsAt: document.getElementById(`eventStart-${id}`)?.value || "",
-        endsAt: document.getElementById(`eventEnd-${id}`)?.value || "",
-        notes: document.getElementById(`eventNotes-${id}`)?.value.trim(),
-        published: Boolean(document.getElementById(`eventPublished-${id}`)?.checked)
-      })
+      body: JSON.stringify(publishedEventFieldsFromForm(id))
     });
     render();
   } catch (err) {
     if (errorEl) errorEl.textContent = err.message || "Could not save event.";
+  }
+}
+
+async function savePublishedEventFood(id) {
+  if (!canEditEventFood()) return;
+  const errorEl = document.getElementById(`eventError-${id}`);
+  if (errorEl) errorEl.textContent = "";
+  try {
+    await apiFetch(`/api/events/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ foodNotes: document.getElementById(`eventFoodNotes-${id}`)?.value.trim() })
+    });
+    render();
+  } catch (err) {
+    if (errorEl) errorEl.textContent = err.message || "Could not save food notes.";
   }
 }
 
@@ -10130,7 +10577,7 @@ function renderSearchLaunchPad(content) {
                 <span>${escapeHTML(item.group)}</span>
                 <strong>${escapeHTML(item.label)}</strong>
               </button>
-              <button type="button" class="search-pin${pinned ? " is-on" : ""}" onclick="toggleQuickAccessPin('${escapeForAttribute(item.tab)}')" aria-pressed="${pinned ? "true" : "false"}" aria-label="${pinned ? "Unpin from Home" : "Pin to Home"}">${pinned ? "Pinned" : "Pin"}</button>
+              <button type="button" class="search-pin${pinned ? " is-on" : ""}" onclick="toggleQuickAccessPin('${escapeForAttribute(item.tab)}')" aria-pressed="${pinned ? "true" : "false"}" aria-label="${pinned ? "Unpin from Home" : "Pin to Home"}">${pinned ? "★" : "☆"}</button>
             </div>`;
           }).join("")}
         </div>
@@ -10234,6 +10681,14 @@ function renderSafety(content) {
   `;
 }
 
+function scrollActiveSubtabIntoView() {
+  document.querySelectorAll(".coffee-subtabs .coffee-subtab.active").forEach((el) => {
+    try {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    } catch (_) {}
+  });
+}
+
 function render() {
   queueMicrotask(populateBeerSelects);
   const content = document.getElementById("content");
@@ -10315,9 +10770,6 @@ function render() {
   } else if (view === "features") {
     destroyCharts();
     renderFeaturesTab(content);
-  } else if (view === "feedback") {
-    destroyCharts();
-    renderSiteFeedback(content);
   } else if (view === "progress") {
     renderMyProgress(content);
   } else if (view === "shift-survey") {
@@ -10332,6 +10784,7 @@ function render() {
 
   content.classList.remove("is-entering");
   requestAnimationFrame(() => content.classList.add("is-entering"));
+  scrollActiveSubtabIntoView();
 }
 
 const ACTIVITY_LABELS = {
@@ -10458,6 +10911,13 @@ function canManageWeeklySpecials() {
   );
 }
 
+function canEditEventFood() {
+  return currentUser && (
+    currentUser.permissions?.editEventFood
+    || StaffRoles?.canEditEventFood?.(currentUser)
+  );
+}
+
 function canEditEvents() {
   return currentUser && (
     currentUser.permissions?.editEvents
@@ -10493,12 +10953,20 @@ function hasShiftLeadCapability(user) {
   return user && (user.permissions?.shiftLeadCapability || StaffRoles?.hasShiftLeadCapability(user));
 }
 
-function buildRoleOptionsHtml(selected) {
-  const roles = window.StaffRoles?.ALL_ROLES || ["bartender", "trainee", "event_lead", "shift_lead", "merch", "inventory_admin", "manager", "admin"];
-  const normalized = StaffRoles?.normalizeRole(selected) || selected;
+function buildRoleOptionsHtml(selectedRoles) {
+  const roles = window.StaffRoles?.ALL_ROLES || ["bartender", "trainee", "trainer", "event_lead", "shift_lead", "merch", "inventory_admin", "head_chef", "manager", "admin"];
+  const selected = new Set(
+    (Array.isArray(selectedRoles) ? selectedRoles : [selectedRoles])
+      .flatMap((value) => StaffRoles?.allAssignedRoles?.({ role: value, extra_roles: [] }) || [value])
+      .map((role) => StaffRoles?.normalizeRole?.(role) || role)
+  );
   return roles.map(role => `
-    <option value="${role}" ${normalized === role ? "selected" : ""}>${escapeHTML(roleLabel(role))}</option>
+    <label class="role-check"><input type="checkbox" value="${role}" ${selected.has(role) ? "checked" : ""}> ${escapeHTML(roleLabel(role))}</label>
   `).join("");
+}
+
+function collectCheckedRoles(root) {
+  return [...(root?.querySelectorAll("input[type=checkbox]:checked") || [])].map((el) => el.value);
 }
 
 let shiftLeadDutyDate = null;
@@ -10594,7 +11062,7 @@ function updateAuthUI() {
 
   if (userName) userName.textContent = currentUser.name;
   if (userRole) {
-    let roleText = roleLabel(currentUser.role);
+    let roleText = (StaffRoles?.allAssignedRoles?.(currentUser) || [currentUser.role]).map(roleLabel).join(" · ");
     if (currentUser.on_shift_lead_duty) roleText += " · on shift lead duty";
     userRole.textContent = roleText;
   }
@@ -11302,11 +11770,11 @@ async function saveBeerCheckin() {
 async function loadLeaderboard(period) {
   const safePeriod = period || leaderboardPeriod;
   try {
-    leaderboardData = await apiFetch(`/api/games/leaderboard?period=${encodeURIComponent(safePeriod)}`);
+    leaderboardData = await apiFetch(`/api/games/leaderboard?period=${encodeURIComponent(safePeriod)}&scope=academy`);
     leaderboardPeriod = safePeriod;
   } catch (err) {
     console.warn("Could not load leaderboard:", err.message);
-    leaderboardData = null;
+    leaderboardData = { leaderboard: [], me: null };
   }
   return leaderboardData;
 }
@@ -11595,63 +12063,61 @@ async function saveFavoriteBeer() {
   }
 }
 
+function renderArcadeTopScores() {
+  const highway = typeof highwayHighScore === "function" ? highwayHighScore() : 0;
+  const atom = typeof atomHighScore === "function" ? atomHighScore() : 0;
+  return `
+    <div class="arcade-top-scores">
+      <ul>
+        <li>ATOM SHOOTER <strong>${atom}</strong></li>
+        <li>HALF-LIFE HIGHWAY <strong>${highway}</strong></li>
+      </ul>
+    </div>
+  `;
+}
+
 function renderLeaderboardSection() {
   const lb = leaderboardData;
-  if (!lb) {
-    return `<div class="game-leaderboard"><div class="game-leaderboard-card"><p style="margin:0;color:var(--muted);font-size:13px;">Loading leaderboard…</p></div></div>`;
-  }
-
   const tabs = [
     { id: "week", label: "This Week" },
     { id: "month", label: "This Month" },
     { id: "all", label: "All Time" }
   ];
-
-  const rows = (lb.leaderboard || []).length
-    ? lb.leaderboard.map(row => `
-        <tr class="${currentUser && row.id === currentUser.id ? "me-row" : ""}">
-          <td>#${row.rank}</td>
-          <td class="lb-name-cell">
-            <span class="lb-name">${escapeHTML(row.name)}</span>
-            ${row.favoriteBeer
-              ? `<span class="lb-fav-beer">Favorite: ${escapeHTML(row.favoriteBeer)}</span>`
-              : row.favoriteBeerLocked
-                ? `<span class="lb-fav-beer">Favorite: ??? · guess in Staff Favorites</span>`
-                : `<span class="lb-fav-beer">Favorite: not set yet</span>`}
-          </td>
-          <td><span class="game-points-badge">${row.points} pts</span></td>
-          <td>${row.accuracy}%</td>
-          <td>${row.sessions}</td>
-        </tr>
+  const rows = (lb?.leaderboard || []).length
+    ? lb.leaderboard.slice(0, 8).map((row) => `
+        <li class="${currentUser && row.id === currentUser.id ? "me-row" : ""}">
+          <span class="wg-rank">#${row.rank}</span>
+          <span>${escapeHTML(row.name)}</span>
+          <span class="wg-pts">${row.points}</span>
+        </li>
       `).join("")
-    : `<tr><td colspan="5" style="color:var(--muted);">No scores yet — play a game to get on the board.</td></tr>`;
-
-  const me = lb.me || {};
-  let meLine = "";
-  if (currentUser) {
-    meLine = me.points
-      ? `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">Your rank: <strong>#${me.rank || "—"}</strong> · <span class="game-points-badge">${me.points} pts</span> · ${me.accuracy || 0}% accuracy</p>`
-      : `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">You have no points this period yet. Finish a scored game to join the board.</p>`;
-  } else {
-    meLine = `<p style="margin:12px 0 0;font-size:13px;color:var(--muted);">Log in to earn points and join the leaderboard.</p>`;
-  }
+    : `<li><span class="wg-rank">—</span><span>No Beer Academy scores yet.</span></li>`;
+  const me = lb?.me || {};
+  const meLine = currentUser
+    ? (me.points
+      ? `You: #${me.rank || "—"} · ${me.points} pts`
+      : "Play a Beer Academy game to join Beer Brains.")
+    : "Log in to save Beer Academy scores.";
 
   return `
-    <div class="game-leaderboard">
-      <div class="game-leaderboard-card">
-        <div class="game-leaderboard-head">
-          <h3>Leaderboard</h3>
-          <div class="game-leaderboard-tabs">
-            ${tabs.map(tab => `
-              <button class="${leaderboardPeriod === tab.id ? "active" : ""}" onclick="setLeaderboardPeriod('${tab.id}')">${tab.label}</button>
+    <div class="wg-fun-board">
+      <div class="wg-fun-board-card">
+        <p class="wg-fun-kicker">Leaderboard</p>
+        <p class="wg-fun-note">Fun scores only — not trainer evals, Skill Passport, or Service Drill coaching.</p>
+        <div class="wg-fun-col">
+          <h3>Beer Brains</h3>
+          <div class="wg-fun-tabs">
+            ${tabs.map((tab) => `
+              <button type="button" class="${leaderboardPeriod === tab.id ? "active" : ""}" onclick="setLeaderboardPeriod('${tab.id}')">${tab.label}</button>
             `).join("")}
           </div>
+          ${lb ? `<ol class="wg-brains-list">${rows}</ol><p class="wg-fun-note" style="margin-top:8px;">${escapeHTML(meLine)}</p>` : `<p class="wg-fun-note">Loading Beer Brains…</p>`}
         </div>
-        <table class="game-leaderboard-table">
-          <thead><tr><th>Rank</th><th>Name</th><th>Points</th><th>Accuracy</th><th>Games</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-        ${meLine}
+        <div class="wg-fun-col">
+          <h3>Arcade High Scores</h3>
+          <p class="arcade-top-note">This device only.</p>
+          ${renderArcadeTopScores()}
+        </div>
       </div>
     </div>
   `;
@@ -12801,16 +13267,89 @@ function renderFeaturesTab(content) {
         <p>Something not working?</p>
         <button type="button" class="btn btn-secondary" onclick="reportLaunchPadIssue()">Report a Launch Pad issue</button>
       </div>
+      <div id="appGuideIssueMount"></div>
 
       <p class="app-credit">MP Launch Pad · v1.0</p>
-      <p class="app-credit">Meredith + Tanner Ruminer</p>
+      <p class="app-credit">Meredith McCain + Tanner Ruminer</p>
     </div>
   `;
+  renderFeaturesIssuePanel();
 }
 
 function reportLaunchPadIssue() {
   feedbackPrefill = { category: "app_issue", pageTab: "Manage · App guide" };
-  activateAppTab("feedback");
+  if (contentType() === "features") {
+    document.getElementById("launchPadIssueForm")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  activateAppTab("features");
+}
+
+async function renderFeaturesIssuePanel() {
+  const mount = document.getElementById("appGuideIssueMount");
+  if (!mount || !currentUser) return;
+  const prefill = feedbackPrefill || { category: "app_issue", pageTab: "Manage · App guide" };
+  feedbackPrefill = null;
+  try {
+    const mine = await apiFetch("/api/site-feedback/me");
+    let managerHtml = "";
+    if (canManageSiteFeedback()) {
+      const all = await apiFetch("/api/site-feedback");
+      const open = (all.feedback || []).filter((item) => item.status !== "resolved");
+      managerHtml = `
+        <div class="guide-block">
+          <p class="guide-block-title">Open issues</p>
+          ${open.length ? open.slice(0, 8).map((item) => `
+            <div class="guide-row">
+              <strong>${escapeHTML(item.subject)}</strong>
+              <span>${escapeHTML(item.userName || "Staff")} · ${escapeHTML(formatFeedbackCategory(item.category))} · ${escapeHTML(formatFeedbackStatus(item.status))}</span>
+            </div>
+          `).join("") : `<p class="desc">No open issues.</p>`}
+        </div>
+      `;
+    }
+    mount.innerHTML = `
+      <div class="feedback-panel" id="launchPadIssueForm">
+        <p class="guide-block-title">Report a Launch Pad issue</p>
+        <div id="siteFeedbackError"></div>
+        <div class="edit-form-grid">
+          <div class="edit-form-field">
+            <label for="siteFeedbackCategory">Category</label>
+            <select id="siteFeedbackCategory">
+              ${Object.entries(FEEDBACK_CATEGORY_LABELS).map(([value, label]) => `
+                <option value="${escapeHTML(value)}"${(prefill.category || "app_issue") === value ? " selected" : ""}>${escapeHTML(label)}</option>
+              `).join("")}
+            </select>
+          </div>
+          <div class="edit-form-field">
+            <label for="siteFeedbackTab">Area</label>
+            <select id="siteFeedbackTab">
+              <option value="">Choose an area (optional)…</option>
+              ${FEEDBACK_TAB_OPTIONS.map(tab => `
+                <option value="${escapeHTML(tab)}"${prefill.pageTab === tab ? " selected" : ""}>${escapeHTML(tab)}</option>
+              `).join("")}
+            </select>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="siteFeedbackSubject">Subject</label>
+            <input type="text" id="siteFeedbackSubject" maxlength="160" value="${escapeForAttribute(prefill.subject || "")}">
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="siteFeedbackMessage">Details</label>
+            <textarea id="siteFeedbackMessage">${escapeHTML(prefill.message || "")}</textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="submitSiteFeedback()">Submit</button>
+        ${managerHtml}
+        ${(mine.submissions || []).length ? `<p class="desc" style="margin-top:16px;">Your last report: ${escapeHTML(mine.submissions[0].subject)} · ${escapeHTML(formatFeedbackStatus(mine.submissions[0].status))}</p>` : ""}
+      </div>
+    `;
+    if (prefill.category === "app_issue") {
+      document.getElementById("launchPadIssueForm")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  } catch (err) {
+    mount.innerHTML = `<p class="auth-error">${escapeHTML(err.message || "Could not load issue form.")}</p>`;
+  }
 }
 
 function renderFeedbackSubmissionRows(rows, showUser) {
@@ -13197,7 +13736,7 @@ async function renderTeamDashboard(content) {
             ${people.map((person) => `
               <tr>
                 <td><strong>${escapeHTML(person.name)}</strong></td>
-                <td>${escapeHTML(person.role_label || roleLabel(person.role))}</td>
+                <td>${escapeHTML((StaffRoles?.allAssignedRoles?.(person) || [person.role]).map(roleLabel).join(" · "))}</td>
               </tr>
             `).join("")}
           </table>
@@ -13298,7 +13837,6 @@ async function renderTeamDashboard(content) {
         title: "Team",
         subtitle: isAdmin() ? "Scheduling, digest, and training progress." : "Shift leads and floor training."
       })}
-      ${renderShiftLeadDutyPanel(shiftLeadDutyPayload, shiftLeadCandidates)}
       <div id="managerDigestPanel" class="coffee-intro" style="margin-top:8px;"><p>Loading morning digest…</p></div>
       ${isAdmin() ? renderApprovedEmailsPanel(approvedPayload.emails) : ""}
       ${floorStaff.length ? renderTeamChartsHtml() : ""}
@@ -13307,7 +13845,7 @@ async function renderTeamDashboard(content) {
         ${floorStaff.map(emp => `
           <tr class="clickable" onclick="teamDetailId=${emp.id}; render();">
             <td><strong>${escapeHTML(emp.name)}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(emp.email)}</span></td>
-            <td>${escapeHTML(roleLabel(emp.role))}</td>
+            <td>${escapeHTML((StaffRoles?.allAssignedRoles?.(emp) || [emp.role]).map(roleLabel).join(" · "))}</td>
             <td>${emp.sessions_completed}</td>
             <td>${emp.accuracy}%</td>
             <td>${formatDate(emp.last_activity)}</td>
@@ -13325,7 +13863,7 @@ async function renderTeamDashboard(content) {
           ${otherStaff.map(emp => `
             <tr class="clickable" onclick="teamDetailId=${emp.id}; render();">
               <td><strong>${escapeHTML(emp.name)}</strong><br><span style="color:#888;font-size:12px;">${escapeHTML(emp.email)}</span></td>
-              <td>${escapeHTML(roleLabel(emp.role))}</td>
+              <td>${escapeHTML((StaffRoles?.allAssignedRoles?.(emp) || [emp.role]).map(roleLabel).join(" · "))}</td>
               <td>${emp.sessions_completed}</td>
               <td>${formatDate(emp.last_activity)}</td>
             </tr>
@@ -13436,9 +13974,9 @@ function renderApprovedEmailsPanel(emails) {
         ${row.locked ? `<br><span style="color:#888;font-size:11px;">Locked bootstrap admin</span>` : ""}
       </td>
       <td>
-        <select class="approve-edit-select" id="approve-role-${row.id}" ${row.locked ? "disabled" : ""}>
-          ${roleOptions(row.role)}
-        </select>
+        <div class="role-checks" id="approve-role-${row.id}">
+          ${buildRoleOptionsHtml(StaffRoles?.allAssignedRoles?.(row) || [row.role, ...(row.extra_roles || [])])}
+        </div>
       </td>
       <td>
         <span class="approve-status ${row.signed_in ? "joined" : ""}">
@@ -13447,7 +13985,7 @@ function renderApprovedEmailsPanel(emails) {
       </td>
       <td>
         <div class="approve-actions">
-          <button type="button" class="approve-edit" ${row.locked ? "disabled" : ""} onclick="updateApprovedEmailRole(${row.id})">Save role</button>
+          <button type="button" class="approve-edit" ${row.locked ? "disabled" : ""} onclick="updateApprovedEmailRole(${row.id})">Save roles</button>
           <button type="button" class="approve-remove" ${row.locked ? "disabled" : ""} onclick="removeApprovedEmail(${row.id})">Remove</button>
         </div>
       </td>
@@ -13462,17 +14000,17 @@ function renderApprovedEmailsPanel(emails) {
     <div class="approve-panel">
       <div class="approve-card">
         <h3>Role assignments</h3>
-        <p>Only <strong>@manhattanproject.beer</strong> Microsoft accounts can sign in. First login creates a bartender account. Add an email here to pre-assign a different role.</p>
+          <p>Only <strong>@manhattanproject.beer</strong> Microsoft accounts can sign in. First login creates a bartender account. Check every role this person should hold — trainer and inventory are extras, not instead of bartender.</p>
         <div id="approveError"></div>
         <form class="approve-form" onsubmit="addApprovedEmail(event)">
           <input id="approveEmailInput" type="email" placeholder="name@manhattanproject.beer" required>
-          <select id="approveRoleInput">
-            ${buildRoleOptionsHtml("bartender")}
-          </select>
-          <button type="submit">Save role</button>
+          <div id="approveRoleInput" class="role-checks">
+            ${buildRoleOptionsHtml(["bartender"])}
+          </div>
+          <button type="submit">Save roles</button>
         </form>
         <table class="progress-table" style="width:100%;max-width:none;margin:0;">
-          <tr><th>Email</th><th>Access type</th><th>Status</th><th></th></tr>
+          <tr><th>Email</th><th>Roles</th><th>Status</th><th></th></tr>
           ${rows}
         </table>
       </div>
@@ -13484,13 +14022,13 @@ async function addApprovedEmail(event) {
   event.preventDefault();
   const errorEl = document.getElementById("approveError");
   const email = document.getElementById("approveEmailInput").value.trim();
-  const role = document.getElementById("approveRoleInput").value;
+  const roles = collectCheckedRoles(document.getElementById("approveRoleInput"));
   if (errorEl) errorEl.innerHTML = "";
 
   try {
     await apiFetch("/api/admin/approved-emails", {
       method: "POST",
-      body: JSON.stringify({ email, role })
+      body: JSON.stringify({ email, roles })
     });
     approvedEmailsData = null;
     teamData = null;
@@ -13504,14 +14042,14 @@ async function addApprovedEmail(event) {
 
 async function updateApprovedEmailRole(id) {
   const errorEl = document.getElementById("approveError");
-  const select = document.getElementById(`approve-role-${id}`);
-  if (!select) return;
+  const box = document.getElementById(`approve-role-${id}`);
+  if (!box) return;
   if (errorEl) errorEl.innerHTML = "";
 
   try {
     await apiFetch(`/api/admin/approved-emails/${id}`, {
       method: "PATCH",
-      body: JSON.stringify({ role: select.value })
+      body: JSON.stringify({ roles: collectCheckedRoles(box) })
     });
     approvedEmailsData = null;
     teamData = null;
@@ -16805,6 +17343,11 @@ function startGame(id) {
     return;
   }
 
+  if (typeof startAcademyGame === "function" && startAcademyGame(id)) {
+    render();
+    return;
+  }
+
   if (id === "guestscene" || id === "recovery") {
     const pack = id === "guestscene"
       ? (window.FloorContent?.GUEST_SCENARIOS || [])
@@ -17479,6 +18022,7 @@ function renderRocketRound(content) {
 
   if (gameSession.complete) {
     stopRocketLoop();
+    if (typeof saveAtomHighScore === "function") saveAtomHighScore(gameSession.score || 0);
     const endedEarly = (gameSession.lives || 0) <= 0 && gameSession.index < gameSession.queue.length;
     content.innerHTML = wrapGame(renderRoundComplete(endedEarly ? "Shields depleted" : "Launch Pad complete"));
     return;
@@ -18047,9 +18591,12 @@ function wrapGame(html) {
   return `<div class="game-session">${back}${html}</div>`;
 }
 
-function renderWarGameTile(g) {
+function renderWarGameTile(g, extraClass) {
+  const open = extraClass
+    ? `<button type="button" class="game-tile academy-tile" data-game-id="${escapeForAttribute(g.id)}" onclick="startGame('${g.id}')">`
+    : `<button type="button" class="game-tile" data-game-id="${escapeForAttribute(g.id)}" onclick="startGame('${g.id}')">`;
   return `
-        <button type="button" class="game-tile" data-game-id="${escapeForAttribute(g.id)}" onclick="startGame('${g.id}')">
+        ${open}
           <div class="game-tile-icon">${g.icon}</div>
           <p class="game-tile-title">${escapeHTML(g.title)}</p>
           <p class="game-tile-desc">${escapeHTML(g.desc)}</p>
@@ -18069,31 +18616,35 @@ function renderGameHub(content) {
     : "";
 
   const drills = hubServiceDrills();
+  const academy = hubBeerAcademyGames();
   const arcade = hubArcadeGames();
-  let leaderboardHtml = "";
-  try {
-    leaderboardHtml = renderLeaderboardSection();
-  } catch (err) {
-    console.warn("Leaderboard unavailable:", err.message);
-    leaderboardHtml = "";
-  }
+  const leaderboardHtml = renderLeaderboardSection();
 
   content.innerHTML = `
     ${typeof renderPageHeader === "function" ? renderPageHeader({
       title: "War Games",
-      subtitle: "Service drills for the floor. Arcade is just for fun."
+      subtitle: "Service drills, beer brain, arcade. Fun scores at the bottom."
     }) : `<div class="coffee-intro launchpad-intro"><h2>War Games</h2></div>`}
     <p class="wg-group-title">Service drills</p>
+    <p class="wg-group-lead">Real-world MP judgment</p>
     <div class="game-hub" id="wg-service-drills">
       ${drills.length
-        ? drills.map(renderWarGameTile).join("")
+        ? drills.map((g) => renderWarGameTile(g)).join("")
         : `<div class="app-state is-empty" role="status"><p class="app-state-title">Service drills failed to load.</p><p class="app-state-detail">Refresh once — the games should appear here.</p></div>`}
     </div>
     <p class="wg-also">Trainer assign: <button type="button" class="wg-also-btn" onclick="startGame('recovery')">Complaint Recovery</button> — still here if they want the old service-recovery set.</p>
+    <p class="wg-group-title">Beer Academy</p>
+    <p class="wg-group-lead">Test your beer brain</p>
+    <div class="game-hub academy-hub" id="wg-beer-academy">
+      ${academy.length
+        ? academy.map((g) => renderWarGameTile(g, "academy-tile")).join("")
+        : `<div class="app-state is-empty" role="status"><p class="app-state-title">Beer Academy failed to load.</p></div>`}
+    </div>
     <p class="wg-group-title">Arcade</p>
+    <p class="wg-group-lead">Just for fun</p>
     <div class="game-hub arcade-hub" id="wg-arcade">
       ${arcade.length
-        ? arcade.map(renderWarGameTile).join("")
+        ? arcade.map((g) => renderWarGameTile(g)).join("")
         : `<div class="app-state is-empty" role="status"><p class="app-state-title">Arcade failed to load.</p></div>`}
     </div>
     ${leaderboardHtml}
@@ -18101,7 +18652,7 @@ function renderGameHub(content) {
   `;
 
   if (!leaderboardData) {
-    loadLeaderboard(leaderboardPeriod).then(() => {
+    loadLeaderboard().then(() => {
       if (activeType === "games" && !activeGame) render();
     });
   }
@@ -18139,6 +18690,15 @@ function renderGames(content) {
     case "readguest":
     case "saturday":
       if (typeof renderJudgmentGame === "function") renderJudgmentGame(content);
+      else renderGameHub(content);
+      break;
+    case "academy_style":
+    case "academy_flavor":
+    case "academy_pair":
+    case "academy_brew":
+    case "academy_cicerone":
+    case "academy_pour":
+      if (typeof renderAcademyGame === "function") renderAcademyGame(content);
       else renderGameHub(content);
       break;
     case "guestscene":
@@ -18641,7 +19201,6 @@ function buildBarSheetHtml(rows) {
             <th>Flavor</th>
             <th>Style</th>
             <th class="abv">ABV</th>
-            <th class="notes">Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -18654,7 +19213,6 @@ function buildBarSheetHtml(rows) {
               <td>${escapeHTML(shortFlavor(beer))}</td>
               <td>${escapeHTML(getStyle(beer))}</td>
               <td class="abv">${escapeHTML(formatPrintAbv(beer))}</td>
-              <td class="notes"></td>
             </tr>
           `).join("")}
         </tbody>
@@ -19787,9 +20345,12 @@ function goHome() {
 function activateAppTab(type) {
   if (!type) return;
   closeMobileNav();
+  const previousActive = activeType;
 
   let nextActive = type;
-  if (type === "beer" || type === "catalog") {
+  if (type === "feedback") {
+    nextActive = "features";
+  } else if (type === "beer" || type === "catalog") {
     ontapView = "catalog";
     menuSubView = "ontap";
     nextActive = "ontap";
@@ -19865,6 +20426,9 @@ function activateAppTab(type) {
   updateStageTitle();
   syncAccountLinkActive();
   render();
+  if (previousActive !== nextActive) {
+    window.scrollTo(0, 0);
+  }
 }
 
 document.addEventListener("click", (event) => {

@@ -146,12 +146,12 @@ const mgrBlock = INDEX.slice(
 );
 if (
   mgrBlock.includes("renderTeamStuffSection()")
-  && mgrBlock.indexOf("renderShiftLeadDutyPanel") < mgrBlock.indexOf("renderTeamStuffSection()")
   && mgrBlock.indexOf("progress-table") < mgrBlock.indexOf("renderTeamStuffSection()")
+  && !mgrBlock.includes("renderShiftLeadDutyPanel(")
 ) {
   pass("manager Team page puts Staff Favorites after primary team content");
 } else {
-  fail("Staff Favorites is missing or still above manager Team content");
+  fail("Staff Favorites is missing or manager Team still shows Shift lead schedule");
 }
 
 if (INDEX.includes('id="team-stuff"') && INDEX.includes("Team stuff") && INDEX.includes("Staff Favorites")) {

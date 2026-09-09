@@ -52,9 +52,10 @@ if (/Manhattan Project · Draft/.test(INDEX) || INDEX.includes("print-draft-bran
 const barHead = INDEX.match(/print-bar-table[\s\S]{0,900}<\/thead>/);
 if (
   barHead
-  && [">Tap<", ">Beer<", ">Vol<", ">GR<", ">Flavor<", ">Style<", ">ABV<", ">Notes<"].every((col) => barHead[0].includes(col))
+  && [">Tap<", ">Beer<", ">Vol<", ">GR<", ">Flavor<", ">Style<", ">ABV<"].every((col) => barHead[0].includes(col))
+  && !barHead[0].includes(">Notes<")
 ) {
-  pass("bar tap sheet columns match TAP · BEER · VOL · GR · FLAVOR · STYLE · ABV · NOTES");
+  pass("bar tap sheet columns match TAP · BEER · VOL · GR · FLAVOR · STYLE · ABV");
 } else {
   fail("bar tap sheet columns do not match the physical sheet");
 }

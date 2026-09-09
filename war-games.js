@@ -29,13 +29,13 @@ const WAR_GAMES = [
     id: "rush",
     icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M22 62h56M30 48h40M38 34h24" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="50" cy="72" r="8" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M50 22v10" stroke="#9c6b4a" stroke-width="3"/></svg>`,
     title: "The Rush",
-    desc: "Saturday 7:30 — the room evolves. What do you do first?"
+    desc: "Saturday 7:30 as Float — upstairs tickets, bar line, patio, production. Whole room, not a section."
   },
   {
     id: "flight",
-    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="16" y="58" width="16" height="22" rx="2" fill="none" stroke="#9c6b4a" stroke-width="3"/><rect x="40" y="46" width="16" height="34" rx="2" fill="none" stroke="#9c6b4a" stroke-width="3"/><rect x="64" y="38" width="16" height="42" rx="2" fill="none" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="72" width="80" height="14" rx="2" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M20 28h12l-2 44h-8zM40 28h12l-2 44h-8zM60 28h12l-2 44h-8zM80 28h12l-2 44h-8z" transform="translate(-16 0)" fill="none" stroke="#9c6b4a" stroke-width="3"/></svg>`,
     title: "Build the Flight",
-    desc: "Four beers from tonight’s taps. More than one right answer."
+    desc: "Four stemless glasses on the wooden board. Live taps. More than one right answer."
   },
   {
     id: "readguest",
@@ -47,7 +47,46 @@ const WAR_GAMES = [
     id: "saturday",
     icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="28" width="56" height="48" rx="6" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M22 44h56M38 28v-8M62 28v-8" stroke="#9c6b4a" stroke-width="3"/></svg>`,
     title: "Saturday Night",
-    desc: "Dynamic service problems. Coaching, not a scoreboard."
+    desc: "Bar service problems: tickets, allergens, runners, events. Coaching, not a scoreboard."
+  }
+];
+
+const BEER_ACADEMY_GAMES = [
+  {
+    id: "academy_style",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="28" width="56" height="48" rx="6" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M34 44h32M34 58h20" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    title: "Style Match",
+    desc: "Name the style — or the MP beer. Live catalog when we have it."
+  },
+  {
+    id: "academy_flavor",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M32 62c8-22 36-22 44 0" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="40" cy="40" r="5" fill="#9c6b4a"/><circle cx="62" cy="36" r="5" fill="#9c6b4a"/></svg>`,
+    title: "Flavor Profile",
+    desc: "Which tasting notes fit this beer?"
+  },
+  {
+    id: "academy_pair",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M28 70h44L62 30H38z" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M38 48h24" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    title: "Pairing Lab",
+    desc: "Food on our menu, beer from the taps. More than one good answer."
+  },
+  {
+    id: "academy_brew",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 28h40v20H30zM38 48v24M62 48v24M28 72h44" fill="none" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    title: "How Beer Is Made",
+    desc: "Put the brew day in order, then a few short questions."
+  },
+  {
+    id: "academy_cicerone",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="28" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M50 28v8M50 64v8M28 50h8M64 50h8" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    title: "Cicerone Challenge",
+    desc: "For the beer nerds. Not a certification."
+  },
+  {
+    id: "academy_pour",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M36 22h28l-4 56H40z" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M40 48h20" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    title: "What Would You Pour?",
+    desc: "Guest tells you what they drink. Pick from what’s on tap."
   }
 ];
 
@@ -56,6 +95,7 @@ if (typeof window !== "undefined") {
   window.TRIVIA_GAME_IDS = TRIVIA_GAME_IDS;
   window.ARCADE_GAMES = ARCADE_GAMES;
   window.WAR_GAMES = WAR_GAMES;
+  window.BEER_ACADEMY_GAMES = BEER_ACADEMY_GAMES;
 }
 
 const FLIGHT_PROMPT = {
@@ -67,134 +107,134 @@ const FLIGHT_PROMPT = {
 const RUSH_NODES = {
   start: {
     beat: 1,
-    setup: "Saturday · 7:30 PM. The room is packed.",
-    scene: "Food is dying in the window. Table 12 is waving. Table 4 just sat. Dirty glasses on 17. The bartender calls for hands.",
-    prompt: "What do you do first?",
+    setup: "Saturday · 7:30 PM. The taproom is packed. You are Float.",
+    scene: "Two food tickets are ready upstairs. The bar has a line. Patio tables need bussing. Someone in production seating is looking around for help.",
+    prompt: "What is your best next move?",
     options: [
       {
-        text: "Run the food in the window — it’s already dying.",
+        text: "Go upstairs, check the tickets, and run the food that’s been waiting — the plates are already done.",
         quality: "strong",
         skills: { urgency: 1 },
         next: "after-window",
-        tip: "Dying food is the clock you cannot reset. A wave can wait twenty seconds; fried chicken cannot."
+        tip: "Kitchen is upstairs. Finished food is on a clock. A bar line can wait twenty seconds; a ticket in the pickup window cannot."
       },
       {
-        text: "Catch Table 12’s eye, say you’ll be right there, then run the window.",
+        text: "Catch the bartender’s eye — “after this run” — then go upstairs for the tickets.",
         quality: "strong",
         skills: { urgency: 1, communicate: 1 },
         next: "after-window",
-        tip: "That’s floor awareness. A nod buys you the seconds to run food without making 12 feel invisible."
+        tip: "That’s whole-room awareness. You protected food and you didn’t disappear on the bar."
       },
       {
-        text: "Greet Table 4 so they don’t feel ignored.",
-        quality: "weak",
-        skills: { urgency: -1 },
-        next: "sat-first",
-        tip: "Greeting matters, but the window is already late. A new table can wait thirty seconds."
-      },
-      {
-        text: "Clear dirty glasses on 17 — never walk empty-handed.",
+        text: "Bus the patio first so it looks clean.",
         quality: "weak",
         skills: { urgency: -1 },
         next: "glass-first",
-        tip: "Never-empty-handed is for the walk, not the first decision. Window first, then grab glass on the way."
+        tip: "Patio matters, but finished food upstairs is already late. Bus on the way back down."
       },
       {
-        text: "Jump on the bar — they called for hands.",
+        text: "Walk production first — that guest looks lost.",
+        quality: "weak",
+        skills: { urgency: -1 },
+        next: "sat-first",
+        tip: "Production seating needs eyes, but dying tickets beat a greet. Nod if you pass, then run food."
+      },
+      {
+        text: "Jump behind the bar until the line dies.",
         quality: "ok",
         skills: { awareness: 1 },
         next: "bar-first",
-        tip: "Bar support is real, but a guest’s plate is dying. Call “after this ticket” and run the window first."
+        tip: "Help the bar when you can — after the tickets. One run upstairs, then hands."
       }
     ]
   },
   "after-window": {
     beat: 2,
-    setup: "You ran the food. Expo is already calling the next ticket.",
-    scene: "Table 12 is still waving. The bartender is louder. Table 4 has menus and no water.",
+    setup: "You ran the food downstairs. Tickets matched. Guests have plates.",
+    scene: "Patio is still dirty. Production guest is still looking. The bartender is louder. Another ticket just hit upstairs.",
     prompt: "The room just evolved. What’s next?",
     options: [
       {
-        text: "Acknowledge 12, drop water on 4 on the way, tell the bartender you’ll swing after this lap.",
+        text: "Tell the bartender you’ll swing after this lap, drop water or a nod in production, bus what you can on the walk.",
         quality: "strong",
         skills: { communicate: 1, awareness: 1 },
         next: "second-lap",
-        tip: "Scan → act → communicate. You didn’t disappear, and you didn’t pick only one fire."
+        tip: "Scan the whole taproom — bar, patio, production — not a personal section."
       },
       {
-        text: "Go straight to Table 12 and take a full order.",
-        quality: "ok",
-        skills: { communicate: 1 },
-        next: "second-lap",
-        tip: "12 needed you. Water on 4 and a call to the bar would have closed two more loops on the same walk."
-      },
-      {
-        text: "Stay in the window until expo is quiet.",
+        text: "Stay upstairs until the kitchen is quiet.",
         quality: "weak",
         skills: { awareness: -1 },
         next: "second-lap",
-        tip: "Expo will never be quiet at 7:30. One more ticket while 12 stands there is how sections collapse."
+        tip: "Kitchen will not go quiet at 7:30. Run what’s ready, then get back on the floor."
       },
       {
-        text: "Hide in glassware until the wave dies down.",
+        text: "Hide in dish until the wave dies down.",
         quality: "weak",
         skills: { communicate: -1, reset: -1 },
         next: "second-lap",
-        tip: "Side work is not a refuge. The room can see you."
+        tip: "The room can see you. Side work is not a refuge during a rush."
+      },
+      {
+        text: "Take the next ticket upstairs and ignore the bar.",
+        quality: "ok",
+        skills: { urgency: 1 },
+        next: "second-lap",
+        tip: "Food is real. A one-line to the bartender would have closed a second loop."
       }
     ]
   },
   "sat-first": {
     beat: 2,
-    setup: "Table 4 is greeted. The window food sat another ninety seconds.",
-    scene: "Kitchen is unhappy. Table 12 looks annoyed. Expo is calling your name.",
+    setup: "You greeted production. The upstairs tickets sat another minute.",
+    scene: "Kitchen is unhappy. The bartender is waving. Patio still needs a bus.",
     prompt: "Recover. What now?",
     options: [
       {
-        text: "Run the dying ticket, apologize to expo, then go to 12 with a real update.",
+        text: "Go upstairs, check both tickets, run the older one first, then give the bartender a real update.",
         quality: "strong",
         skills: { urgency: 1, communicate: 1 },
         next: "second-lap",
-        tip: "You reset the clock. Own the miss, then talk to the waving table."
+        tip: "You reset the clock. Own the miss, then talk to the bar."
       },
       {
-        text: "Take Table 12’s drink order first so they stop waving.",
+        text: "Jump on the bar so they stop waving.",
         quality: "ok",
         skills: { communicate: 1 },
         next: "second-lap",
-        tip: "12 is loud. The food is still dying. Window, then 12 — or you stack a second miss."
+        tip: "Bar needed you. The food is still waiting upstairs."
       },
       {
-        text: "Tell the kitchen it’s not your section.",
+        text: "Tell kitchen it’s not your assignment tonight.",
         quality: "weak",
         skills: { awareness: -1 },
         next: "second-lap",
-        tip: "If you can see it, it’s yours. Sections are a starting map, not a wall."
+        tip: "Everyone rotates. If you can see it, it’s yours. Assignments are a starting map, not a wall."
       }
     ]
   },
   "glass-first": {
     beat: 2,
-    setup: "17 is cleaner. The window ticket sat.",
-    scene: "Expo is sharp. Table 12 is standing now. Table 4 is still dry.",
-    prompt: "You chose glass first. How do you get back in the game?",
+    setup: "Patio is cleaner. The upstairs tickets sat.",
+    scene: "Kitchen is sharp. Production guest is standing now. Bar line grew.",
+    prompt: "You chose patio first. How do you get back in the game?",
     options: [
       {
-        text: "Run the window now, eyes on 12 as you pass, water on 4 if your hands are free after.",
+        text: "Upstairs now. Read both tickets before you grab plates. Bus glass on the way back down if your hands are free.",
         quality: "strong",
         skills: { urgency: 1, reset: 1 },
         next: "second-lap",
-        tip: "That’s the reset. Glass was the wrong first move; this is the right second one."
+        tip: "Patio was the wrong first move; this is the right second one. Always read the ticket before you leave the kitchen."
       },
       {
-        text: "Keep bussing — the room looks messy.",
+        text: "Keep bussing — the patio still looks messy.",
         quality: "weak",
         skills: { urgency: -1 },
         next: "second-lap",
-        tip: "Pretty room, dead food. Guests remember the plate."
+        tip: "Pretty patio, dead food. Guests remember the plate."
       },
       {
-        text: "Stop and explain to 12 that you were clearing tables.",
+        text: "Stop and explain to production that you were clearing tables.",
         quality: "ok",
         skills: { communicate: 1 },
         next: "second-lap",
@@ -204,55 +244,55 @@ const RUSH_NODES = {
   },
   "bar-first": {
     beat: 2,
-    setup: "You helped the bartender. Two cocktails walked.",
-    scene: "The window ticket is colder. Table 12 has been ignored. Expo is looking for a runner.",
+    setup: "You helped the bartender. Two beers walked.",
+    scene: "Tickets upstairs are colder. Production is still lost. Kitchen is looking for a runner.",
     prompt: "Bar is quieter for a second. What do you do with it?",
     options: [
       {
-        text: "Grab the dying food, tell expo you’ve got it, nod at 12 on the way.",
+        text: "Go upstairs, check tickets, tell kitchen you’ve got the run, nod at production on the way down.",
         quality: "strong",
         skills: { urgency: 1, communicate: 1 },
         next: "second-lap",
-        tip: "You helped the bar and came back to the floor. That’s the job."
+        tip: "You helped the bar and came back to the room. That’s Float."
       },
       {
-        text: "Stay on the bar until they say they’re good.",
+        text: "Stay behind the bar until they say they’re good.",
         quality: "weak",
         skills: { awareness: -1 },
         next: "second-lap",
-        tip: "“Hands” is not “become a bartender.” One run, then return to the room."
+        tip: "Hands is a run, not “become the bartender.” One assist, then return to the floor."
       },
       {
-        text: "Go take Table 12 now and leave the window.",
+        text: "Walk production now and leave the tickets.",
         quality: "ok",
         skills: { communicate: 1 },
         next: "second-lap",
-        tip: "12 needed you. Carry the ticket if you can — never walk empty-handed past expo."
+        tip: "They needed you. Carry food if you can — never walk empty-handed past a ready ticket."
       }
     ]
   },
   "second-lap": {
     beat: 3,
     setup: "Same Saturday. The next problem is already here.",
-    scene: "Table 8 asks if the fried chicken is safe for a nut allergy. Expo is calling another ticket. Table 12 wants to pay.",
+    scene: "A guest at the bar asks if the fried chicken is safe for a nut allergy. Another ticket is up. Someone in production wants to pay.",
     prompt: "Three things at once. What’s the order?",
     options: [
       {
-        text: "Stop for the allergen — check notes, confirm with kitchen, don’t guess — then flag a lead for the checkout if you can’t take it immediately.",
+        text: "Stop for the allergen — check notes, confirm with kitchen, don’t guess — then flag the Shift Lead for the checkout if you can’t take it immediately.",
         quality: "strong",
         skills: { communicate: 1, awareness: 1 },
         next: "close-lap",
-        tip: "Allergen is safety, not a vibe. Checkout can wait ten seconds; a wrong yes cannot."
+        tip: "Allergen is safety, not a vibe. And it belongs on the ticket before food is sent — never a casual yes."
       },
       {
-        text: "Run the expo ticket first. Allergy can wait.",
+        text: "Run the ticket first. Allergy can wait.",
         quality: "ok",
         skills: { urgency: 1 },
         next: "close-lap",
-        tip: "Food is on a clock, but an allergen question is a stop-the-line. Don’t let it sit unanswered."
+        tip: "Food is on a clock, but an allergen question is a stop-the-line."
       },
       {
-        text: "Take the card on 12 — they’re ready to leave.",
+        text: "Take payment in production — they’re ready to leave.",
         quality: "weak",
         skills: { awareness: -1 },
         next: "close-lap",
@@ -263,39 +303,39 @@ const RUSH_NODES = {
         quality: "weak",
         skills: { communicate: -1 },
         next: "close-lap",
-        tip: "Never guess. Check the dish, confirm with kitchen, say what you know and what you can’t guarantee."
+        tip: "Never guess. Confirm with kitchen. Put the allergy on the ticket if they order."
       }
     ]
   },
   "close-lap": {
     beat: 4,
     setup: "The rush is still on. This is the reset.",
-    scene: "Hands are empty. Dirty pint glasses are on your pass. Table 4 still needs water. The bartender is fine for a minute.",
+    scene: "Hands are empty. Dirty pints on patio. Production still needs water. The bartender is fine for a minute.",
     prompt: "How do you close the loop?",
     options: [
       {
-        text: "Water on 4, glass in your hand on the way back, eyes on the room.",
+        text: "Water in production, glass in your hand on the way back, eyes on bar, patio, and back space.",
         quality: "strong",
         skills: { reset: 1, awareness: 1 },
         next: null,
-        tip: "That’s Scan → Prioritize → Act → Communicate → Reset. Never walk empty-handed — after the urgent work."
+        tip: "Scan the whole taproom. Never walk empty-handed — after the urgent work."
       },
       {
-        text: "Stand in the service station until someone tells you what’s next.",
+        text: "Stand at the service well until someone tells you what’s next.",
         quality: "weak",
         skills: { reset: -1 },
         next: null,
         tip: "Waiting to be told is how 7:30 gets worse. The next scan is yours."
       },
       {
-        text: "Start a side-work project in the back.",
+        text: "Start a restock project in storage.",
         quality: "weak",
         skills: { awareness: -1 },
         next: null,
-        tip: "If the room is full, the floor owns you. Back-of-house busywork can wait."
+        tip: "If the room is full, the floor owns you."
       },
       {
-        text: "Ask the lead “what do you need?” while you drop water.",
+        text: "Ask the Shift Lead “what do you need?” while you drop water.",
         quality: "strong",
         skills: { communicate: 1, reset: 1 },
         next: null,
@@ -309,105 +349,105 @@ const SATURDAY_PROBLEMS = [
   {
     id: "window",
     skill: "urgency",
-    train: { skill: "independent_service", shift: 5, label: "Own your section" },
-    setup: "Saturday night · expo",
-    scene: "Two plates are dying in the window. A four-top in your section is waving for another round.",
-    prompt: "What do you do?",
+    train: { skill: "runner_check", shift: 3, label: "Runner ticket check" },
+    setup: "Saturday night · Float",
+    scene: "Two food tickets are ready upstairs. A bartender has a line. Patio tables need bussing. Someone in production seating is looking around for help.",
+    prompt: "What is your best next move?",
     options: [
-      { text: "Run the food, tell the four-top you’ll be right there as you pass.", quality: "strong", tip: "Food is on a clock. A nod keeps the waving table in the game." },
-      { text: "Take the round first — they’re already drinking.", quality: "weak", tip: "Drinks can wait twenty seconds. Those plates cannot." },
-      { text: "Ask someone else to run the food while you stay for the round.", quality: "ok", tip: "Calling help is fine if you actually get the call out. Don’t assume they heard you." }
+      { text: "Check tickets upstairs and run the food that’s been waiting — then communicate with the bar on the way back.", quality: "strong", tip: "Finished food is on a clock. Read the ticket before you leave the kitchen." },
+      { text: "Bus the patio first so it looks clean.", quality: "weak", tip: "Pretty patio, dead food." },
+      { text: "Jump behind the bar until the line dies, then maybe check kitchen.", quality: "ok", tip: "Help the bar after the run, not instead of it." }
     ]
   },
   {
     id: "allergen",
     skill: "safety",
-    train: { skill: "allergy_confirm", shift: 1, label: "Allergen questions" },
-    setup: "Saturday night · table",
-    scene: "A guest asks if the fried chicken is safe for a nut allergy. The ticket printer is going.",
+    train: { skill: "ticket_accuracy", shift: 3, label: "Ticket accuracy" },
+    setup: "Saturday night · Bartender",
+    scene: "A guest at the bar asks an allergy question you are not completely sure about. Run/Bus calls that a table needs water. There is a line.",
     prompt: "What do you do?",
     options: [
-      { text: "Never guess — check current notes, confirm with kitchen, say what you know and what you can’t guarantee.", quality: "strong", tip: "Escalate when unsure. A confident wrong answer is the failure." },
+      { text: "Pause the order. Confirm with kitchen. Do not send food without a clear allergy note on the ticket. Water can wait ten seconds or go to Float.", quality: "strong", tip: "Allergy is a stop-the-line. It must be on the ticket before Send." },
       { text: "It’s probably fine — we’ve sold a lot of it tonight.", quality: "weak", tip: "Volume is not a safety check." },
-      { text: "Read ingredients from memory from last week.", quality: "weak", tip: "Recipes move. Use the portal and the kitchen that is here tonight." }
+      { text: "Send the food now and add the allergy in a second ticket later.", quality: "weak", tip: "Do not rely on a second conflicting ticket. Confirm first." }
     ]
   },
   {
     id: "slow-ticket",
     skill: "communicate",
-    train: { skill: "independent_service", shift: 5, label: "Own your section" },
-    setup: "Saturday night · dining room",
-    scene: "A two-top asks where their food is. You haven’t checked expo in a while.",
-    prompt: "What do you do?",
+    train: { skill: "runner_check", shift: 3, label: "Runner ticket check" },
+    setup: "Saturday night · Run/Bus",
+    scene: "You go upstairs and see two completed tickets. One table still has food in front of them. The other order has been waiting longer.",
+    prompt: "What should you check before grabbing plates?",
     options: [
-      { text: "Check expo, come back with a real time or a lead, don’t invent a number.", quality: "strong", tip: "Honesty plus a next step. Guests forgive a wait they understand." },
-      { text: "Say “should be any minute” and walk away.", quality: "weak", tip: "That’s a stall. They will ask again, angrier." },
-      { text: "Blame the kitchen from the table.", quality: "weak", tip: "They hear us fighting. Fix it upstairs, not in front of them." }
+      { text: "Read both tickets: guest name, table/location, items, wait time. Run the older ready ticket if that guest is waiting; don’t drop food on a table that is still eating the last course unless the ticket says so.", quality: "strong", tip: "Ticket reading, destination, and urgency — before you leave the kitchen." },
+      { text: "Grab whichever looks done and head downstairs.", quality: "weak", tip: "Guessing the destination is how food lands on the wrong patio table." },
+      { text: "Take both at once even if you can’t read the tickets.", quality: "ok", tip: "Speed is good. Unreadable tickets are not." }
     ]
   },
   {
     id: "checkout",
     skill: "urgency",
-    train: { skill: "independent_service", shift: 5, label: "Own your section" },
-    setup: "Saturday night · checkout",
-    scene: "A guest is standing with a card out. Expo is calling your name for a runner.",
+    train: { skill: "ticket_correction", shift: 4, label: "Ticket corrections" },
+    setup: "Saturday night · Bartender",
+    scene: "A guest is waiting to close a tab. Kitchen just called that a ticket you sent is missing a location.",
     prompt: "What do you do?",
     options: [
-      { text: "Grab the ticket if you can carry it to the pass, tell the guest “I’m dropping this and I’ll take you next.”", quality: "strong", tip: "You protected the plate and you didn’t abandon the person holding a card." },
-      { text: "Ignore expo — the guest is ready to leave.", quality: "weak", tip: "Checkout matters. Dying food still wins the clock." },
-      { text: "Point at another server and keep walking.", quality: "ok", tip: "Only if they actually take it. A point without a name is a drop." }
+      { text: "Tell kitchen the location now — don’t only send a second ticket. Then take the tab.", quality: "strong", tip: "Corrections are verbal plus urgency. A second silent ticket can duplicate the order." },
+      { text: "Ignore kitchen — the guest is ready to leave.", quality: "weak", tip: "Checkout matters. A lost plate still wins the clock." },
+      { text: "Fire a new ticket and hope they catch it.", quality: "weak", tip: "That is how doubles happen." }
     ]
   },
   {
     id: "dirty-table",
     skill: "reset",
-    train: { skill: "independent_service", shift: 5, label: "Own your section" },
-    setup: "Saturday night · your section",
-    scene: "A four-top left a mess. The next party is at the host. Another section needs water.",
+    train: { skill: "independent_service", shift: 5, label: "Own the room" },
+    setup: "Saturday night · Run/Bus",
+    scene: "A four-top on patio left a mess. Guests are standing with drinks looking for seats. Production still has dirty glasses.",
     prompt: "What do you do?",
     options: [
-      { text: "Clear and reset fast enough to seat, grab water for the other section on the same walk if you can.", quality: "strong", tip: "Turn the table. Help on the walk. That’s ownership." },
-      { text: "Let the host wait — you’ll get to it after a break.", quality: "weak", tip: "An empty dirty table is lost seats and a guest staring at someone else’s napkins." },
-      { text: "Only run water for the other section and leave your four-top.", quality: "ok", tip: "Helping is good. Your sat party still needs a clean table." }
+      { text: "Reset patio fast enough to seat, grab production glass on the same walk if you can.", quality: "strong", tip: "Seat yourself means a dirty table is lost seats. Whole-room, not a section." },
+      { text: "Take a break — you’ll get to it.", quality: "weak", tip: "Guests staring at someone else’s napkins will leave." },
+      { text: "Only clear production and leave patio.", quality: "ok", tip: "Helping is good. The standing party still needs a clean table." }
     ]
   },
   {
     id: "bar-hands",
     skill: "awareness",
-    train: { skill: "independent_service", shift: 5, label: "Own your section" },
-    setup: "Saturday night · bar",
-    scene: "Bartender: “I need a runner.” Your section looks stable for thirty seconds.",
+    train: { skill: "independent_service", shift: 5, label: "Own the room" },
+    setup: "Saturday night · Float",
+    scene: "Bartender: “I need a runner.” Patio looks stable for thirty seconds. A ticket is not up.",
     prompt: "What do you do?",
     options: [
-      { text: "Take the run, tell your section you’ll be thirty seconds, come back.", quality: "strong", tip: "Hands means a run, not a new job. Communicate, then return." },
-      { text: "Stay in your section — not your problem.", quality: "weak", tip: "If the bar dies, the whole room dies. Help when you can." },
-      { text: "Move behind the bar and start making drinks.", quality: "ok", tip: "Only if you’re trained for it and a lead asked. Most nights they need a runner, not another bartender." }
+      { text: "Take the run or water, tell the Shift Lead you’ll be thirty seconds, come back to scanning the room.", quality: "strong", tip: "Hands means help, then return. Everyone is cross-trained." },
+      { text: "Stay put — not your assignment tonight.", quality: "weak", tip: "If the bar dies, the whole taproom dies." },
+      { text: "Move behind the bar and start making drinks without being asked.", quality: "ok", tip: "Only if you’re trained for it and a lead asked. Most nights they need a runner." }
     ]
   },
   {
     id: "wrong-beer",
     skill: "recovery",
     train: { skill: "recovery_scenario", shift: 4, label: "Complaint recovery" },
-    setup: "Saturday night · beer",
-    scene: "Guest: “This isn’t what I ordered.” It’s the wrong beer, already sipped.",
+    setup: "Saturday night · Bartender",
+    scene: "Guest at the bar: “This isn’t what I ordered.” It’s the wrong beer, already sipped.",
     prompt: "What do you do?",
     options: [
-      { text: "Acknowledge, don’t defend, pull it, get the right one, loop a lead if it needs a comp.", quality: "strong", tip: "A small, fast recovery beats a proud explanation." },
-      { text: "Explain that they pointed at the wrong tap.", quality: "weak", tip: "Being right is not the goal. They leave willing to come back, or they don’t." },
+      { text: "Acknowledge, don’t defend, pull it, pour the right one, loop a Shift Lead if it needs a comp.", quality: "strong", tip: "A small, fast recovery beats a proud explanation." },
+      { text: "Explain that they pointed at the wrong tap.", quality: "weak", tip: "Being right is not the goal." },
       { text: "Leave the wrong beer and offer a taste of the right one later.", quality: "weak", tip: "They already told you it’s wrong. Replace it." }
     ]
   },
   {
     id: "walk-in",
     skill: "communicate",
-    train: { skill: "guest_greet", shift: 2, label: "Guest greet" },
-    setup: "Saturday night · host",
-    scene: "Walk-in party of eight asks if you can seat them now. The floor is slammed. Kitchen is in the weeds.",
+    train: { skill: "events_awareness", shift: 5, label: "What’s on the books" },
+    setup: "Saturday night · Shift Lead",
+    scene: "A party of eight walks in and asks if they can sit in production. There is a private event using part of the back space. Normal service is still running.",
     prompt: "What do you do?",
     options: [
-      { text: "Check with the lead, set a real wait, offer bar or patio if that’s honest.", quality: "strong", tip: "Honesty plus options beats overpromising a table you don’t have." },
-      { text: "Seat them immediately without telling the kitchen.", quality: "weak", tip: "That’s how a crash starts." },
-      { text: "Tell them you can’t help and turn away.", quality: "weak", tip: "Too blunt. Offer a path — wait, bar, or another night." }
+      { text: "Protect the event boundary, offer patio or taproom seats that are actually open, tell Float to keep eyes on production, set an honest wait.", quality: "strong", tip: "No host stand. You still own the room: event edges, guest communication, normal service." },
+      { text: "Seat them in the event space — it’s empty-looking chairs.", quality: "weak", tip: "That’s how you crash a wedding welcome party." },
+      { text: "Tell them you can’t help and turn away.", quality: "weak", tip: "Too blunt. Offer a path — wait, patio, or bar." }
     ]
   }
 ];
@@ -457,6 +497,90 @@ function styleFamily(beer) {
   if (tags.light || tags.modelo) return "light";
   if (tags.fruity) return "fruit";
   return "other";
+}
+
+function flightFamilyColor(beer) {
+  return beerPourLook(beer).color;
+}
+
+function beerPourLook(beer) {
+  const hay = beerHaystack(beer);
+  const tags = tagBeer(beer);
+  if (/stout|porter|nitro|black matter/.test(hay)) {
+    return { color: "#1a120e", head: "#efe3c8", haze: false, dark: true };
+  }
+  if (/black ipa/.test(hay)) {
+    return { color: "#2a1810", head: "rgba(245,230,200,0.42)", haze: false, dark: true };
+  }
+  if (tags.dark) {
+    return { color: "#24160f", head: "#efe3c8", haze: false, dark: true };
+  }
+  if (tags.sour || /gose|berliner|tart/.test(hay)) {
+    if (/blood|berry|raspberry|cherry|strawberry|tiger|guava|passion/.test(hay)) {
+      return { color: "#c45a6a", head: "rgba(255,240,245,0.42)", haze: false, dark: false };
+    }
+    return { color: "#d4787a", head: "rgba(255,255,255,0.34)", haze: false, dark: false };
+  }
+  if (/hefe|weizen/.test(hay) && !/\bipa\b/.test(hay)) {
+    return { color: "#e0c56a", head: "rgba(255,255,255,0.46)", haze: true, dark: false };
+  }
+  if (/saison/.test(hay)) {
+    return { color: "#e8d48a", head: "rgba(255,255,255,0.36)", haze: true, dark: false };
+  }
+  if (/belgian golden|tripel|golden strong/.test(hay)) {
+    return { color: "#d4a017", head: "rgba(255,255,255,0.3)", haze: false, dark: false };
+  }
+  if (tags.hazy || /hazy|neipa|half-life|half life/.test(hay)) {
+    return { color: "#e4b84a", head: "rgba(255,255,255,0.4)", haze: true, dark: false };
+  }
+  if (/west coast|double ipa|triple ipa/.test(hay)) {
+    return { color: "#c8962a", head: "rgba(255,255,255,0.28)", haze: false, dark: false };
+  }
+  if (/amber/.test(hay)) {
+    return { color: "#8b4518", head: "rgba(255,230,200,0.34)", haze: false, dark: false };
+  }
+  if (/honey lager|gold flash/.test(hay)) {
+    return { color: "#d4a017", head: "rgba(255,255,255,0.3)", haze: false, dark: false };
+  }
+  if (/pils|pilsner|k[öo]lsch|blonde|light lager|helles/.test(hay)) {
+    return { color: "#f0d27a", head: "rgba(255,255,255,0.28)", haze: false, dark: false };
+  }
+  if (tags.light || tags.wheat) {
+    return { color: "#e8c96a", head: "rgba(255,255,255,0.3)", haze: Boolean(tags.wheat), dark: false };
+  }
+  return { color: "#c4a574", head: "rgba(255,255,255,0.26)", haze: false, dark: false };
+}
+
+function flightGlassMarkup(index, beer, name, pouring) {
+  const look = beer ? beerPourLook(beer) : { color: "transparent", head: "transparent", haze: false, dark: false };
+  const filled = Boolean(beer);
+  const clipId = `flight-liquid-${index}`;
+  const label = name || "";
+  return `
+    <div class="flight-slot${filled ? " is-filled" : " is-empty"}">
+      <div class="flight-glass${filled ? " is-filled" : ""}${pouring ? " is-pouring" : ""}${look.haze ? " is-hazy" : ""}${look.dark ? " is-dark" : ""}" style="--beer:${look.color};--head:${look.head}">
+        <svg class="flight-glass-svg" viewBox="0 0 80 112" aria-hidden="true">
+          <defs>
+            <clipPath id="${clipId}">
+              <path d="M22 26h36l-4.2 62c-1.1 14.5-8.2 19-13.8 19s-12.7-4.5-13.8-19z"/>
+            </clipPath>
+          </defs>
+          <g class="flight-liquid-g" clip-path="url(#${clipId})">
+            <rect class="flight-liquid" x="20" y="26" width="40" height="84" fill="${filled ? look.color : "transparent"}"/>
+            ${filled ? `<ellipse class="flight-foam" cx="40" cy="40" rx="16" ry="5" fill="${look.head}"/>` : ""}
+          </g>
+          <path class="flight-outline" d="M20 22h40l-4.6 66c-1.2 16-9 21-15.4 21s-14.2-5-15.4-21z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.78)" stroke-width="1.7"/>
+          <path class="flight-shine" d="M28 30c0 0 1.4 38 1 52" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+          <g class="flight-atom" transform="translate(40 68)" fill="none" stroke="rgba(196,165,116,0.55)" stroke-width="1.2">
+            <ellipse cx="0" cy="0" rx="9" ry="3.4"/>
+            <ellipse cx="0" cy="0" rx="9" ry="3.4" transform="rotate(60)"/>
+            <ellipse cx="0" cy="0" rx="9" ry="3.4" transform="rotate(120)"/>
+            <circle cx="0" cy="0" r="1.4" fill="rgba(196,165,116,0.7)" stroke="none"/>
+          </g>
+        </svg>
+      </div>
+      <strong class="flight-name">${escapeHTML(label || " ")}</strong>
+    </div>`;
 }
 
 function scoreFlight(picks, taps) {
@@ -1026,18 +1150,29 @@ function renderFlightGame(content) {
     return;
   }
   const selected = gameSession.selected || [];
+  const boardSlots = [0, 1, 2, 3].map((index) => {
+    const name = selected[index] || "";
+    const beer = name ? taps.find((row) => beerName(row) === name) : null;
+    return flightGlassMarkup(index, beer, name, Boolean(beer) && index === selected.length - 1);
+  }).join("");
   content.innerHTML = wrapGame(`
     <div class="game-card scenario-card wg-flight">
       <p class="scenario-eyebrow">${escapeHTML(FLIGHT_PROMPT.setup)}</p>
       <p class="wg-scene">${escapeHTML(FLIGHT_PROMPT.scene)}</p>
       <p class="game-question">${escapeHTML(FLIGHT_PROMPT.prompt)}</p>
-      <p class="wg-progress">${selected.length} of 4 picked</p>
+      <p class="wg-progress">${selected.length} of 4 on the board</p>
+      <div class="flight-board" aria-label="Manhattan Project flight board">
+        ${boardSlots}
+      </div>
+      <p class="flight-color-note">Glass color is a style-based guess, not a lab reading.</p>
       <div class="flight-grid">
         ${taps.map((beer) => {
           const meta = beerButtonMeta(beer);
           const on = selected.includes(meta.name);
+          const look = beerPourLook(beer);
           return `
             <button type="button" class="flight-chip${on ? " is-on" : ""}" data-name="${escapeHTML(meta.name)}" onclick="toggleFlightBeer(this.getAttribute('data-name'))">
+              <i class="flight-chip-swatch" style="background:${look.color}" aria-hidden="true"></i>
               <strong>${escapeHTML(meta.name)}</strong>
               <span>${escapeHTML([meta.style, meta.abv].filter(Boolean).join(" · "))}</span>
               ${meta.flavor ? `<span class="flight-flavor">${escapeHTML(meta.flavor)}</span>` : ""}
@@ -1095,16 +1230,644 @@ function renderReadGuestGame(content) {
   `);
 }
 
+const BREW_STEPS = [
+  { id: "mash", label: "Malt / Mash", why: "Crushed malt soaks in hot water so enzymes turn starch into fermentable sugar." },
+  { id: "lauter", label: "Lauter / Separate wort", why: "You rinse and drain the mash. The sweet liquid left is wort." },
+  { id: "boil", label: "Boil", why: "The wort is boiled to sterilize it and set up hop additions." },
+  { id: "hops", label: "Add hops", why: "Hops usually go in during the boil — early for bitterness, late for aroma." },
+  { id: "chill", label: "Chill", why: "Wort has to cool before yeast can go in. Hot wort would kill it." },
+  { id: "ferment", label: "Ferment", why: "Yeast eats the sugar and makes alcohol and CO₂. That’s beer, not wort." },
+  { id: "condition", label: "Condition", why: "The beer rests, clears, and rounds out before you package it." },
+  { id: "package", label: "Package / Serve", why: "Keg, can, or bottle — then it hits the taproom." }
+];
+
+const BREW_QUIZ = [
+  {
+    prompt: "What does yeast primarily do?",
+    options: [
+      { label: "Turn fermentable sugars into alcohol and CO₂", quality: "strong", explain: "Correct — yeast is the engine. Sugar in, beer out." },
+      { label: "Add bitterness during the boil", quality: "weak", explain: "Close — that’s hops. Yeast ferments the wort after it cools." },
+      { label: "Filter haze out of the finished beer", quality: "weak", explain: "Close — some beer is filtered later. Yeast’s job is fermentation." },
+      { label: "Roast the malt darker", quality: "weak", explain: "Close — roast happens at the maltster, long before yeast." }
+    ]
+  },
+  {
+    prompt: "When are hops commonly added?",
+    options: [
+      { label: "During the boil — and sometimes after, for aroma", quality: "strong", explain: "Correct — boil for bitterness, late or dry-hop for smell." },
+      { label: "Only in the mash tun", quality: "weak", explain: "Close — mash is about malt sugar. Hops come later." },
+      { label: "After the beer is already in the guest’s glass", quality: "weak", explain: "That’s a garnish, not brewing. Hops go in on brew day or in the tank." },
+      { label: "Instead of yeast", quality: "weak", explain: "You still need yeast. Hops season the wort; they don’t ferment it." }
+    ]
+  },
+  {
+    prompt: "What contributes fermentable sugars?",
+    options: [
+      { label: "Malted grain, pulled into the wort during mash", quality: "strong", explain: "Correct — malt is the sugar source. Water just carries it." },
+      { label: "Hops", quality: "weak", explain: "Close — hops are bitterness and aroma, not the main sugar." },
+      { label: "The serving glass", quality: "weak", explain: "The glass doesn’t ferment. Sugar comes from malt." },
+      { label: "CO₂ in the keg", quality: "weak", explain: "Gas carbonates. Sugar already fermented before packaging." }
+    ]
+  },
+  {
+    prompt: "What is wort?",
+    options: [
+      { label: "The sweet unfermented liquid, after mash and before yeast", quality: "strong", explain: "Correct — once yeast works, we call it beer." },
+      { label: "Foam on a poorly poured pint", quality: "weak", explain: "That’s head. Wort is the pre-beer liquid in the brewery." },
+      { label: "A style of German lager", quality: "weak", explain: "Close sound, different word. Wort is the sugar liquid." },
+      { label: "Spent grain after brewing", quality: "weak", explain: "Spent grain is the leftover husk. Wort is what you drained off." }
+    ]
+  }
+];
+
+const CICERONE_BANK = [
+  {
+    prompt: "Why do we keep draft beer cold from keg to glass?",
+    options: [
+      { label: "Warm beer in the lines foams, tastes dull, and dies faster", quality: "strong", explain: "Correct — cold chain is draft quality. Foam problems are often temperature, not “the keg is wild.”" },
+      { label: "So the tap handles stay shiny", quality: "weak", explain: "Looks don’t pour the beer. Temperature does." },
+      { label: "Warm beer has more hops", quality: "weak", explain: "Heat doesn’t add hops. It knocks aroma out and makes foam." },
+      { label: "Health code requires beer at 80°F", quality: "weak", explain: "That’s hot. Draft beer wants to stay cold." }
+    ]
+  },
+  {
+    prompt: "A guest says the pint “tastes skunky.” What’s the usual intro-level cause?",
+    options: [
+      { label: "Light struck the beer — especially in clear or green bottles", quality: "strong", explain: "Correct — light-struck (skunky) is a storage / package issue. Keep beer out of sun." },
+      { label: "Too much malt in the mash", quality: "weak", explain: "Malt doesn’t make skunk. Light on hops does." },
+      { label: "The glass was too clean", quality: "weak", explain: "Dirty glass causes bubbles to cling. Skunk is light damage." },
+      { label: "They sat in production seating", quality: "weak", explain: "The room doesn’t skunk a pint. Light and old beer do." }
+    ]
+  },
+  {
+    prompt: "Why do we use stemless tasting glasses on an MP flight?",
+    options: [
+      { label: "Four small pours on one board — easy to taste, easy to carry", quality: "strong", explain: "Correct — our flight is four stemless glasses sitting on the wood board, not a paddle of samples in name only." },
+      { label: "Stemless glass raises ABV", quality: "weak", explain: "The glass doesn’t change the beer. It changes how we serve a flight." },
+      { label: "Guests aren’t allowed to drink from stemmed glass", quality: "weak", explain: "No such rule. This is how we build a flight here." },
+      { label: "It hides off-flavors", quality: "weak", explain: "Glassware shouldn’t hide faults. Taste honestly, then talk." }
+    ]
+  },
+  {
+    prompt: "IBU is mainly a measure of what?",
+    options: [
+      { label: "Bitterness from hops (a number, not the whole flavor story)", quality: "strong", explain: "Correct — IBU is bitterness. A hazy can taste softer than the number suggests." },
+      { label: "Alcohol by volume", quality: "weak", explain: "That’s ABV. IBU is bitterness." },
+      { label: "Calories", quality: "weak", explain: "Not a calorie count. Bitterness." },
+      { label: "How hazy the beer is", quality: "weak", explain: "Haze is yeast/protein/hop matter. IBU is bitterness." }
+    ]
+  },
+  {
+    prompt: "Ale yeast vs lager yeast — the floor version?",
+    options: [
+      { label: "Ales ferment warmer and faster; lagers ferment cooler and cleaner", quality: "strong", explain: "Correct — that’s enough to talk a guest through Gold Flash vs a Belgian without a textbook." },
+      { label: "Lagers are always hoppier than ales", quality: "weak", explain: "Style decides hops, not the yeast family alone." },
+      { label: "Ales cannot be pale", quality: "weak", explain: "Plenty of pale ales. Color is malt, not “ale vs lager.”" },
+      { label: "Lager yeast is only for sours", quality: "weak", explain: "Sours are a different conversation (bugs/acid). Lagers are clean and cool." }
+    ]
+  },
+  {
+    prompt: "A pint has no head and looks lifeless. First check?",
+    options: [
+      { label: "Dirty or lipstick-filmed glass, or beer that’s too cold / flat", quality: "strong", explain: "Correct — film kills foam. So does a glass right out of a freezer chest or a dying keg." },
+      { label: "Tell them all beer is supposed to be flat", quality: "weak", explain: "Head is part of the pour. Don’t teach that." },
+      { label: "Add a shot of soda water", quality: "weak", explain: "Don’t doctor the beer. Fix glass, temp, or the keg." },
+      { label: "Pour from higher to “add hops”", quality: "weak", explain: "A high pour adds foam, not hop character — and it can waste beer." }
+    ]
+  },
+  {
+    prompt: "Stouts are often served a little warmer than a light lager. Why?",
+    options: [
+      { label: "Cold mutes roast and chocolate; a touch warmer lets them show", quality: "strong", explain: "Correct — ice-cold stout tastes like brown water. Don’t freeze the nuance." },
+      { label: "Stout is safer at room temperature for hours", quality: "weak", explain: "Still keep kegs cold. “A little warmer in the glass” is not “leave it on the bar.”" },
+      { label: "ABV disappears when stout is cold", quality: "weak", explain: "ABV doesn’t vanish. Flavor hides." },
+      { label: "Health code requires stout at 70°F", quality: "weak", explain: "No. Draft still wants a cold keg." }
+    ]
+  },
+  {
+    prompt: "A guest wants “something hoppy but not bitter.” What do you reach toward?",
+    options: [
+      { label: "A hazy / juicy IPA, and say it’s hop aroma without the West Coast bite", quality: "strong", explain: "Correct — aroma vs bitterness is the distinction. Offer a taste." },
+      { label: "The bitterest West Coast on the wall, because hoppy means bitter", quality: "weak", explain: "That’s the trap. They asked for hop flavor, not chew-the-hops bitter." },
+      { label: "A nitro stout", quality: "weak", explain: "Roast isn’t hops. Different conversation." },
+      { label: "Whatever is closest to the handle they pointed at", quality: "weak", explain: "Listen first. Then point." }
+    ]
+  },
+  {
+    prompt: "How should packaged beer be stored in a cooler or retail fridge?",
+    options: [
+      { label: "Cold, dark, upright if you can — heat and sun age it fast", quality: "strong", explain: "Correct — beer is food. Light and heat are the enemies." },
+      { label: "In the window so guests can see the label", quality: "weak", explain: "Sun skunks beer. Sell it from the dark cooler." },
+      { label: "At room temp so hops “wake up”", quality: "weak", explain: "Warm storage ages beer. Wake hops by pouring fresh, not by cooking the can." },
+      { label: "On its side like wine, always", quality: "weak", explain: "Cans and most bottles are happier upright. This isn’t a cellar list." }
+    ]
+  },
+  {
+    prompt: "What are the four classic beer ingredients?",
+    options: [
+      { label: "Water, malt, hops, yeast", quality: "strong", explain: "Correct — everything else (fruit, coffee, lactose) is an extra on top of that." },
+      { label: "Barley, whiskey, hops, foam", quality: "weak", explain: "Foam isn’t an ingredient. Water and yeast are." },
+      { label: "Corn, sugar, yellow dye, bubbles", quality: "weak", explain: "That’s a joke about light macro lager, not how we brew." },
+      { label: "Grapes, malt, hops, yeast", quality: "weak", explain: "Grapes are wine. Beer starts with grain." }
+    ]
+  },
+  {
+    prompt: "A fatty burger hits the table. Pairing instinct?",
+    options: [
+      { label: "Bitterness or carbonation to cut richness — or malt if they want comfort", quality: "strong", explain: "Correct — cut or complement. Either is a real pairing if you say it out loud." },
+      { label: "The sweetest dessert beer we have", quality: "weak", explain: "Sweet on a greasy burger stacks. Cut or malt is the move." },
+      { label: "No beer — fat and beer don’t mix", quality: "weak", explain: "They mix if you pick the right one." },
+      { label: "Whatever has the highest ABV", quality: "weak", explain: "ABV isn’t a pairing rule." }
+    ]
+  },
+  {
+    prompt: "Cardboard / sherry / wet paper in a beer usually points to what (intro level)?",
+    options: [
+      { label: "Oxidation — old, warm, or roughly handled beer", quality: "strong", explain: "Correct — that’s the “this keg sat too long / got warm” conversation, not a new style." },
+      { label: "Too much Nam Jim on the chicken", quality: "weak", explain: "Sauce isn’t in the pint. Oxidation is stale beer." },
+      { label: "A Belgian yeast character you should sell as a feature", quality: "weak", explain: "Don’t sell cardboard as Belgian. Flag it to the bar." },
+      { label: "Not enough hops in the mash", quality: "weak", explain: "Hops aren’t mashed in as the main process. This is age and oxygen." }
+    ]
+  }
+];
+
+function academyCatalog() {
+  if (typeof beers !== "undefined" && Array.isArray(beers) && beers.length) return beers.filter((row) => beerName(row));
+  return liveTaps();
+}
+
+function beerStyleOf(beer) {
+  return String((typeof getStyle === "function" ? getStyle(beer) : "") || beer?.Style || beer?.style || "").trim();
+}
+
+function beerFlavorOf(beer) {
+  return String((typeof getFlavorProfile === "function" ? getFlavorProfile(beer) : "") || beer?.["Flavor Profile"] || beer?.flavor || "").trim();
+}
+
+function beerAbvNum(beer) {
+  const raw = String(beer?.ABV || beer?.abv || "").replace("%", "");
+  const n = parseFloat(raw);
+  return Number.isFinite(n) ? n : null;
+}
+
+const STYLE_DISTRACTORS = [
+  "Honey Lager", "Hazy IPA", "West Coast IPA", "Pilsner", "Amber Lager",
+  "Fruited Sour", "Belgian Golden Strong", "Saison", "Hefeweizen", "Nitro Stout", "Black IPA", "Kölsch"
+];
+
+function uniqueNonempty(list) {
+  const seen = new Set();
+  return (list || []).filter((item) => {
+    const key = String(item || "").trim().toLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function tagFoodItem(food) {
+  const hay = `${food?.name || ""} ${food?.description || ""} ${food?.section || ""}`.toLowerCase();
+  return {
+    fried: /fried|tender|chicken|fries|nachos|chips|tallow/.test(hay),
+    rich: /burger|steak|bacon|cheese|queso|pretzel|nachos|gouda|gruy|cheddar/.test(hay),
+    spicy: /buffalo|thai chili|chorizo|jalape|spicy|nam jim/.test(hay),
+    delicate: /salad|yogurt|hummus|avocado|fruit bowl/.test(hay),
+    sweet: /waffle|pancake|compote|jam|fruit|yogurt/.test(hay),
+    roast: /steak|burger|bacon|biltong|pork/.test(hay)
+  };
+}
+
+function scorePairingChoice(food, beer) {
+  const f = tagFoodItem(food);
+  const t = tagBeer(beer);
+  const name = beerName(beer);
+  const foodName = food?.name || "that plate";
+  const hay = beerHaystack(beer);
+  if (f.delicate && (t.bitter || (t.dark && !t.wheat && !t.sour))) {
+    return { quality: "weak", explain: `Close — ${name} is a lot of beer for ${foodName}. Lighter, wheat, or tart beers keep delicate food from disappearing.` };
+  }
+  if (f.sweet && t.bitter) {
+    return { quality: "weak", explain: `Close — bitterness fights dessert. A sour, wheat, or fruit-forward beer sits better with ${foodName}.` };
+  }
+  if ((f.fried || f.rich) && (t.bitter || t.hoppy || t.sour)) {
+    return { quality: "strong", explain: `Correct — bitterness or acidity cuts the richness of ${foodName}. ${name} gives the plate a reset.` };
+  }
+  if (f.spicy && (t.wheat || t.sour || t.hazy || t.fruity)) {
+    return { quality: "strong", explain: `Correct — spice likes fruit, wheat, or tart beer. ${name} cools ${foodName} instead of stacking heat.` };
+  }
+  if (f.sweet && (t.sour || t.fruity || t.wheat)) {
+    return { quality: "strong", explain: `Correct — fruit and acidity love ${foodName}. ${name} plays with the sweet side.` };
+  }
+  if (f.delicate && (t.light || t.wheat || t.sour || t.modelo)) {
+    return { quality: "strong", explain: `Correct — ${name} stays out of the way of ${foodName}. Light with delicate.` };
+  }
+  if (f.roast && (t.dark || /amber/.test(hay))) {
+    return { quality: "strong", explain: `Correct — malt and roast talk to each other. ${name} complements ${foodName}.` };
+  }
+  if ((f.fried || f.rich) && t.light) {
+    return { quality: "ok", explain: `That works — a clean beer refreshes fried food. A hoppier or tarter pick would cut even more.` };
+  }
+  return { quality: "ok", explain: `You can sell ${name} with ${foodName} if you say why. Bitterness cuts richness, acid cuts fat, malt loves roast, light beers love delicate plates.` };
+}
+
+function scorePourChoice(vignette, beer) {
+  const t = tagBeer(beer);
+  const hay = beerHaystack(beer);
+  const abv = beerAbvNum(beer);
+  const name = beerName(beer);
+  if (vignette === "lite") {
+    if (t.bitter) return { quality: "weak", explain: `Close — they asked for not bitter. ${name} will taste hoppy next to Miller Lite.` };
+    if (t.light || t.modelo) return { quality: "strong", explain: `Correct — stay in the lager lane. ${name} is the bridge from Miller Lite.` };
+    if (t.wheat || t.sour) return { quality: "ok", explain: `Soft enough if you explain it. A clean lager would have been the closest first pour.` };
+    return { quality: "ok", explain: `Keep it easy and not bitter. Tie it back to what they already drink.` };
+  }
+  if (vignette === "hazy") {
+    if (t.hazy && abv != null && abv <= 6.5) return { quality: "strong", explain: `Correct — still hazy, and ${abv}% keeps it sessionable.` };
+    if (t.hazy) return { quality: "ok", explain: `It’s hazy. Say the ABV out loud so they know if it’s heavier than they wanted.` };
+    if (t.bitter && !t.hazy) return { quality: "weak", explain: `West Coast isn’t what they asked for. Stay hazy, then talk ABV.` };
+    if (t.light) return { quality: "ok", explain: `Lower ABV, different flavor. Offer it as a lighter cousin, not a hazy.` };
+    return { quality: "ok", explain: `Say how it compares to a hazy — juice vs bitter, and the ABV.` };
+  }
+  if (t.dark && /imperial|barrel/.test(hay) && abv != null && abv >= 9) {
+    return { quality: "ok", explain: `It’s dark, and it’s heavy. Warn them, or offer a taste of something leaner.` };
+  }
+  if (t.dark && abv != null && abv <= 7) return { quality: "strong", explain: `Correct — dark without being a meal. ${name} is the move.` };
+  if (t.dark) return { quality: "ok", explain: `Dark, yes. Tell them the body and ABV so “not super heavy” stays honest.` };
+  if (/amber|brown|dunkel|schwarz/.test(hay)) return { quality: "strong", explain: `Correct — roasted color without stout weight.` };
+  if (t.light || t.modelo) return { quality: "weak", explain: `That’s not dark. They asked for color.` };
+  return { quality: "ok", explain: `If it isn’t dark, don’t sell it as dark. If it is, talk body, not just color.` };
+}
+
+function buildStyleQueue() {
+  const pool = academyCatalog().filter((beer) => beerStyleOf(beer));
+  const styles = uniqueNonempty(pool.map(beerStyleOf));
+  const questions = [];
+  shuffleCopy(pool).slice(0, 4).forEach((beer) => {
+    const style = beerStyleOf(beer);
+    const others = uniqueNonempty(styles.filter((s) => s.toLowerCase() !== style.toLowerCase()).concat(STYLE_DISTRACTORS));
+    const options = shuffleCopy([
+      { label: style, quality: "strong", explain: `Correct — ${beerName(beer)} is our ${style}.${beerFlavorOf(beer) ? ` ${beerFlavorOf(beer)}` : ""}` },
+      ...shuffleCopy(others).slice(0, 3).map((label) => ({
+        label,
+        quality: "weak",
+        explain: `Close — ${beerName(beer)} is a ${style}, not ${label}.${beerFlavorOf(beer) ? ` ${beerFlavorOf(beer)}` : ""}`
+      }))
+    ]);
+    if (options.length >= 3) {
+      questions.push({
+        setup: "Style Match",
+        prompt: `Which style is ${beerName(beer)}?`,
+        options
+      });
+    }
+  });
+  shuffleCopy(styles).slice(0, 2).forEach((style) => {
+    const matches = pool.filter((beer) => beerStyleOf(beer).toLowerCase() === style.toLowerCase());
+    const others = pool.filter((beer) => beerStyleOf(beer).toLowerCase() !== style.toLowerCase());
+    if (!matches.length || others.length < 2) return;
+    const correct = matches[0];
+    const options = shuffleCopy([
+      { label: beerName(correct), quality: "strong", explain: `Correct — ${beerName(correct)} is our ${style}.${beerFlavorOf(correct) ? ` ${beerFlavorOf(correct)}` : ""}` },
+      ...shuffleCopy(others).slice(0, 3).map((beer) => ({
+        label: beerName(beer),
+        quality: "weak",
+        explain: `Close — ${beerName(beer)} is a ${beerStyleOf(beer)}, not a ${style}. ${beerName(correct)} is the ${style}.`
+      }))
+    ]);
+    questions.push({
+      setup: "Style Match",
+      prompt: `Which MP beer is a ${style}?`,
+      options
+    });
+  });
+  return shuffleCopy(questions).slice(0, 6);
+}
+
+function buildFlavorQueue() {
+  const pool = academyCatalog().filter((beer) => beerFlavorOf(beer));
+  const flavors = uniqueNonempty(pool.map(beerFlavorOf));
+  const canned = [
+    "Citrus + stone fruit hops",
+    "Banana + clove",
+    "Coffee + vanilla",
+    "Coconut + strawberry",
+    "Pine + grapefruit bitterness",
+    "Tart raspberry + acid",
+    "Light honey malt",
+    "Roast chocolate + cream"
+  ];
+  const questions = [];
+  shuffleCopy(pool).forEach((beer) => {
+    const flavor = beerFlavorOf(beer);
+    const others = uniqueNonempty(flavors.filter((row) => row.toLowerCase() !== flavor.toLowerCase()).concat(canned));
+    if (others.length < 3) return;
+    questions.push({
+      setup: beerStyleOf(beer) || "Flavor Profile",
+      prompt: `${beerName(beer)} — which profile fits best?`,
+      options: shuffleCopy([
+        { label: flavor, quality: "strong", explain: `Correct — ${beerName(beer)} reads as ${flavor}.` },
+        ...shuffleCopy(others).slice(0, 3).map((label) => ({
+          label,
+          quality: "weak",
+          explain: `Close — ${beerName(beer)} is ${flavor}, not ${label}.`
+        }))
+      ])
+    });
+  });
+  return shuffleCopy(questions).slice(0, 5);
+}
+
+function buildPairQueue() {
+  const taps = liveTaps();
+  const menu = (typeof FOOD_MENU !== "undefined" && Array.isArray(FOOD_MENU) ? FOOD_MENU : [])
+    .filter((item) => ["dinner", "lunch", "brunch", "breakfast"].includes(item.category) && item.section !== "Sauces");
+  const foods = shuffleCopy(menu.filter((item) => /chicken|burger|steak|salad|waffle|pretzel|nachos|hummus|yogurt|fries/.test(`${item.name} ${item.section}`))).slice(0, 5);
+  if (taps.length < 3 || !foods.length) return [];
+  return foods.map((food) => {
+    const scored = shuffleCopy(taps).slice(0, 8).map((beer) => {
+      const result = scorePairingChoice(food, beer);
+      return { label: [beerName(beer), beerStyleOf(beer)].filter(Boolean).join(" — "), quality: result.quality, explain: result.explain };
+    });
+    const mixed = [
+      ...scored.filter((row) => row.quality === "strong").slice(0, 2),
+      ...scored.filter((row) => row.quality === "ok").slice(0, 1),
+      ...scored.filter((row) => row.quality === "weak").slice(0, 1)
+    ];
+    const options = shuffleCopy(mixed.length >= 3 ? mixed : scored).slice(0, 4);
+    return {
+      setup: "Pairing Lab",
+      scene: food.description || "",
+      prompt: `Guest orders ${food.name}. Which beer do you recommend?`,
+      options
+    };
+  });
+}
+
+function buildPourQueue() {
+  const taps = liveTaps();
+  if (taps.length < 3) return [];
+  const beats = [
+    { id: "lite", setup: "What would you pour?", scene: "“I usually drink Miller Lite and don’t want anything bitter.”" },
+    { id: "hazy", setup: "What would you pour?", scene: "“I like hazy IPAs but want something lower ABV.”" },
+    { id: "dark", setup: "What would you pour?", scene: "“I want something dark but not super heavy.”" }
+  ];
+  return beats.map((beat) => ({
+    setup: beat.setup,
+    scene: beat.scene,
+    prompt: "Pick from what’s actually on tap.",
+    options: shuffleCopy(taps).slice(0, 6).map((beer) => {
+      const result = scorePourChoice(beat.id, beer);
+      const meta = [beerName(beer), beerStyleOf(beer), beerAbvNum(beer) != null ? `${beerAbvNum(beer)}%` : ""].filter(Boolean).join(" — ");
+      return { label: meta, quality: result.quality, explain: result.explain };
+    })
+  }));
+}
+
+function buildCiceroneQueue() {
+  const questions = shuffleCopy(CICERONE_BANK).slice(0, 7).map((item) => ({
+    setup: "Cicerone Challenge",
+    prompt: item.prompt,
+    options: shuffleCopy(item.options)
+  }));
+  const taps = liveTaps().filter((beer) => beerAbvNum(beer) != null);
+  if (taps.length >= 3) {
+    const sorted = [...taps].sort((a, b) => beerAbvNum(b) - beerAbvNum(a));
+    const high = sorted[0];
+    questions.push({
+      setup: "Cicerone Challenge",
+      prompt: "From tonight’s taps, which beer is highest ABV?",
+      options: shuffleCopy(sorted.slice(0, 4)).map((beer) => ({
+        label: `${beerName(beer)} · ${beerAbvNum(beer)}%`,
+        quality: beerName(beer) === beerName(high) ? "strong" : "weak",
+        explain: beerName(beer) === beerName(high)
+          ? `Correct — ${beerName(high)} is ${beerAbvNum(high)}% tonight. Say the number before you pour a “fun” beer.`
+          : `Close — ${beerName(high)} is the heavy hitter at ${beerAbvNum(high)}%. ${beerName(beer)} is ${beerAbvNum(beer)}%.`
+      }))
+    });
+  }
+  return shuffleCopy(questions).slice(0, 8);
+}
+
+function recordAcademyIfNeeded(session) {
+  if (!session || session.recorded || typeof recordProgress !== "function") return;
+  if (typeof currentUser === "undefined" || !currentUser) {
+    session.recorded = true;
+    return;
+  }
+  session.recorded = true;
+  const total = Math.max(session.queueLength || (session.queue || []).length, 1);
+  recordProgress(session.id, "beer", session.right || 0, total);
+}
+
+function startAcademyGame(id) {
+  if (!BEER_ACADEMY_GAMES.some((game) => game.id === id)) return false;
+
+  if (id === "academy_brew") {
+    gameSession = {
+      id,
+      kind: "academy",
+      mode: "order",
+      steps: BREW_STEPS,
+      nextIndex: 0,
+      placed: [],
+      remaining: shuffleCopy(BREW_STEPS.map((step) => step.id)),
+      quiz: shuffleCopy(BREW_QUIZ),
+      queue: [],
+      queueLength: BREW_STEPS.length + BREW_QUIZ.length,
+      index: 0,
+      right: 0,
+      complete: false,
+      recorded: false,
+      missedThisStep: false,
+      feedback: null
+    };
+    return true;
+  }
+
+  const builders = {
+    academy_style: buildStyleQueue,
+    academy_flavor: buildFlavorQueue,
+    academy_pair: buildPairQueue,
+    academy_cicerone: buildCiceroneQueue,
+    academy_pour: buildPourQueue
+  };
+  const queue = builders[id] ? builders[id]() : [];
+  gameSession = {
+    id,
+    kind: "academy",
+    mode: "quiz",
+    queue,
+    queueLength: queue.length,
+    index: 0,
+    right: 0,
+    complete: false,
+    recorded: false,
+    feedback: null,
+    emptyReason: !queue.length
+  };
+  return true;
+}
+
+function academyMeta(id) {
+  return BEER_ACADEMY_GAMES.find((game) => game.id === id) || { title: "Beer Academy", desc: "" };
+}
+
+function renderAcademyGame(content) {
+  if (!gameSession || gameSession.kind !== "academy") {
+    content.innerHTML = wrapGame(`<div class="status"><strong>No academy game loaded.</strong></div>`);
+    return;
+  }
+  const meta = academyMeta(gameSession.id);
+  if (gameSession.emptyReason) {
+    content.innerHTML = wrapGame(`<div class="status"><strong>Need live beer or food data for this game.</strong> Open On Tap, then come back.</div>`);
+    return;
+  }
+  if (gameSession.complete) {
+    recordAcademyIfNeeded(gameSession);
+    const total = gameSession.queueLength || gameSession.right;
+    content.innerHTML = wrapGame(`
+      <div class="game-card academy-card">
+        <p class="scenario-eyebrow">Beer Academy</p>
+        <p class="game-question">${escapeHTML(meta.title)}</p>
+        <p class="wg-scene">You got <strong>${gameSession.right}</strong> of <strong>${total}</strong>. Fun score only — not a trainer eval, Skill Passport, or ranking.</p>
+        ${gameSession.id === "academy_cicerone" ? `<p class="academy-disclaimer">Finishing this does not make you a Certified Cicerone.</p>` : ""}
+        <button type="button" class="game-next" onclick="startGame('${gameSession.id}')">Play again</button>
+      </div>
+    `);
+    return;
+  }
+  if (gameSession.mode === "order") return renderBrewOrder(content, meta);
+  const item = gameSession.queue[gameSession.index];
+  if (!item) {
+    gameSession.complete = true;
+    return renderAcademyGame(content);
+  }
+  const fb = gameSession.feedback;
+  const ciceroneNote = gameSession.id === "academy_cicerone"
+    ? `<p class="academy-disclaimer">For the beer nerds. Completing this does not make you a Certified Cicerone.</p>`
+    : "";
+  content.innerHTML = wrapGame(`
+    <div class="game-card academy-card">
+      <p class="wg-progress">${escapeHTML(meta.title)} · ${gameSession.index + 1} of ${gameSession.queue.length}</p>
+      ${ciceroneNote}
+      <p class="scenario-eyebrow">${escapeHTML(item.setup || meta.title)}</p>
+      ${item.scene ? `<p class="wg-scene">${escapeHTML(item.scene)}</p>` : ""}
+      <p class="game-question">${escapeHTML(item.prompt)}</p>
+      <div class="game-options">
+        ${item.options.map((opt, idx) => `
+          <button type="button" class="${optionClass(fb, idx, opt.quality)}" ${fb ? "disabled" : `onclick="answerAcademy(${idx})"`}>${escapeHTML(opt.label)}</button>
+        `).join("")}
+      </div>
+      ${fb ? `<p class="scenario-feedback academy-explain is-${fb.quality}">${escapeHTML(fb.explain)}</p>
+        <button type="button" class="game-next" onclick="nextAcademy()">Next</button>` : ""}
+    </div>
+  `);
+}
+
+function renderBrewOrder(content, meta) {
+  const fb = gameSession.feedback;
+  const next = BREW_STEPS[gameSession.nextIndex];
+  content.innerHTML = wrapGame(`
+    <div class="game-card academy-card">
+      <p class="wg-progress">${escapeHTML(meta.title)} · put these in order</p>
+      <p class="scenario-eyebrow">Brew day</p>
+      <p class="game-question">Put these in order</p>
+      <ol class="brew-placed">
+        ${gameSession.placed.map((step) => `<li>${escapeHTML(step.label)}</li>`).join("")}
+        ${next ? `<li class="is-next">${escapeHTML(next.label)}?</li>` : ""}
+      </ol>
+      <div class="game-options">
+        ${gameSession.remaining.map((id) => {
+          const step = BREW_STEPS.find((row) => row.id === id);
+          return `<button type="button" class="game-option${fb ? " disabled" : ""}" ${fb ? "disabled" : `onclick="answerBrewStep('${id}')"`}>${escapeHTML(step.label)}</button>`;
+        }).join("")}
+      </div>
+      ${fb ? `<p class="scenario-feedback academy-explain is-${fb.quality}">${escapeHTML(fb.explain)}</p>
+        <button type="button" class="game-next" onclick="nextAcademy()">Next</button>` : ""}
+    </div>
+  `);
+}
+
+function answerBrewStep(id) {
+  if (!gameSession || gameSession.id !== "academy_brew" || gameSession.mode !== "order" || gameSession.feedback) return;
+  const expected = BREW_STEPS[gameSession.nextIndex];
+  if (!expected) return;
+  if (id !== expected.id) {
+    gameSession.missedThisStep = true;
+    gameSession.feedback = {
+      quality: "weak",
+      explain: `Not yet — ${expected.label} comes next. ${expected.why}`
+    };
+    if (typeof render === "function") render();
+    return;
+  }
+  if (!gameSession.missedThisStep) gameSession.right += 1;
+  gameSession.placed.push(expected);
+  gameSession.remaining = gameSession.remaining.filter((row) => row !== id);
+  gameSession.nextIndex += 1;
+  gameSession.missedThisStep = false;
+  gameSession.index += 1;
+  if (gameSession.nextIndex >= BREW_STEPS.length) {
+    gameSession.mode = "quiz";
+    gameSession.queue = gameSession.quiz;
+    gameSession.index = 0;
+  }
+  if (typeof render === "function") render();
+}
+
+function answerAcademy(idx) {
+  if (!gameSession || gameSession.kind !== "academy" || gameSession.feedback) return;
+  const item = (gameSession.queue || [])[gameSession.index];
+  const opt = item?.options?.[idx];
+  if (!opt) return;
+  if (opt.quality === "strong" || opt.quality === "ok") gameSession.right += 1;
+  gameSession.feedback = { idx, quality: opt.quality, explain: opt.explain };
+  if (typeof render === "function") render();
+}
+
+function nextAcademy() {
+  if (!gameSession || gameSession.kind !== "academy") return;
+  if (gameSession.mode === "order") {
+    gameSession.feedback = null;
+    if (gameSession.missedThisStep) {
+      const expected = BREW_STEPS[gameSession.nextIndex];
+      if (expected) {
+        gameSession.placed.push(expected);
+        gameSession.remaining = gameSession.remaining.filter((row) => row !== expected.id);
+        gameSession.nextIndex += 1;
+        gameSession.index += 1;
+        gameSession.missedThisStep = false;
+        if (gameSession.nextIndex >= BREW_STEPS.length) {
+          gameSession.mode = "quiz";
+          gameSession.queue = gameSession.quiz;
+          gameSession.index = 0;
+        }
+      }
+    }
+    if (typeof render === "function") render();
+    return;
+  }
+  gameSession.feedback = null;
+  gameSession.index += 1;
+  if (gameSession.index >= (gameSession.queue || []).length) {
+    gameSession.complete = true;
+  }
+  if (typeof render === "function") render();
+}
+
 if (typeof window !== "undefined") {
   window.WAR_GAMES = WAR_GAMES;
   window.FEATURED_GAME_IDS = FEATURED_GAME_IDS;
   window.TRIVIA_GAME_IDS = TRIVIA_GAME_IDS;
   window.ARCADE_GAMES = ARCADE_GAMES;
+  window.BEER_ACADEMY_GAMES = BEER_ACADEMY_GAMES;
   window.FLIGHT_PROMPT = FLIGHT_PROMPT;
   window.tagBeer = tagBeer;
   window.scoreFlight = scoreFlight;
   window.scoreReadGuestBeer = scoreReadGuestBeer;
+  window.beerPourLook = beerPourLook;
   window.startJudgmentGame = startJudgmentGame;
+  window.startAcademyGame = startAcademyGame;
   window.answerJudgment = answerJudgment;
   window.nextJudgment = nextJudgment;
   window.advanceRushFromFeedback = advanceRushFromFeedback;
@@ -1112,6 +1875,10 @@ if (typeof window !== "undefined") {
   window.submitFlight = submitFlight;
   window.openWarGameTraining = openWarGameTraining;
   window.renderJudgmentGame = renderJudgmentGame;
+  window.renderAcademyGame = renderAcademyGame;
+  window.answerAcademy = answerAcademy;
+  window.answerBrewStep = answerBrewStep;
+  window.nextAcademy = nextAcademy;
 }
 
 if (typeof module !== "undefined" && module.exports) {
@@ -1120,6 +1887,7 @@ if (typeof module !== "undefined" && module.exports) {
     FEATURED_GAME_IDS,
     TRIVIA_GAME_IDS,
     ARCADE_GAMES,
+    BEER_ACADEMY_GAMES,
     FLIGHT_PROMPT,
     RUSH_NODES,
     SATURDAY_PROBLEMS,
@@ -1127,6 +1895,7 @@ if (typeof module !== "undefined" && module.exports) {
     scoreFlight,
     scoreReadGuestBeer,
     styleFamily,
+    beerPourLook,
     coachingFromSession,
     pickReadGuestOptions,
     uniqueTrain

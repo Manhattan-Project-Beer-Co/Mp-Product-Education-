@@ -24,9 +24,15 @@ const TRAINING_SKILL_META = {
   sell_this: { label: "Sell This Today", kind: "observe" },
   pairing_talk: { label: "Food + beer pairing", kind: "know" },
   recovery_scenario: { label: "Complaint recovery", kind: "demonstrate" },
-  independent_service: { label: "Own your section", kind: "demonstrate" },
+  independent_service: { label: "Own the room", kind: "demonstrate" },
   events_awareness: { label: "What’s on the books", kind: "know" },
-  trainer_signoff: { label: "Trainer sign-off", kind: "demonstrate" }
+  trainer_signoff: { label: "Trainer sign-off", kind: "demonstrate" },
+  ticket_flow: { label: "How a ticket moves", kind: "know" },
+  know_the_space: { label: "Know the space", kind: "know" },
+  guest_location: { label: "Name + location on every ticket", kind: "observe" },
+  ticket_accuracy: { label: "Ticket accuracy", kind: "know" },
+  runner_check: { label: "Runner ticket check", kind: "observe" },
+  ticket_correction: { label: "Ticket corrections", kind: "demonstrate" }
 };
 
 const TRAINING_LESSONS = {
@@ -82,7 +88,7 @@ const TRAINING_LESSONS = {
   },
   guest_greet: {
     learn: {
-      facts: "Clock-in greet: eye contact, welcome, “have you been in before?”, first drink or water. Don’t vanish into side work.",
+      facts: "Clock-in greet: eye contact, welcome, “have you been in before?”, first drink or water. Guests order at the bar and seat themselves — there is no host. Don’t vanish into side work.",
       guest: "A greet in the first minute beats a perfect beer two minutes later.",
       why: "Unacknowledged guests start the night already annoyed."
     },
@@ -182,9 +188,9 @@ const TRAINING_LESSONS = {
   },
   independent_service: {
     learn: {
-      facts: "Scan → prioritize → act → communicate → reset. Never walk empty-handed. Help outside your section when the room needs it.",
-      guest: "They should not have to wave twice.",
-      why: "Waiting to be told is how sections collapse at 7:30."
+      facts: "Scan → prioritize → act → communicate → reset. Never walk empty-handed. There are no traditional server sections — Shift Lead, Bartender, Float, and Run/Bus rotate. Think about the entire taproom.",
+      guest: "They should not have to wave twice — patio, bar, and production included.",
+      why: "Waiting to be told is how 7:30 gets worse."
     },
     practice: "Play The Rush, then work 30 minutes of service using the loop. After each lap, name what you scanned.",
     prove: "Trainer watches a rush window. You don’t disappear into side work.",
@@ -192,7 +198,7 @@ const TRAINING_LESSONS = {
   },
   events_awareness: {
     learn: {
-      facts: "Events is a My Shift page: what’s published this week, event checklists, event SOPs. Know if private dining is using the production space before you stash glassware there.",
+      facts: "Events is a My Shift page: what’s published this week, guest count, taproom impact, patio, production/back, food notes. Production seating may be an event or extra seats — check before you stash glassware there.",
       guest: "If someone asks about a private event, point them to the lead — don’t guess capacity.",
       why: "Walking into a buyout unprepared makes the whole floor look surprised."
     },
@@ -209,8 +215,215 @@ const TRAINING_LESSONS = {
     practice: "Review Skills you can do with your trainer. Mark anything that still needs practice.",
     prove: "Trainer completes the handoff: strength, needs practice, next focus.",
     reference: { label: "Stay on Training", stay: true }
+  },
+  ticket_flow: {
+    learn: {
+      facts: "Guests order at the bar. Food tickets go upstairs to kitchen. Runners check the ticket upstairs, then carry food down. Patio, taproom, and production/back are all destinations.",
+      guest: "They should never have to wonder if anyone knows where they sat.",
+      why: "A ticket without a location is a plate wandering the stairs."
+    },
+    practice: "Say the path out loud: bar ticket → kitchen upstairs → runner check → table downstairs.",
+    prove: "Tell your trainer who owns accuracy at send, who owns the upstairs check, and who cooks to the ticket.",
+    reference: { label: "Kitchen Ticket SOP", sopTitle: "Kitchen Ticket SOP" }
+  },
+  know_the_space: {
+    learn: {
+      facts: "Bar service, seat yourself, no host. Daily assignments: Shift Lead, Bartender, Float, Run/Bus — everyone is cross-trained and rotates. Kitchen is upstairs. Outdoor patio. Production/back may be extra seating or a private event.",
+      guest: "If they look lost, they are looking for a seat or the bar — there is no host stand to point at.",
+      why: "If you only watch “your” chairs, patio and production die."
+    },
+    practice: "Walk the room once: bar, taproom floor, patio, stairs to kitchen, production/back. Name today’s assignment and who else is on.",
+    prove: "Trainer: “Where does food get checked?” and “Where might an event be using chairs?” You answer without guessing.",
+    reference: { label: "Today's Floor", tab: "today-floor" },
+    visual: "space"
+  },
+  guest_location: {
+    learn: {
+      facts: "Every ticket: guest name as Last, F. and a real location (Patio 4, Bar, High-top 2, Production). Seat-yourself is not an excuse to skip location.",
+      guest: "Their beer and their food have to find the same people.",
+      why: "Wrong patio vs production is how a table eats someone else’s chicken."
+    },
+    practice: "Write three example headers: Garcia, M. / Patio 3 · Patel, A. / Bar · Nguyen, T. / Production.",
+    prove: "Trainer watches you put name + location on a ticket before send.",
+    reference: { label: "Kitchen Ticket SOP", sopTitle: "Kitchen Ticket SOP" }
+  },
+  ticket_accuracy: {
+    learn: {
+      facts: "A complete ticket has guest name, location, every food and drink item, modifiers, and allergies. Review it before send. Kitchen cooks what is printed, not what you meant.",
+      guest: "“No pickle” and “shellfish allergy” are not optional flavor text.",
+      why: "The runner only knows what you wrote."
+    },
+    practice: "Compare the correct and incorrect ticket examples below. Mark what is missing before you would send.",
+    prove: "Trainer: you catch a missing modifier and a missing allergy on sample tickets.",
+    reference: { label: "Kitchen Ticket SOP", sopTitle: "Kitchen Ticket SOP" },
+    quiz: "ticket_accuracy"
+  },
+  runner_check: {
+    learn: {
+      facts: "Before you leave the kitchen: read guest name, location, items, modifiers, allergies. Match plates to that ticket. Then walk downstairs. Food already on a clock beats a pretty patio.",
+      guest: "The plate in your hands is their meal — not a tray of random food.",
+      why: "Grabbing “whatever looks done” is how Patio 2 gets Production’s order."
+    },
+    practice: "Use the runner checklist on two imaginary tickets upstairs. Do not skip the read.",
+    prove: "Trainer watches one real or staged run. You read the ticket out loud before you pick up plates.",
+    reference: { label: "Kitchen Ticket SOP", sopTitle: "Kitchen Ticket SOP" },
+    visual: "runner"
+  },
+  ticket_correction: {
+    learn: {
+      facts: "If the ticket is already in kitchen, tell them now. Do not only fire a second conflicting ticket. Remakes need a verbal plus the correction. Shift Lead for lost plates, comps, and safety.",
+      guest: "They should hear an honest fix, not a silent reprint.",
+      why: "A second silent ticket is how you get two burgers or none."
+    },
+    practice: "Play Saturday Night checkout / allergen beats. Say the sentence you would use to kitchen.",
+    prove: "Trainer: you sent a ticket with no location. Walk the correction — kitchen first, then the guest if food already moved.",
+    reference: { label: "Kitchen Ticket SOP", sopTitle: "Kitchen Ticket SOP" },
+    quiz: "ticket_correction"
   }
 };
+
+const TICKET_QUIZZES = {
+  ticket_accuracy: [
+    {
+      id: "A",
+      prompt: "Which guest name belongs on the ticket?",
+      ticket: "Loc: Patio 3\n1 Fried Chicken",
+      options: [
+        { text: "Garcia, M.", good: true, tip: "Last, F. — kitchen and runners can read it at a glance." },
+        { text: "Maria", good: false, tip: "First name only is how two Marias collide on patio." },
+        { text: "Leave it blank — you’ll remember the table.", good: false, tip: "The runner upstairs cannot read your memory." }
+      ]
+    },
+    {
+      id: "B",
+      prompt: "What is wrong with this ticket?",
+      ticket: "Garcia, M.\n1 Fried Chicken\n1 Gold Flash pint",
+      options: [
+        { text: "Missing table / location.", good: true, tip: "Seat yourself still needs Patio 3, Bar, or Production on the ticket." },
+        { text: "The beer should not be on a food ticket.", good: false, tip: "Complete food and drink details belong together so the run is whole." },
+        { text: "The name format is wrong.", good: false, tip: "Garcia, M. is the house format." }
+      ]
+    },
+    {
+      id: "C",
+      prompt: "Guest said extra hot and no pickle. Which ticket is send-ready?",
+      options: [
+        { text: "Garcia, M. · Patio 3 · 1 Fried Chicken — extra hot, no pickle", good: true, tip: "Modifiers live on the ticket, not in the air." },
+        { text: "Garcia, M. · Patio 3 · 1 Fried Chicken — you’ll tell kitchen on the way up", good: false, tip: "Kitchen cooks the ticket, not the hallway conversation." },
+        { text: "Garcia, M. · 1 Fried Chicken extra hot (location later)", good: false, tip: "Location is not optional." }
+      ]
+    },
+    {
+      id: "D",
+      prompt: "Guest mentioned a shellfish allergy. The ticket has the chicken and location. What is still missing?",
+      ticket: "Garcia, M.\nLoc: Patio 3\n1 Fried Chicken — extra hot, no pickle",
+      options: [
+        { text: "Allergy note on the ticket, confirmed with kitchen before send.", good: true, tip: "If it is not on the ticket, it did not happen." },
+        { text: "Nothing — you’ll mention it if kitchen asks.", good: false, tip: "Kitchen should not have to ask. Stop and confirm." },
+        { text: "A second ticket that only says ALLERGY.", good: false, tip: "One complete ticket. Do not split the truth across two slips." }
+      ]
+    },
+    {
+      id: "E",
+      prompt: "Which of these is a complete, reviewable ticket?",
+      ticket: "Garcia, M.\nLoc: Patio 3\n1 Fried Chicken — extra hot, no pickle\nALLERGY: shellfish\n1 Gold Flash pint",
+      options: [
+        { text: "This one — name, location, items, modifiers, allergy. Review, then send.", good: true, tip: "Read it once like a runner who has never met Garcia." },
+        { text: "Drop the beer — kitchen doesn’t need it.", good: false, tip: "Complete food and drink details keep the run honest." },
+        { text: "Send now and fix spelling later with a second ticket.", good: false, tip: "Review before send. Corrections after send are a different skill." }
+      ]
+    }
+  ],
+  ticket_correction: [
+    {
+      id: "F",
+      prompt: "You already sent a ticket with no location. Food is still upstairs. What do you do?",
+      options: [
+        { text: "Tell kitchen the location now. Do not only fire a second silent ticket.", good: true, tip: "Verbal plus urgency. A second slip can duplicate the order." },
+        { text: "Send a new full ticket and walk away.", good: false, tip: "That is how you get two chickens." },
+        { text: "Wait for the runner to guess patio vs production.", good: false, tip: "Guessing destinations is the failure." }
+      ]
+    }
+  ]
+};
+
+const TICKET_QUIZ_ANSWERS = {};
+
+function renderTicketSample(text) {
+  if (!text) return "";
+  return `<pre class="ticket-sample">${escapeHTML(text)}</pre>`;
+}
+
+function renderKnowTheSpaceVisual() {
+  return `
+    <div class="space-map" aria-label="Taproom zones">
+      <div class="space-map-row">
+        <div class="space-zone"><span>Kitchen upstairs</span><em>Check tickets here before you run</em></div>
+      </div>
+      <div class="space-map-row">
+        <div class="space-zone"><span>Bar</span><em>Guests order here · no host</em></div>
+        <div class="space-zone"><span>Taproom</span><em>Seat yourself</em></div>
+      </div>
+      <div class="space-map-row">
+        <div class="space-zone"><span>Patio</span><em>Outdoor seating · bus on the walk</em></div>
+        <div class="space-zone"><span>Production / back</span><em>Extra seats or private event</em></div>
+      </div>
+      <p class="training-section-lead">Photos of each zone will live here. Assignments rotate: Shift Lead · Bartender · Float · Run/Bus.</p>
+    </div>
+  `;
+}
+
+function renderRunnerChecklist() {
+  return `
+    <ol class="runner-check">
+      <li>Read guest name</li>
+      <li>Read table / location</li>
+      <li>Read items, modifiers, allergies</li>
+      <li>Match plates to that ticket</li>
+      <li>Then walk downstairs</li>
+    </ol>
+  `;
+}
+
+function renderTrainingQuiz(quizKey) {
+  const items = TICKET_QUIZZES[quizKey] || [];
+  if (!items.length) return "";
+  return `
+    <section class="training-lesson-block">
+      <h3>Check yourself</h3>
+      <p>Ticket standards — not a software walkthrough. Pick the house way.</p>
+      ${items.map((item, qIdx) => {
+        const state = TICKET_QUIZ_ANSWERS[`${quizKey}:${qIdx}`];
+        return `
+          <div class="ticket-quiz" id="ticket-quiz-${quizKey}-${qIdx}">
+            <p class="ticket-quiz-kicker">Example ${item.id}</p>
+            <p>${escapeHTML(item.prompt)}</p>
+            ${renderTicketSample(item.ticket)}
+            <div class="game-options">
+              ${item.options.map((opt, idx) => {
+                let cls = "game-option";
+                if (state) {
+                  cls += " disabled";
+                  if (opt.good) cls += " correct";
+                  else if (state.idx === idx) cls += " wrong";
+                }
+                return `<button type="button" class="${cls}" ${state ? "disabled" : `onclick="answerTrainingQuiz('${quizKey}', ${qIdx}, ${idx})"`}>${escapeHTML(opt.text)}</button>`;
+              }).join("")}
+            </div>
+            ${state ? `<p class="scenario-feedback">${escapeHTML(item.options[state.idx]?.tip || "")}</p>` : ""}
+          </div>
+        `;
+      }).join("")}
+    </section>
+  `;
+}
+
+function answerTrainingQuiz(quizKey, qIdx, idx) {
+  const item = (TICKET_QUIZZES[quizKey] || [])[qIdx];
+  if (!item || TICKET_QUIZ_ANSWERS[`${quizKey}:${qIdx}`]) return;
+  TICKET_QUIZ_ANSWERS[`${quizKey}:${qIdx}`] = { idx };
+  if (typeof render === "function") render();
+}
 
 const TRAINING_KIND_LABEL = {
   know: "Learn",
@@ -238,7 +451,7 @@ const DAY_IN_THE_LIFE = [
   {
     id: "orient",
     title: "Get oriented",
-    points: ["Walk the floor once", "See who’s on bar vs floor", "Note events or buyouts", "Fill water / sanitizer if it’s thin"]
+    points: ["Walk the floor once — bar, patio, production/back, stairs to kitchen", "See today’s assignments: Shift Lead, Bartender, Float, Run/Bus", "Note events or buyouts using production", "Fill water / sanitizer if it’s thin"]
   },
   {
     id: "pre",
@@ -253,7 +466,7 @@ const DAY_IN_THE_LIFE = [
   {
     id: "rush",
     title: "Rush",
-    points: ["Scan the room", "Prioritize the window and waving guests", "Run food", "Communicate", "Help outside your section", "Don’t disappear into side work"],
+    points: ["Scan the room", "Prioritize upstairs tickets and the bar line", "Run food", "Communicate", "Help outside your assignment", "Don’t disappear into side work"],
     why: "Every unnecessary trip adds up during a rush. Moving intentionally keeps the floor cleaner and gets guests what they need faster."
   },
   {
@@ -269,11 +482,11 @@ const DAY_IN_THE_LIFE = [
 ];
 
 const SERVICE_LOOP = [
-  { title: "Scan", example: "Window, waving table, dirty glasses, bartender call." },
-  { title: "Prioritize", example: "Food dying in the window beats a water top-off." },
-  { title: "Act", example: "Run the food. Then the wave. Then the glass." },
-  { title: "Communicate", example: "“I’ve got 12.” “Window is slammed.” “Need a lead on 4.”" },
-  { title: "Reset", example: "Hands empty? Grab glassware or menus on the way back." }
+  { title: "Scan", example: "Upstairs tickets, bar line, patio, production seating." },
+  { title: "Prioritize", example: "Finished food upstairs beats a water top-off." },
+  { title: "Act", example: "Check the ticket, run the food. Then the bar. Then the glass." },
+  { title: "Communicate", example: "“I’ve got patio 3.” “Tickets are stacked.” “Need a lead on production.”" },
+  { title: "Reset", example: "Hands empty? Grab glassware or menus on the way back. Never walk empty-handed." }
 ];
 
 let trainingState = {
@@ -577,7 +790,7 @@ function trainingQuickLink(action) {
     return;
   }
   if (action === "feedback") {
-    activateAppTab("feedback");
+    activateAppTab("features");
     return;
   }
   if (action === "games") {
@@ -873,12 +1086,16 @@ function renderLesson(state) {
           <p class="training-why-kicker">Why this matters</p>
           <p>${escapeHTML(lesson.learn.why)}</p>
         </div>
+        ${lesson.visual === "space" ? renderKnowTheSpaceVisual() : ""}
       </section>
 
       <section class="training-lesson-block">
         <h3>Practice</h3>
         <p>${escapeHTML(lesson.practice)}</p>
+        ${lesson.visual === "runner" ? renderRunnerChecklist() : ""}
       </section>
+
+      ${lesson.quiz ? renderTrainingQuiz(lesson.quiz) : ""}
 
       <section class="training-lesson-block">
         <h3>Prove</h3>
@@ -886,7 +1103,6 @@ function renderLesson(state) {
       </section>
 
       ${lesson.reference ? `
-        <p class="training-ref-note">Reference — supplemental, not the lesson.</p>
         <button type="button" class="btn btn-secondary" onclick="openTrainingReference(TRAINING_LESSONS['${escapeForAttribute(lessonKey)}'].reference)">${escapeHTML(lesson.reference.label)} →</button>
       ` : ""}
 
@@ -1099,7 +1315,7 @@ if (typeof window !== "undefined") {
   window.trainingQuickLink = trainingQuickLink;
   window.showTrainerMode = showTrainerMode;
   window.showTrainingDashboard = showTrainingDashboard;
-  window.setTrainingSkillStatus = setTrainingSkillStatus;
+  window.answerTrainingQuiz = answerTrainingQuiz;
   window.saveTrainingHandoff = saveTrainingHandoff;
 }
 

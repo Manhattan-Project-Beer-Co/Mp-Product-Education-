@@ -9,10 +9,10 @@ const seven = require("./seven-shifts");
 const DEFAULT_TZ = process.env.SEVEN_SHIFTS_TIMEZONE || "America/Chicago";
 
 const FLOOR_STATIONS = [
-  { key: "run_bus", label: "Run / Bus" },
-  { key: "coffee_bar", label: "Coffee / Bar" },
-  { key: "event", label: "Event" },
-  { key: "bar", label: "Bar" }
+  { key: "shift_lead", label: "Shift Lead" },
+  { key: "bartender", label: "Bartender" },
+  { key: "float", label: "Float" },
+  { key: "run_bus", label: "Run / Bus" }
 ];
 
 const FLOOR_STATION_KEYS = new Set(FLOOR_STATIONS.map(s => s.key));

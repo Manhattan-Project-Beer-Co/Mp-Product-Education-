@@ -276,7 +276,7 @@
   input[type="email"],
   input[type="password"] {
     width: 100%;
-    padding: 11px 14px 11px 42px;
+    padding: 8px 12px;
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-md);
     font-family: var(--font);
@@ -286,6 +286,9 @@
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-shadow: var(--shadow-sm);
+  }
+  .search-wrap input[type="text"] {
+    padding: 11px 14px 11px 42px;
   }
 
   .auth-panel input {
@@ -1804,7 +1807,7 @@
     font-size: 15px;
     line-height: 1.6;
     color: var(--muted);
-    max-width: 540px;
+    max-width: 42rem;
   }
 
   .coffee-subtabs,
@@ -2566,9 +2569,10 @@
   .classified-toast span { font-size: 14px; line-height: 1.4; }
 
   .guide-page {
-    max-width: 720px;
+    max-width: 1080px;
     margin: 0 auto;
-    padding: 0 20px 40px;
+    padding: 0 var(--page-pad) 40px;
+    width: 100%;
   }
 
   .guide-intro {
@@ -4198,8 +4202,10 @@
     box-shadow: 0 6px 18px rgba(9, 9, 11, 0.2);
   }
   .today-floor {
-    max-width: 760px;
+    max-width: 1080px;
     margin: 0 auto;
+    padding: 0 var(--page-pad) 40px;
+    width: 100%;
   }
   .today-floor__intro {
     margin-bottom: 18px;
@@ -4573,11 +4579,17 @@
     max-width: 42rem;
     line-height: 1.45;
   }
+  .page-header,
+  .page-header-actions {
+    overflow: visible;
+  }
   .page-header-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+    position: relative;
+    z-index: 20;
   }
   .page-back,
   .stage-back {
@@ -5029,13 +5041,307 @@
     width: 52px;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: var(--ink);
   }
-  .ontap-table .name-col { font-weight: 650; color: var(--ink); }
-  .ontap-table .flavor-col { color: var(--muted); max-width: 280px; }
+  .ontap-table .name-col { font-weight: 700; color: var(--ink); font-size: 1.02rem; }
+  .ontap-table .style-col { font-weight: 600; color: var(--ink); }
+  .ontap-table .quiet-col { color: var(--muted); font-size: 0.84rem; font-weight: 500; }
+  .ontap-table .flavor-col { color: var(--muted); max-width: 280px; font-size: 0.84rem; }
   .ontap-table .meta-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
   .ontap-mobile-list { display: none; }
+  .tap-entry {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 10px 14px;
+    padding: 12px 4px 14px;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .tap-entry:last-child { border-bottom: 0; }
+  .tap-entry-num {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .tap-entry-num small {
+    display: block;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .tap-entry-name {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .tap-entry-style {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .tap-entry-meta {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .app-state {
+    margin: 12px 0 24px;
+    padding: 18px 4px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .app-state-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .app-state-detail {
+    margin: 6px 0 0;
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .app-state.is-error .app-state-title { color: #e8b4aa; }
+
+  .edit-form-section {
+    margin: 0 0 18px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .edit-form-section:last-of-type { border-bottom: 0; }
+  .edit-form-heading {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .edit-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+  }
+  .edit-form-field.is-span,
+  .edit-form-grid .is-span { grid-column: 1 / -1; }
+  .edit-form-field label,
+  .weekly-special-edit .edit-form-field label {
+    display: block;
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .weekly-special-edit input,
+  .weekly-special-edit select,
+  .merch-admin-panel input[type="text"],
+  .merch-admin-panel input[type="number"],
+  .merch-admin-panel select {
+    min-height: 38px;
+    padding: 7px 10px;
+    font-size: 14px;
+  }
+  .weekly-special-edit textarea,
+  .merch-admin-panel textarea {
+    min-height: 72px;
+    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  @media (max-width: 720px) {
+    .edit-form-grid { grid-template-columns: 1fr; }
+  }
+
+  .today-floor__yours {
+    margin: 0 0 18px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .today-floor__yours-kicker {
+    margin: 0 0 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .today-floor__yours h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+  .today-floor__yours p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .team-stuff {
+    margin: 36px 0 8px;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .team-stuff .home-section-title {
+    margin-bottom: 6px;
+  }
+  .team-stuff .home-section-lead {
+    margin: 0 0 12px;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .app-credit {
+    margin: 28px 0 0;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    opacity: 0.72;
+    line-height: 1.55;
+  }
+  .app-credit + .app-credit { margin-top: 0; }
+  .guide-report {
+    margin: 18px 0 0;
+  }
+  .guide-report p {
+    margin: 0 0 8px;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .wg-group-title {
+    max-width: 1080px;
+    margin: 8px auto 0;
+    padding: 0 24px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .game-hub.arcade-hub { padding-top: 12px; }
+  .highway-shell {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 0 16px 20px;
+  }
+  .highway-hud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin: 0 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .highway-hud strong { color: var(--ink); font-size: 13px; letter-spacing: 0; }
+  .highway-hud.is-boosting { color: #d7a36f; }
+  .highway-boost-chip {
+    margin-left: auto;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(201, 149, 112, 0.18);
+    color: #e8c399;
+    font-weight: 700;
+  }
+  .highway-boost-chip[hidden] { display: none !important; }
+  .highway-stage {
+    position: relative;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #101214;
+  }
+  .highway-stage canvas {
+    display: block;
+    width: 100%;
+    height: min(48vh, 400px);
+    touch-action: none;
+  }
+  .highway-overlay[hidden] { display: none !important; }
+  .highway-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 6, 7, 0.82);
+  }
+  .highway-overlay-panel {
+    min-width: 196px;
+    max-width: 86%;
+    padding: 18px 18px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: #161a1c;
+    color: #f1eee7;
+    text-align: center;
+  }
+  .highway-overlay-kicker {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .highway-overlay-stat {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #c5c2bb;
+  }
+  .highway-overlay-stat strong { color: #f1eee7; }
+  .highway-overlay-panel .btn { margin-top: 12px; }
+  .highway-drive {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin: 10px 0 8px;
+  }
+  .highway-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 0 0 6px;
+  }
+  .highway-controls .btn {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+  .highway-pad {
+    min-height: 56px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: #1a1e20;
+    color: #f1eee7;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .highway-pad-boost { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: #e8c399; border-color: rgba(201,149,112,0.4); }
+  .highway-help {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+    text-align: center;
+  }
   .ontap-row-edit {
     margin-top: 8px;
   }
@@ -5068,41 +5374,54 @@
   }
   .ontap-print-menu {
     position: relative;
+    z-index: 80;
   }
-  .ontap-print-menu > summary {
-    list-style: none;
-    cursor: pointer;
-  }
-  .ontap-print-menu > summary::-webkit-details-marker { display: none; }
+  .ontap-print-menu-list[hidden] { display: none !important; }
   .ontap-print-menu-list {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 6px);
-    z-index: 50;
-    min-width: 228px;
+    position: fixed;
+    z-index: 4000;
+    min-width: 240px;
+    width: max-content;
+    max-width: min(280px, calc(100vw - 24px));
     padding: 6px;
-    border: 1px solid var(--line-strong);
+    border: 1px solid #4a5156;
     border-radius: 10px;
-    background: var(--surface);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.32);
+    background: #1c2124;
+    color: #f1eee7;
+    color-scheme: light;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.48);
+    opacity: 1;
+    visibility: visible;
   }
-  .ontap-print-menu-list button {
+  .ontap-print-item {
     display: block;
     width: 100%;
     margin: 0;
-    padding: 10px 12px;
+    padding: 11px 12px;
     border: 0;
     border-radius: 8px;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
+    background: #1c2124 !important;
+    color: #f1eee7 !important;
+    -webkit-text-fill-color: #f1eee7 !important;
+    font: 600 13px/1.3 var(--font-display);
     text-align: left;
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
-  .ontap-print-menu-list button:hover {
-    background: rgba(156, 107, 74, 0.14);
+  .ontap-print-item:hover {
+    background: #2a2420 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  .ontap-print-item:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -2px;
+    background: #2a2420 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
   }
   .ontap-print-root { display: none; }
   .print-preview-stage {
@@ -5606,7 +5925,7 @@
 
   /* Training dashboard (UX Phase 6) */
   .training-page {
-    max-width: 760px;
+    max-width: 1080px;
     margin: 0 auto;
     padding: 8px var(--page-pad) 56px;
     width: 100%;
@@ -5735,6 +6054,26 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ink);
+  }
+  .training-next-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+  .training-next-list li {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .training-next-list strong {
+    display: inline-block;
+    min-width: 8.5rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   .training-section-lead {
     margin: 0 0 14px;
@@ -6333,9 +6672,11 @@
     .page-header {
       flex-direction: column;
       align-items: stretch;
+      overflow: visible;
     }
     .page-header-actions {
       width: 100%;
+      overflow: visible;
     }
     .page-header-actions .btn {
       flex: 1 1 auto;
@@ -6796,6 +7137,23 @@
       background: #15181a !important;
       border-color: var(--line-strong) !important;
       box-shadow: none !important;
+    }
+    .ontap-print-menu-list {
+      background: #1c2124 !important;
+      color: #f1eee7 !important;
+      border-color: #4a5156 !important;
+      z-index: 4000 !important;
+    }
+    .ontap-print-item {
+      color: #f1eee7 !important;
+      -webkit-text-fill-color: #f1eee7 !important;
+      background: #1c2124 !important;
+    }
+    .ontap-print-item:hover,
+    .ontap-print-item:focus-visible {
+      background: #2a2420 !important;
+      color: #fff !important;
+      -webkit-text-fill-color: #fff !important;
     }
     .btn-secondary:hover, .btn-icon:hover, .btn-edit:hover, .btn-print:hover,
     .auth-btn:hover, .game-back:hover, .flash-nav button:hover {
@@ -7381,7 +7739,7 @@
     /* Ask MP: one fast operational search surface. */
     .ask-mp-page {
       width: 100%;
-      max-width: 860px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 8px var(--page-pad) 56px;
     }
@@ -7659,10 +8017,6 @@
         <button class="auth-btn primary" onclick="startMicrosoftSignIn()">Sign in with Microsoft</button>
       </div>
     </div>
-    <div class="sidebar-credit">
-      <span>MP Launch Pad · v1.0 Created by</span>
-      <span>Meredith McCain and Tanner Ruminer</span>
-    </div>
   </aside>
 
   <div class="app-stage">
@@ -7716,11 +8070,11 @@
 
 <main id="appMain" class="app-main" tabindex="-1">
 <div id="content">
-  <div class="status"><strong>Loading beer list…</strong> Please wait a moment.</div>
+  <div class="status"><strong>Loading today’s taps…</strong></div>
 </div>
 </main>
 
-<footer class="app-footer">MP LAUNCH PAD · Manhattan Project Beer Co. · Internal use</footer>
+<footer class="app-footer">Manhattan Project Beer Co. · Internal use</footer>
   </div>
 </div>
 
@@ -7758,6 +8112,7 @@
 <script src="ui.js"></script>
 <script src="training.js"></script>
 <script src="war-games.js"></script>
+<script src="arcade.js"></script>
 <script>
 const API_BASE = "";
 let currentUser = null;
@@ -7817,11 +8172,14 @@ const BEER_RATING_LABELS = {
 };
 
 const FEEDBACK_CATEGORY_LABELS = {
+  app_issue: "App issue",
   bug: "Bug / something broken",
   wrong_info: "Wrong information",
   idea: "Idea / suggestion",
   other: "Other"
 };
+
+let feedbackPrefill = null;
 
 const FEEDBACK_TAB_OPTIONS = window.SITE_FEATURES.feedbackTabOptions;
 
@@ -7830,6 +8188,7 @@ function getFeatureSections() {
 }
 
 let beers = [];
+let beersLoadError = "";
 let foods = [];
 let foodCategory = "all";
 let merchSection = "stock";
@@ -8988,7 +9347,19 @@ const GAME_POINT_VALUES = {
   saturday: 15
 };
 
-const GAMES = typeof WAR_GAMES !== "undefined" ? WAR_GAMES : [];
+function hubServiceDrills() {
+  const list = (typeof window !== "undefined" && window.WAR_GAMES)
+    || (typeof WAR_GAMES !== "undefined" ? WAR_GAMES : null);
+  return Array.isArray(list) ? list : [];
+}
+
+function hubArcadeGames() {
+  const list = (typeof window !== "undefined" && window.ARCADE_GAMES)
+    || (typeof ARCADE_GAMES !== "undefined" ? ARCADE_GAMES : null);
+  return Array.isArray(list) ? list : [];
+}
+
+let gameReturnTab = null;
 
 function parseCSV(text) {
   const rows = [];
@@ -9058,11 +9429,13 @@ async function loadData(options = {}) {
       throw new Error(body.error || "Beer list returned " + beerResponse.status);
     }
 
-    beers = (await beerResponse.json()).beers.filter(b =>
+    const payload = await beerResponse.json();
+    beers = (payload.beers || []).filter(b =>
       b.Name &&
-      b.Name.trim() !== "" &&
-      b.Name.trim() !== "?"
+      String(b.Name).trim() !== "" &&
+      String(b.Name).trim() !== "?"
     );
+    beersLoadError = "";
 
     if (FOOD_CSV_URL !== "PASTE_YOUR_FOOD_CSV_LINK_HERE") {
       try {
@@ -9093,6 +9466,8 @@ async function loadData(options = {}) {
     }
   } catch (error) {
     console.error(error);
+    beers = [];
+    beersLoadError = error.message || "Nucleus could not be reached.";
     content.innerHTML = `
       <div class="status">
         <strong>The beer list could not be loaded.</strong>
@@ -9103,7 +9478,9 @@ async function loadData(options = {}) {
 }
 
 function col(item, field) {
-  return (item[field] || "").trim();
+  const value = item && item[field];
+  if (value == null) return "";
+  return String(value).trim();
 }
 
 function beerNameMatches(beer, targetName) {
@@ -9285,7 +9662,7 @@ function openSearchResult(result) {
 
   if (type === "training" || result.game) {
     const name = result.game || result.title;
-    const game = (typeof WAR_GAMES !== "undefined" ? WAR_GAMES : [])
+    const game = hubServiceDrills()
       .find((entry) => entry.title === name);
     activateAppTab("games");
     if (game && typeof startGame === "function") {
@@ -9504,12 +9881,12 @@ async function renderEvents(content) {
           })}
       ${editing ? renderPageEditBanner("Edit mode — publish an event with start and end so it appears for the floor.") : ""}
       ${editing
-        ? `<div class="weekly-edit-stack" style="max-width:760px;margin:0 auto 18px;">
+        ? `<div class="weekly-edit-stack" style="max-width:1080px;margin:0 auto 18px;">
             ${records.map(renderPublishedEventEditCard).join("")}
             ${renderNewPublishedEventForm()}
           </div>`
         : (liveRecords.length
-          ? `<div class="list coffee-list" style="max-width:760px;margin:0 auto 18px;">${liveRecords.map((event) => `
+          ? `<div class="list coffee-list" style="max-width:1080px;margin:0 auto 18px;">${liveRecords.map((event) => `
               <div class="card coffee-card">
                 <div class="card-top">
                   <div>
@@ -9521,10 +9898,7 @@ async function renderEvents(content) {
                 ${event.summary ? `<p class="desc" style="margin-top:10px;">${escapeHTML(event.summary)}</p>` : ""}
               </div>
             `).join("")}</div>`
-          : `<div class="card" style="max-width:760px;margin:0 auto 18px;">
-              <p class="name">This week’s events</p>
-              <p class="desc">No published events this week.</p>
-            </div>`)}
+          : `${typeof renderAppState === "function" ? renderAppState({ title: "Nothing scheduled this week.", detail: "No published events this week." }) : `<p class="app-state-title">Nothing scheduled this week.</p>`}`)}
       <p class="checklist-section-head">Event checklists</p>
       ${eventLists.length ? eventLists.map((list) => `
         <button type="button" class="checklist-card" onclick="openChecklistFromEvents('${escapeForAttribute(list.id)}')">
@@ -9563,35 +9937,59 @@ async function renderEvents(content) {
 function renderPublishedEventEditCard(event) {
   const id = event.id;
   return `
-    <div class="merch-admin-panel weekly-special-edit" id="eventEdit-${id}">
+    <div class="merch-admin-panel weekly-special-edit edit-form" id="eventEdit-${id}">
       <div class="card-top">
         <h3>${escapeHTML(event.title || "Event")}</h3>
         <span class="status-chip is-${escapeForAttribute(event.status || "live")}">${escapeHTML(specialStatusLabel(event))}</span>
       </div>
-      <label for="eventTitle-${id}">Title</label>
-      <input id="eventTitle-${id}" type="text" value="${escapeForAttribute(event.title || "")}">
-      <label for="eventSummary-${id}">Summary</label>
-      <textarea id="eventSummary-${id}" rows="2">${escapeHTML(event.summary || "")}</textarea>
-      <label for="eventLocation-${id}">Location</label>
-      <input id="eventLocation-${id}" type="text" value="${escapeForAttribute(event.location || "")}">
-      <div class="inventory-admin-grid" style="margin-top:8px;">
-        <div>
-          <label for="eventStart-${id}">Starts</label>
-          <input id="eventStart-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(event.startsAt))}">
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Basics</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field is-span">
+            <label for="eventTitle-${id}">Title</label>
+            <input id="eventTitle-${id}" type="text" value="${escapeForAttribute(event.title || "")}">
+          </div>
+          <div class="edit-form-field">
+            <label for="eventLocation-${id}">Location</label>
+            <input id="eventLocation-${id}" type="text" value="${escapeForAttribute(event.location || "")}">
+          </div>
         </div>
-        <div>
-          <label for="eventEnd-${id}">Ends</label>
-          <input id="eventEnd-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(event.endsAt))}">
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Guest description</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field is-span">
+            <label for="eventSummary-${id}">Summary</label>
+            <textarea id="eventSummary-${id}" rows="2">${escapeHTML(event.summary || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="eventNotes-${id}">Staff notes</label>
+            <textarea id="eventNotes-${id}" rows="2">${escapeHTML(event.notes || "")}</textarea>
+          </div>
         </div>
-      </div>
-      <label for="eventNotes-${id}">Staff notes</label>
-      <textarea id="eventNotes-${id}" rows="2">${escapeHTML(event.notes || "")}</textarea>
-      <label><input id="eventPublished-${id}" type="checkbox"${event.published ? " checked" : ""}> Published</label>
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Scheduling</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field">
+            <label for="eventStart-${id}">Starts</label>
+            <input id="eventStart-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(event.startsAt))}">
+          </div>
+          <div class="edit-form-field">
+            <label for="eventEnd-${id}">Ends</label>
+            <input id="eventEnd-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(event.endsAt))}">
+          </div>
+        </div>
+        <div class="merch-check-row">
+          <label><input id="eventPublished-${id}" type="checkbox"${event.published ? " checked" : ""}> Published</label>
+        </div>
+      </section>
       <p id="eventError-${id}" class="auth-error" style="margin-top:10px;"></p>
-      <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="savePublishedEvent(${id})">Save</button>
-        <button type="button" class="btn btn-danger" onclick="deletePublishedEvent(${id})">Remove</button>
-      </div>
+      ${renderFormActions({
+        saveOnclick: `savePublishedEvent(${id})`,
+        cancelOnclick: "setPageEditMode('events', false)",
+        extraHtml: `<button type="button" class="btn btn-danger" onclick="deletePublishedEvent(${id})">Remove</button>`
+      })}
     </div>
   `;
 }
@@ -9617,9 +10015,11 @@ function renderNewPublishedEventForm() {
         </div>
       </div>
       <p id="eventError-new" class="auth-error" style="margin-top:10px;"></p>
-      <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="createPublishedEvent()">Publish</button>
-      </div>
+      ${renderFormActions({
+        saveLabel: "Publish",
+        saveOnclick: "createPublishedEvent()",
+        cancelOnclick: "setPageEditMode('events', false)"
+      })}
     </div>
   `;
 }
@@ -9997,6 +10397,7 @@ function clearSessionState() {
   WEEKLY_SPECIALS = DEFAULT_WEEKLY_SPECIALS.map((s) => ({ ...s }));
   tapDisplayMeta = {};
   tapDisplayMetaLoaded = false;
+  tapDisplayMetaLoading = false;
 }
 
 function handleSessionEnded() {
@@ -10954,6 +11355,23 @@ function renderFavoriteBeerPrompt() {
   `;
 }
 
+function renderTeamStuffSection() {
+  return `
+    <section class="team-stuff" id="team-stuff">
+      <h3 class="home-section-title">Team stuff</h3>
+      <p class="home-section-lead">Social — not a service drill.</p>
+      ${typeof renderFavoriteBeerPrompt === "function" ? renderFavoriteBeerPrompt() : ""}
+      <button type="button" class="btn btn-secondary" onclick="openStaffFavoritesFromTeam()">Staff Favorites</button>
+    </section>
+  `;
+}
+
+function openStaffFavoritesFromTeam() {
+  gameReturnTab = "team";
+  activateAppTab("games");
+  startGame("favbeer");
+}
+
 function dismissFavoriteBeerPrompt() {
   sessionStorage.setItem("favorite-beer-dismissed", "1");
   if (activeType === "game" && !activeGame) render();
@@ -11189,7 +11607,7 @@ function renderLeaderboardSection() {
     { id: "all", label: "All Time" }
   ];
 
-  const rows = lb.leaderboard.length
+  const rows = (lb.leaderboard || []).length
     ? lb.leaderboard.map(row => `
         <tr class="${currentUser && row.id === currentUser.id ? "me-row" : ""}">
           <td>#${row.rank}</td>
@@ -12036,12 +12454,22 @@ async function renderTodayFloorBoard(content) {
       ].filter(section => section.rows.length);
     }
 
+    const you = staffAll.find((row) => row.isYou);
+    const youHtml = you ? `
+      <section class="today-floor__yours">
+        <p class="today-floor__yours-kicker">Your floor</p>
+        <h3>${escapeHTML([you.roleName, you.stationName || you.floorStationLabel].filter(Boolean).join(" · ") || "Taproom")}</h3>
+        <p>${escapeHTML(formatShiftClock(you.startAt))}–${escapeHTML(formatShiftClock(you.endAt))}${isToday && you.status === "now" ? " · on now" : ""}</p>
+      </section>
+    ` : "";
+
     content.innerHTML = `
       <div class="today-floor">
         ${renderPageHeader({
           title: "Today’s Floor",
           subtitle: `${dateLabel}${todayFloorRole !== "all" ? ` · ${todayFloorRole}` : ""} · ${isToday ? `${data.onNowCount || 0} on now · ` : ""}${staffAll.length} scheduled`
         })}
+        ${youHtml}
         ${dayControls}
         ${roleControls}
         ${privileged ? renderTodayFloorAdminBar(data, canSync) : ""}
@@ -12318,14 +12746,15 @@ function formatFeedbackStatus(status) {
 function renderFeaturesTab(content) {
   const features = window.SITE_FEATURES;
   const sections = getFeatureSections();
-  const recentUpdates = (features.recentUpdates || []).slice(0, 3);
+  const recentUpdates = (features.recentUpdates || []).slice(0, 8);
   const roles = features.roles || [];
 
   content.innerHTML = `
     <div class="guide-page">
       ${typeof renderPageHeader === "function"
         ? renderPageHeader({
-            title: features.tabLabel || "Features"
+            title: features.tabLabel || "App guide",
+            subtitle: "What this portal does, by role and tab."
           })
         : `<div class="guide-intro">
         <h2>${escapeHTML(features.tabLabel || "Features")}</h2>
@@ -12359,7 +12788,7 @@ function renderFeaturesTab(content) {
 
       ${recentUpdates.length ? `
         <div class="guide-block">
-          <p class="guide-block-title">Recent</p>
+          <p class="guide-block-title">Version / What’s New</p>
           <ul class="guide-updates">
             ${recentUpdates.map(item => `
               <li><strong>${escapeHTML(item.date)}</strong> — ${escapeHTML(item.text)}</li>
@@ -12368,11 +12797,20 @@ function renderFeaturesTab(content) {
         </div>
       ` : ""}
 
-      <div class="guide-callout">
-        Sign in to save training progress. Wrong menu info or bugs? Use Feedback under your name in the sidebar.
+      <div class="guide-report">
+        <p>Something not working?</p>
+        <button type="button" class="btn btn-secondary" onclick="reportLaunchPadIssue()">Report a Launch Pad issue</button>
       </div>
+
+      <p class="app-credit">MP Launch Pad · v1.0</p>
+      <p class="app-credit">Meredith + Tanner Ruminer</p>
     </div>
   `;
+}
+
+function reportLaunchPadIssue() {
+  feedbackPrefill = { category: "app_issue", pageTab: "Manage · App guide" };
+  activateAppTab("feedback");
 }
 
 function renderFeedbackSubmissionRows(rows, showUser) {
@@ -12472,33 +12910,46 @@ async function renderSiteFeedback(content) {
       `;
     }
 
+    const prefill = feedbackPrefill || {};
+    feedbackPrefill = null;
+
     content.innerHTML = `
       <div class="feedback-panel">
-        <div class="coffee-intro" style="padding-top:0;">
-          <h2>Site Feedback</h2>
-          <p>Help us improve this portal during the shift lead pilot. Report bugs, incorrect tap or menu info, or share ideas for new features.</p>
-        </div>
-        <div class="auth-panel" style="max-width:none;margin:0;padding:24px;">
+        ${renderPageHeader({
+          title: "Feedback",
+          subtitle: "Bugs, wrong info, or ideas."
+        })}
+        <div class="auth-panel edit-form" style="max-width:none;margin:0;padding:0 0 24px;">
           <div id="siteFeedbackError"></div>
-          <label for="siteFeedbackCategory">What kind of feedback is this?</label>
-          <select id="siteFeedbackCategory">
-            <option value="">Choose a category…</option>
-            ${Object.entries(FEEDBACK_CATEGORY_LABELS).map(([value, label]) => `
-              <option value="${escapeHTML(value)}">${escapeHTML(label)}</option>
-            `).join("")}
-          </select>
-          <label for="siteFeedbackTab">Which part of the site?</label>
-          <select id="siteFeedbackTab">
-            <option value="">Choose an area (optional)…</option>
-            ${FEEDBACK_TAB_OPTIONS.map(tab => `
-              <option value="${escapeHTML(tab)}">${escapeHTML(tab)}</option>
-            `).join("")}
-          </select>
-          <label for="siteFeedbackSubject">Subject</label>
-          <input type="text" id="siteFeedbackSubject" maxlength="160" placeholder="Short summary — e.g. Tap 4 shows wrong beer">
-          <label for="siteFeedbackMessage">Details</label>
-          <textarea id="siteFeedbackMessage" placeholder="What happened? What should it say instead? Steps to reproduce a bug?"></textarea>
-          <button class="game-next" style="width:100%;margin-top:16px;" onclick="submitSiteFeedback()">Submit feedback</button>
+          <div class="edit-form-grid">
+            <div class="edit-form-field">
+              <label for="siteFeedbackCategory">What kind of feedback is this?</label>
+              <select id="siteFeedbackCategory">
+                <option value="">Choose a category…</option>
+                ${Object.entries(FEEDBACK_CATEGORY_LABELS).map(([value, label]) => `
+                  <option value="${escapeHTML(value)}"${prefill.category === value ? " selected" : ""}>${escapeHTML(label)}</option>
+                `).join("")}
+              </select>
+            </div>
+            <div class="edit-form-field">
+              <label for="siteFeedbackTab">Which part of the site?</label>
+              <select id="siteFeedbackTab">
+                <option value="">Choose an area (optional)…</option>
+                ${FEEDBACK_TAB_OPTIONS.map(tab => `
+                  <option value="${escapeHTML(tab)}"${prefill.pageTab === tab ? " selected" : ""}>${escapeHTML(tab)}</option>
+                `).join("")}
+              </select>
+            </div>
+            <div class="edit-form-field is-span">
+              <label for="siteFeedbackSubject">Subject</label>
+              <input type="text" id="siteFeedbackSubject" maxlength="160" placeholder="Short summary — e.g. Tap 4 shows wrong beer" value="${escapeForAttribute(prefill.subject || "")}">
+            </div>
+            <div class="edit-form-field is-span">
+              <label for="siteFeedbackMessage">Details</label>
+              <textarea id="siteFeedbackMessage" placeholder="What happened? What should it say instead?">${escapeHTML(prefill.message || "")}</textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:16px;" onclick="submitSiteFeedback()">Submit feedback</button>
         </div>
         <div class="coffee-intro" style="margin-top:32px;margin-bottom:0;">
           <h2>Your submissions</h2>
@@ -12738,7 +13189,7 @@ async function renderTeamDashboard(content) {
       content.innerHTML = `
         ${renderPageHeader({
           title: "Team",
-          subtitle: "Staff directory. Training stats and scheduling stay with managers."
+          subtitle: "Staff directory."
         })}
         ${people.length ? `
           <table class="progress-table">
@@ -12751,6 +13202,7 @@ async function renderTeamDashboard(content) {
             `).join("")}
           </table>
         ` : `<div class="status"><strong>No teammates listed yet.</strong></div>`}
+        ${renderTeamStuffSection()}
       `;
     } catch (err) {
       content.innerHTML = `<div class="status"><strong>Could not load the team directory.</strong>${escapeHTML(err.message)}</div>`;
@@ -12842,12 +13294,10 @@ async function renderTeamDashboard(content) {
     const shiftLeadCandidates = teamData.employees.filter(emp => hasShiftLeadCapability(emp));
 
     content.innerHTML = `
-      <div class="coffee-intro">
-        <h2>Team Dashboard</h2>
-        <p>${isAdmin()
-          ? "Approve staff emails, schedule shift leads, and monitor training progress."
-          : "Schedule shift leads and monitor training progress across the floor team."}</p>
-      </div>
+      ${renderPageHeader({
+        title: "Team",
+        subtitle: isAdmin() ? "Scheduling, digest, and training progress." : "Shift leads and floor training."
+      })}
       ${renderShiftLeadDutyPanel(shiftLeadDutyPayload, shiftLeadCandidates)}
       <div id="managerDigestPanel" class="coffee-intro" style="margin-top:8px;"><p>Loading morning digest…</p></div>
       ${isAdmin() ? renderApprovedEmailsPanel(approvedPayload.emails) : ""}
@@ -12882,6 +13332,7 @@ async function renderTeamDashboard(content) {
           `).join("")}
         </table>
       ` : ""}
+      ${renderTeamStuffSection()}
     `;
     if (floorStaff.length) {
       setTimeout(() => initTeamCharts(teamData.employees), 0);
@@ -13491,60 +13942,97 @@ function renderWeeklySpecialEditCard(special) {
   const sid = escapeForAttribute(special.id);
   const status = special.status || "live";
   return `
-    <div class="merch-admin-panel weekly-special-edit" id="weeklyEdit-${sid}">
+    <div class="merch-admin-panel weekly-special-edit edit-form" id="weeklyEdit-${sid}">
       <div class="card-top">
         <h3>${escapeHTML(special.dayLabel)} · ${escapeHTML(special.meal || "Special")}</h3>
         <span class="status-chip is-${escapeForAttribute(status)}">${escapeHTML(specialStatusLabel(special))}</span>
       </div>
-      <label for="weeklyDay-${sid}">Day</label>
-      <select id="weeklyDay-${sid}">
-        ${["monday","tuesday","wednesday","thursday","friday","saturday","sunday","other"].map((day) => `
-          <option value="${day}"${special.day === day ? " selected" : ""}>${day[0].toUpperCase()}${day.slice(1)}</option>
-        `).join("")}
-      </select>
-      <label for="weeklyName-${sid}">Dish name</label>
-      <input id="weeklyName-${sid}" type="text" value="${escapeForAttribute(special.name || "")}">
-      <label for="weeklyPrice-${sid}">Price</label>
-      <input id="weeklyPrice-${sid}" type="text" value="${escapeForAttribute(special.price || "")}">
-      <label for="weeklySchedule-${sid}">Service window</label>
-      <input id="weeklySchedule-${sid}" type="text" value="${escapeForAttribute(special.schedule || "")}" placeholder="11 am until sold out">
-      <label for="weeklyMeal-${sid}">Meal</label>
-      <input id="weeklyMeal-${sid}" type="text" value="${escapeForAttribute(special.meal || "")}" placeholder="Lunch">
-      <label for="weeklyDesc-${sid}">Guest description</label>
-      <textarea id="weeklyDesc-${sid}" rows="3">${escapeHTML(special.description || "")}</textarea>
-      <label for="weeklyBuild-${sid}">Build / ingredients</label>
-      <textarea id="weeklyBuild-${sid}" rows="2">${escapeHTML(special.build || "")}</textarea>
-      <label for="weeklyTraining-${sid}">Staff talking points</label>
-      <textarea id="weeklyTraining-${sid}" rows="2">${escapeHTML(special.training || "")}</textarea>
-      <label for="weeklyNotes-${sid}">Chef / allergen notes</label>
-      <textarea id="weeklyNotes-${sid}" rows="2">${escapeHTML(special.notes || "")}</textarea>
-      <div class="inventory-admin-grid" style="margin-top:8px;">
-        <div>
-          <label for="weeklyPublish-${sid}">Publish</label>
-          <input id="weeklyPublish-${sid}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(special.publishAt))}">
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Basics</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field">
+            <label for="weeklyDay-${sid}">Day</label>
+            <select id="weeklyDay-${sid}">
+              ${["monday","tuesday","wednesday","thursday","friday","saturday","sunday","other"].map((day) => `
+                <option value="${day}"${special.day === day ? " selected" : ""}>${day[0].toUpperCase()}${day.slice(1)}</option>
+              `).join("")}
+            </select>
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklyMeal-${sid}">Meal</label>
+            <input id="weeklyMeal-${sid}" type="text" value="${escapeForAttribute(special.meal || "")}" placeholder="Lunch">
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="weeklyName-${sid}">Dish name</label>
+            <input id="weeklyName-${sid}" type="text" value="${escapeForAttribute(special.name || "")}">
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklyPrice-${sid}">Price</label>
+            <input id="weeklyPrice-${sid}" type="text" value="${escapeForAttribute(special.price || "")}">
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklySchedule-${sid}">Service window</label>
+            <input id="weeklySchedule-${sid}" type="text" value="${escapeForAttribute(special.schedule || "")}" placeholder="11 am until sold out">
+          </div>
         </div>
-        <div>
-          <label for="weeklyExpire-${sid}">Expire</label>
-          <input id="weeklyExpire-${sid}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(special.expireAt))}">
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Guest description</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field is-span">
+            <label for="weeklyDesc-${sid}">Guest description</label>
+            <textarea id="weeklyDesc-${sid}" rows="3">${escapeHTML(special.description || "")}</textarea>
+          </div>
         </div>
-        <div>
-          <label for="weeklyGf-${sid}">Gluten-free</label>
-          ${dietSelectHtml(`weeklyGf-${sid}`, special.glutenFree)}
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Ingredients / details</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field is-span">
+            <label for="weeklyBuild-${sid}">Build / ingredients</label>
+            <textarea id="weeklyBuild-${sid}" rows="2">${escapeHTML(special.build || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="weeklyTraining-${sid}">Staff talking points</label>
+            <textarea id="weeklyTraining-${sid}" rows="2">${escapeHTML(special.training || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="weeklyNotes-${sid}">Chef / allergen notes</label>
+            <textarea id="weeklyNotes-${sid}" rows="2">${escapeHTML(special.notes || "")}</textarea>
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklyGf-${sid}">Gluten-free</label>
+            ${dietSelectHtml(`weeklyGf-${sid}`, special.glutenFree)}
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklyDairy-${sid}">Dairy</label>
+            ${dietSelectHtml(`weeklyDairy-${sid}`, special.dairy)}
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklyNuts-${sid}">Nuts</label>
+            ${dietSelectHtml(`weeklyNuts-${sid}`, special.nuts)}
+          </div>
         </div>
-        <div>
-          <label for="weeklyDairy-${sid}">Dairy</label>
-          ${dietSelectHtml(`weeklyDairy-${sid}`, special.dairy)}
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Scheduling</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field">
+            <label for="weeklyPublish-${sid}">Publish</label>
+            <input id="weeklyPublish-${sid}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(special.publishAt))}">
+          </div>
+          <div class="edit-form-field">
+            <label for="weeklyExpire-${sid}">Expire</label>
+            <input id="weeklyExpire-${sid}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(special.expireAt))}">
+          </div>
         </div>
-        <div>
-          <label for="weeklyNuts-${sid}">Nuts</label>
-          ${dietSelectHtml(`weeklyNuts-${sid}`, special.nuts)}
-        </div>
-      </div>
+      </section>
       <p id="weeklyError-${sid}" class="auth-error" style="margin-top:10px;"></p>
-      <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="saveWeeklySpecial('${sid}')">Save</button>
-        <button type="button" class="btn btn-secondary" onclick="archiveWeeklySpecial('${sid}', ${special.active === false ? "false" : "true"})">${special.active === false ? "Restore" : "Archive"}</button>
-      </div>
+      ${renderFormActions({
+        saveOnclick: `saveWeeklySpecial('${sid}')`,
+        cancelOnclick: "setPageEditMode('weekly', false)",
+        extraHtml: `<button type="button" class="btn btn-secondary" onclick="archiveWeeklySpecial('${sid}', ${special.active === false ? "false" : "true"})">${special.active === false ? "Restore" : "Archive"}</button>`
+      })}
     </div>
   `;
 }
@@ -13579,9 +14067,11 @@ function renderNewWeeklySpecialForm() {
         </div>
       </div>
       <p id="weeklyError-new" class="auth-error" style="margin-top:10px;"></p>
-      <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="createWeeklySpecial()">Save as scheduled</button>
-      </div>
+      ${renderFormActions({
+        saveLabel: "Save as scheduled",
+        saveOnclick: "createWeeklySpecial()",
+        cancelOnclick: "setPageEditMode('weekly', false)"
+      })}
     </div>
   `;
 }
@@ -13603,7 +14093,7 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
   const header = typeof renderEditablePageHeader === "function"
     ? renderEditablePageHeader({
         title: "Weekly Specials",
-        subtitle: "Monday lunch, Taco Tuesday, and Wednesday dinner — plus this week’s floor notes. Future dishes can be scheduled to publish and expire on their own.",
+        subtitle: "This week’s dishes and floor notes.",
         canEdit: weeklySpecialsCanEdit,
         view: "weekly"
       })
@@ -13649,7 +14139,7 @@ function renderWeeklySpecialsPaint(content, categoryTabs, query) {
               </div>
             `;
           }).join("")}</div>`
-        : `<div class="status"><strong>No weekly specials are live right now.</strong></div>`)}
+        : `${typeof renderAppState === "function" ? renderAppState({ title: "No weekly specials are live right now." }) : `<div class="status"><strong>No weekly specials are live right now.</strong></div>`}`)}
   `;
 }
 
@@ -14215,8 +14705,8 @@ function renderMerchAdminStockForm() {
       <div id="merchItemSizeInputs" class="merch-size-inputs"></div>
       <p id="merchItemError" class="auth-error" style="margin-top:10px;"></p>
       <div class="merch-admin-actions">
-        <button class="game-next" type="button" onclick="submitMerchItem()">Create product</button>
-        <button class="auth-btn" type="button" onclick="cancelMerchEdit()">Cancel</button>
+        <button class="btn btn-primary" type="button" onclick="submitMerchItem()">Create product</button>
+        <button class="btn btn-secondary" type="button" onclick="cancelMerchEdit()">Cancel</button>
       </div>
     </div>
   `;
@@ -14256,8 +14746,8 @@ function renderMerchEditForm(item) {
       </div>
       <p id="merchEditError_${item.id}" class="auth-error" style="margin-top:10px;"></p>
       <div class="merch-admin-actions">
-        <button class="game-next" type="button" onclick="saveMerchItem(${item.id})">Save changes</button>
-        <button class="auth-btn" type="button" onclick="cancelMerchEdit()">Cancel</button>
+        <button class="btn btn-primary" type="button" onclick="saveMerchItem(${item.id})">Save changes</button>
+        <button class="btn btn-secondary" type="button" onclick="cancelMerchEdit()">Cancel</button>
         ${item.status === "archived"
           ? `<button class="auth-btn" type="button" onclick="restoreMerchItem(${item.id})">Restore</button>`
           : `<button class="auth-btn" type="button" onclick="archiveMerchItem(${item.id})">Archive</button>`}
@@ -15749,7 +16239,9 @@ function renderBarSeasonalBlock() {
         view: "bar-seasonal"
       })
     : `<div class="coffee-intro" style="padding-bottom:0;"><h2>Seasonal cocktails</h2></div>`;
-  if (!editing && !drinks.length) return "";
+  if (!editing && !drinks.length) {
+    return `${header}${typeof renderAppState === "function" ? renderAppState({ title: "No seasonal drinks right now." }) : ""}`;
+  }
   return `
     ${header}
     ${editing ? renderPageEditBanner("Edit seasonal cocktails here. Core wine and house cocktails stay as the printed list.") : ""}
@@ -15829,53 +16321,90 @@ function renderBarMenu(content) {
 function renderCoffeeSpecialEditCard(item) {
   const id = escapeForAttribute(item.id);
   const status = item.status || "live";
+  const view = item.menu === "bar" ? "bar-seasonal" : "coffee-seasonal";
   return `
-    <div class="merch-admin-panel weekly-special-edit" id="coffeeSpecialEdit-${id}">
+    <div class="merch-admin-panel weekly-special-edit edit-form" id="coffeeSpecialEdit-${id}">
       <div class="card-top">
         <h3>${escapeHTML(item.name || "Seasonal drink")}</h3>
         <span class="status-chip is-${escapeForAttribute(status)}">${escapeHTML(specialStatusLabel(item))}</span>
       </div>
-      <label for="coffeeSpecialMenu-${id}">Menu</label>
-      <select id="coffeeSpecialMenu-${id}">
-        <option value="coffee"${(item.menu || "coffee") === "coffee" ? " selected" : ""}>Coffee</option>
-        <option value="bar"${item.menu === "bar" ? " selected" : ""}>Wine + Cocktails</option>
-      </select>
-      <label for="coffeeSpecialKind-${id}">Drink type</label>
-      <select id="coffeeSpecialKind-${id}">
-        <option value="latte"${item.kind === "latte" ? " selected" : ""}>Latte</option>
-        <option value="matcha"${item.kind === "matcha" ? " selected" : ""}>Matcha</option>
-        <option value="cocktail"${item.kind === "cocktail" ? " selected" : ""}>Cocktail</option>
-        <option value="other"${item.kind === "other" ? " selected" : ""}>Other</option>
-      </select>
-      <label for="coffeeSpecialName-${id}">Drink name</label>
-      <input id="coffeeSpecialName-${id}" type="text" value="${escapeForAttribute(item.name || "")}">
-      <label for="coffeeSpecialPrice-${id}">Price</label>
-      <input id="coffeeSpecialPrice-${id}" type="text" value="${escapeForAttribute(item.price || "")}">
-      <label for="coffeeSpecialDescription-${id}">Guest description</label>
-      <textarea id="coffeeSpecialDescription-${id}" rows="3">${escapeHTML(item.description || "")}</textarea>
-      <label for="coffeeSpecialBuild-${id}">Build / ingredients</label>
-      <textarea id="coffeeSpecialBuild-${id}" rows="3">${escapeHTML(item.build || "")}</textarea>
-      <label for="coffeeSpecialTraining-${id}">Staff talking points</label>
-      <textarea id="coffeeSpecialTraining-${id}" rows="2">${escapeHTML(item.training || "")}</textarea>
-      <div class="inventory-admin-grid" style="margin-top:8px;">
-        <div>
-          <label for="coffeeSpecialPublish-${id}">Publish</label>
-          <input id="coffeeSpecialPublish-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(item.publishAt))}">
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Basics</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field">
+            <label for="coffeeSpecialMenu-${id}">Menu</label>
+            <select id="coffeeSpecialMenu-${id}">
+              <option value="coffee"${(item.menu || "coffee") === "coffee" ? " selected" : ""}>Coffee</option>
+              <option value="bar"${item.menu === "bar" ? " selected" : ""}>Wine + Cocktails</option>
+            </select>
+          </div>
+          <div class="edit-form-field">
+            <label for="coffeeSpecialKind-${id}">Drink type</label>
+            <select id="coffeeSpecialKind-${id}">
+              <option value="latte"${item.kind === "latte" ? " selected" : ""}>Latte</option>
+              <option value="matcha"${item.kind === "matcha" ? " selected" : ""}>Matcha</option>
+              <option value="cocktail"${item.kind === "cocktail" ? " selected" : ""}>Cocktail</option>
+              <option value="other"${item.kind === "other" ? " selected" : ""}>Other</option>
+            </select>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="coffeeSpecialName-${id}">Drink name</label>
+            <input id="coffeeSpecialName-${id}" type="text" value="${escapeForAttribute(item.name || "")}">
+          </div>
+          <div class="edit-form-field">
+            <label for="coffeeSpecialPrice-${id}">Price</label>
+            <input id="coffeeSpecialPrice-${id}" type="text" value="${escapeForAttribute(item.price || "")}">
+          </div>
         </div>
-        <div>
-          <label for="coffeeSpecialExpire-${id}">Expire</label>
-          <input id="coffeeSpecialExpire-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(item.expireAt))}">
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Guest description</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field is-span">
+            <label for="coffeeSpecialDescription-${id}">Guest description</label>
+            <textarea id="coffeeSpecialDescription-${id}" rows="3">${escapeHTML(item.description || "")}</textarea>
+          </div>
         </div>
-      </div>
-      <div class="merch-check-row">
-        <label><input id="coffeeSpecialAvailable-${id}" type="checkbox"${item.available ? " checked" : ""}> Available now</label>
-        <label><input id="coffeeSpecialNew-${id}" type="checkbox"${item.isNew ? " checked" : ""}> Mark as new</label>
-      </div>
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Ingredients / details</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field is-span">
+            <label for="coffeeSpecialBuild-${id}">Build / ingredients</label>
+            <textarea id="coffeeSpecialBuild-${id}" rows="3">${escapeHTML(item.build || "")}</textarea>
+          </div>
+          <div class="edit-form-field is-span">
+            <label for="coffeeSpecialTraining-${id}">Staff talking points</label>
+            <textarea id="coffeeSpecialTraining-${id}" rows="2">${escapeHTML(item.training || "")}</textarea>
+          </div>
+        </div>
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Availability</h4>
+        <div class="merch-check-row">
+          <label><input id="coffeeSpecialAvailable-${id}" type="checkbox"${item.available ? " checked" : ""}> Available now</label>
+          <label><input id="coffeeSpecialNew-${id}" type="checkbox"${item.isNew ? " checked" : ""}> Mark as new</label>
+        </div>
+      </section>
+      <section class="edit-form-section">
+        <h4 class="edit-form-heading">Scheduling</h4>
+        <div class="edit-form-grid">
+          <div class="edit-form-field">
+            <label for="coffeeSpecialPublish-${id}">Publish</label>
+            <input id="coffeeSpecialPublish-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(item.publishAt))}">
+          </div>
+          <div class="edit-form-field">
+            <label for="coffeeSpecialExpire-${id}">Expire</label>
+            <input id="coffeeSpecialExpire-${id}" type="datetime-local" value="${escapeForAttribute(toDateTimeLocalValue(item.expireAt))}">
+          </div>
+        </div>
+      </section>
       <p id="coffeeSpecialError-${id}" class="auth-error" style="margin-top:10px;"></p>
-      <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="saveCoffeeSpecial('${id}')">Save</button>
-        <button type="button" class="btn btn-secondary" onclick="archiveCoffeeSpecial('${id}', ${item.archived ? "false" : "true"})">${item.archived ? "Restore" : "Archive"}</button>
-      </div>
+      ${renderFormActions({
+        saveOnclick: `saveCoffeeSpecial('${id}')`,
+        cancelOnclick: `setPageEditMode('${view}', false)`,
+        extraHtml: `<button type="button" class="btn btn-secondary" onclick="archiveCoffeeSpecial('${id}', ${item.archived ? "false" : "true"})">${item.archived ? "Restore" : "Archive"}</button>`
+      })}
     </div>
   `;
 }
@@ -15915,9 +16444,11 @@ function renderNewCoffeeSpecialForm(menu) {
         </div>
       </div>
       <p id="coffeeSpecialError-new" class="auth-error" style="margin-top:10px;"></p>
-      <div class="merch-admin-actions">
-        <button type="button" class="btn btn-primary" onclick="createCoffeeSpecial()">Save drink</button>
-      </div>
+      ${renderFormActions({
+        saveLabel: "Save drink",
+        saveOnclick: "createCoffeeSpecial()",
+        cancelOnclick: "setPageEditMode(document.getElementById('coffeeSpecialMenu-new')?.value === 'bar' ? 'bar-seasonal' : 'coffee-seasonal', false)"
+      })}
     </div>
   `;
 }
@@ -15938,7 +16469,7 @@ async function renderCoffeeSeasonal(content, sectionTabs, query) {
   });
   const header = renderEditablePageHeader({
     title: "Seasonal Drinks",
-    subtitle: "Add, schedule, and archive seasonal lattes, matchas, and coffee features. Staff only see what’s live.",
+    subtitle: "Live seasonal lattes and matchas.",
     canEdit: weeklySpecialsCanEdit,
     view: "coffee-seasonal"
   });
@@ -15948,7 +16479,8 @@ async function renderCoffeeSeasonal(content, sectionTabs, query) {
     ${editing ? renderPageEditBanner("Edit mode — save each drink, or add a new seasonal. Scheduled drinks stay hidden until publish.") : ""}
     ${editing
       ? `<div class="weekly-edit-stack">${drinks.map(renderCoffeeSpecialEditCard).join("")}${renderNewCoffeeSpecialForm("coffee")}</div>`
-      : (drinks.length ? `<div class="list coffee-list" style="padding-top:0;">${drinks.map(item => `
+      : (drinks.length
+        ? `<div class="list coffee-list" style="padding-top:0;">${drinks.map(item => `
       <div class="card coffee-card" onclick="openSeasonalLatte('${escapeForAttribute(item.name)}')">
         <div class="card-top">
           <div>
@@ -15959,7 +16491,8 @@ async function renderCoffeeSeasonal(content, sectionTabs, query) {
         </div>
         <p class="desc" style="margin-top:10px;">${escapeHTML(item.description)}</p>
       </div>
-    `).join("")}</div>` : `<div class="status"><strong>No seasonal drinks match.</strong> Try a different search.</div>`)}
+    `).join("")}</div>`
+        : (typeof renderAppState === "function" ? renderAppState({ title: query ? "Nothing matches that search." : "No seasonal drinks right now." }) : ""))}
   `;
 }
 
@@ -16259,6 +16792,13 @@ function startGame(id) {
   quizItem = practiceItem = tapItem = abvItem = styleItem = reverseItem = speedItem = rocketItem = null;
   flashFlipped = false;
   stopRocketLoop();
+  if (typeof stopHighwayLoop === "function") stopHighwayLoop();
+
+  if (id === "highway") {
+    gameSession = { id: "highway", arcade: true, recorded: true };
+    render();
+    return;
+  }
 
   if (typeof startJudgmentGame === "function" && startJudgmentGame(id)) {
     render();
@@ -16394,6 +16934,7 @@ function beginRound(id, filterFn) {
     gameSession.streak = 0;
     gameSession.maxStreak = 0;
     gameSession.score = 0;
+    gameSession.arcade = true;
   }
   return true;
 }
@@ -16416,7 +16957,7 @@ function advanceRound(correct) {
   const rocketDead = gameSession.id === "rocket" && (gameSession.lives || 0) <= 0;
   if (gameSession.index >= gameSession.queue.length || rocketDead) {
     gameSession.complete = true;
-    if (markSessionRecorded(gameSession)) {
+    if (markSessionRecorded(gameSession) && !gameSession.arcade && gameSession.id !== "highway" && gameSession.id !== "rocket") {
       const category = gameSession.id.startsWith("coffee") ? "coffee" : "beer";
       const attempted = Math.max(gameSession.index, gameSession.right, 1);
       const rocketPoints = gameSession.id === "rocket"
@@ -17497,10 +18038,22 @@ function prepareSpeedQuestion() {
 }
 
 function wrapGame(html) {
+  const backTarget = gameReturnTab === "team"
+    ? { label: "Team", onclick: "gameReturnTab=null; stopRocketLoop(); if (typeof stopHighwayLoop==='function') stopHighwayLoop(); activeGame=null; gameSession=null; rocketItem=null; activateAppTab('team');" }
+    : { label: "War Games", onclick: "gameReturnTab=null; stopRocketLoop(); if (typeof stopHighwayLoop==='function') stopHighwayLoop(); activeGame=null; gameSession=null; rocketItem=null; render();" };
   const back = typeof renderLogicalBackHtml === "function"
-    ? renderLogicalBackHtml({ label: "War Games", onclick: "stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();" })
-    : `<button type="button" class="page-back" onclick="stopRocketLoop(); activeGame=null; gameSession=null; rocketItem=null; render();">← War Games</button>`;
+    ? renderLogicalBackHtml(backTarget)
+    : `<button type="button" class="page-back" onclick="${backTarget.onclick}">← ${backTarget.label}</button>`;
   return `<div class="game-session">${back}${html}</div>`;
+}
+
+function renderWarGameTile(g) {
+  return `
+        <button type="button" class="game-tile" data-game-id="${escapeForAttribute(g.id)}" onclick="startGame('${g.id}')">
+          <div class="game-tile-icon">${g.icon}</div>
+          <p class="game-tile-title">${escapeHTML(g.title)}</p>
+          <p class="game-tile-desc">${escapeHTML(g.desc)}</p>
+        </button>`;
 }
 
 function renderGameHub(content) {
@@ -17515,23 +18068,35 @@ function renderGameHub(content) {
     `
     : "";
 
+  const drills = hubServiceDrills();
+  const arcade = hubArcadeGames();
+  let leaderboardHtml = "";
+  try {
+    leaderboardHtml = renderLeaderboardSection();
+  } catch (err) {
+    console.warn("Leaderboard unavailable:", err.message);
+    leaderboardHtml = "";
+  }
+
   content.innerHTML = `
     ${typeof renderPageHeader === "function" ? renderPageHeader({
       title: "War Games",
-      subtitle: "Judgment drills for the floor — not trivia."
+      subtitle: "Service drills for the floor. Arcade is just for fun."
     }) : `<div class="coffee-intro launchpad-intro"><h2>War Games</h2></div>`}
-    <div class="game-hub">
-      ${GAMES.map(g => `
-        <button type="button" class="game-tile" onclick="startGame('${g.id}')">
-          <div class="game-tile-icon">${g.icon}</div>
-          <p class="game-tile-title">${g.title}</p>
-          <p class="game-tile-desc">${g.desc}</p>
-        </button>
-      `).join("")}
+    <p class="wg-group-title">Service drills</p>
+    <div class="game-hub" id="wg-service-drills">
+      ${drills.length
+        ? drills.map(renderWarGameTile).join("")
+        : `<div class="app-state is-empty" role="status"><p class="app-state-title">Service drills failed to load.</p><p class="app-state-detail">Refresh once — the games should appear here.</p></div>`}
     </div>
     <p class="wg-also">Trainer assign: <button type="button" class="wg-also-btn" onclick="startGame('recovery')">Complaint Recovery</button> — still here if they want the old service-recovery set.</p>
-    ${renderFavoriteBeerPrompt()}
-    ${renderLeaderboardSection()}
+    <p class="wg-group-title">Arcade</p>
+    <div class="game-hub arcade-hub" id="wg-arcade">
+      ${arcade.length
+        ? arcade.map(renderWarGameTile).join("")
+        : `<div class="app-state is-empty" role="status"><p class="app-state-title">Arcade failed to load.</p></div>`}
+    </div>
+    ${leaderboardHtml}
     ${badgesStrip}
   `;
 
@@ -17564,6 +18129,10 @@ function renderGames(content) {
     case "reverse": renderReverseQuiz(content); break;
     case "speed": renderSpeedRound(content); break;
     case "rocket": renderRocketRound(content); break;
+    case "highway":
+      if (typeof renderHighwayGame === "function") renderHighwayGame(content);
+      else renderGameHub(content);
+      break;
     case "favbeer": renderFavoriteBeerGame(content); break;
     case "rush":
     case "flight":
@@ -17927,6 +18496,7 @@ async function ensureTapDisplayMeta({ force = false } = {}) {
   } catch (err) {
     console.warn("Tap display meta unavailable:", err.message);
     if (!tapDisplayMetaLoaded) tapDisplayMeta = {};
+    tapDisplayMetaLoaded = true;
   } finally {
     tapDisplayMetaLoading = false;
   }
@@ -18100,22 +18670,143 @@ function syncOntapPrintRoot() {
   root.innerHTML = buildDraftMenuHtml(rows) + buildBarSheetHtml(rows);
 }
 
+let ontapPrintMenuBound = false;
+
+function ensureOntapPrintMenuList() {
+  let list = document.getElementById("ontapPrintMenuList");
+  if (list) return list;
+  list = document.createElement("div");
+  list.id = "ontapPrintMenuList";
+  list.className = "ontap-print-menu-list";
+  list.setAttribute("role", "menu");
+  list.hidden = true;
+  list.innerHTML = `
+    <div class="ontap-print-item" role="menuitem" tabindex="0" data-print-mode="draft">Guest Draft Menu</div>
+    <div class="ontap-print-item" role="menuitem" tabindex="0" data-print-mode="bar">Bar Tap Sheet</div>
+    <div class="ontap-print-item" role="menuitem" tabindex="0" data-print-mode="both">Print Both</div>
+  `;
+  document.body.appendChild(list);
+  list.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-print-mode]");
+    if (item) openOnTapPrintChooser(item.getAttribute("data-print-mode"));
+  });
+  list.addEventListener("keydown", (event) => {
+    const item = event.target.closest("[data-print-mode]");
+    if (!item) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openOnTapPrintChooser(item.getAttribute("data-print-mode"));
+    }
+  });
+  return list;
+}
+
+function positionOntapPrintMenu() {
+  const btn = document.getElementById("ontapPrintMenuBtn");
+  const list = document.getElementById("ontapPrintMenuList");
+  if (!btn || !list || list.hidden) return;
+  const rect = btn.getBoundingClientRect();
+  const width = Math.max(240, Math.min(280, window.innerWidth - 24));
+  let left = rect.right - width;
+  if (left < 12) left = 12;
+  if (left + width > window.innerWidth - 12) left = Math.max(12, window.innerWidth - width - 12);
+  let top = rect.bottom + 6;
+  list.style.position = "fixed";
+  list.style.left = `${left}px`;
+  list.style.top = `${top}px`;
+  list.style.right = "auto";
+  list.style.width = `${width}px`;
+  list.style.zIndex = "4000";
+  const box = list.getBoundingClientRect();
+  if (box.bottom > window.innerHeight - 8) {
+    list.style.top = `${Math.max(8, rect.top - box.height - 6)}px`;
+  }
+}
+
+function closeOntapPrintMenu() {
+  const menu = document.getElementById("ontapPrintMenu");
+  const list = document.getElementById("ontapPrintMenuList");
+  const btn = document.getElementById("ontapPrintMenuBtn");
+  if (menu) menu.classList.remove("is-open");
+  if (list) list.hidden = true;
+  if (btn) btn.setAttribute("aria-expanded", "false");
+}
+
+function bindOntapPrintMenuChrome() {
+  if (ontapPrintMenuBound) return;
+  ontapPrintMenuBound = true;
+  document.addEventListener("click", (event) => {
+    const menu = document.getElementById("ontapPrintMenu");
+    const list = document.getElementById("ontapPrintMenuList");
+    if (!menu || !menu.classList.contains("is-open")) return;
+    if (menu.contains(event.target) || (list && list.contains(event.target))) return;
+    closeOntapPrintMenu();
+  });
+  document.addEventListener("keydown", (event) => {
+    const menu = document.getElementById("ontapPrintMenu");
+    const list = document.getElementById("ontapPrintMenuList");
+    if (!menu || !menu.classList.contains("is-open") || !list) return;
+    const items = [...list.querySelectorAll("[role='menuitem']")];
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeOntapPrintMenu();
+      document.getElementById("ontapPrintMenuBtn")?.focus();
+      return;
+    }
+    if (!items.length) return;
+    const index = items.indexOf(document.activeElement);
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const next = event.key === "ArrowDown"
+        ? items[(index + 1 + items.length) % items.length]
+        : items[(index - 1 + items.length) % items.length];
+      next?.focus();
+    }
+    if (event.key === "Home") {
+      event.preventDefault();
+      items[0].focus();
+    }
+    if (event.key === "End") {
+      event.preventDefault();
+      items[items.length - 1].focus();
+    }
+  });
+  window.addEventListener("resize", positionOntapPrintMenu);
+  window.addEventListener("scroll", positionOntapPrintMenu, true);
+}
+
+function toggleOntapPrintMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById("ontapPrintMenu");
+  const btn = document.getElementById("ontapPrintMenuBtn");
+  if (!menu || !btn) return;
+  bindOntapPrintMenuChrome();
+  const list = ensureOntapPrintMenuList();
+  const open = !menu.classList.contains("is-open");
+  if (!open) {
+    closeOntapPrintMenu();
+    return;
+  }
+  if (list.parentElement !== document.body) document.body.appendChild(list);
+  menu.classList.add("is-open");
+  list.hidden = false;
+  btn.setAttribute("aria-expanded", "true");
+  positionOntapPrintMenu();
+  list.querySelector("[role='menuitem']")?.focus();
+}
+
 function renderOnTapPrintMenu() {
+  if (typeof closeOntapPrintMenu === "function") closeOntapPrintMenu();
   if (!getOnTapBeersSorted().length) return "";
   return `
-    <details class="ontap-print-menu">
-      <summary class="btn btn-print" aria-haspopup="menu">Print ▾</summary>
-      <div class="ontap-print-menu-list" role="menu">
-        <button type="button" role="menuitem" onclick="openOnTapPrintChooser('draft')">Guest Draft Menu</button>
-        <button type="button" role="menuitem" onclick="openOnTapPrintChooser('bar')">Bar Tap Sheet</button>
-        <button type="button" role="menuitem" onclick="openOnTapPrintChooser('both')">Print Both</button>
-      </div>
-    </details>
+    <div class="ontap-print-menu" id="ontapPrintMenu">
+      <button type="button" class="btn btn-print" id="ontapPrintMenuBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="ontapPrintMenuList" onclick="toggleOntapPrintMenu(event)">Print ▾</button>
+    </div>
   `;
 }
 
 function openOnTapPrintChooser(mode) {
-  document.querySelectorAll(".ontap-print-menu").forEach((el) => { el.open = false; });
+  if (typeof closeOntapPrintMenu === "function") closeOntapPrintMenu();
   syncOntapPrintRoot();
   const rows = getOnTapBeersSorted();
   if (!rows.length) {
@@ -18212,9 +18903,9 @@ function renderOnTapTable(rows) {
                   ${tags ? `<div class="meta-tags">${tags}</div>` : ""}
                   <div class="ontap-row-edit">${renderTapEditor(beer.nucleus_tap_id, beer.nucleus_product_id)}${renderOnTapMetaEditor(beer)}</div>
                 </td>
-                <td>${escapeHTML(getStyle(beer) || "—")}</td>
-                <td>${escapeHTML(getABVText(beer) || "—")}</td>
-                <td>${escapeHTML(getPourSize(beer))}</td>
+                <td class="style-col">${escapeHTML(getStyle(beer) || "—")}</td>
+                <td class="quiet-col">${escapeHTML(getABVText(beer) || "—")}</td>
+                <td class="quiet-col">${escapeHTML(getPourSize(beer))}</td>
                 <td class="flavor-col">${escapeHTML(shortFlavor(beer) || "—")}</td>
               </tr>
             `;
@@ -18227,34 +18918,21 @@ function renderOnTapTable(rows) {
 
 function renderOnTapMobileCards(rows) {
   return `
-    <div class="ontap-mobile-list list">
+    <div class="ontap-mobile-list">
       ${rows.map((beer) => {
         const name = col(beer, "Name");
-        const flavor = shortFlavor(beer);
+        const meta = [getABVText(beer), getPourSize(beer), shortFlavor(beer)].filter(Boolean).join(" · ");
         return `
-          <div class="card" role="button" tabindex="0" aria-label="${escapeForAttribute(name)}" onclick="openBeerByName('${escapeForAttribute(name)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBeerByName('${escapeForAttribute(name)}');}">
-            <div class="tap-layout">
-              <div class="tap-number">
-                <small>TAP</small>
-                <strong>${escapeHTML(getTapNumber(beer) || "—")}</strong>
-              </div>
-              <div>
-                <div class="card-top">
-                  <div>
-                    <p class="name">${escapeHTML(name)}</p>
-                    <p class="desc">${escapeHTML([getStyle(beer), getABVText(beer), getPourSize(beer)].filter(Boolean).join(" · "))}</p>
-                  </div>
-                </div>
-                ${flavor ? `<p class="desc" style="margin-top:8px;">${escapeHTML(flavor)}</p>` : ""}
-                <div class="tags">
-                  ${isYes(beer["New Tap"]) ? `<span class="tag new">New</span>` : ""}
-                  ${isYes(beer["Gluten-Reduced"]) ? `<span class="tag gf">Gluten-reduced</span>` : ""}
-                </div>
-                ${renderTapEditor(beer.nucleus_tap_id, beer.nucleus_product_id)}
-                ${renderOnTapMetaEditor(beer)}
-              </div>
-            </div>
-          </div>
+          <button type="button" class="tap-entry" aria-label="${escapeForAttribute(name)}" onclick="openBeerByName('${escapeForAttribute(name)}')">
+            <span class="tap-entry-num"><small>TAP</small>${escapeHTML(getTapNumber(beer) || "—")}</span>
+            <span>
+              <span class="tap-entry-name">${escapeHTML(name)}</span>
+              <span class="tap-entry-style">${escapeHTML(getStyle(beer) || "—")}</span>
+              ${meta ? `<span class="tap-entry-meta">${escapeHTML(meta)}</span>` : ""}
+              ${isYes(beer["New Tap"]) || isYes(beer["Gluten-Reduced"]) ? `<span class="tap-entry-meta">${isYes(beer["New Tap"]) ? "New" : ""}${isYes(beer["New Tap"]) && isYes(beer["Gluten-Reduced"]) ? " · " : ""}${isYes(beer["Gluten-Reduced"]) ? "GR" : ""}</span>` : ""}
+            </span>
+          </button>
+          ${typeof isPageEditMode === "function" && isPageEditMode("ontap") ? `<div class="ontap-row-edit">${renderTapEditor(beer.nucleus_tap_id, beer.nucleus_product_id)}${renderOnTapMetaEditor(beer)}</div>` : ""}
         `;
       }).join("")}
     </div>
@@ -18323,23 +19001,23 @@ function downloadOnTapCsv(event) {
 
 function renderList(content) {
   const view = contentType();
-  const query = document.getElementById("search").value.toLowerCase().trim();
+  const query = (document.getElementById("search")?.value || "").toLowerCase().trim();
   const isCatalog = view === "ontap" && ontapView === "catalog";
   const isBoard = view === "ontap" && !isCatalog;
   let source = view === "food" ? foods : beers;
 
-  if (isBoard && canManageTaps() && !tapsState.loaded) {
-    if (!tapsState.loading) {
-      content.innerHTML = `<div class="status"><strong>Loading taps…</strong></div>`;
-      ensureTapsState().then(() => render());
-    }
-    return;
+  // Tap editors and pour-size meta are overlays. Never block the live board
+  // on those requests — a hang or 401 left On Tap looking empty.
+  if (isBoard && canManageTaps() && !tapsState.loaded && !tapsState.loading) {
+    ensureTapsState().then(() => {
+      if (typeof contentType === "function" && contentType() === "ontap") render();
+    });
   }
 
   if (isBoard && !tapDisplayMetaLoaded && !tapDisplayMetaLoading) {
-    content.innerHTML = `<div class="status"><strong>Loading On Tap…</strong></div>`;
-    ensureTapDisplayMeta().then(() => render());
-    return;
+    ensureTapDisplayMeta().then(() => {
+      if (typeof contentType === "function" && contentType() === "ontap") render();
+    });
   }
 
   if (isBoard) {
@@ -18408,12 +19086,22 @@ function renderList(content) {
 
   if (isBoard) {
     if (filtered.length === 0 && !emptyTapCards) {
-      const message = source.length === 0
-        ? "No beers are currently marked as On Tap. Confirm beers are marked on tap in Nucleus."
-        : "Nothing matches your search or selected filter.";
-      content.innerHTML = pageHeader + banner + adminNote + `
-        <div class="status"><strong>Nothing to show yet.</strong>${message}</div>
-      `;
+      const message = beersLoadError
+        ? beersLoadError
+        : source.length === 0
+          ? "No beers are currently marked as On Tap. Confirm beers are marked on tap in Nucleus."
+          : "Nothing matches your search or selected filter.";
+      content.innerHTML = pageHeader + banner + adminNote + (
+        typeof renderAppState === "function"
+          ? renderAppState({
+              kind: beersLoadError ? "error" : "empty",
+              title: beersLoadError
+                ? "The beer list could not be loaded."
+                : source.length === 0 ? "No beers on tap right now." : "Nothing matches that search.",
+              detail: message
+            })
+          : `<div class="status"><strong>${escapeHTML(message)}</strong></div>`
+      );
       return;
     }
     content.innerHTML =

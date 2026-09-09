@@ -333,7 +333,8 @@ async function getBeerRows() {
 
   const tapByProduct = new Map();
   for (const tap of taps) {
-    if (tap.current_product_id) tapByProduct.set(tap.current_product_id, tap);
+    const productId = tap.current_product_id || tap.current_product?.id;
+    if (productId) tapByProduct.set(String(productId), tap);
   }
 
   // Timestamps that several taps share were written in one transaction — a
@@ -347,7 +348,7 @@ async function getBeerRows() {
   );
 
   const rows = products.map((product) =>
-    toBeerRow(product, tapByProduct.get(product.id) || null, bulkStamps)
+    toBeerRow(product, tapByProduct.get(String(product.id)) || null, bulkStamps)
   );
   rows.sort((a, b) => {
     const aTap = Number(a.Tap || 0);

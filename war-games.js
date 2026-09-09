@@ -7,8 +7,22 @@
  * openTrainingSkill, activateAppTab.
  */
 
-const FEATURED_GAME_IDS = ["rush", "flight", "readguest", "saturday", "favbeer"];
-const TRIVIA_GAME_IDS = ["tap", "quiz", "practice", "abv", "style", "reverse", "flash", "speed", "rocket"];
+const FEATURED_GAME_IDS = ["rush", "flight", "readguest", "saturday"];
+const TRIVIA_GAME_IDS = ["tap", "quiz", "practice", "abv", "style", "reverse", "flash", "speed"];
+const ARCADE_GAMES = [
+  {
+    id: "rocket",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="38" ry="14" fill="none" stroke="#9c6b4a" stroke-width="3"/><ellipse cx="50" cy="50" rx="38" ry="14" fill="none" stroke="#9c6b4a" stroke-width="3" transform="rotate(60 50 50)"/><circle cx="50" cy="50" r="5" fill="#9c6b4a"/></svg>`,
+    title: "ATOM SHOOTER",
+    desc: "Shoot the right atom. Recreational — not a training score."
+  },
+  {
+    id: "highway",
+    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M38 18h24l10 64H28z" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M50 22v54M42 48h16" stroke="#9c6b4a" stroke-width="3"/></svg>`,
+    title: "HALF-LIFE HIGHWAY",
+    desc: "Top-down hop road. Collect atoms, dodge kegs, local high score."
+  }
+];
 
 const WAR_GAMES = [
   {
@@ -34,14 +48,15 @@ const WAR_GAMES = [
     icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="28" width="56" height="48" rx="6" fill="none" stroke="#9c6b4a" stroke-width="3"/><path d="M22 44h56M38 28v-8M62 28v-8" stroke="#9c6b4a" stroke-width="3"/></svg>`,
     title: "Saturday Night",
     desc: "Dynamic service problems. Coaching, not a scoreboard."
-  },
-  {
-    id: "favbeer",
-    icon: `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5"/><ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="#9c6b4a" stroke-width="2.5" transform="rotate(60 50 50)"/><path d="M38 58c0-12 8-22 12-28 4 6 12 16 12 28a12 12 0 0 1-24 0z" fill="none" stroke="#9c6b4a" stroke-width="3"/><circle cx="50" cy="58" r="3" fill="#9c6b4a"/></svg>`,
-    title: "Staff Favorites",
-    desc: "Guess teammates’ beers — unlock them on the board"
   }
 ];
+
+if (typeof window !== "undefined") {
+  window.FEATURED_GAME_IDS = FEATURED_GAME_IDS;
+  window.TRIVIA_GAME_IDS = TRIVIA_GAME_IDS;
+  window.ARCADE_GAMES = ARCADE_GAMES;
+  window.WAR_GAMES = WAR_GAMES;
+}
 
 const FLIGHT_PROMPT = {
   setup: "Two guests. One board.",
@@ -1084,6 +1099,7 @@ if (typeof window !== "undefined") {
   window.WAR_GAMES = WAR_GAMES;
   window.FEATURED_GAME_IDS = FEATURED_GAME_IDS;
   window.TRIVIA_GAME_IDS = TRIVIA_GAME_IDS;
+  window.ARCADE_GAMES = ARCADE_GAMES;
   window.FLIGHT_PROMPT = FLIGHT_PROMPT;
   window.tagBeer = tagBeer;
   window.scoreFlight = scoreFlight;
@@ -1103,6 +1119,7 @@ if (typeof module !== "undefined" && module.exports) {
     WAR_GAMES,
     FEATURED_GAME_IDS,
     TRIVIA_GAME_IDS,
+    ARCADE_GAMES,
     FLIGHT_PROMPT,
     RUSH_NODES,
     SATURDAY_PROBLEMS,

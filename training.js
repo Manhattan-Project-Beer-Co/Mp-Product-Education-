@@ -634,6 +634,29 @@ async function saveTrainingHandoff(traineeId, shiftNumber) {
   if (typeof render === "function") render();
 }
 
+const TRAINING_NEXT_SHIFT = {
+  1: { know: "Home, On Tap, and Ask MP.", practice: "One-sentence Gold Flash pitch.", ask: "How we confirm allergens with kitchen." },
+  2: { know: "Guest greet and beer style families.", practice: "Take one coffee order including milk.", ask: "What End of Shift should include tonight." },
+  3: { know: "Opening sequence and where SOPs live.", practice: "Run the 86 board before you sell.", ask: "Which SOP you’d use if espresso tastes sour." },
+  4: { know: "Today’s Sell This item and one pairing.", practice: "Recommend without reading the screen.", ask: "How we recover a complaint on this floor." },
+  5: { know: "Your section and what’s on the books.", practice: "Own the section without waiting to be assigned.", ask: "What sign-off still needs a trainer." }
+};
+
+function renderBeforeNextShift(block) {
+  const next = TRAINING_NEXT_SHIFT[block?.shift];
+  if (!next) return "";
+  return `
+    <section class="training-section training-next-shift">
+      <h3 class="training-section-title">Before your next shift</h3>
+      <ul class="training-next-list">
+        <li><strong>Know</strong> ${escapeHTML(next.know)}</li>
+        <li><strong>Practice</strong> ${escapeHTML(next.practice)}</li>
+        <li><strong>Ask your trainer</strong> ${escapeHTML(next.ask)}</li>
+      </ul>
+    </section>
+  `;
+}
+
 function renderTrainingRoadmap(state) {
   const blocks = [];
   for (let shift = 1; shift <= 5; shift += 1) {
@@ -1048,6 +1071,7 @@ async function renderTrainingDashboard(content) {
 
       <div id="trainingTodayStrip"></div>
       ${renderTodayFocus(state)}
+      ${renderBeforeNextShift(block)}
       ${renderSkillsYouCanDo(state)}
       ${renderTrainingRoadmap(state)}
       ${renderServiceLoop()}

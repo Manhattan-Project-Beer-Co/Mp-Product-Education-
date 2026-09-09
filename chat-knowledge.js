@@ -5,10 +5,16 @@ const { SITE_FEATURES, buildSiteOverviewText } = require("./site-features");
 const SITE_OVERVIEW = buildSiteOverviewText();
 
 const TRAINING_GAMES = [
-  { name: "The Rush", desc: "Evolving Saturday 7:30 prioritization — window, waving tables, bar hands. Teaches urgency and communication, not a timer." },
-  { name: "Build the Flight", desc: "Four-beer flight from the current On Tap list. Multiple reasonable answers; explains why." },
+  { name: "The Rush", desc: "Evolving Saturday 7:30 as Float — upstairs tickets, bar line, patio, production. Whole-room awareness, not a server section." },
+  { name: "Build the Flight", desc: "Four-beer flight on a wooden board from the current On Tap list. Multiple reasonable answers; explains why." },
   { name: "Read the Guest", desc: "Branching recommendation from live taps. Starts at Modelo, then “I don’t like bitter.”" },
-  { name: "Saturday Night", desc: "Dynamic service problems (window, allergen, slow ticket, checkout). Ends with Strong / Work on and Training links — not a 7/10 score." },
+  { name: "Saturday Night", desc: "Dynamic service problems (tickets upstairs, allergen, runner check, checkout). Ends with Strong / Work on and Training links — not a 7/10 score." },
+  { name: "Style Match", desc: "Beer Academy — name the style or the MP beer from the live catalog, with a short explanation." },
+  { name: "Flavor Profile", desc: "Beer Academy — pick the tasting notes that fit the beer." },
+  { name: "Pairing Lab", desc: "Beer Academy — match a current food item to a beer using pairing principles, not one arbitrary answer." },
+  { name: "How Beer Is Made", desc: "Beer Academy — put the brew day in order, then a few short questions." },
+  { name: "Cicerone Challenge", desc: "Beer Academy — deeper beer-service quiz for the nerds. Completing it does not make you a Certified Cicerone." },
+  { name: "What Would You Pour?", desc: "Beer Academy — guest tells you what they drink; pick from what’s on tap." },
   { name: "Staff Favorites", desc: "Guess teammates’ favorite beers on Team — not a War Games service drill." },
   { name: "Coffee Quiz", desc: "10 questions from the coffee training manual — on Drinks, not the War Games hub." },
   { name: "Coffee Flashcards", desc: "15 cards on espresso, milk, and bar standards — on Drinks." }

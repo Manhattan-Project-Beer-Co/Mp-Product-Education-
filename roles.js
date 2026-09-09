@@ -1,24 +1,19 @@
 /**
  * Staff roles and permissions — keep in sync with Team tab options and site-features.js.
  *
- * Roles:
- * - admin: full access
- * - manager: view everything (team, shift reports, all tabs)
- * - merch: edit merch inventory, ideas, and votes
- * - inventory_admin: edit ops inventory counts/orders
- * - shift_lead: shift reports & digest when scheduled on duty; can update taps (+ extra role on merch staff)
- * - event_lead: private events — all reference tabs, training, briefing, feedback
- * - bartender: floor staff — menus, training, end-of-shift survey
- * - trainee: same floor access as bartender while learning; lands on Training after login
+ * A person can hold several roles at once (primary + extra_roles).
+ * Today's Floor assignment is separate from these account roles.
  */
 
 const ROLES = {
   ADMIN: "admin",
   MANAGER: "manager",
+  HEAD_CHEF: "head_chef",
   MERCH: "merch",
   INVENTORY_ADMIN: "inventory_admin",
   SHIFT_LEAD: "shift_lead",
   EVENT_LEAD: "event_lead",
+  TRAINER: "trainer",
   BARTENDER: "bartender",
   TRAINEE: "trainee"
 };
@@ -32,14 +27,29 @@ const LEGACY_ROLE_MAP = {
 const ROLE_LABELS = {
   admin: "Admin",
   manager: "Manager",
+  head_chef: "Head Chef",
   merch: "Merch",
-  inventory_admin: "Inventory Admin",
+  inventory_admin: "Inventory",
   shift_lead: "Shift Lead",
   event_lead: "Event Lead",
-  bartender: "Bartender",
+  trainer: "Trainer",
+  bartender: "Employee / Bartender",
   trainee: "Trainee",
-  employee: "Bartender"
+  employee: "Employee / Bartender"
 };
+
+const PRIMARY_ROLE_PRIORITY = [
+  ROLES.TRAINEE,
+  ROLES.ADMIN,
+  ROLES.MANAGER,
+  ROLES.HEAD_CHEF,
+  ROLES.SHIFT_LEAD,
+  ROLES.EVENT_LEAD,
+  ROLES.TRAINER,
+  ROLES.INVENTORY_ADMIN,
+  ROLES.MERCH,
+  ROLES.BARTENDER
+];
 
 const FLOOR_STAFF_ROLES = new Set([ROLES.BARTENDER, ROLES.TRAINEE, "employee"]);
 
@@ -60,8 +70,23 @@ function parseExtraRoles(value) {
 }
 
 function serializeExtraRoles(roles) {
-  const cleaned = [...new Set((roles || []).map(normalizeRole).filter(r => ALL_ROLES.includes(r)))];
+  const cleaned = [...new Set((roles || []).map(normalizeRole).filter((r) => ALL_ROLES.includes(r)))];
   return JSON.stringify(cleaned);
+}
+
+function allAssignedRoles(user) {
+  if (!user) return [];
+  return [...new Set([
+    normalizeRole(user.role),
+    ...parseExtraRoles(user.extra_roles)
+  ].filter((role) => ALL_ROLES.includes(role) || role === "employee"))];
+}
+
+function splitAssignedRoles(roles) {
+  const unique = [...new Set((roles || []).map(normalizeRole).filter((r) => ALL_ROLES.includes(r)))];
+  if (!unique.length) return { role: ROLES.BARTENDER, extra_roles: [] };
+  const role = PRIMARY_ROLE_PRIORITY.find((r) => unique.includes(r)) || unique[0];
+  return { role, extra_roles: unique.filter((r) => r !== role) };
 }
 
 function roleLabel(role) {
@@ -79,14 +104,12 @@ function hasExtraRole(user, role) {
 function hasRole(user, ...roles) {
   if (!user) return false;
   const wanted = roles.map(normalizeRole);
-  const primary = normalizeRole(user.role);
-  const extras = parseExtraRoles(user.extra_roles);
-  return wanted.some(role => role === primary || extras.includes(role));
+  const assigned = allAssignedRoles(user);
+  return wanted.some((role) => assigned.includes(role) || (role === ROLES.BARTENDER && assigned.includes("employee")));
 }
 
 function hasShiftLeadCapability(user) {
-  return hasRole(user, ROLES.ADMIN, ROLES.MANAGER, ROLES.SHIFT_LEAD)
-    || hasExtraRole(user, ROLES.SHIFT_LEAD);
+  return hasRole(user, ROLES.ADMIN, ROLES.MANAGER, ROLES.SHIFT_LEAD);
 }
 
 function canViewAllSite(user) {
@@ -115,14 +138,12 @@ function canViewShiftReports(user, onShiftLeadDuty = false) {
   return hasShiftLeadCapability(user);
 }
 
-/** Who can change what’s pouring on the live tap wall (writes to Nucleus). */
 function canManageTaps(user) {
   return hasShiftLeadCapability(user);
 }
 
-/** Who can update weekly food specials / This Week at MP board. */
 function canManageWeeklySpecials(user) {
-  return hasShiftLeadCapability(user);
+  return hasShiftLeadCapability(user) || hasRole(user, ROLES.HEAD_CHEF);
 }
 
 function canEditSpecials(user) {
@@ -153,8 +174,12 @@ function canEditEvents(user) {
   return hasRole(user, ROLES.ADMIN, ROLES.MANAGER, ROLES.EVENT_LEAD);
 }
 
+function canEditEventFood(user) {
+  return canEditEvents(user) || hasRole(user, ROLES.HEAD_CHEF);
+}
+
 function canTrainStaff(user) {
-  return hasShiftLeadCapability(user);
+  return hasRole(user, ROLES.ADMIN, ROLES.MANAGER, ROLES.SHIFT_LEAD, ROLES.TRAINER);
 }
 
 function canSubmitShiftSurvey(user) {
@@ -162,8 +187,10 @@ function canSubmitShiftSurvey(user) {
     user,
     ROLES.BARTENDER,
     ROLES.TRAINEE,
+    ROLES.TRAINER,
     ROLES.EVENT_LEAD,
     ROLES.SHIFT_LEAD,
+    ROLES.HEAD_CHEF,
     ROLES.MERCH,
     ROLES.ADMIN,
     ROLES.MANAGER
@@ -171,11 +198,11 @@ function canSubmitShiftSurvey(user) {
 }
 
 function receivesDailyBriefing(user) {
-  return hasRole(user, ROLES.BARTENDER, ROLES.TRAINEE, ROLES.EVENT_LEAD);
+  return hasRole(user, ROLES.BARTENDER, ROLES.TRAINEE, ROLES.TRAINER, ROLES.EVENT_LEAD, ROLES.HEAD_CHEF);
 }
 
 function isFloorStaffForTraining(user) {
-  return FLOOR_STAFF_ROLES.has(normalizeRole(user?.role));
+  return hasRole(user, ROLES.BARTENDER, ROLES.TRAINEE);
 }
 
 function canManageSops(user) {
@@ -206,6 +233,7 @@ function buildPermissions(user, onShiftLeadDuty = false) {
     editSop: canEditSOP(user),
     editBeer: canEditBeer(user),
     editEvents: canEditEvents(user),
+    editEventFood: canEditEventFood(user),
     trainStaff: canTrainStaff(user),
     viewShiftReports: canViewShiftReports(user, onShiftLeadDuty),
     submitShiftSurvey: canSubmitShiftSurvey(user),
@@ -222,9 +250,12 @@ const api = {
   ALL_ROLES,
   ROLE_LABELS,
   LEGACY_ROLE_MAP,
+  PRIMARY_ROLE_PRIORITY,
   normalizeRole,
   parseExtraRoles,
   serializeExtraRoles,
+  allAssignedRoles,
+  splitAssignedRoles,
   roleLabel,
   hasRole,
   hasExtraRole,
@@ -243,6 +274,7 @@ const api = {
   canEditSOP,
   canEditBeer,
   canEditEvents,
+  canEditEventFood,
   canTrainStaff,
   canViewShiftReports,
   canSubmitShiftSurvey,

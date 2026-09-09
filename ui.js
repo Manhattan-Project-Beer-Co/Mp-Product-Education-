@@ -156,7 +156,8 @@ const homeBriefingCache = {
   digest: null,
   checklists: null,
   viewedKeys: new Set(),
-  announcements: []
+  announcements: [],
+  events: []
 };
 
 function resetHomeBriefingCache() {
@@ -168,7 +169,20 @@ function resetHomeBriefingCache() {
   homeBriefingCache.checklists = null;
   homeBriefingCache.viewedKeys = new Set();
   homeBriefingCache.announcements = [];
+  homeBriefingCache.events = [];
+  homeBriefingCache.weeklyBoard = null;
   quickAccessEditing = false;
+}
+
+function eventIsTodayOnHome(event, now = new Date()) {
+  if (!event?.startsAt) return false;
+  const start = new Date(event.startsAt);
+  if (Number.isNaN(start.getTime())) return false;
+  const end = event.endsAt ? new Date(event.endsAt) : new Date(start.getTime() + 4 * 60 * 60 * 1000);
+  if (Number.isNaN(end.getTime())) return false;
+  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+  return start < dayEnd && end >= dayStart;
 }
 
 function isWeeklySpecialPlaceholder(special) {
@@ -204,6 +218,10 @@ async function ensureHomeBriefingData({ force = false } = {}) {
     apiFetch("/api/announcements/state").catch((err) => {
       console.warn("Home announcements unavailable:", err.message);
       return { viewedKeys: [] };
+    }),
+    apiFetch("/api/events").catch((err) => {
+      console.warn("Home events unavailable:", err.message);
+      return { events: [] };
     })
   ];
 
@@ -229,10 +247,11 @@ async function ensureHomeBriefingData({ force = false } = {}) {
   }
 
   try {
-    const [huddle, announceState, checklists, digest] = await Promise.all(tasks);
+    const [huddle, announceState, eventsPayload, checklists, digest] = await Promise.all(tasks);
     homeBriefingCache.huddle = huddle;
     homeBriefingCache.checklists = checklists;
     homeBriefingCache.digest = digest;
+    homeBriefingCache.events = eventsPayload?.events || [];
     homeBriefingCache.viewedKeys = new Set(announceState?.viewedKeys || []);
     if (typeof ensureWeeklySpecials === "function") {
       await ensureWeeklySpecials().catch(() => {});
@@ -264,6 +283,23 @@ function buildTodayAtMpCards(cache = homeBriefingCache) {
       detail: [weekly.dayLabel, weekly.meal, weekly.price].filter(Boolean).join(" · "),
       action: () => typeof openWeeklySpecialTraining === "function" && openWeeklySpecialTraining(weekly.id),
       actionAttr: `onclick="typeof openWeeklySpecialTraining==='function'&&openWeeklySpecialTraining('${escapeForAttribute(weekly.id)}')"`
+    });
+  }
+
+  const todayEvents = (cache.events || []).filter((event) => event.published && eventIsTodayOnHome(event));
+  if (todayEvents.length) {
+    const first = todayEvents[0];
+    cards.push({
+      id: "event-today",
+      kicker: "Event today",
+      title: first.title,
+      detail: [
+        first.location,
+        first.guestCount ? `${first.guestCount} guests` : "",
+        first.taproomImpact,
+        todayEvents.length > 1 ? `+${todayEvents.length - 1} more` : ""
+      ].filter(Boolean).join(" · ") || "On the books today",
+      actionAttr: `onclick="activateAppTab('events')"`
     });
   }
 
@@ -398,7 +434,7 @@ function buildRoleAwareCards(cache = homeBriefingCache) {
           kicker: "Feedback",
           title: `${digest.openFeedback} open feedback item${digest.openFeedback === 1 ? "" : "s"}`,
           detail: "Needs review or triage",
-          actionAttr: `onclick="activateAppTab('feedback')"`
+          actionAttr: `onclick="activateAppTab('features')"`
         });
       }
       if (digest.openMaintenance > 0) {

@@ -109,9 +109,11 @@ const TEST_USERS = [
   { name: "Ingrid Inventory", email: "inventory@mp.test", role: "inventory_admin", favorite_beer: "Fat Man Stout" },
   { name: "Evan Event Lead", email: "event@mp.test", role: "event_lead", favorite_beer: "Trinity" },
   { name: "Alex Rivera", email: "alex@mp.test", role: "bartender", favorite_beer: "Black Matter Nitro" },
-  { name: "Jordan Kim", email: "jordan@mp.test", role: "bartender", favorite_beer: "Little Boy" },
+  { name: "Jordan Kim", email: "jordan@mp.test", role: "bartender", extra_roles: ["trainer", "inventory_admin"], favorite_beer: "Little Boy" },
   { name: "Sam Ortiz", email: "sam@mp.test", role: "bartender", favorite_beer: "Chain Reaction" },
-  { name: "Riley Chen", email: "riley@mp.test", role: "trainee", favorite_beer: "Still deciding" }
+  { name: "Riley Chen", email: "riley@mp.test", role: "trainee", favorite_beer: "Still deciding" },
+  { name: "Tracy Trainer", email: "trainer@mp.test", role: "trainer", favorite_beer: "Gold Flash" },
+  { name: "Chris Chef", email: "chef@mp.test", role: "head_chef", favorite_beer: "Trinity" }
 ];
 
 const EMPLOYEE_PROGRESS = {
@@ -690,9 +692,11 @@ console.log("  manager@mp.test   — admin, Team dashboard");
 console.log("  shiftlead@mp.test — shift lead, Shift Reports");
 console.log("  merch@mp.test     — merch manager");
 console.log("  alex@mp.test      — strong beer + coffee scores");
-console.log("  jordan@mp.test    — mid-level, still learning");
+console.log("  jordan@mp.test    — bartender + trainer + inventory");
 console.log("  sam@mp.test       — top performer");
 console.log("  riley@mp.test     — new hire, minimal activity");
+console.log("  trainer@mp.test   — trainer (no manager powers)");
+console.log("  chef@mp.test      — head chef (specials + event food notes)");
 console.log("\nSign in with Microsoft to get a real account; set AZURE_ADMIN_EMAILS to bootstrap an admin.");
 console.log("\nOpen http://localhost:8080 → Inventory tab for product stock\n");
-console.log("Managers schedule shift lead duty on the Team tab; shiftlead@mp.test is scheduled for today.\n");
+console.log("Today’s Floor shows who is on; 7shifts can auto-assign shift lead duty. Account roles are separate from tonight’s assignment.\n");

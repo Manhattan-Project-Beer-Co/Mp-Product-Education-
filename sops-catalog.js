@@ -62,8 +62,8 @@ ${section("In the taproom", bullets([
 ]))}
 ${section("Food service", bullets([
   "Upsell food — start with fries, then other items",
-  "Assign a Table Location in Toast when food is ordered",
-  "Deliver with polished silverware, napkins, and trays (two expo setups)",
+  "Every food ticket needs guest name (Last, F.) and table / location before it is sent",
+  "Deliver with polished silverware, napkins, and trays",
   "After dining: bus, ask how the meal was, suggest a next visit"
 ]))}
 ${section("Action items during service", bullets([
@@ -85,6 +85,76 @@ ${section("Guidelines", bullets([
   "Follow Opening, Closing, Cut, Weekly Detail, and Clean Don’t Lean checklists",
   "Uniforms: dark earth tones; appropriate clothing; staff may be sent to change if not compliant"
 ]))}`
+  },
+  {
+    category: "Floor",
+    title: "Kitchen Ticket SOP",
+    summary: "Clear ticket. Correct food. Confident delivery. MP ticket standards for bar, kitchen, and runners.",
+    sort_order: 1.5,
+    body: `
+<p><strong>Clear ticket. Correct food. Confident delivery.</strong> Kitchen is upstairs. Guests order at the bar, seat themselves, and there is no host. Tickets must tell the whole room where food goes.</p>
+${section("Bar process — before you send", bullets([
+  "Guest name as <strong>Last, F.</strong> — Garcia, M. not Maria and not a blank name",
+  "Table number / location: Patio 3, Bar, High-top 2, Production, etc. Seat-yourself means you still capture where they sat",
+  "Complete food and drink details — every item, not a vibe",
+  "Modifiers: no onion, extra hot, well done, split — write them on the ticket",
+  "Allergies in plain sight on the ticket. Pause and confirm with kitchen before send. Never guess",
+  "Review the ticket once before you send it. Read it like a runner who has never met this guest"
+]))}
+${section("If you already sent a mistake", bullets([
+  "Tell kitchen immediately — do not rely only on a second ticket",
+  "A silent second ticket can duplicate the order or land on the wrong table",
+  "Correct name, location, modifier, or allergy out loud, then follow the house correction path",
+  "If food already left the pass, loop a Shift Lead"
+]))}
+${section("Kitchen", bullets([
+  "Cook to the ticket in front of you",
+  "If name, location, items, modifiers, or allergy notes are missing or conflicting — do not guess. Call FOH",
+  "Plate for the location on the ticket. Patio and production are not interchangeable"
+]))}
+${section("FOH / bartender / float", bullets([
+  "You own ticket accuracy at the bar. Shift Lead backs you up on corrections and comps",
+  "Everyone rotates: Shift Lead, Bartender, Float, Run/Bus. If you can see a dying ticket, it is yours",
+  "Think about the entire taproom — bar, patio, production/back — not a personal section"
+]))}
+${section("Runner ticket check — upstairs, before you walk", bullets([
+  "Read the ticket: guest name, location, items, modifiers, allergies",
+  "Match plates to that ticket. If it does not match, do not leave the kitchen",
+  "Check wait time / urgency when two tickets are ready",
+  "Carry food downstairs. Never walk empty-handed on the way back — glass, water, or menus"
+]))}
+${section("Remakes", bullets([
+  "Confirm what is wrong before you fire a remake",
+  "Tell kitchen it is a remake, not a new table",
+  "Do not send a conflicting second ticket and hope they notice"
+]))}
+${section("Escalation", bullets([
+  "Allergen uncertainty: stop, confirm with kitchen, Shift Lead if still unclear",
+  "Lost plate / wrong location: tell kitchen and Shift Lead now",
+  "Guest recovery if the food is already in front of them — see below"
+]))}
+${section("Guest recovery", bullets([
+  "Acknowledge. Do not defend the ticket",
+  "Fix what you can: remake, replace, water, honest time",
+  "Loop a Shift Lead for comps or safety",
+  "The goal is a guest who will come back — not being right about the ticket"
+]))}
+${section("Accountability", bullets([
+  "The person who sends the ticket owns name, location, items, modifiers, and allergies",
+  "The runner owns the upstairs check",
+  "Kitchen owns cooking to the ticket they were given",
+  "Shift Lead owns the room when two of those loops break"
+]))}
+${section("Roles at a glance", `<table class="sop-roles">
+<tr><th>Role</th><th>Ticket job</th></tr>
+<tr><td>Shift Lead</td><td>Corrections, allergens that need a call, event edges, the whole room</td></tr>
+<tr><td>Bartender</td><td>Accurate tickets at the bar; review before send</td></tr>
+<tr><td>Float</td><td>See dying tickets, bar line, patio, and production — prioritize, then communicate</td></tr>
+<tr><td>Run/Bus</td><td>Upstairs ticket check, run food down, bus patio and production on the walk</td></tr>
+<tr><td>Kitchen</td><td>Cook the ticket; stop when the ticket is incomplete</td></tr>
+</table>`)}
+<p>Motto: <strong>Clear ticket. Correct food. Confident delivery.</strong></p>
+`
   },
   {
     category: "Floor",

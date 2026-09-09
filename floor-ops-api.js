@@ -3,7 +3,7 @@
  * shout-outs, skills, first-5, team challenges, feedback pipeline extras.
  */
 
-const { hasShiftLeadCapability } = require("./roles");
+const { canTrainStaff } = require("./roles");
 
 const TRAINING_STATUSES = ["not_introduced", "learning", "can_do", "verified", "needs_practice"];
 
@@ -197,7 +197,7 @@ const FIRST_FIVE = [
     goal: "Understand how MP operates.",
     focus: "Learn the room, Launch Pad, how we talk about beer, and when to stop and ask about allergens.",
     mission: "Get oriented so you can work a shift without getting lost.",
-    skills: ["login_portal", "find_on_tap", "ask_mp", "allergy_confirm", "taste_one_beer"]
+    skills: ["login_portal", "find_on_tap", "ask_mp", "allergy_confirm", "taste_one_beer", "ticket_flow"]
   },
   {
     shift: 2,
@@ -205,7 +205,7 @@ const FIRST_FIVE = [
     goal: "Prepare yourself and your area for service.",
     focus: "Guest greet, beer styles, coffee menu, and how we close the day.",
     mission: "Show up ready — greet, know the menus, leave a clean handoff.",
-    skills: ["guest_greet", "style_basics", "coffee_menu", "end_of_shift"]
+    skills: ["guest_greet", "know_the_space", "guest_location", "style_basics", "coffee_menu", "end_of_shift"]
   },
   {
     shift: 3,
@@ -213,7 +213,7 @@ const FIRST_FIVE = [
     goal: "Understand how service moves and how to support it.",
     focus: "Checklists, SOPs, and the 86 board — the systems that keep the floor honest.",
     mission: "Run service confidently without waiting to be told what to do.",
-    skills: ["checklist_run", "sop_lookup", "86_board"]
+    skills: ["checklist_run", "sop_lookup", "86_board", "ticket_accuracy", "runner_check"]
   },
   {
     shift: 4,
@@ -221,14 +221,14 @@ const FIRST_FIVE = [
     goal: "Perform key service tasks confidently.",
     focus: "Sell This Today, pairing talk, and recovering when a guest is unhappy.",
     mission: "Take the order, recommend with confidence, and recover cleanly.",
-    skills: ["sell_this", "pairing_talk", "recovery_scenario"]
+    skills: ["sell_this", "pairing_talk", "recovery_scenario", "ticket_correction"]
   },
   {
     shift: 5,
     title: "Shift 5 — Ownership + Checkout",
     goal: "Begin operating independently.",
     focus: "Own a slice of service, know what’s on the books, and get trainer sign-off.",
-    mission: "Work your section like it’s yours — then check out clean.",
+    mission: "Work the whole taproom like it’s yours — then check out clean.",
     skills: ["independent_service", "events_awareness", "trainer_signoff"]
   }
 ];
@@ -241,7 +241,7 @@ function trainerUser(db, req) {
 }
 
 function isTrainer(db, req) {
-  return hasShiftLeadCapability(trainerUser(db, req));
+  return canTrainStaff(trainerUser(db, req));
 }
 
 function progressStatus(row) {

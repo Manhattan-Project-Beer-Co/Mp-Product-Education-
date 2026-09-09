@@ -105,7 +105,7 @@ if (
   fail("Highway is missing discrete lanes, the beer can, or taproom obstacles");
 }
 
-if (INDEX.includes("Meredith + Tanner Ruminer") && INDEX.includes("app-credit") && !INDEX.includes("Created by")) {
+if (INDEX.includes("Meredith McCain + Tanner Ruminer") && INDEX.includes("app-credit") && !INDEX.includes("Created by")) {
   pass("creator credit is App Guide metadata only");
 } else {
   fail("creator credit still appears as Created by chrome");

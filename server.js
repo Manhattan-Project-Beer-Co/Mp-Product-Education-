@@ -52,6 +52,8 @@ const {
   canManageTaps,
   canManageWeeklySpecials,
   canEditEvents,
+  canEditEventFood,
+  splitAssignedRoles,
   canViewShiftReports,
   canSubmitShiftSurvey,
   receivesDailyBriefing,
@@ -387,6 +389,10 @@ if (!userColumns.has("microsoft_oid")) {
 if (!userColumns.has("extra_roles")) {
   db.exec(`ALTER TABLE users ADD COLUMN extra_roles TEXT NOT NULL DEFAULT '[]'`);
 }
+const approvedEmailColumns = new Set(db.prepare("PRAGMA table_info(approved_emails)").all().map((c) => c.name));
+if (!approvedEmailColumns.has("extra_roles")) {
+  db.exec(`ALTER TABLE approved_emails ADD COLUMN extra_roles TEXT NOT NULL DEFAULT '[]'`);
+}
 if (!userColumns.has("favorite_beer")) {
   db.exec(`ALTER TABLE users ADD COLUMN favorite_beer TEXT NOT NULL DEFAULT ''`);
 }
@@ -481,7 +487,13 @@ const GAME_POINT_VALUES = {
   fav_beer: 25,
   sell_this: 20,
   guestscene: 12,
-  recovery: 15
+  recovery: 15,
+  academy_style: 10,
+  academy_flavor: 10,
+  academy_pair: 10,
+  academy_brew: 10,
+  academy_cicerone: 10,
+  academy_pour: 10
 };
 
 function computeSessionPoints(activityType, score, total) {
@@ -804,7 +816,7 @@ function tapManagerRequired(req, res, next) {
 function weeklySpecialsManagerRequired(req, res, next) {
   const user = loadAuthedUser(req);
   if (!user || !canManageWeeklySpecials(user)) {
-    return res.status(403).json({ error: "Shift lead, manager, or admin access required to update food and coffee specials." });
+    return res.status(403).json({ error: "Head chef, shift lead, manager, or admin access required to update food and coffee specials." });
   }
   req.authUser = user;
   next();
@@ -858,6 +870,15 @@ function isAllowedStaffEmail(email) {
 
 function getApprovedEmail(email) {
   return db.prepare("SELECT * FROM approved_emails WHERE email = ?").get(normalizeEmail(email));
+}
+
+function rolesFromRequest(body, fallbackRole = ROLES.BARTENDER) {
+  if (Array.isArray(body?.roles) && body.roles.length) {
+    return splitAssignedRoles(body.roles);
+  }
+  const role = ALLOWED_APPROVED_ROLES.has(body?.role) ? normalizeRole(body.role) : fallbackRole;
+  const extra = body?.extra_roles != null ? parseExtraRoles(body.extra_roles) : [];
+  return splitAssignedRoles([role, ...extra]);
 }
 
 // Access is bounded by the Entra tenant, not by an in-app list: the app
@@ -2212,7 +2233,7 @@ app.post("/api/beer-checkins", authRequired, (req, res) => {
   res.json({ ok: true, beerName });
 });
 
-const FEEDBACK_CATEGORIES = new Set(["bug", "wrong_info", "idea", "other"]);
+const FEEDBACK_CATEGORIES = new Set(["app_issue", "bug", "wrong_info", "idea", "other"]);
 const FEEDBACK_STATUSES = new Set(["open", "reviewed", "resolved"]);
 
 function formatFeedbackRow(row) {
@@ -2329,7 +2350,7 @@ app.patch("/api/site-feedback/:id", authRequired, managerOrAdminRequired, (req, 
 
 app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) => {
   const rows = db.prepare(`
-    SELECT a.id, a.email, a.role, a.created_at, a.added_by,
+    SELECT a.id, a.email, a.role, a.extra_roles, a.created_at, a.added_by,
            u.name AS added_by_name,
            eu.id AS user_id,
            eu.name AS user_name
@@ -2344,6 +2365,7 @@ app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =>
       id: row.id,
       email: row.email,
       role: row.role,
+      extra_roles: parseExtraRoles(row.extra_roles),
       created_at: row.created_at,
       added_by_name: row.added_by_name || null,
       signed_in: Boolean(row.user_id),
@@ -2355,7 +2377,8 @@ app.get("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =>
 
 app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) => {
   const email = normalizeEmail(req.body.email);
-  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? normalizeRole(req.body.role) : ROLES.BARTENDER;
+  const assigned = rolesFromRequest(req.body, ROLES.BARTENDER);
+  const extraJson = serializeExtraRoles(assigned.extra_roles);
 
   if (!email || !email.includes("@")) {
     return res.status(400).json({ error: "A valid email address is required." });
@@ -2369,25 +2392,25 @@ app.post("/api/admin/approved-emails", authRequired, adminRequired, (req, res) =
 
   try {
     db.prepare(`
-      INSERT INTO approved_emails (email, role, added_by)
-      VALUES (?, ?, ?)
-    `).run(email, role, req.user.id);
+      INSERT INTO approved_emails (email, role, extra_roles, added_by)
+      VALUES (?, ?, ?, ?)
+    `).run(email, assigned.role, extraJson, req.user.id);
   } catch (err) {
     if (String(err.message).includes("UNIQUE")) {
       db.prepare(`
         UPDATE approved_emails
-        SET role = ?, added_by = ?
+        SET role = ?, extra_roles = ?, added_by = ?
         WHERE email = ?
-      `).run(role, req.user.id, email);
+      `).run(assigned.role, extraJson, req.user.id, email);
     } else {
       throw err;
     }
   }
 
-  db.prepare(`UPDATE users SET role = ? WHERE email = ?`).run(role, email);
+  db.prepare(`UPDATE users SET role = ?, extra_roles = ? WHERE email = ?`).run(assigned.role, extraJson, email);
 
   const row = db.prepare(`
-    SELECT a.id, a.email, a.role, a.created_at, a.added_by,
+    SELECT a.id, a.email, a.role, a.extra_roles, a.created_at, a.added_by,
            u.name AS added_by_name,
            eu.id AS user_id,
            eu.name AS user_name
@@ -2422,27 +2445,28 @@ app.patch("/api/admin/approved-emails/:id", authRequired, adminRequired, (req, r
     return res.status(404).json({ error: "Approved email not found." });
   }
 
-  const role = ALLOWED_APPROVED_ROLES.has(req.body.role) ? normalizeRole(req.body.role) : null;
-  if (!role) {
+  const assigned = rolesFromRequest(req.body, existing.role);
+  if (!assigned.role) {
     return res.status(400).json({ error: "A valid role is required." });
   }
 
-  if (AZURE_ADMIN_EMAILS.has(existing.email) && role !== "admin") {
+  if (AZURE_ADMIN_EMAILS.has(existing.email) && assigned.role !== "admin" && !assigned.extra_roles.includes("admin")) {
     return res.status(400).json({
       error: "This email is locked as admin in server config."
     });
   }
 
+  const extraJson = serializeExtraRoles(assigned.extra_roles);
   db.prepare(`
     UPDATE approved_emails
-    SET role = ?, added_by = ?
+    SET role = ?, extra_roles = ?, added_by = ?
     WHERE id = ?
-  `).run(role, req.user.id, id);
+  `).run(assigned.role, extraJson, req.user.id, id);
 
-  db.prepare(`UPDATE users SET role = ? WHERE email = ?`).run(role, existing.email);
+  db.prepare(`UPDATE users SET role = ?, extra_roles = ? WHERE email = ?`).run(assigned.role, extraJson, existing.email);
 
   const row = db.prepare(`
-    SELECT a.id, a.email, a.role, a.created_at, a.added_by,
+    SELECT a.id, a.email, a.role, a.extra_roles, a.created_at, a.added_by,
            u.name AS added_by_name,
            eu.id AS user_id,
            eu.name AS user_name
@@ -2495,6 +2519,12 @@ app.get("/api/games/leaderboard", optionalAuth, (req, res) => {
   const period = String(req.query.period || "week").trim();
   const allowed = ["week", "month", "all"];
   const safePeriod = allowed.includes(period) ? period : "week";
+  const ACADEMY_TYPES = ["academy_style", "academy_flavor", "academy_pair", "academy_brew", "academy_cicerone", "academy_pour"];
+  const scope = String(req.query.scope || "").trim();
+  const typeClause = scope === "academy"
+    ? `AND p.activity_type IN (${ACADEMY_TYPES.map(() => "?").join(",")})`
+    : "";
+  const typeParams = scope === "academy" ? ACADEMY_TYPES : [];
 
   let dateClause = "";
   if (safePeriod === "week") dateClause = "AND p.completed_at >= datetime('now', '-7 days')";
@@ -2510,11 +2540,12 @@ app.get("/api/games/leaderboard", optionalAuth, (req, res) => {
     INNER JOIN progress_sessions p ON p.user_id = u.id
     WHERE u.role IN ('bartender', 'trainee', 'event_lead', 'shift_lead', 'admin', 'merch', 'manager', 'inventory_admin')
       ${dateClause}
+      ${typeClause}
     GROUP BY u.id
     HAVING points > 0
     ORDER BY points DESC, correct DESC, u.name ASC
     LIMIT 25
-  `).all();
+  `).all(...typeParams);
 
   const unlockedIds = req.user ? getUnlockedFavoriteIds(req.user.id) : new Set();
 
@@ -2547,7 +2578,8 @@ app.get("/api/games/leaderboard", optionalAuth, (req, res) => {
       FROM progress_sessions p
       WHERE p.user_id = ?
         ${dateClause}
-    `).get(req.user.id);
+        ${typeClause}
+    `).get(req.user.id, ...typeParams);
 
     const myPoints = myRow?.points || 0;
     let myRank = null;
@@ -2560,10 +2592,11 @@ app.get("/api/games/leaderboard", optionalAuth, (req, res) => {
           INNER JOIN progress_sessions p ON p.user_id = u.id
           WHERE u.role IN ('bartender', 'trainee', 'event_lead', 'shift_lead', 'admin', 'merch', 'manager', 'inventory_admin')
             ${dateClause}
+            ${typeClause}
           GROUP BY u.id
           HAVING points > ?
         )
-      `).get(myPoints)?.rank || 1;
+      `).get(...typeParams, myPoints)?.rank || 1;
     }
 
     me = {
@@ -3161,7 +3194,7 @@ app.get("/api/team/directory", authRequired, (req, res) => {
 
 app.get("/api/admin/employees", authRequired, managerOrAdminRequired, (req, res) => {
   const employees = db.prepare(`
-    SELECT u.id, u.name, u.email, u.role, u.created_at,
+    SELECT u.id, u.name, u.email, u.role, u.extra_roles, u.created_at,
            COUNT(p.id) AS sessions_completed,
            COALESCE(SUM(p.score), 0) AS total_correct,
            COALESCE(SUM(p.total), 0) AS total_questions,
@@ -3183,7 +3216,7 @@ app.get("/api/admin/employees", authRequired, managerOrAdminRequired, (req, res)
         last_activity: row.last_activity
       };
 
-      if (!isFloorStaffForTraining({ role: normalizeRole(row.role) })) {
+      if (!isFloorStaffForTraining({ role: normalizeRole(row.role), extra_roles: row.extra_roles })) {
         return { ...base, next_step: null, recommendations: [] };
       }
 
@@ -3280,15 +3313,20 @@ app.patch("/api/admin/users/:id", authRequired, managerOrAdminRequired, (req, re
   const existing = getUserRow(id);
   if (!existing) return res.status(404).json({ error: "User not found." });
 
-  const role = req.body.role && ALLOWED_APPROVED_ROLES.has(req.body.role)
-    ? normalizeRole(req.body.role)
-    : normalizeRole(existing.role);
-  const extra_roles = req.body.extra_roles != null
-    ? serializeExtraRoles(req.body.extra_roles)
-    : existing.extra_roles || "[]";
+  const assigned = Array.isArray(req.body.roles)
+    ? splitAssignedRoles(req.body.roles)
+    : {
+        role: req.body.role && ALLOWED_APPROVED_ROLES.has(req.body.role)
+          ? normalizeRole(req.body.role)
+          : normalizeRole(existing.role),
+        extra_roles: req.body.extra_roles != null
+          ? parseExtraRoles(req.body.extra_roles)
+          : parseExtraRoles(existing.extra_roles)
+      };
+  const extra_roles = serializeExtraRoles(assigned.extra_roles);
 
-  db.prepare(`UPDATE users SET role = ?, extra_roles = ? WHERE id = ?`).run(role, extra_roles, id);
-  db.prepare(`UPDATE approved_emails SET role = ? WHERE email = ?`).run(role, existing.email);
+  db.prepare(`UPDATE users SET role = ?, extra_roles = ? WHERE id = ?`).run(assigned.role, extra_roles, id);
+  db.prepare(`UPDATE approved_emails SET role = ?, extra_roles = ? WHERE email = ?`).run(assigned.role, extra_roles, existing.email);
 
   const updated = getUserRow(id);
   res.json({ ok: true, user: publicUser(updated) });
@@ -3548,7 +3586,8 @@ registerPublishedEventsApi(app, {
   authRequired,
   eventsManagerRequired,
   loadAuthedUser,
-  canEditEvents
+  canEditEvents,
+  canEditEventFood
 });
 
 registerTapDisplayApi(app, {

@@ -2,6 +2,7 @@
  * Recreational arcade games. Scores stay on this device — not training analytics.
  */
 const HIGHWAY_STORAGE_KEY = "mp-arcade-highway-high";
+const ATOM_STORAGE_KEY = "mp-arcade-atom-high";
 const HIGHWAY_LANES = 4;
 const HIGHWAY_LANE_MS = 160;
 const HIGHWAY_STEER_LOCK_MS = 180;
@@ -25,6 +26,24 @@ function saveHighwayHighScore(score) {
   try {
     const best = Math.max(highwayHighScore(), Math.floor(score));
     localStorage.setItem(HIGHWAY_STORAGE_KEY, String(best));
+    return best;
+  } catch (_) {
+    return Math.floor(score);
+  }
+}
+
+function atomHighScore() {
+  try {
+    return Number(localStorage.getItem(ATOM_STORAGE_KEY) || 0) || 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
+function saveAtomHighScore(score) {
+  try {
+    const best = Math.max(atomHighScore(), Math.floor(score));
+    localStorage.setItem(ATOM_STORAGE_KEY, String(best));
     return best;
   } catch (_) {
     return Math.floor(score);
@@ -649,6 +668,10 @@ if (typeof window !== "undefined") {
   window.nudgeHighwayLane = nudgeHighwayLane;
   window.syncHighwayOverlay = syncHighwayOverlay;
   window.HIGHWAY_STORAGE_KEY = HIGHWAY_STORAGE_KEY;
+  window.ATOM_STORAGE_KEY = ATOM_STORAGE_KEY;
+  window.highwayHighScore = highwayHighScore;
+  window.atomHighScore = atomHighScore;
+  window.saveAtomHighScore = saveAtomHighScore;
 }
 
 if (typeof module !== "undefined" && module.exports) {
@@ -658,6 +681,9 @@ if (typeof module !== "undefined" && module.exports) {
     HIGHWAY_LANE_MS,
     HIGHWAY_STEER_LOCK_MS,
     highwayHighScore,
-    saveHighwayHighScore
+    saveHighwayHighScore,
+    ATOM_STORAGE_KEY,
+    atomHighScore,
+    saveAtomHighScore
   };
 }

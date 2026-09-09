@@ -9,7 +9,7 @@ const TRAINING_GAMES = [
   { name: "Build the Flight", desc: "Four-beer flight from the current On Tap list. Multiple reasonable answers; explains why." },
   { name: "Read the Guest", desc: "Branching recommendation from live taps. Starts at Modelo, then “I don’t like bitter.”" },
   { name: "Saturday Night", desc: "Dynamic service problems (window, allergen, slow ticket, checkout). Ends with Strong / Work on and Training links — not a 7/10 score." },
-  { name: "Staff Favorites", desc: "Guess teammates’ favorite beers for bonus points; unlocks them on the leaderboard." },
+  { name: "Staff Favorites", desc: "Guess teammates’ favorite beers on Team — not a War Games service drill." },
   { name: "Coffee Quiz", desc: "10 questions from the coffee training manual — on Drinks, not the War Games hub." },
   { name: "Coffee Flashcards", desc: "15 cards on espresso, milk, and bar standards — on Drinks." }
 ];

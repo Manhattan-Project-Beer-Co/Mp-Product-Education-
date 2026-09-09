@@ -55,8 +55,8 @@ const triviaOnHub = hubIds.filter((id) => TRIVIA_GAME_IDS.includes(id));
 if (triviaOnHub.length) fail(`trivia still on the hub: ${triviaOnHub.join(", ")}`);
 else pass("matching trivia is off the hub");
 
-if (INDEX.includes("const GAMES = typeof WAR_GAMES") && INDEX.includes("startJudgmentGame") && INDEX.includes("renderJudgmentGame")) {
-  pass("index.html wires the judgment engine");
+if (INDEX.includes("function hubServiceDrills") && INDEX.includes("function hubArcadeGames") && INDEX.includes("startJudgmentGame") && INDEX.includes("renderJudgmentGame")) {
+  pass("index.html wires the judgment engine at render time");
 } else {
   fail("index.html is not wired to war-games.js");
 }

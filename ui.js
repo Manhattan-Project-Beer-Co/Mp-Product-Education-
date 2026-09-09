@@ -125,6 +125,21 @@ function renderPageEditBanner(message) {
   return `<div class="page-edit-banner" role="status">${escapeHTML(message)}</div>`;
 }
 
+function renderAppState({ kind = "empty", title = "", detail = "" } = {}) {
+  const extra = detail ? `<p class="app-state-detail">${escapeHTML(detail)}</p>` : "";
+  return `<div class="app-state is-${escapeHTML(kind)}" role="status"><p class="app-state-title">${escapeHTML(title)}</p>${extra}</div>`;
+}
+
+function renderFormActions({ saveLabel = "Save", saveOnclick = "", cancelOnclick = "", extraHtml = "" } = {}) {
+  return `
+    <div class="merch-admin-actions edit-form-actions">
+      ${saveOnclick ? `<button type="button" class="btn btn-primary" onclick="${saveOnclick}">${escapeHTML(saveLabel)}</button>` : ""}
+      ${cancelOnclick ? `<button type="button" class="btn btn-secondary" onclick="${cancelOnclick}">Cancel</button>` : ""}
+      ${extraHtml}
+    </div>
+  `;
+}
+
 function resetPageEditModes() {
   Object.keys(pageEditModes).forEach((key) => {
     delete pageEditModes[key];
@@ -420,7 +435,7 @@ function homeCardPriority(card) {
 
 function renderTodayCardsHtml(cards, { compact = false, roleActions = false } = {}) {
   if (!cards.length) {
-    return `<p class="home-empty">${compact ? "All quiet. You’re caught up." : "All quiet. You’re caught up."}</p>`;
+    return `<p class="home-empty">You're caught up.</p>`;
   }
   const ordered = compact
     ? cards
@@ -853,6 +868,8 @@ if (typeof window !== "undefined") {
   window.renderEditToggleButton = renderEditToggleButton;
   window.renderEditablePageHeader = renderEditablePageHeader;
   window.renderPageEditBanner = renderPageEditBanner;
+  window.renderAppState = renderAppState;
+  window.renderFormActions = renderFormActions;
   window.resetPageEditModes = resetPageEditModes;
   window.toggleQuickAccessPin = toggleQuickAccessPin;
   window.toggleQuickAccessEditing = toggleQuickAccessEditing;

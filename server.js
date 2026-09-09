@@ -3698,7 +3698,8 @@ const CLIENT_SCRIPTS = new Set([
   "floor-tools.js",
   "ui.js",
   "training.js",
-  "war-games.js"
+  "war-games.js",
+  "arcade.js"
 ]);
 
 app.use("/images", express.static(path.join(__dirname, "images"), {

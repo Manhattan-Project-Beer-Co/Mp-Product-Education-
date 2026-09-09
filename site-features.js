@@ -6,6 +6,7 @@ const SITE_FEATURES = {
   tabLabel: "App guide",
   updatedAt: "2026-09-08",
   recentUpdates: [
+    { date: "2026-09-08", text: "Final manager polish — reading widths, quieter forms, On Tap scan/mobile, War Games Service Drills vs Arcade (ATOM SHOOTER + Half-Life Highway), Staff Favorites on Team, App Guide credit + issue report." },
     { date: "2026-09-08", text: "Manager-ready cleanup Phase 7 — visual/a11y polish: shared page headers, focus rings, skip-to-content, 44px mobile targets, keyboard War Games/On Tap, Edit shortcuts on Home. I’m caught up no longer clears required acknowledgments." },
     { date: "2026-09-08", text: "Manager-ready cleanup Phase 6 — Home uses Since last shift (7shifts clock-out when linked), sparse New/Important badges, and pin-able Quick Access. Ask MP and Search Launch Pad open the source (beer, dish, SOP, drill) instead of a bare tab." },
     { date: "2026-09-08", text: "Manager-ready cleanup Phase 5 — War Games rebuilt as judgment drills (The Rush, Build the Flight, Read the Guest, Saturday Night) from the live On Tap list. Trivia matching is off the hub. Coaching links back into Training." },
@@ -63,10 +64,10 @@ const SITE_FEATURES = {
     { id: "safety", title: "Safety + Emergency", summary: "Always reachable from the sidebar — incident cards plus Fix It troubleshooting." },
     { id: "sops", title: "SOPs", summary: "Procedures, Recipes, Emergency, photo standards gallery (Learn group)." },
     { id: "checklists", title: "Checklists", summary: "Opening/closing/cut/events/detail lists with streaks (My Shift group)." },
-    { id: "launchpad", title: "War Games", summary: "Judgment drills: The Rush, Build the Flight (live taps), Read the Guest, Saturday Night coaching into Training, plus Staff Favorites. Trivia matching is retired from the hub (Learn group)." },
+    { id: "launchpad", title: "War Games", summary: "Service drills: The Rush, Build the Flight (live taps), Read the Guest, Saturday Night. Arcade: ATOM SHOOTER and Half-Life Highway (device-local scores). Staff Favorites lives on Team. Trivia matching is retired from the hub (Learn group)." },
     { id: "progress", title: "My Progress", summary: "Scores, tasting journal, achievements (Learn group)." },
     { id: "shift", title: "End of Shift / Reports", summary: "Anonymous surveys (My Shift) + digests for leads (Manage · Shift Reports)." },
-    { id: "team", title: "Team", summary: "Staff directory for everyone signed in. Morning digest, analytics, and shift lead duty stay with managers." },
+    { id: "team", title: "Team", summary: "Staff directory for everyone signed in. Team stuff includes Staff Favorites. Morning digest, analytics, and shift lead duty stay with managers." },
     { id: "briefing", title: "Daily briefing", summary: "Lives on Home (and Today at MP on Training). Pulls specials, 86s, handoffs, Sell This, unread announcements; shift leads see Friday food and coffee specials reminders." },
     { id: "feedback", title: "Feedback", summary: "Ideas/bugs with Submitted → Reviewing → Planned → Built pipeline (Team group)." }
   ]

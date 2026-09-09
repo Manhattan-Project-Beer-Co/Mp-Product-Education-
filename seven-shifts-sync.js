@@ -355,6 +355,14 @@ function getUserShiftContext(db, userId, now = new Date()) {
   const endMs = shift ? Date.parse(shift.end_at) : NaN;
   const minutesToEnd = Number.isFinite(endMs) ? Math.round((endMs - now.getTime()) / 60000) : null;
 
+  const lastRow = db.prepare(`
+    SELECT * FROM scheduled_shifts
+    WHERE user_id = ?
+      AND end_at < ?
+    ORDER BY end_at DESC
+    LIMIT 1
+  `).get(userId, now.toISOString());
+
   return {
     synced: Boolean(db.prepare("SELECT 1 FROM scheduled_shifts LIMIT 1").get()),
     source: seven.isConfigured() ? "7shifts" : "none",
@@ -386,7 +394,15 @@ function getUserShiftContext(db, userId, now = new Date()) {
       roleName: row.role_name,
       startAt: row.start_at,
       endAt: row.end_at
-    }))
+    })),
+    lastShift: lastRow ? {
+      startAt: lastRow.start_at,
+      endAt: lastRow.end_at,
+      roleName: lastRow.role_name,
+      stationName: lastRow.station_name,
+      isShiftLead: Boolean(lastRow.is_shift_lead),
+      shiftDate: lastRow.shift_date
+    } : null
   };
 }
 

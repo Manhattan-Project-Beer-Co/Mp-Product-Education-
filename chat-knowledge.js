@@ -5,19 +5,13 @@ const { SITE_FEATURES, buildSiteOverviewText } = require("./site-features");
 const SITE_OVERVIEW = buildSiteOverviewText();
 
 const TRAINING_GAMES = [
+  { name: "The Rush", desc: "Evolving Saturday 7:30 prioritization — window, waving tables, bar hands. Teaches urgency and communication, not a timer." },
+  { name: "Build the Flight", desc: "Four-beer flight from the current On Tap list. Multiple reasonable answers; explains why." },
+  { name: "Read the Guest", desc: "Branching recommendation from live taps. Starts at Modelo, then “I don’t like bitter.”" },
+  { name: "Saturday Night", desc: "Dynamic service problems (window, allergen, slow ticket, checkout). Ends with Strong / Work on and Training links — not a 7/10 score." },
   { name: "Staff Favorites", desc: "Guess teammates’ favorite beers for bonus points; unlocks them on the leaderboard." },
-  { name: "Guest Scenarios", desc: "Recommend for Blue Moon fans, parties, allergies, intoxicated guests." },
-  { name: "Complaint Recovery", desc: "MP preferred service recovery with tougher guest levels." },
-  { name: "Tap Match", desc: "Match tap numbers to beers — critical for floor service." },
-  { name: "Flavor Quiz", desc: "Match flavor profiles to beer names." },
-  { name: "Guest Match", desc: "A guest describes what they want — recommend a tap." },
-  { name: "ABV Challenge", desc: "Pick the correct ABV from the sheet." },
-  { name: "Style Match", desc: "Pick the listed style for each beer." },
-  { name: "Pick the Profile", desc: "Reverse quiz — pick the flavor profile for a beer." },
-  { name: "Speed Round", desc: "12 mixed questions under time pressure." },
-  { name: "Beer Flashcards", desc: "15 cards reviewing sheet info." },
-  { name: "Coffee Quiz", desc: "10 questions from the coffee training manual." },
-  { name: "Coffee Flashcards", desc: "15 cards on espresso, milk, and bar standards." }
+  { name: "Coffee Quiz", desc: "10 questions from the coffee training manual — on Drinks, not the War Games hub." },
+  { name: "Coffee Flashcards", desc: "15 cards on espresso, milk, and bar standards — on Drinks." }
 ];
 
 const COFFEE_SECTIONS = [
@@ -246,7 +240,7 @@ function localAnswer(query, beers, sops = []) {
       return (
         "Gluten-related beers from the list (still confirm with kitchen/lead for allergies):\n\n" +
         gfHits.map(b => `• ${formatBeer(b)}`).join("\n\n") +
-        "\n\nUse **Floor Tools → Allergy Check** for food filters — never guarantee without kitchen confirmation."
+        "\n\nUse **Shift Tools → Allergy Check** for food filters — never guarantee without kitchen confirmation."
       );
     }
   }
@@ -261,7 +255,7 @@ function localAnswer(query, beers, sops = []) {
     return (
       "Here's what I found in the beer menu:\n\n" +
       beerHits.map(({ beer }) => `• ${formatBeer(beer)}`).join("\n\n") +
-      "\n\nCheck the **On Tap** or **All Beers** tab for full details."
+      "\n\nCheck the **On Tap** tab (Beer Catalog for the full list) for full details."
     );
   }
 
@@ -314,13 +308,13 @@ function localAnswer(query, beers, sops = []) {
     return (
       "War Games on this site:\n\n" +
       TRAINING_GAMES.map(g => `• **${g.name}** — ${g.desc}`).join("\n") +
-      "\n\nOpen the **War Games** tab (beer) or **Coffee** tab (coffee quiz/flashcards)."
+      "\n\nOpen **War Games** for the judgment drills, or **Drinks** for coffee quiz/flashcards."
     );
   }
 
   return (
     "I couldn't find that in Ask MP's training materials. Try a beer name, Michelada mix, coffee close, gluten-reduced taps, an SOP title, or a training game. " +
-    "I only answer from content on this site — open **Floor Tools** for 86s, recommenders, and allergy check."
+    "I only answer from content on this site — open **Shift Tools** for 86s, recommenders, and allergy check."
   );
 }
 
@@ -338,7 +332,9 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
         title: col(beer, "Name") || "Beer",
         summary: text,
         score,
-        tab: "ontap"
+        tab: "ontap",
+        source: "On Tap",
+        beer: col(beer, "Name")
       });
     }
   }
@@ -352,7 +348,9 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
         title: food.name,
         summary: food.description || food.notes || "",
         score,
-        tab: "food"
+        tab: "food",
+        source: "Food + Specials",
+        food: food.id || food.name
       });
     }
   }
@@ -366,7 +364,8 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
         title: section.title,
         summary: section.text.slice(0, 220),
         score,
-        tab: "coffee"
+        tab: "drinks",
+        source: "Drinks · Coffee"
       });
     }
   }
@@ -381,7 +380,9 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
         summary: doc.summary || stripHtml(doc.body).slice(0, 220),
         score,
         tab: "sops",
-        category: doc.category
+        category: doc.category,
+        source: doc.category ? `SOP · ${doc.category}` : "SOPs",
+        sopTitle: doc.title
       });
     }
   }
@@ -394,7 +395,9 @@ function universalSearch(query, { beers = [], sops = [], foods = [] } = {}) {
         title: game.name,
         summary: game.desc,
         score,
-        tab: "game"
+        tab: "games",
+        source: "War Games",
+        game: game.name
       });
     }
   }

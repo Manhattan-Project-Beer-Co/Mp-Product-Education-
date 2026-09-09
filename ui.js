@@ -22,10 +22,12 @@ function greetingForNow(date = new Date()) {
  * Standard page header.
  * actionsHtml: optional right-side buttons (Print, Edit, etc.)
  */
-function renderPageHeader({ title, subtitle = "", eyebrow = "", actionsHtml = "" } = {}) {
+function renderPageHeader({ title, subtitle = "", eyebrow = "", actionsHtml = "", back = null } = {}) {
+  const backHtml = back ? renderLogicalBackHtml(back) : "";
   return `
     <div class="page-header">
       <div class="page-header-text">
+        ${backHtml}
         ${eyebrow ? `<p class="page-header-eyebrow">${escapeHTML(eyebrow)}</p>` : ""}
         <h2 class="page-header-title">${escapeHTML(title || "")}</h2>
         ${subtitle ? `<p class="page-header-sub">${escapeHTML(subtitle)}</p>` : ""}
@@ -33,6 +35,16 @@ function renderPageHeader({ title, subtitle = "", eyebrow = "", actionsHtml = ""
       ${actionsHtml ? `<div class="page-header-actions">${actionsHtml}</div>` : ""}
     </div>
   `;
+}
+
+function renderLogicalBackHtml(back) {
+  if (!back) return "";
+  const label = back.label || "Back";
+  let action = "";
+  if (back.tab) action = `activateAppTab('${String(back.tab).replace(/['"]/g, "")}')`;
+  else if (back.onclick) action = back.onclick;
+  if (!action) return "";
+  return `<button type="button" class="page-back" onclick="${action}">← ${escapeHTML(label)}</button>`;
 }
 
 /** Per-view inline edit mode (Phase 3). Same page for staff + admins; Edit reveals controls. */
@@ -141,6 +153,7 @@ function resetHomeBriefingCache() {
   homeBriefingCache.checklists = null;
   homeBriefingCache.viewedKeys = new Set();
   homeBriefingCache.announcements = [];
+  quickAccessEditing = false;
 }
 
 function isWeeklySpecialPlaceholder(special) {
@@ -228,7 +241,7 @@ function buildTodayAtMpCards(cache = homeBriefingCache) {
   const sections = cache.huddle?.sections || {};
   const weekly = typeof getTodayWeeklySpecial === "function" ? getTodayWeeklySpecial() : null;
 
-  if (weekly && weekly.active && !isWeeklySpecialPlaceholder(weekly)) {
+  if (weekly && (typeof isLiveSpecial !== "function" || isLiveSpecial(weekly)) && !isWeeklySpecialPlaceholder(weekly)) {
     cards.push({
       id: "special",
       kicker: "Special",
@@ -246,7 +259,7 @@ function buildTodayAtMpCards(cache = homeBriefingCache) {
       id: "86",
       kicker: "86'd",
       title: names.join(", "),
-      detail: eightySix.length > 4 ? `+${eightySix.length - 4} more on the board` : "Check Floor Tools for the full board",
+      detail: eightySix.length > 4 ? `+${eightySix.length - 4} more on the board` : "Check Shift Tools for the full board",
       actionAttr: `onclick="activateAppTab('floor')"`
     });
   }
@@ -345,7 +358,7 @@ function buildRoleAwareCards(cache = homeBriefingCache) {
         kicker: "Friday update",
         title: "Coffee seasonals need an update",
         detail: "Confirm the latte and matcha before the weekend",
-        actionAttr: `onclick="coffeeSection='seasonal'; activateAppTab('coffee')"`
+        actionAttr: `onclick="coffeeSection='seasonal'; drinksSection='coffee'; activateAppTab('drinks')"`
       });
     } else {
       const weekly = typeof getTodayWeeklySpecial === "function" ? getTodayWeeklySpecial() : null;
@@ -378,7 +391,7 @@ function buildRoleAwareCards(cache = homeBriefingCache) {
           id: "maint",
           kicker: "Maintenance",
           title: `${digest.openMaintenance} open ticket${digest.openMaintenance === 1 ? "" : "s"}`,
-          detail: "Ops follow-up on Floor Tools",
+          detail: "Ops follow-up on Shift Tools",
           actionAttr: `onclick="activateAppTab('floor')"`
         });
       }
@@ -426,61 +439,201 @@ function renderTodayCardsHtml(cards, { compact = false, roleActions = false } = 
   `;
 }
 
+function formatHomeWhen(iso) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  }).format(date);
+}
+
+function sinceLastShiftCopy(shift) {
+  const last = shift?.lastShift;
+  if (last?.endAt) {
+    const when = formatHomeWhen(last.endAt);
+    const role = [last.roleName, last.stationName].filter(Boolean).join(" · ");
+    return {
+      title: "Since last shift",
+      lead: when
+        ? `Since you clocked out ${when}${role ? ` · ${role}` : ""}`
+        : "Changes since your last 7shifts block ended."
+    };
+  }
+  return {
+    title: "Since last shift",
+    lead: "7shifts last clock-out isn’t linked yet — these are unread since you last reviewed."
+  };
+}
+
+function awayItemTone(item) {
+  const blob = `${item?.label || ""} ${item?.title || ""} ${item?.type || ""}`.toLowerCase();
+  if (/86|allergen|urgent|emergency|out of stock/.test(blob)) return "important";
+  if (/new on tap|new tap|seasonal|special/.test(blob) || item?.type === "beer" || item?.type === "weekly") return "new";
+  return "";
+}
+
+function requiresHomeAck(item) {
+  return awayItemTone(item) === "important";
+}
+
 function renderAwaySectionHtml(items) {
   if (!items.length) return "";
+  const shift = typeof getShiftContext === "function" ? getShiftContext() : currentUser?.shift;
+  const copy = sinceLastShiftCopy(shift);
+  const dismissible = items.filter((item) => !requiresHomeAck(item));
   return `
     <section class="home-section">
-      <h3 class="home-section-title">While you were away</h3>
-      <p class="home-section-lead">${items.length} thing${items.length === 1 ? "" : "s"} changed since you last reviewed</p>
+      <h3 class="home-section-title">${escapeHTML(copy.title)}</h3>
+      <p class="home-section-lead">${escapeHTML(copy.lead)}</p>
       <div class="away-list">
-        ${items.map((item) => `
-          <div class="away-item" data-key="${escapeForAttribute(item.key)}">
+        ${items.map((item) => {
+          const tone = awayItemTone(item);
+          return `
+          <div class="away-item${tone ? ` is-${tone}` : ""}" data-key="${escapeForAttribute(item.key)}">
             <button type="button" class="away-item-main" onclick="openHomeAnnouncement('${escapeForAttribute(item.key)}')">
-              <span class="away-item-kicker">${escapeHTML(item.label || "Update")}</span>
+              <span class="away-item-kicker">${escapeHTML(tone === "important" ? "Important" : tone === "new" ? "New" : (item.label || "Update"))}</span>
               <span class="away-item-title">${escapeHTML(item.title)}</span>
               <span class="away-item-summary">${escapeHTML(item.summary || "")}</span>
             </button>
-            <button type="button" class="btn btn-sm btn-subtle away-item-ack" onclick="markHomeAnnouncementRead('${escapeForAttribute(item.key)}')">Got it</button>
-          </div>
-        `).join("")}
+            ${tone === "important" ? `<button type="button" class="btn btn-sm btn-subtle away-item-ack" onclick="markHomeAnnouncementRead('${escapeForAttribute(item.key)}')">Acknowledge</button>` : ""}
+          </div>`;
+        }).join("")}
       </div>
-      ${items.length > 1 ? `
-        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:12px;" onclick="markAllHomeAnnouncementsRead()">Mark all as read</button>
-      ` : ""}
+      ${dismissible.length ? `
+        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:12px;" onclick="markAllHomeAnnouncementsRead()">I'm caught up</button>
+      ` : `<p class="home-section-lead">Important items stay until you Acknowledge each one.</p>`}
     </section>
   `;
 }
 
-function renderQuickAccessHtml() {
-  const links = [
-    { type: "ontap", label: "On Tap", icon: "tap" },
-    { type: "food", label: "Food", icon: "food" },
-    { type: "checklists", label: "Checklists", icon: "check" },
-    { type: "floor", label: "Floor", icon: "floor" },
-    { type: "askmp", label: "Ask MP", icon: "ask" }
-  ];
-  if (typeof canSubmitShiftSurvey === "function" ? canSubmitShiftSurvey() : currentUser) {
-    links.push({ type: "shift-survey", label: "End of Shift", icon: "shift" });
-  }
+const QUICK_ACCESS_CATALOG = [
+  { type: "ontap", label: "On Tap", icon: "tap" },
+  { type: "food", label: "Food", icon: "food" },
+  { type: "drinks", label: "Drinks", icon: "drink" },
+  { type: "checklists", label: "Checklists", icon: "check" },
+  { type: "floor", label: "Shift Tools", icon: "floor" },
+  { type: "askmp", label: "Ask MP", icon: "ask" },
+  { type: "search", label: "Search Launch Pad", icon: "search" },
+  { type: "games", label: "War Games", icon: "games" },
+  { type: "training", label: "Training", icon: "train" },
+  { type: "sops", label: "SOPs", icon: "sop" },
+  { type: "today-floor", label: "Today’s Floor", icon: "event" },
+  { type: "events", label: "Events", icon: "event" },
+  { type: "team", label: "Team", icon: "train" },
+  { type: "safety", label: "Safety", icon: "safety" },
+  { type: "merch", label: "Merch", icon: "merch" },
+  { type: "shift-survey", label: "End of Shift", icon: "shift" }
+];
+
+const QUICK_ACCESS_DEFAULTS = ["ontap", "food", "checklists", "floor", "askmp", "shift-survey"];
+let quickAccessEditing = false;
+
+function quickAccessStorageKey() {
+  return `mp-quick-access:${currentUser?.id || "guest"}`;
+}
+
+function loadQuickAccessPins() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(quickAccessStorageKey()) || "null");
+    if (Array.isArray(raw) && raw.length) {
+      return raw.filter((type) => QUICK_ACCESS_CATALOG.some((item) => item.type === type)).slice(0, 8);
+    }
+  } catch (_) {}
+  return QUICK_ACCESS_DEFAULTS.slice();
+}
+
+function isQuickAccessPinned(type) {
+  return loadQuickAccessPins().includes(type);
+}
+
+function saveQuickAccessPins(pins) {
+  try {
+    localStorage.setItem(quickAccessStorageKey(), JSON.stringify(pins.slice(0, 8)));
+  } catch (_) {}
+}
+
+function toggleQuickAccessPin(type) {
+  if (!QUICK_ACCESS_CATALOG.some((item) => item.type === type)) return;
+  const pins = loadQuickAccessPins();
+  const at = pins.indexOf(type);
+  if (at >= 0) pins.splice(at, 1);
+  else if (pins.length < 8) pins.push(type);
+  saveQuickAccessPins(pins);
+  if (typeof refreshHomeIfVisible === "function") refreshHomeIfVisible();
+  if (typeof contentType === "function" && contentType() === "search" && typeof render === "function") render();
+}
+
+function toggleQuickAccessEditing() {
+  quickAccessEditing = !quickAccessEditing;
+  if (typeof refreshHomeIfVisible === "function") refreshHomeIfVisible();
+}
+
+function moveQuickAccessPin(type, delta) {
+  const pins = loadQuickAccessPins();
+  const at = pins.indexOf(type);
+  const next = at + Number(delta);
+  if (at < 0 || next < 0 || next >= pins.length) return;
+  const [row] = pins.splice(at, 1);
+  pins.splice(next, 0, row);
+  saveQuickAccessPins(pins);
+  if (typeof refreshHomeIfVisible === "function") refreshHomeIfVisible();
+}
+
+function quickAccessIcon(name) {
   const icons = {
     tap: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8M12 4v5m-4 0h8v4H8zM6 13h12v7H6z"/></svg>`,
     food: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v7m3-7v7M5 8h3m-1 3v9m7-16v16m0-16c3 2 4 5 4 8h-4"/></svg>`,
+    drink: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l-1 7H8zM8 11h8v7H8z"/></svg>`,
     check: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v15H5zM8 3h8v4H8zM8 12l2 2 5-5"/></svg>`,
     floor: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 18v-7h12v7M9 11V7h6v4"/></svg>`,
     ask: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v11H9l-4 4zM9 9h6M9 12h4"/></svg>`,
+    search: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>`,
+    games: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v8H4zM8 14h2m4 0h2M9 6h6"/></svg>`,
+    train: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v14H6zM9 20h6M8 8h8M8 12h6"/></svg>`,
+    sop: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16H7zM10 8h4M10 12h4"/></svg>`,
+    event: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v14H5zM5 10h14M9 4v4M15 4v4"/></svg>`,
+    safety: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>`,
+    merch: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7zM9 8V6h6v2"/></svg>`,
     shift: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg>`
   };
+  return icons[name] || "";
+}
+
+function renderQuickAccessHtml() {
+  const pins = loadQuickAccessPins();
+  const links = pins
+    .map((type) => QUICK_ACCESS_CATALOG.find((item) => item.type === type))
+    .filter(Boolean)
+    .filter((link) => link.type !== "shift-survey" || (typeof canSubmitShiftSurvey === "function" ? canSubmitShiftSurvey() : Boolean(currentUser)));
+  const editing = quickAccessEditing;
   return `
     <section class="home-section">
-      <h3 class="home-section-title">Quick tools</h3>
-      <div class="quick-access-grid">
-        ${links.map((link) => `
-          <button type="button" class="quick-access-card" onclick="activateAppTab('${link.type}')">
-            <span class="quick-access-icon">${icons[link.icon] || ""}</span>
-            <span class="quick-access-label">${escapeHTML(link.label)}</span>
-          </button>
-        `).join("")}
+      <div class="quick-access-head">
+        <h3 class="home-section-title">Quick access</h3>
+        <button type="button" class="btn btn-subtle btn-sm" onclick="toggleQuickAccessEditing()">${editing ? "Done" : "Edit shortcuts"}</button>
       </div>
+      ${editing ? `<p class="home-section-lead">Remove or reorder. Pins stay on this device. Add more from Search Launch Pad.</p>` : ""}
+      ${links.length ? `
+      <div class="quick-access-grid${editing ? " is-editing" : ""}">
+        ${links.map((link, index) => `
+          <div class="quick-access-item">
+            <button type="button" class="quick-access-card" onclick="${editing ? "return false;" : `activateAppTab('${link.type}')`}">
+              <span class="quick-access-icon">${quickAccessIcon(link.icon)}</span>
+              <span class="quick-access-label">${escapeHTML(link.label)}</span>
+            </button>
+            ${editing ? `
+              <div class="quick-access-tools">
+                <button type="button" class="btn btn-subtle btn-sm" ${index === 0 ? "disabled" : ""} onclick="moveQuickAccessPin('${link.type}', -1)" aria-label="Move ${escapeHTML(link.label)} up">Up</button>
+                <button type="button" class="btn btn-subtle btn-sm" ${index === links.length - 1 ? "disabled" : ""} onclick="moveQuickAccessPin('${link.type}', 1)" aria-label="Move ${escapeHTML(link.label)} down">Down</button>
+                <button type="button" class="btn btn-subtle btn-sm" onclick="toggleQuickAccessPin('${link.type}')" aria-label="Remove ${escapeHTML(link.label)}">Remove</button>
+              </div>` : ""}
+          </div>
+        `).join("")}
+      </div>` : `<p class="home-empty">No shortcuts. Pin destinations from Search Launch Pad.</p>`}
     </section>
   `;
 }
@@ -492,7 +645,7 @@ function renderTodayAtMpStripHtml(cache = homeBriefingCache, { compact = true } 
     return `
       <section class="today-strip">
         <h3 class="home-section-title">Today at MP</h3>
-        <p class="home-empty">Board looks quiet — check Floor Tools if anything changes mid-shift.</p>
+        <p class="home-empty">Board looks quiet — check Shift Tools if anything changes mid-shift.</p>
       </section>
     `;
   }
@@ -531,9 +684,10 @@ async function openHomeAnnouncement(itemKey) {
   if (typeof briefingViewedKeys !== "undefined") {
     briefingViewedKeys = homeBriefingCache.viewedKeys;
   }
+  const mustAck = requiresHomeAck(item);
   if (typeof openBriefingItem === "function") {
-    await openBriefingItem(itemKey);
-    homeBriefingCache.viewedKeys.add(itemKey);
+    await openBriefingItem(itemKey, { markViewed: !mustAck });
+    if (!mustAck) homeBriefingCache.viewedKeys.add(itemKey);
     refreshHomeIfVisible();
   }
 }
@@ -553,7 +707,7 @@ async function markHomeAnnouncementRead(itemKey) {
 }
 
 async function markAllHomeAnnouncementsRead() {
-  const items = buildAwayItems();
+  const items = buildAwayItems().filter((item) => !requiresHomeAck(item));
   await Promise.all(items.map((item) => markHomeAnnouncementRead(item.key)));
 }
 
@@ -577,12 +731,16 @@ function renderHomeShiftHtml() {
     ? describeShiftStatus(shift)
     : null;
   if (!desc?.visible) return "";
+  const last = shift?.lastShift;
+  const lastLine = !shift?.onShift && last?.endAt
+    ? `Last out ${formatHomeWhen(last.endAt)}`
+    : "";
   return `
     <button type="button" class="home-shift" data-state="${escapeForAttribute(desc.state)}" onclick="activateAppTab('today-floor')">
       <span class="home-shift-kicker">Your shift</span>
       <span class="home-shift-copy">
         <span class="home-shift-label">${escapeHTML(desc.label)}</span>
-        <span class="home-shift-detail">${escapeHTML(desc.detail)}</span>
+        <span class="home-shift-detail">${escapeHTML([desc.detail, lastLine].filter(Boolean).join(" · "))}</span>
       </span>
       <span class="home-shift-action">Today’s Floor</span>
     </button>
@@ -696,4 +854,12 @@ if (typeof window !== "undefined") {
   window.renderEditablePageHeader = renderEditablePageHeader;
   window.renderPageEditBanner = renderPageEditBanner;
   window.resetPageEditModes = resetPageEditModes;
+  window.toggleQuickAccessPin = toggleQuickAccessPin;
+  window.toggleQuickAccessEditing = toggleQuickAccessEditing;
+  window.moveQuickAccessPin = moveQuickAccessPin;
+  window.isQuickAccessPinned = isQuickAccessPinned;
+  window.loadQuickAccessPins = loadQuickAccessPins;
+  window.requiresHomeAck = requiresHomeAck;
+  window.sinceLastShiftCopy = sinceLastShiftCopy;
+  window.awayItemTone = awayItemTone;
 }

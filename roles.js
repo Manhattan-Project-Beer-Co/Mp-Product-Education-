@@ -125,6 +125,38 @@ function canManageWeeklySpecials(user) {
   return hasShiftLeadCapability(user);
 }
 
+function canEditSpecials(user) {
+  return canManageWeeklySpecials(user);
+}
+
+function canEditDrinks(user) {
+  return canManageWeeklySpecials(user);
+}
+
+function canEditMerch(user) {
+  return canManageMerch(user);
+}
+
+function canEditInventory(user) {
+  return canManageOpsInventory(user);
+}
+
+function canEditSOP(user) {
+  return canManageSops(user);
+}
+
+function canEditBeer(user) {
+  return canManageTaps(user);
+}
+
+function canEditEvents(user) {
+  return hasRole(user, ROLES.ADMIN, ROLES.MANAGER, ROLES.EVENT_LEAD);
+}
+
+function canTrainStaff(user) {
+  return hasShiftLeadCapability(user);
+}
+
 function canSubmitShiftSurvey(user) {
   return hasRole(
     user,
@@ -167,6 +199,14 @@ function buildPermissions(user, onShiftLeadDuty = false) {
     manageOpsInventory: canManageOpsInventory(user),
     manageTaps: canManageTaps(user),
     manageWeeklySpecials: canManageWeeklySpecials(user),
+    editSpecials: canEditSpecials(user),
+    editDrinks: canEditDrinks(user),
+    editMerch: canEditMerch(user),
+    editInventory: canEditInventory(user),
+    editSop: canEditSOP(user),
+    editBeer: canEditBeer(user),
+    editEvents: canEditEvents(user),
+    trainStaff: canTrainStaff(user),
     viewShiftReports: canViewShiftReports(user, onShiftLeadDuty),
     submitShiftSurvey: canSubmitShiftSurvey(user),
     manageSops: canManageSops(user),
@@ -196,6 +236,14 @@ const api = {
   canManageOpsInventory,
   canManageTaps,
   canManageWeeklySpecials,
+  canEditSpecials,
+  canEditDrinks,
+  canEditMerch,
+  canEditInventory,
+  canEditSOP,
+  canEditBeer,
+  canEditEvents,
+  canTrainStaff,
   canViewShiftReports,
   canSubmitShiftSurvey,
   receivesDailyBriefing,

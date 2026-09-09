@@ -10,7 +10,7 @@
     "dev": "node server.js",
     "dev:local": "node -e \"process.env.DEV_LOGIN='1'; require('./server.js')\"",
     "seed": "node seed.js",
-    "check": "node scripts/check-encoding.js && node scripts/check-syntax.js",
+    "check": "node scripts/check-encoding.js && node scripts/check-syntax.js && node scripts/check-phase1-nav.js && node scripts/check-specials-schedule.js && node scripts/check-phase3-print.js && node scripts/check-phase4-training.js && node scripts/check-phase5-wargames.js && node scripts/check-phase6-home.js && node scripts/check-phase7-polish.js",
     "check:boot": "node scripts/check-boot.js",
     "backup": "node scripts/backup-now.js"
   },

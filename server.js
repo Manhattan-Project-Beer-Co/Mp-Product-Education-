@@ -51,6 +51,7 @@ const {
   canManageOpsInventory,
   canManageTaps,
   canManageWeeklySpecials,
+  canEditEvents,
   canViewShiftReports,
   canSubmitShiftSurvey,
   receivesDailyBriefing,
@@ -61,6 +62,7 @@ const {
   buildPermissions
 } = require("./roles");
 const { registerWeeklySpecialsApi } = require("./weekly-specials-api");
+const { registerPublishedEventsApi } = require("./published-events-api");
 const { registerTapDisplayApi } = require("./tap-display-api");
 
 const app = express();
@@ -803,6 +805,15 @@ function weeklySpecialsManagerRequired(req, res, next) {
   const user = loadAuthedUser(req);
   if (!user || !canManageWeeklySpecials(user)) {
     return res.status(403).json({ error: "Shift lead, manager, or admin access required to update food and coffee specials." });
+  }
+  req.authUser = user;
+  next();
+}
+
+function eventsManagerRequired(req, res, next) {
+  const user = loadAuthedUser(req);
+  if (!user || !canEditEvents(user)) {
+    return res.status(403).json({ error: "Event lead, manager, or admin access required." });
   }
   req.authUser = user;
   next();
@@ -3131,6 +3142,23 @@ app.post("/api/checklists/:id/reset", authRequired, (req, res) => {
   res.json({ ok: true, shiftDate, completedTaskIds: [] });
 });
 
+app.get("/api/team/directory", authRequired, (req, res) => {
+  const rows = db.prepare(`
+    SELECT id, name, role, extra_roles
+    FROM users
+    ORDER BY name COLLATE NOCASE ASC
+  `).all();
+  res.json({
+    people: rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      role: normalizeRole(row.role),
+      extra_roles: parseExtraRoles(row.extra_roles),
+      role_label: roleLabel(row.role)
+    }))
+  });
+});
+
 app.get("/api/admin/employees", authRequired, managerOrAdminRequired, (req, res) => {
   const employees = db.prepare(`
     SELECT u.id, u.name, u.email, u.role, u.created_at,
@@ -3515,6 +3543,14 @@ registerWeeklySpecialsApi(app, {
   canManageWeeklySpecials
 });
 
+registerPublishedEventsApi(app, {
+  db,
+  authRequired,
+  eventsManagerRequired,
+  loadAuthedUser,
+  canEditEvents
+});
+
 registerTapDisplayApi(app, {
   db,
   authRequired,
@@ -3661,7 +3697,8 @@ const CLIENT_SCRIPTS = new Set([
   "ops-content.js",
   "floor-tools.js",
   "ui.js",
-  "training.js"
+  "training.js",
+  "war-games.js"
 ]);
 
 app.use("/images", express.static(path.join(__dirname, "images"), {

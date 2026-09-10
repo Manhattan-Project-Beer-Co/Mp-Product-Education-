@@ -469,6 +469,12 @@ function homeCardPriority(card) {
   return 30;
 }
 
+function clampHomeText(text, max = 90) {
+  const value = String(text || "").replace(/\s+/g, " ").trim();
+  if (value.length <= max) return value;
+  return `${value.slice(0, Math.max(0, max - 1)).trim()}…`;
+}
+
 function renderTodayCardsHtml(cards, { compact = false, roleActions = false } = {}) {
   if (!cards.length) {
     return `<p class="home-empty">You're caught up.</p>`;
@@ -482,7 +488,7 @@ function renderTodayCardsHtml(cards, { compact = false, roleActions = false } = 
         <button type="button" class="today-card${!compact && !roleActions && index === 0 ? " is-featured" : ""}" ${card.actionAttr || ""}>
           <span class="today-card-kicker">${escapeHTML(card.kicker)}</span>
           <span class="today-card-title">${escapeHTML(card.title)}</span>
-          ${card.detail ? `<span class="today-card-detail">${escapeHTML(card.detail)}</span>` : ""}
+          ${card.detail ? `<span class="today-card-detail">${escapeHTML(clampHomeText(card.detail, compact || roleActions ? 70 : 90))}</span>` : ""}
           ${roleActions ? `<span class="role-action-arrow" aria-hidden="true">→</span>` : ""}
         </button>
       `).join("")}
@@ -548,7 +554,7 @@ function renderAwaySectionHtml(items) {
             <button type="button" class="away-item-main" onclick="openHomeAnnouncement('${escapeForAttribute(item.key)}')">
               <span class="away-item-kicker">${escapeHTML(tone === "important" ? "Important" : tone === "new" ? "New" : (item.label || "Update"))}</span>
               <span class="away-item-title">${escapeHTML(item.title)}</span>
-              <span class="away-item-summary">${escapeHTML(item.summary || "")}</span>
+              <span class="away-item-summary">${escapeHTML(clampHomeText(item.summary || "", 90))}</span>
             </button>
             ${tone === "important" ? `<button type="button" class="btn btn-sm btn-subtle away-item-ack" onclick="markHomeAnnouncementRead('${escapeForAttribute(item.key)}')">Acknowledge</button>` : ""}
           </div>`;
@@ -863,21 +869,20 @@ async function renderHomeShell(content, { skipFetch = false } = {}) {
         subtitle: "Here’s what you need to know for your shift today.",
         eyebrow: `${dateLabel} · ${serviceLabel}`
       })}
-      ${renderHomeShiftHtml()}
 
       <section class="home-section home-primary-section">
         <h3 class="home-section-title">Today at MP</h3>
         ${homeBriefingCache.error ? `<p class="auth-error">${escapeHTML(homeBriefingCache.error)}</p>` : ""}
         ${renderTodayCardsHtml(todayCards)}
+        ${roleCards.length ? `
+          <div class="home-role-inline">
+            <h4 class="home-section-title home-section-title-sm">For you</h4>
+            ${renderTodayCardsHtml(roleCards, { roleActions: true, compact: true })}
+          </div>
+        ` : ""}
       </section>
 
-      ${roleCards.length ? `
-        <section class="home-section home-role-section">
-          <h3 class="home-section-title">For you</h3>
-          ${renderTodayCardsHtml(roleCards, { roleActions: true })}
-        </section>
-      ` : ""}
-
+      ${renderHomeShiftHtml()}
       ${renderAwaySectionHtml(awayItems)}
       ${renderQuickAccessHtml()}
     </div>

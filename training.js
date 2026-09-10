@@ -955,21 +955,31 @@ function renderSkillsYouCanDo(state) {
   `;
 }
 
+function wrapTrainingMore(title, inner) {
+  if (!inner) return "";
+  return `<details class="training-more"><summary>${escapeHTML(title)}</summary>${inner}</details>`;
+}
+
 function renderTodayFocus(state) {
   const block = (state.curriculum || []).find((c) => c.shift === state.unlockedShift)
     || (state.curriculum || [])[0];
   if (!block) {
     return `
       <section class="training-section">
-        <h3 class="training-section-title">Today</h3>
+        <h3 class="training-section-title">Today’s actions</h3>
         <p class="training-empty">Your five-shift path will show here once training data loads.</p>
       </section>
     `;
   }
 
   const skills = block.skills || [];
+  const pending = skills.filter((sk) => {
+    const status = skillStatusFor(state, block.shift, sk);
+    return status !== "verified" && status !== "can_do";
+  });
+  const shown = (pending.length ? pending : skills).slice(0, 3);
   const byKind = { know: [], observe: [], demonstrate: [] };
-  skills.forEach((sk) => {
+  shown.forEach((sk) => {
     const kind = TRAINING_SKILL_META[sk]?.kind || "know";
     (byKind[kind] || byKind.know).push(sk);
   });
@@ -982,8 +992,7 @@ function renderTodayFocus(state) {
   return `
     <section class="training-section">
       <div class="training-focus-head">
-        <h3 class="training-section-title">Today</h3>
-        <p class="training-focus-blurb">${escapeHTML(block.mission || block.focus || shiftShortTitle(block))}</p>
+        <h3 class="training-section-title">Today’s actions</h3>
       </div>
       ${groups.map((g) => `
         <div class="training-skill-group">
@@ -1285,13 +1294,13 @@ async function renderTrainingDashboard(content) {
         </button>
       </header>
 
-      <div id="trainingTodayStrip"></div>
       ${renderTodayFocus(state)}
-      ${renderBeforeNextShift(block)}
-      ${renderSkillsYouCanDo(state)}
-      ${renderTrainingRoadmap(state)}
-      ${renderServiceLoop()}
-      ${renderDayInTheLife()}
+      <div id="trainingTodayStrip"></div>
+      ${wrapTrainingMore("Before your next shift", renderBeforeNextShift(block))}
+      ${wrapTrainingMore("Skills you can do", renderSkillsYouCanDo(state))}
+      ${wrapTrainingMore("Five-shift path", renderTrainingRoadmap(state))}
+      ${wrapTrainingMore("MP service loop", renderServiceLoop())}
+      ${wrapTrainingMore("Your shift at MP", renderDayInTheLife())}
     </div>
   `;
 

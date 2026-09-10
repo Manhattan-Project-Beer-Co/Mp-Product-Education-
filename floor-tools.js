@@ -731,8 +731,9 @@ async function renderSkillsBoard(el) {
         <button class="game-next" style="margin-top:8px;" onclick="lookupWhoKnows()">Find trained staff</button>
         <div id="whoKnowsResults" style="margin-top:10px;"></div>
       </div>
-      <div style="overflow:auto;max-width:100%;">
-        <table class="game-leaderboard-table" style="min-width:720px;">
+      <div style="overflow:auto;max-width:100%;" class="table-h-scroll">
+        <p class="table-h-scroll-hint">Swipe for more</p>
+        <table class="game-leaderboard-table keep-table" style="min-width:720px;">
           <thead><tr><th>Name</th>${skills.map(s => `<th>${escapeHTML(s.label)}</th>`).join("")}</tr></thead>
           <tbody>
             ${(data.matrix || []).map(row => `

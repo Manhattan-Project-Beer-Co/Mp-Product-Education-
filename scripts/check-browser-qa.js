@@ -228,6 +228,66 @@ if (SERVER.includes('"war-games.js"') && SERVER.includes('"arcade.js"')) {
   fail("client script allowlist is missing a War Games file");
 }
 
+if (
+  !INDEX.includes('id="tapSelect-')
+  && !INDEX.includes('id="pour-${')
+  && !INDEX.includes('id="cat-${')
+  && INDEX.includes("isPhoneOntapLayout()")
+  && !/renderOnTapTable\(filtered\)\s*\+\s*[\s\S]{0,80}renderOnTapMobileCards\(filtered\)/.test(INDEX)
+) {
+  pass("On Tap board mounts one editor tree (no duplicate tapSelect/pour/cat IDs)");
+} else {
+  fail("On Tap still duplicates editors or uses colliding element IDs");
+}
+
+if (
+  INDEX.includes("ontap-nucleus-note")
+  && INDEX.includes("closest?.(\".tap-inline-editor\")")
+  && INDEX.includes("data-field=\"pour\"")
+  && INDEX.includes("data-field=\"category\"")
+) {
+  pass("On Tap beer identity is read-only from Nucleus; pour/category save from the editor");
+} else {
+  fail("On Tap save path still uses getElementById or editable name/style/flavor fields");
+}
+
+{
+  const saveStart = INDEX.indexOf("async function saveTap(button)");
+  const saveSrc = INDEX.slice(saveStart, saveStart + 4500);
+  const catchIdx = saveSrc.indexOf("} catch");
+  const catchBlock = catchIdx >= 0 ? saveSrc.slice(catchIdx) : "";
+  const metaStart = INDEX.indexOf("async function saveTapDisplayMeta(button)");
+  const metaSrc = INDEX.slice(metaStart, metaStart + 2200);
+  const metaCatchIdx = metaSrc.indexOf("} catch");
+  const metaCatch = metaCatchIdx >= 0 ? metaSrc.slice(metaCatchIdx) : "";
+  if (
+    saveStart >= 0
+    && catchBlock.includes("setOntapEditorStatus(editor, \"error\"")
+    && !catchBlock.includes("setPageEditMode")
+    && !catchBlock.includes("ontapSaveFlash")
+    && !catchBlock.includes("alert(")
+    && saveSrc.includes("ontapSaveFlash = \"Saved\"")
+    && metaCatch.includes("setOntapEditorStatus(editor, \"error\"")
+    && !metaCatch.includes("setPageEditMode")
+    && !metaCatch.includes("alert(")
+  ) {
+    pass("On Tap save success flashes Saved; failure stays in edit mode with an inline error");
+  } else {
+    fail("On Tap save success/failure states are missing or failure still re-renders");
+  }
+}
+
+if (
+  INDEX.includes("@media (max-width: 430px)")
+  && INDEX.includes("table-h-scroll")
+  && INDEX.includes("keep-table")
+  && INDEX.includes("overflow-x: hidden")
+) {
+  pass("phone CSS keeps dense tables inside a swipe container instead of page-level sideways scroll");
+} else {
+  fail("phone table overflow containment is missing");
+}
+
 function startLocalServer() {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [path.join(ROOT, "server.js")], {
@@ -354,6 +414,52 @@ async function liveBrowserChecks() {
       pass("tap display meta is reachable for the same On Tap dataset");
     } else {
       fail(`/api/tap-display-meta returned ${metaRes.status}`);
+    }
+
+    const manager = users.find((u) => u.email === "manager@mp.test")
+      || users.find((u) => u.role === "manager" || u.role === "admin");
+    if (!manager) {
+      fail("no manager seed user for On Tap persist check");
+    } else {
+      const mgrLogin = await fetch(`${BASE}/api/auth/dev-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: manager.id })
+      });
+      if (!mgrLogin.ok) {
+        fail(`dev-login as ${manager.email} returned ${mgrLogin.status}`);
+      } else {
+        const mgrCookie = cookieHeader(mgrLogin);
+        const pourSize = `QA ${String(Date.now()).slice(-6)} oz`;
+        const putRes = await fetch(`${BASE}/api/tap-display-meta/qa-ontap-persist`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Cookie: mgrCookie },
+          body: JSON.stringify({ pourSize, printCategory: "CORE" })
+        });
+        if (!putRes.ok) {
+          fail(`PUT /api/tap-display-meta returned ${putRes.status}`);
+        } else {
+          const getRes = await fetch(`${BASE}/api/tap-display-meta`, { headers: { Cookie: mgrCookie } });
+          const payload = getRes.ok ? await getRes.json() : {};
+          const saved = payload.meta && payload.meta["qa-ontap-persist"];
+          if (saved && saved.pourSize === pourSize && saved.printCategory === "CORE") {
+            pass("On Tap pour size persists after PUT + GET");
+          } else {
+            fail("On Tap pour size did not persist after a successful PUT");
+          }
+        }
+
+        const denied = await fetch(`${BASE}/api/tap-display-meta/qa-ontap-persist`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Cookie: cookie },
+          body: JSON.stringify({ pourSize: "should-not-save", printCategory: "CORE" })
+        });
+        if (denied.status === 401 || denied.status === 403) {
+          pass("trainee cannot save tap display meta (failure does not look like success)");
+        } else {
+          fail(`trainee PUT /api/tap-display-meta returned ${denied.status}, expected 401/403`);
+        }
+      }
     }
   } finally {
     if (child && child.exitCode == null) {

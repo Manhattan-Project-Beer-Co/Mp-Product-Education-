@@ -42,6 +42,19 @@ if (UI.includes("Your shift") && UI.includes("Last out") && UI.includes("Quick a
   fail("Your Shift or Quick Access is missing from Home");
 }
 
+{
+  const shell = UI.slice(UI.indexOf("async function renderHomeShell"), UI.indexOf("window.renderPageHeader"));
+  const todayIdx = shell.indexOf("Today at MP");
+  const shiftIdx = shell.indexOf("renderHomeShiftHtml()");
+  const awayIdx = shell.indexOf("renderAwaySectionHtml");
+  const quickIdx = shell.indexOf("renderQuickAccessHtml()");
+  if (todayIdx >= 0 && shiftIdx > todayIdx && awayIdx > shiftIdx && quickIdx > awayIdx) {
+    pass("Home order is Today at MP → Your Shift → Since last shift → Quick Access");
+  } else {
+    fail("Home section order is not Today at MP above Your Shift");
+  }
+}
+
 if (UI.includes("toggleQuickAccessPin") && UI.includes("mp-quick-access:") && UI.includes("QUICK_ACCESS_DEFAULTS")) {
   pass("optional Home pins persist on this device");
 } else {
